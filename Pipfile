@@ -1,0 +1,10 @@
+[packages]
+
+[dev-packages]
+pytest = '*'
+pytest-runner = "*"
+pytest-cov = "*"
+"pytest-pep8" = "*"
+pytest-flakes = "*"
+pytest-mypy = "*"
+codecov = "*"
