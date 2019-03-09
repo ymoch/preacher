@@ -3,8 +3,8 @@
 [dev-packages]
 pytest = '*'
 pytest-runner = "*"
-pytest-cov = "*"
-"pytest-pep8" = "*"
+pytest-pycodestyle = "*"
 pytest-flakes = "*"
 pytest-mypy = "*"
+pytest-cov = "*"
 codecov = "*"
