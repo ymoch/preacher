@@ -1,12 +1,11 @@
 """Description."""
 
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, List
 
 from .verification import Verification
 
 
-DescribedValue = Any
-Extraction = Callable[[DescribedValue], Any]
+Extraction = Callable[[Any], Any]
 Predicate = Callable[[Any], Verification]
 
 
@@ -37,7 +36,7 @@ class Description:
     ...         MagicMock(return_value=Verification(True)),
     ...     ]
     ... )
-    >>> verification = description.verify('described')
+    >>> verification = description('described')
     >>> verification.is_valid
     False
     >>> len(verification.children)
@@ -56,7 +55,7 @@ class Description:
     ...         MagicMock(return_value=Verification(True)),
     ...     ]
     ... )
-    >>> verification = description.verify('described')
+    >>> verification = description('described')
     >>> verification.is_valid
     True
     >>> len(verification.children)
@@ -66,16 +65,14 @@ class Description:
     >>> verification.children[1].is_valid
     True
     """
-
-    def __init__(
-        self,
-        extraction: Extraction,
-        predicates: Iterable[Predicate],
-    ):
+    def __init__(self, extraction: Extraction, predicates: List[Predicate]):
         self._extraction = extraction
         self._predicates = predicates
 
-    def verify(self, value: DescribedValue) -> Verification:
+    def __call__(self, value: Any) -> Verification:
+        return self.verify(value)
+
+    def verify(self, value: Any) -> Verification:
         verified_value = self._extraction(value)
         verifications = [
             predicate(verified_value)
