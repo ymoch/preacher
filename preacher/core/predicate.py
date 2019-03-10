@@ -1,7 +1,5 @@
 """Predicate."""
 
-from typing import Any, Optional
-
 import hamcrest
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
@@ -45,41 +43,3 @@ def of_hamcrest_matcher(matcher: HamcrestMatcher) -> Predicate:
         return Verification(is_valid=True)
 
     return _test
-
-
-def null() -> Predicate:
-    """
-    >>> null()(None).is_valid
-    True
-    >>> null()(False).is_valid
-    False
-    """
-    return of_hamcrest_matcher(hamcrest.none())
-
-
-def equal_to(expected: Optional[Any]) -> Predicate:
-    """
-    >>> predicate = equal_to(1)
-    >>> predicate(0).is_valid
-    False
-    >>> predicate('1').is_valid
-    False
-    >>> predicate(1).is_valid
-    True
-    """
-    return of_hamcrest_matcher(hamcrest.equal_to(expected))
-
-
-def has_length(expected: int) -> Predicate:
-    """
-    >>> predicate = has_length(1)
-    >>> predicate(None).is_valid
-    False
-    >>> predicate([]).is_valid
-    False
-    >>> predicate([1]).is_valid
-    True
-    >>> predicate([0, 1]).is_valid
-    False
-    """
-    return of_hamcrest_matcher(hamcrest.has_length(expected))
