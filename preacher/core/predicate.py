@@ -12,6 +12,28 @@ from .verification import Verification
 def hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
     """
     Make a predicate from a Hamcrest matcher.
+
+    >>> from unittest.mock import MagicMock, patch
+    >>> matcher = MagicMock(HamcrestMatcher)
+
+    >>> with patch(
+    ...     f'{__name__}.hamcrest.assert_that',
+    ...     side_effect=AssertionError(' message\\n')
+    ... ) as assert_that:
+    ...     predicate = hamcrest_predicate(matcher)
+    ...     verification = predicate(0)
+    ...     assert_that.assert_called_with(0, matcher)
+    >>> verification.is_valid
+    False
+    >>> verification.message
+    'message'
+
+    >>> with patch(f'{__name__}.hamcrest.assert_that') as assert_that:
+    ...     predicate = hamcrest_predicate(matcher)
+    ...     verification = predicate(1)
+    ...     assert_that.assert_called_with(1, matcher)
+    >>> verification.is_valid
+    True
     """
     def _test(actual: VerifiedValue) -> Verification:
         try:
@@ -29,29 +51,12 @@ def equal_to(expected: Optional[Any]) -> Predicate:
     """
     Returns a predicate that the the target is expected.
 
-    >>> predicate = equal_to(None)
-    >>> verification = predicate(None)
-    >>> verification.is_valid
-    True
-    >>> verification = predicate(0)
-    >>> verification.is_valid
-    False
-    >>> verification.message
-    'Expected: <None>\\n     but: was <0>'
-
     >>> predicate = equal_to(1)
-    >>> verification = predicate(0)
-    >>> verification.is_valid
+    >>> predicate(0).is_valid
     False
-    >>> verification.message
-    'Expected: <1>\\n     but: was <0>'
-    >>> verification = predicate('1')
-    >>> verification.is_valid
+    >>> predicate('1').is_valid
     False
-    >>> verification.message
-    "Expected: <1>\\n     but: was \'1\'"
-    >>> verification = predicate(1)
-    >>> verification.is_valid
+    >>> predicate(1).is_valid
     True
     """
     return hamcrest_predicate(hamcrest.equal_to(expected))
