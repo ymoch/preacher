@@ -14,6 +14,6 @@ def main() -> None:
         },
     })
     data = {'foo': 'bar'}
-    verification = description.verify(data)
+    verification = description(data)
     if not verification.is_valid:
         sys.exit(1)

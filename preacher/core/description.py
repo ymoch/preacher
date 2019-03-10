@@ -21,7 +21,7 @@ class Description:
     ...     extraction=MagicMock(return_value='target'),
     ...     predicates=[],
     ... )
-    >>> verification = description.verify('described')
+    >>> verification = description('described')
     >>> verification.is_valid
     True
     >>> len(verification.children)
@@ -70,9 +70,6 @@ class Description:
         self._predicates = predicates
 
     def __call__(self, value: Any) -> Verification:
-        return self.verify(value)
-
-    def verify(self, value: Any) -> Verification:
         verified_value = self._extraction(value)
         verifications = [
             predicate(verified_value)

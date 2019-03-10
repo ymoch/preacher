@@ -14,6 +14,7 @@ _EXTRACTION_MAP: Mapping[str, Callable[[str], Extraction]] = {
     'jq': extraction.with_jq,
 }
 _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
+
 _STATIC_MATCHER_MAP: Mapping[str, Matcher] = {
     # For objects.
     'is_null': hamcrest.is_(hamcrest.none()),
@@ -236,11 +237,11 @@ def compile_description(description_object: dict) -> Description:
     ...     'jq': '.foo',
     ...     'it': {'ends_with': 'r'},
     ... })
-    >>> description.verify({}).is_valid
+    >>> description({}).is_valid
     False
-    >>> description.verify({'foo': 'bar'}).is_valid
+    >>> description({'foo': 'bar'}).is_valid
     True
-    >>> description.verify({'foo': 'baz'}).is_valid
+    >>> description({'foo': 'baz'}).is_valid
     False
 
     >>> description = compile_description({
@@ -250,11 +251,11 @@ def compile_description(description_object: dict) -> Description:
     ...         {'ends_with': 'z'},
     ...     ],
     ... })
-    >>> description.verify({}).is_valid
+    >>> description({}).is_valid
     False
-    >>> description.verify({'foo': 'bar'}).is_valid
+    >>> description({'foo': 'bar'}).is_valid
     False
-    >>> description.verify({'foo': 'baz'}).is_valid
+    >>> description({'foo': 'baz'}).is_valid
     True
     """
     extraction = compile_extraction(description_object)
