@@ -7,7 +7,7 @@ from hamcrest.core.matcher import Matcher
 
 from . import extraction
 from . import predicate
-from .description import Predicate, Extraction
+from .description import Description, Extraction, Predicate
 
 
 _EXTRACTION_MAP: Mapping[str, Callable[[str], Extraction]] = {
@@ -228,3 +228,40 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
         return predicate.of_hamcrest_matcher(matcher)
 
     raise CompilationError(f'Unrecognized predicate key: \'{key}\'')
+
+
+def compile_description(description_object: dict) -> Description:
+    """
+    >>> description = compile_description({
+    ...     'jq': '.foo',
+    ...     'it': {'ends_with': 'r'},
+    ... })
+    >>> description.verify({}).is_valid
+    False
+    >>> description.verify({'foo': 'bar'}).is_valid
+    True
+    >>> description.verify({'foo': 'baz'}).is_valid
+    False
+
+    >>> description = compile_description({
+    ...     'jq': '.foo',
+    ...     'it': [
+    ...         {'starts_with': 'b'},
+    ...         {'ends_with': 'z'},
+    ...     ],
+    ... })
+    >>> description.verify({}).is_valid
+    False
+    >>> description.verify({'foo': 'bar'}).is_valid
+    False
+    >>> description.verify({'foo': 'baz'}).is_valid
+    True
+    """
+    extraction = compile_extraction(description_object)
+    predicate_objects = description_object.get('it', [])
+    if isinstance(predicate_objects, dict):
+        predicate_objects = [predicate_objects]
+    return Description(
+        extraction=extraction,
+        predicates=[compile_predicate(obj) for obj in predicate_objects]
+    )
