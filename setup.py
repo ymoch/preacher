@@ -46,10 +46,10 @@ setuptools.setup(
     ],
     tests_require=[
         'pytest',
-        'pytest-cov',
-        'pytest-pep8',
+        'pytest-codestyle',
         'pytest-flakes',
         'pytest-mypy',
+        'pytest-cov',
     ],
     classifiers=[
         'Development Status :: 1 - Planning',

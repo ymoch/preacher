@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0a37e0a2246c403ba41f9ddd1421dbe2a9c668a7f0da30a3506d3a1adcc94f05"
+            "sha256": "4194807ebaebb5b16a3137d4b49177d97090b068fce8a2177f0807617c9a67aa"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -13,7 +13,23 @@
             }
         ]
     },
-    "default": {},
+    "default": {
+        "pyjq": {
+            "hashes": [
+                "sha256:45f7688d8191a4043e7c4839d6cabff8f16abc98fe48c3a4a0cc2da05c62096d",
+                "sha256:5f3cd45b856ae4b42a1058d2e91e13d84df5ea188aedc3ae397dc0e01c270db9"
+            ],
+            "index": "pypi",
+            "version": "==2.3.1"
+        },
+        "six": {
+            "hashes": [
+                "sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c",
+                "sha256:d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
+            ],
+            "version": "==1.12.0"
+        }
+    },
     "develop": {
         "atomicwrites": {
             "hashes": [
