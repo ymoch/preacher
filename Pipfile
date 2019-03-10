@@ -1,5 +1,6 @@
 [packages]
 pyjq = "*"
+pyhamcrest = "*"
 
 [dev-packages]
 pytest = '*'
