@@ -2,7 +2,7 @@
 
 import sys
 
-from preacher.core.extraction import extraction_with_jq
+from preacher.core.extraction import with_jq
 from preacher.core.description import Description
 from preacher.core.predicate import equal_to
 
@@ -10,7 +10,7 @@ from preacher.core.predicate import equal_to
 def main() -> None:
     """Main."""
     description = Description(
-        extraction=extraction_with_jq('.foo'),
+        extraction=with_jq('.foo'),
         predicates=[equal_to('bar')],
     )
     data = {'foo': 'bar'}

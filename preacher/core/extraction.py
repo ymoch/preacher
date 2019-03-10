@@ -5,11 +5,11 @@ from .description import Extraction
 from pyjq import compile as jq_compile
 
 
-def extraction_with_jq(query: str) -> Extraction:
+def with_jq(query: str) -> Extraction:
     """
     Returns a extractor of given `jq`.
 
-    >>> extract = extraction_with_jq('.foo')
+    >>> extract = with_jq('.foo')
     >>> extract({'not_foo': 'bar'})
     >>> extract({'foo': 'bar'})
     'bar'
