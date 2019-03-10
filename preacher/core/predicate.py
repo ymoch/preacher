@@ -9,7 +9,7 @@ from .description import Predicate, VerifiedValue
 from .verification import Verification
 
 
-def hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
+def _hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
     """
     Make a predicate from a Hamcrest matcher.
 
@@ -20,7 +20,7 @@ def hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
     ...     f'{__name__}.hamcrest.assert_that',
     ...     side_effect=AssertionError(' message\\n')
     ... ) as assert_that:
-    ...     predicate = hamcrest_predicate(matcher)
+    ...     predicate = _hamcrest_predicate(matcher)
     ...     verification = predicate(0)
     ...     assert_that.assert_called_with(0, matcher)
     >>> verification.is_valid
@@ -29,7 +29,7 @@ def hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
     'message'
 
     >>> with patch(f'{__name__}.hamcrest.assert_that') as assert_that:
-    ...     predicate = hamcrest_predicate(matcher)
+    ...     predicate = _hamcrest_predicate(matcher)
     ...     verification = predicate(1)
     ...     assert_that.assert_called_with(1, matcher)
     >>> verification.is_valid
@@ -59,4 +59,4 @@ def equal_to(expected: Optional[Any]) -> Predicate:
     >>> predicate(1).is_valid
     True
     """
-    return hamcrest_predicate(hamcrest.equal_to(expected))
+    return _hamcrest_predicate(hamcrest.equal_to(expected))
