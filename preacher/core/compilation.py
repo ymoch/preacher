@@ -82,30 +82,30 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
     preacher.core.compilation.CompilationError: ... 'invalid_key'
 
     >>> predicate = compile_predicate('is_null')
-    >>> predicate(None).is_valid
-    True
-    >>> predicate(True).is_valid
-    False
+    >>> predicate(None).status.name
+    'SUCCESS'
+    >>> predicate('SUCCESS').status.name
+    'UNSTABLE'
 
     >>> predicate = compile_predicate('is_not_null')
-    >>> predicate(None).is_valid
-    False
-    >>> predicate(False).is_valid
-    True
+    >>> predicate(None).status.name
+    'UNSTABLE'
+    >>> predicate('UNSTABLE').status.name
+    'SUCCESS'
 
     >>> predicate = compile_predicate('is_empty')
-    >>> predicate(None).is_valid
-    False
-    >>> predicate(0).is_valid
-    False
-    >>> predicate('').is_valid
-    True
-    >>> predicate([]).is_valid
-    True
-    >>> predicate('A').is_valid
-    False
-    >>> predicate([1]).is_valid
-    False
+    >>> predicate(None).status.name
+    'UNSTABLE'
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate('').status.name
+    'SUCCESS'
+    >>> predicate([]).status.name
+    'SUCCESS'
+    >>> predicate('A').status.name
+    'UNSTABLE'
+    >>> predicate([1]).status.name
+    'UNSTABLE'
 
     >>> compile_predicate({})
     Traceback (most recent call last):
@@ -118,16 +118,16 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
     preacher.core.compilation.CompilationError: ... has 2
 
     >>> predicate = compile_predicate({'has_length': 1})
-    >>> predicate(None).is_valid
-    False
-    >>> predicate('').is_valid
-    False
-    >>> predicate([]).is_valid
-    False
-    >>> predicate('A').is_valid
-    True
-    >>> predicate([1]).is_valid
-    True
+    >>> predicate(None).status.name
+    'UNSTABLE'
+    >>> predicate('').status.name
+    'UNSTABLE'
+    >>> predicate([]).status.name
+    'UNSTABLE'
+    >>> predicate('A').status.name
+    'SUCCESS'
+    >>> predicate([1]).status.name
+    'SUCCESS'
 
     >>> compile_predicate({'invalid_key': 0})
     Traceback (most recent call last):
@@ -135,74 +135,74 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
     preacher.core.compilation.CompilationError: ... 'invalid_key'
 
     >>> predicate = compile_predicate({'equals_to': 1})
-    >>> predicate(0).is_valid
-    False
-    >>> predicate('1').is_valid
-    False
-    >>> predicate(1).is_valid
-    True
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate('1').status.name
+    'UNSTABLE'
+    >>> predicate(1).status.name
+    'SUCCESS'
 
     >>> predicate = compile_predicate({'is_greater_than': 0})
-    >>> predicate(-1).is_valid
-    False
-    >>> predicate(0).is_valid
-    False
-    >>> predicate(1).is_valid
-    True
+    >>> predicate(-1).status.name
+    'UNSTABLE'
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate(1).status.name
+    'SUCCESS'
 
     >>> predicate = compile_predicate({'is_greater_than_or_equal_to': 0})
-    >>> predicate(-1).is_valid
-    False
-    >>> predicate(0).is_valid
-    True
-    >>> predicate(1).is_valid
-    True
+    >>> predicate(-1).status.name
+    'UNSTABLE'
+    >>> predicate(0).status.name
+    'SUCCESS'
+    >>> predicate(1).status.name
+    'SUCCESS'
 
     >>> predicate = compile_predicate({'is_less_than': 0})
-    >>> predicate(-1).is_valid
-    True
-    >>> predicate(0).is_valid
-    False
-    >>> predicate(1).is_valid
-    False
+    >>> predicate(-1).status.name
+    'SUCCESS'
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate(1).status.name
+    'UNSTABLE'
 
     >>> predicate = compile_predicate({'is_less_than_or_equal_to': 0})
-    >>> predicate(-1).is_valid
-    True
-    >>> predicate(0).is_valid
-    True
-    >>> predicate(1).is_valid
-    False
+    >>> predicate(-1).status.name
+    'SUCCESS'
+    >>> predicate(0).status.name
+    'SUCCESS'
+    >>> predicate(1).status.name
+    'UNSTABLE'
 
     >>> predicate = compile_predicate({'contains_string': '0'})
-    >>> predicate(0).is_valid
-    False
-    >>> predicate('012').is_valid
-    True
-    >>> predicate('123').is_valid
-    False
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate('012').status.name
+    'SUCCESS'
+    >>> predicate('123').status.name
+    'UNSTABLE'
 
     >>> predicate = compile_predicate({'starts_with': 'AB'})
-    >>> predicate(0).is_valid
-    False
-    >>> predicate('ABC').is_valid
-    True
-    >>> predicate('ACB').is_valid
-    False
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate('ABC').status.name
+    'SUCCESS'
+    >>> predicate('ACB').status.name
+    'UNSTABLE'
 
     >>> predicate = compile_predicate({'ends_with': 'BC'})
-    >>> predicate(0).is_valid
-    False
-    >>> predicate('ABC').is_valid
-    True
-    >>> predicate('ACB').is_valid
-    False
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate('ABC').status.name
+    'SUCCESS'
+    >>> predicate('ACB').status.name
+    'UNSTABLE'
 
     >>> predicate = compile_predicate({'matches_regexp': '^A*B$'})
-    >>> predicate('B').is_valid
-    True
-    >>> predicate('ACB').is_valid
-    False
+    >>> predicate('B').status.name
+    'SUCCESS'
+    >>> predicate('ACB').status.name
+    'UNSTABLE'
 
     TODO: Should return `False` when the value type is not `str`.
     >>> predicate(0).status.name
@@ -235,12 +235,12 @@ def compile_description(description_object: dict) -> Description:
     ...     'jq': '.foo',
     ...     'it': {'ends_with': 'r'},
     ... })
-    >>> description({}).is_valid
-    False
-    >>> description({'foo': 'bar'}).is_valid
-    True
-    >>> description({'foo': 'baz'}).is_valid
-    False
+    >>> description({}).status.name
+    'UNSTABLE'
+    >>> description({'foo': 'bar'}).status.name
+    'SUCCESS'
+    >>> description({'foo': 'baz'}).status.name
+    'UNSTABLE'
 
     >>> description = compile_description({
     ...     'jq': '.foo',
@@ -249,12 +249,12 @@ def compile_description(description_object: dict) -> Description:
     ...         {'ends_with': 'z'},
     ...     ],
     ... })
-    >>> description({}).is_valid
-    False
-    >>> description({'foo': 'bar'}).is_valid
-    False
-    >>> description({'foo': 'baz'}).is_valid
-    True
+    >>> description({}).status.name
+    'UNSTABLE'
+    >>> description({'foo': 'bar'}).status.name
+    'UNSTABLE'
+    >>> description({'foo': 'baz'}).status.name
+    'SUCCESS'
     """
     extraction = compile_extraction(description_object)
     predicate_objects = description_object.get('it', [])

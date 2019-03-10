@@ -53,16 +53,6 @@ class Status(Enum):
 
 @dataclass
 class Verification:
-    """
-    >>> Verification(Status.SUCCESS).is_valid
-    True
-    >>> Verification(Status.UNSTABLE).is_valid
-    False
-    """
     status: Status
     message: Optional[str] = None
     children: Collection[Verification] = tuple()
-
-    @property
-    def is_valid(self) -> bool:
-        return self.status.is_succeeded
