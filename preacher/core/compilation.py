@@ -205,10 +205,8 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
     False
 
     TODO: Should return `False` when the value type is not `str`.
-    >>> predicate(0).is_valid
-    Traceback (most recent call last):
-        ...
-    TypeError: ...
+    >>> predicate(0).status.name
+    'FAILURE'
     """
     if isinstance(predicate_object, str):
         matcher = _STATIC_MATCHER_MAP.get(predicate_object)

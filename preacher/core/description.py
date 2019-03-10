@@ -1,8 +1,9 @@
 """Description."""
 
+from functools import reduce
 from typing import Any, Callable, List
 
-from .verification import Verification
+from .verification import Status, Verification
 
 
 Extraction = Callable[[Any], Any]
@@ -22,8 +23,8 @@ class Description:
     ...     predicates=[],
     ... )
     >>> verification = description('described')
-    >>> verification.is_valid
-    True
+    >>> verification.status.name
+    'SUCCESS'
     >>> len(verification.children)
     0
 
@@ -32,38 +33,41 @@ class Description:
     >>> description = Description(
     ...     extraction=MagicMock(return_value='target'),
     ...     predicates=[
-    ...         MagicMock(return_value=Verification(False)),
-    ...         MagicMock(return_value=Verification(True)),
+    ...         MagicMock(return_value=Verification(Status.UNSTABLE)),
+    ...         MagicMock(return_value=Verification(Status.FAILURE)),
+    ...         MagicMock(return_value=Verification(Status.SUCCESS)),
     ...     ]
     ... )
     >>> verification = description('described')
-    >>> verification.is_valid
-    False
+    >>> verification.status.name
+    'FAILURE'
     >>> len(verification.children)
-    2
-    >>> verification.children[0].is_valid
-    False
-    >>> verification.children[1].is_valid
-    True
+    3
+    >>> verification.children[0].status.name
+    'UNSTABLE'
+    >>> verification.children[1].status.name
+    'FAILURE'
+    >>> verification.children[2].status.name
+    'SUCCESS'
 
     When given only predicates that returns true,
     then describes that it is valid.
     >>> description = Description(
     ...     extraction=MagicMock(return_value='target'),
     ...     predicates=[
-    ...         MagicMock(return_value=Verification(True)),
-    ...         MagicMock(return_value=Verification(True)),
+    ...         MagicMock(return_value=Verification(Status.SUCCESS)),
+    ...         MagicMock(return_value=Verification(Status.SUCCESS)),
     ...     ]
     ... )
     >>> verification = description('described')
-    >>> verification.is_valid
-    True
+    >>> verification.status.name
+    'SUCCESS'
     >>> len(verification.children)
     2
-    >>> verification.children[0].is_valid
-    True
-    >>> verification.children[1].is_valid
-    True
+    >>> verification.children[0].status.name
+    'SUCCESS'
+    >>> verification.children[1].status.name
+    'SUCCESS'
     """
     def __init__(self, extraction: Extraction, predicates: List[Predicate]):
         self._extraction = extraction
@@ -75,8 +79,9 @@ class Description:
             predicate(verified_value)
             for predicate in self._predicates
         ]
-        is_valid = all(
-            verification.is_valid
-            for verification in verifications
+        status = reduce(
+            lambda a, b: a.merge(b.status),
+            verifications,
+            Status.SUCCESS
         )
-        return Verification(is_valid=is_valid, children=verifications)
+        return Verification(status, children=verifications)
