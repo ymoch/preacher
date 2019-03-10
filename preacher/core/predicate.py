@@ -9,7 +9,7 @@ from .description import Predicate, VerifiedValue
 from .verification import Verification
 
 
-def _hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
+def of_hamcrest_matcher(matcher: HamcrestMatcher) -> Predicate:
     """
     Make a predicate from a Hamcrest matcher.
 
@@ -20,7 +20,7 @@ def _hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
     ...     f'{__name__}.hamcrest.assert_that',
     ...     side_effect=AssertionError(' message\\n')
     ... ) as assert_that:
-    ...     predicate = _hamcrest_predicate(matcher)
+    ...     predicate = of_hamcrest_matcher(matcher)
     ...     verification = predicate(0)
     ...     assert_that.assert_called_with(0, matcher)
     >>> verification.is_valid
@@ -29,7 +29,7 @@ def _hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
     'message'
 
     >>> with patch(f'{__name__}.hamcrest.assert_that') as assert_that:
-    ...     predicate = _hamcrest_predicate(matcher)
+    ...     predicate = of_hamcrest_matcher(matcher)
     ...     verification = predicate(1)
     ...     assert_that.assert_called_with(1, matcher)
     >>> verification.is_valid
@@ -47,10 +47,18 @@ def _hamcrest_predicate(matcher: HamcrestMatcher) -> Predicate:
     return _test
 
 
+def null() -> Predicate:
+    """
+    >>> null()(None).is_valid
+    True
+    >>> null()(False).is_valid
+    False
+    """
+    return of_hamcrest_matcher(hamcrest.none())
+
+
 def equal_to(expected: Optional[Any]) -> Predicate:
     """
-    Returns a predicate that the the target is expected.
-
     >>> predicate = equal_to(1)
     >>> predicate(0).is_valid
     False
@@ -59,4 +67,19 @@ def equal_to(expected: Optional[Any]) -> Predicate:
     >>> predicate(1).is_valid
     True
     """
-    return _hamcrest_predicate(hamcrest.equal_to(expected))
+    return of_hamcrest_matcher(hamcrest.equal_to(expected))
+
+
+def has_length(expected: int) -> Predicate:
+    """
+    >>> predicate = has_length(1)
+    >>> predicate(None).is_valid
+    False
+    >>> predicate([]).is_valid
+    False
+    >>> predicate([1]).is_valid
+    True
+    >>> predicate([0, 1]).is_valid
+    False
+    """
+    return of_hamcrest_matcher(hamcrest.has_length(expected))
