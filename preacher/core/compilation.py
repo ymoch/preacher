@@ -116,6 +116,18 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
         ...
     preacher.core.compilation.CompilationError: ... has 2
 
+    >>> predicate = compile_predicate({'has_length': 1})
+    >>> predicate(None).is_valid
+    False
+    >>> predicate('').is_valid
+    False
+    >>> predicate([]).is_valid
+    False
+    >>> predicate('A').is_valid
+    True
+    >>> predicate([1]).is_valid
+    True
+
     >>> compile_predicate({'invalid_key': 0})
     Traceback (most recent call last):
         ...
@@ -129,17 +141,73 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
     >>> predicate(1).is_valid
     True
 
-    >>> predicate = compile_predicate({'has_length': 1})
-    >>> predicate(None).is_valid
+    >>> predicate = compile_predicate({'is_greater_than': 0})
+    >>> predicate(-1).is_valid
     False
-    >>> predicate('').is_valid
+    >>> predicate(0).is_valid
     False
-    >>> predicate([]).is_valid
-    False
-    >>> predicate('A').is_valid
+    >>> predicate(1).is_valid
     True
-    >>> predicate([1]).is_valid
+
+    >>> predicate = compile_predicate({'is_greater_than_or_equal_to': 0})
+    >>> predicate(-1).is_valid
+    False
+    >>> predicate(0).is_valid
     True
+    >>> predicate(1).is_valid
+    True
+
+    >>> predicate = compile_predicate({'is_less_than': 0})
+    >>> predicate(-1).is_valid
+    True
+    >>> predicate(0).is_valid
+    False
+    >>> predicate(1).is_valid
+    False
+
+    >>> predicate = compile_predicate({'is_less_than_or_equal_to': 0})
+    >>> predicate(-1).is_valid
+    True
+    >>> predicate(0).is_valid
+    True
+    >>> predicate(1).is_valid
+    False
+
+    >>> predicate = compile_predicate({'contains_string': '0'})
+    >>> predicate(0).is_valid
+    False
+    >>> predicate('012').is_valid
+    True
+    >>> predicate('123').is_valid
+    False
+
+    >>> predicate = compile_predicate({'starts_with': 'AB'})
+    >>> predicate(0).is_valid
+    False
+    >>> predicate('ABC').is_valid
+    True
+    >>> predicate('ACB').is_valid
+    False
+
+    >>> predicate = compile_predicate({'ends_with': 'BC'})
+    >>> predicate(0).is_valid
+    False
+    >>> predicate('ABC').is_valid
+    True
+    >>> predicate('ACB').is_valid
+    False
+
+    >>> predicate = compile_predicate({'matches_regexp': '^A*B$'})
+    >>> predicate('B').is_valid
+    True
+    >>> predicate('ACB').is_valid
+    False
+
+    TODO: Should return `False` when the value type is not `str`.
+    >>> predicate(0).is_valid
+    Traceback (most recent call last):
+        ...
+    TypeError: ...
     """
     if isinstance(predicate_object, str):
         matcher = _STATIC_MATCHER_MAP.get(predicate_object)
