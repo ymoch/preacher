@@ -1,14 +1,13 @@
 """Description."""
 
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Callable, Iterable
 
 from .verification import Verification
 
 
-DescribedValue = Optional[dict]
-VerifiedValue = Optional[Any]
-Extraction = Callable[[DescribedValue], Optional[VerifiedValue]]
-Predicate = Callable[[Optional[VerifiedValue]], Verification]
+DescribedValue = Any
+Extraction = Callable[[DescribedValue], Any]
+Predicate = Callable[[Any], Verification]
 
 
 class Description:
