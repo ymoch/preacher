@@ -16,6 +16,17 @@ class Description:
 
     >>> from unittest.mock import MagicMock
 
+    When extraction fails, then description fails.
+    >>> description = Description(
+    ...     extraction=MagicMock(side_effect=Exception('message')),
+    ...     predicates=[]
+    ... )
+    >>> verification = description('described')
+    >>> verification.status.name
+    'FAILURE'
+    >>> verification.message
+    'Extraction failed: message'
+
     When given no predicates,
     then describes that any described value is valid.
     >>> description = Description(
@@ -74,7 +85,14 @@ class Description:
         self._predicates = predicates
 
     def __call__(self, value: Any) -> Verification:
-        verified_value = self._extraction(value)
+        try:
+            verified_value = self._extraction(value)
+        except Exception as error:
+            return Verification(
+                status=Status.FAILURE,
+                message=f'Extraction failed: {str(error)}'
+            )
+
         verifications = [
             predicate(verified_value)
             for predicate in self._predicates
