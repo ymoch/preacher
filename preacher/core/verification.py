@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 from typing import Collection, Optional
 
 
@@ -35,20 +35,17 @@ class Status(Enum):
     >>> Status.FAILURE.merge(Status.FAILURE).name
     'FAILURE'
     """
-    SUCCESS = auto()
-    UNSTABLE = auto()
-    FAILURE = auto()
+    # Numbers stand for the priorities for merging.
+    SUCCESS = 0
+    UNSTABLE = 1
+    FAILURE = 2
 
     @property
     def is_succeeded(self):
         return self is Status.SUCCESS
 
     def merge(self, other: Status):
-        if self is Status.FAILURE or other is Status.FAILURE:
-            return Status.FAILURE
-        if self is Status.UNSTABLE or other is Status.UNSTABLE:
-            return Status.UNSTABLE
-        return Status.SUCCESS
+        return max(self, other, key=lambda status: status.value)
 
 
 @dataclass
