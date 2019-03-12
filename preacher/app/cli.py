@@ -4,7 +4,7 @@ import argparse
 import logging
 import sys
 
-import yaml
+import ruamel.yaml as yaml
 
 from preacher import __version__ as VERSION
 from preacher.core.description import Description
@@ -50,7 +50,7 @@ def main() -> None:
 
     for config_path in config_paths:
         with open(config_path) as config_file:
-            config = yaml.load(config_file)
+            config = yaml.safe_load(config_file)
         description = compile_description(config)
         app.consume_description(description)
 
