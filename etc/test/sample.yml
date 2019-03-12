@@ -1,3 +1,4 @@
 jq: .foo
 it:
-  equals_to: bar
+  - equals_to: bar
+  - contains_string: ba

@@ -1,15 +1,35 @@
 """Preacher CLI."""
 
 import argparse
-import functools
-import os
+import logging
 import sys
 
 import yaml
 
 from preacher import __version__ as VERSION
+from preacher.core.description import Description
 from preacher.core.compilation import compile_description
-from preacher.core.verification import Status, Verification
+from .view import LoggingView
+
+
+LOGGER = logging.getLogger(__name__)
+
+
+class Application:
+    def __init__(self, view: LoggingView) -> None:
+        self._view = view
+        self._is_succeeded = True
+
+    @property
+    def is_succeeded(self) -> bool:
+        return self._is_succeeded
+
+    def consume_description(self, description: Description) -> None:
+        data = {'foo': 'bar'}
+        verification = description(data)
+
+        self._is_succeeded &= verification.status.is_succeeded
+        self._view.show_verification(verification, 'Description')
 
 
 def parse_args() -> argparse.Namespace:
@@ -20,24 +40,19 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def process_by_config(config_path: os.PathLike) -> Verification:
-    with open(config_path) as config_file:
-        config = yaml.load(config_file)
-    description = compile_description(config)
-    data = {'foo': 'bar'}
-    return description(data)
-
-
 def main() -> None:
     """Main."""
     args = parse_args()
     config_paths = args.conf
 
-    verifications = (process_by_config(path) for path in config_paths)
-    status = functools.reduce(
-        lambda a, b: a.merge(b.status),
-        verifications,
-        Status.SUCCESS,
-    )
-    if not status.is_succeeded:
+    view = LoggingView(LOGGER)
+    app = Application(view)
+
+    for config_path in config_paths:
+        with open(config_path) as config_file:
+            config = yaml.load(config_file)
+        description = compile_description(config)
+        app.consume_description(description)
+
+    if not app.is_succeeded:
         sys.exit(1)
