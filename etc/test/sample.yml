@@ -1,4 +1,5 @@
-jq: .foo
-it:
-  - equals_to: bar
-  - contains_string: ba
+body:
+  - jq: .foo
+    it:
+      - equals_to: bar
+      - contains_string: ba

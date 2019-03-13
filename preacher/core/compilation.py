@@ -8,6 +8,7 @@ from hamcrest.core.matcher import Matcher
 from . import extraction
 from . import predicate
 from .description import Description, Extraction, Predicate
+from .scenario import ResponseScenario
 
 
 _EXTRACTION_MAP: Mapping[str, Callable[[str], Extraction]] = {
@@ -264,3 +265,19 @@ def compile_description(description_object: dict) -> Description:
         extraction=extraction,
         predicates=[compile_predicate(obj) for obj in predicate_objects]
     )
+
+
+def compile_response_scenario(response_object: dict) -> ResponseScenario:
+    """
+    >>> scenario = compile_response_scenario({})
+    >>> verification = scenario(body=b'{}')
+    >>> verification.body.status.name
+    'SUCCESS'
+    >>> verification.body.children
+    []
+    """
+    body_descriptions = [
+        compile_description(description_object)
+        for description_object in response_object.get('body', [])
+    ]
+    return ResponseScenario(body_descriptions)

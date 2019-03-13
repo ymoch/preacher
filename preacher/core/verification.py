@@ -3,7 +3,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-from typing import Collection, Optional
+from functools import reduce
+from typing import Collection, Iterable, Optional
 
 
 class Status(Enum):
@@ -46,6 +47,16 @@ class Status(Enum):
 
     def merge(self, other: Status):
         return max(self, other, key=lambda status: status.value)
+
+
+def merge_statuses(statuses: Iterable[Status]):
+    """
+    >>> merge_statuses([]).name
+    'SUCCESS'
+    >>> merge_statuses([Status.SUCCESS, Status.UNSTABLE, Status.FAILURE]).name
+    'FAILURE'
+    """
+    return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SUCCESS)
 
 
 @dataclass
