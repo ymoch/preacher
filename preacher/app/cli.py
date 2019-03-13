@@ -25,7 +25,6 @@ class Application:
         return self._is_succeeded
 
     def consume_scenario(self, scenario: ResponseScenario) -> None:
-        print(scenario._body_descriptions)
         data = b'{"foo": "bar"}'
         verification = scenario(body=data)
 
