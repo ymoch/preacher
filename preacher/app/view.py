@@ -61,6 +61,6 @@ class LoggingView:
     @contextlib.contextmanager
     def _nested(self) -> Iterator[None]:
         original = self._indent
-        self._indent += '  '
+        self._indent += '..'
         yield
         self._indent = original
