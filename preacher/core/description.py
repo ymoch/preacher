@@ -1,9 +1,8 @@
 """Description."""
 
-from functools import reduce
 from typing import Any, Callable, List
 
-from .verification import Status, Verification
+from .verification import Status, Verification, merge_statuses
 
 
 Extraction = Callable[[Any], Any]
@@ -93,13 +92,6 @@ class Description:
                 message=f'Extraction failed: {str(error)}'
             )
 
-        verifications = [
-            predicate(verified_value)
-            for predicate in self._predicates
-        ]
-        status = reduce(
-            lambda a, b: a.merge(b.status),
-            verifications,
-            Status.SUCCESS
-        )
+        verifications = [pred(verified_value) for pred in self._predicates]
+        status = merge_statuses(v.status for v in verifications)
         return Verification(status, children=verifications)
