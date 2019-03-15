@@ -7,8 +7,12 @@ from hamcrest.core.matcher import Matcher
 
 from . import extraction
 from . import predicate
-from .description import Description, Extraction, Predicate
-from .scenario import ResponseScenario
+from .scenario import (
+    ResponseScenario,
+    Description,
+    Extraction,
+    Predicate,
+)
 
 
 _EXTRACTION_MAP: Mapping[str, Callable[[str], Extraction]] = {

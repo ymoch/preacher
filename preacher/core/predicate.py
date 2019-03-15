@@ -5,7 +5,7 @@ from typing import Any
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher
 
-from .description import Predicate
+from .scenario import Predicate
 from .verification import Status, Verification
 
 

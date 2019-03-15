@@ -1,6 +1,6 @@
 """Extraction."""
 
-from .description import Extraction
+from .scenario import Extraction
 
 from pyjq import compile as jq_compile
 
