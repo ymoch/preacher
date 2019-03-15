@@ -1,5 +1,10 @@
 body:
   - jq: .foo
     it:
+      - is: bar
       - equals_to: bar
-      - contains_string: ba
+      - has_length: 3
+      - contains_string: a
+      - starts_with: ba
+      - ends_with: ar
+      - matches_regexp: ^b.r$

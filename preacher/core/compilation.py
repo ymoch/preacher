@@ -25,6 +25,7 @@ _STATIC_MATCHER_MAP: Mapping[str, Matcher] = {
 }
 _VALUE_MATCHER_FUNCTION_MAP: Mapping[str, Callable[[Any], Matcher]] = {
     # For objects.
+    'is': lambda expected: hamcrest.is_(expected),
     'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
     'has_length': lambda expected: hamcrest.has_length(expected),
     # For numbers.
