@@ -1,20 +1,18 @@
 """Scenario."""
 
 import json
-from dataclasses import dataclass
 from typing import Any, Callable, List
 
-from .verification import Status, Verification, merge_statuses
+from .verification import (
+    Status,
+    Verification,
+    ResponseVerification,
+    merge_statuses,
+)
 
 
 Extraction = Callable[[Any], Any]
 Predicate = Callable[[Any], Verification]
-
-
-@dataclass
-class ResponseVerification:
-    status: Status
-    body: Verification
 
 
 class Description:

@@ -64,3 +64,9 @@ class Verification:
     status: Status
     message: Optional[str] = None
     children: Collection[Verification] = tuple()
+
+
+@dataclass
+class ResponseVerification:
+    status: Status
+    body: Verification
