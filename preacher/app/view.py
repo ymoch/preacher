@@ -48,8 +48,7 @@ class LoggingView:
         message = verification.message
         if message:
             with self._nested():
-                for line in io.StringIO(message):
-                    self._log(level, line.rstrip())
+                self._multi_line_message(level, message)
 
         with self._nested():
             for idx, child in enumerate(verification.children):
@@ -57,6 +56,10 @@ class LoggingView:
 
     def _log(self, level: int, message: str, *args) -> None:
         self._logger.log(level, self._indent + message, *args)
+
+    def _multi_line_message(self, level: int, message: str) -> None:
+        for line in io.StringIO(message):
+            self._log(level, line.rstrip())
 
     @contextlib.contextmanager
     def _nested(self) -> Iterator[None]:
