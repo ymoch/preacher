@@ -136,6 +136,14 @@ def compile_predicate(predicate_object: Union[str, dict]) -> Predicate:
         ...
     preacher.core.compilation.CompilationError: ... 'invalid_key'
 
+    >>> predicate = compile_predicate({'is': 1})
+    >>> predicate(0).status.name
+    'UNSTABLE'
+    >>> predicate('1').status.name
+    'UNSTABLE'
+    >>> predicate(1).status.name
+    'SUCCESS'
+
     >>> predicate = compile_predicate({'equals_to': 1})
     >>> predicate(0).status.name
     'UNSTABLE'
