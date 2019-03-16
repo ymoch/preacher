@@ -8,7 +8,7 @@ import ruamel.yaml as yaml
 
 from preacher import __version__ as VERSION
 from preacher.core.scenario import ResponseScenario
-from preacher.core.compilation import compile_response_scenario
+from preacher.compilation.scenario import compile_response_scenario
 from .view import LoggingView
 
 
