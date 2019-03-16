@@ -1,10 +1,18 @@
-body:
-  - jq: .foo
-    it:
-      - is: bar
-      - equals_to: bar
-      - has_length: 3
-      - contains_string: a
-      - starts_with: ba
-      - ends_with: ar
-      - matches_regexp: ^b.r$
+request:
+  path: /path/to/foo
+  query:
+    key: value
+    multi-key:
+      - value1
+      - value2
+response:
+  body:
+    - jq: .foo
+      it:
+        - is: bar
+        - equals_to: bar
+        - has_length: 3
+        - contains_string: a
+        - starts_with: ba
+        - ends_with: ar
+        - matches_regexp: ^b.r$

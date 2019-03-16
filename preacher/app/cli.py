@@ -41,7 +41,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         'conf',
         nargs='+',
-        help='confign file paths'
+        help='config file paths'
     )
     parser.add_argument(
         '-v', '--version',
@@ -74,7 +74,8 @@ def main() -> None:
     for config_path in config_paths:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
-        scenario = compile_response_scenario(config)
+        # TODO: Implement here,
+        scenario = compile_response_scenario(config['response'])
         app.consume_scenario(scenario)
 
     if not app.is_succeeded:

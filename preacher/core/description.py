@@ -3,7 +3,6 @@
 from typing import Any, Callable, List
 
 from .verification import (
-    Status,
     Verification,
     merge_statuses,
 )
@@ -16,6 +15,7 @@ class Description:
     """
     Description.
 
+    >>> from .verification import Status
     >>> from unittest.mock import MagicMock
 
     When extraction fails, then description fails.
@@ -27,7 +27,7 @@ class Description:
     >>> verification.status.name
     'FAILURE'
     >>> verification.message
-    'Extraction failed: message'
+    'Exception: message'
 
     When given no predicates,
     then describes that any described value is valid.
@@ -90,10 +90,7 @@ class Description:
         try:
             verified_value = self._extraction(value)
         except Exception as error:
-            return Verification(
-                status=Status.FAILURE,
-                message=f'Extraction failed: {str(error)}'
-            )
+            return Verification.of_error(error)
 
         verifications = [pred(verified_value) for pred in self._predicates]
         status = merge_statuses(v.status for v in verifications)
