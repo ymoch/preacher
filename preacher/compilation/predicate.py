@@ -5,8 +5,7 @@ from typing import Any, Callable, Mapping, Union
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
-from preacher.core.scenario import Predicate
-from preacher.core.predicate import of_hamcrest_matcher
+from preacher.core.predicate import Predicate, of_hamcrest_matcher
 from .error import CompilationError
 
 

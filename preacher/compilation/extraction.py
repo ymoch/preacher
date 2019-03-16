@@ -2,8 +2,7 @@
 
 from typing import Callable, Mapping
 
-from preacher.core.extraction import with_jq
-from preacher.core.scenario import Extraction
+from preacher.core.extraction import Extraction, with_jq
 from .error import CompilationError
 
 
