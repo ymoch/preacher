@@ -12,7 +12,11 @@ from preacher.core.compilation import compile_response_scenario
 from .view import LoggingView
 
 
+HANDLER = logging.StreamHandler()
+HANDLER.setLevel(logging.WARN)
 LOGGER = logging.getLogger(__name__)
+LOGGER.addHandler(HANDLER)
+LOGGER.setLevel(logging.INFO)
 
 
 class Application:
@@ -34,8 +38,21 @@ class Application:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--version', action='version', version=VERSION)
-    parser.add_argument('conf', nargs='+')
+    parser.add_argument(
+        'conf',
+        nargs='+',
+        help='confign file paths'
+    )
+    parser.add_argument(
+        '-v', '--version',
+        action='version',
+        version=VERSION,
+    )
+    parser.add_argument(
+        '-q', '--quiet',
+        action='store_true',
+        help='show details on the console only when an any issue occurs',
+    )
 
     return parser.parse_args()
 
@@ -44,6 +61,12 @@ def main() -> None:
     """Main."""
     args = parse_args()
     config_paths = args.conf
+    should_be_quiet = args.quiet
+
+    logging_level = logging.INFO
+    if should_be_quiet:
+        logging_level = logging.WARN
+    HANDLER.setLevel(logging_level)
 
     view = LoggingView(LOGGER)
     app = Application(view)
