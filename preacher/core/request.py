@@ -1,8 +1,16 @@
 """Request."""
 
+from dataclasses import dataclass
+from typing import Mapping
+
 import requests
 
-from .verification import Verification
+
+@dataclass
+class Response:
+    status_code: int
+    headers: Mapping[str, str]
+    body: str
 
 
 class Request:
@@ -10,13 +18,13 @@ class Request:
         self._path = path
         self._query = query
 
-    def __call__(self, base_url: str) -> Verification:
-        try:
-            requests.get(
-                base_url + self._path,
-                query=self._query,
-            )
-        except requests.HTTPError as error:
-            return Verification.of_error(error)
-
-        return Verification.succeed()
+    def __call__(self, base_url: str) -> Response:
+        res = requests.get(
+            base_url + self._path,
+            query=self._query,
+        )
+        return Response(
+            status_code=res.status_code,
+            headers=res.headers,
+            body=res.text,
+        )
