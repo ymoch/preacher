@@ -1,5 +1,7 @@
 """Request."""
 
+from __future__ import annotations
+
 from collections.abc import Mapping
 from dataclasses import dataclass
 
@@ -15,6 +17,12 @@ class Response:
 
 class Request:
     """
+    >>> request = Request(path='/path', params={'key': 'value'})
+    >>> request.path
+    '/path'
+    >>> request.params
+    {'key': 'value'}
+
     >>> from unittest.mock import MagicMock, patch
     >>> inner_response = MagicMock(
     ...     requests.Response,
@@ -22,7 +30,6 @@ class Request:
     ...     headers={'header-key': 'header-value'},
     ...     text='text',
     ... )
-    >>> request = Request(path='/path', params={'key': 'value'})
     >>> with patch('requests.get', return_value=inner_response) as mock:
     ...     response = request('base-url')
     ...     mock.call_args
@@ -48,3 +55,11 @@ class Request:
             headers=res.headers,
             body=res.text,
         )
+
+    @property
+    def path(self: Request) -> str:
+        return self._path
+
+    @property
+    def params(self: Request) -> Mapping:
+        return self._params
