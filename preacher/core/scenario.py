@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-import dataclasses
-from typing import List
+from dataclasses import dataclass
+from typing import List, Optional
 
 from .description import Description
 from .request import Request
@@ -15,8 +15,8 @@ from .verification import (
 )
 
 
-@dataclasses.dataclass
-class ResponseVerification:
+@dataclass
+class ResponseScenarioVerification:
     status: Status
     body: Verification
 
@@ -30,23 +30,33 @@ class ResponseScenario:
 
     def __call__(
         self: ResponseScenario,
-        body: bytes,
-    ) -> ResponseVerification:
-        body_data = json.loads(body.decode('utf-8'))
-        body_verifications = [
-            describe(body_data) for describe in self._body_descriptions
-        ]
-        body_status = merge_statuses(v.status for v in body_verifications)
+        body: str,
+    ) -> ResponseScenarioVerification:
+        try:
+            body_verification = self._verify_body(body)
+        except Exception as error:
+            body_verification = Verification.of_error(error)
 
-        status = body_status
-
-        return ResponseVerification(
+        status = body_verification.status
+        return ResponseScenarioVerification(
             status=status,
-            body=Verification(
-                status=body_status,
-                children=body_verifications,
-            ),
+            body=body_verification,
         )
+
+    def _verify_body(self: ResponseScenario, body: str) -> Verification:
+        data = json.loads(body)
+        verifications = [
+            describe(data) for describe in self._body_descriptions
+        ]
+        status = merge_statuses(v.status for v in verifications)
+        return Verification(status=status, children=verifications)
+
+
+@dataclass
+class ScenarioVerification:
+    status: Status
+    request: Verification
+    response_scenario: Optional[ResponseScenarioVerification] = None
 
 
 class Scenario:
@@ -58,8 +68,26 @@ class Scenario:
         self._request = request
         self._response_scenario = response_scenario
 
-    def __call__(self: Scenario, base_url: str) -> None:
+    def __call__(self: Scenario, base_url: str) -> ScenarioVerification:
         try:
-            self._request(base_url)
+            response = self._request(base_url)
         except Exception as error:
-            Verification.of_error(error)
+            return ScenarioVerification(
+                status=Status.FAILURE,
+                request=Verification.of_error(error),
+            )
+        request_verification = Verification.succeed()
+
+        response_scenario_verification = self._response_scenario(
+            body=response.body,
+        )
+
+        status = merge_statuses([
+            request_verification.status,
+            response_scenario_verification.status,
+        ])
+        return ScenarioVerification(
+            status=status,
+            request=request_verification,
+            response_scenario=response_scenario_verification,
+        )

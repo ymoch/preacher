@@ -29,7 +29,7 @@ class Application:
         return self._is_succeeded
 
     def consume_scenario(self, scenario: ResponseScenario) -> None:
-        data = b'{"foo": "bar"}'
+        data = '{"foo": "bar"}'
         verification = scenario(body=data)
 
         self._is_succeeded &= verification.status.is_succeeded
