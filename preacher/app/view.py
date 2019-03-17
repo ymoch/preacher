@@ -41,11 +41,11 @@ class LoggingView:
                 label='Request',
             )
 
-            response_scenario = verification.response_scenario
-            if response_scenario:
-                self.show_response_scenario_verification(response_scenario)
+            response = verification.response
+            if response:
+                self.show_response_verification(response)
 
-    def show_response_scenario_verification(
+    def show_response_verification(
         self: LoggingView,
         verification: ResponseScenarioVerification,
         label: str = 'Response',

@@ -60,7 +60,7 @@ class ResponseScenario:
 class ScenarioVerification:
     status: Status
     request: Verification
-    response_scenario: Optional[ResponseScenarioVerification] = None
+    response: Optional[ResponseScenarioVerification] = None
 
 
 class Scenario:
@@ -97,9 +97,9 @@ class Scenario:
     'UNSTABLE'
     >>> verification.request.status.name
     'SUCCESS'
-    >>> verification.response_scenario.status.name
+    >>> verification.response.status.name
     'UNSTABLE'
-    >>> verification.response_scenario.body.status.name
+    >>> verification.response.body.status.name
     'UNSTABLE'
     """
     def __init__(
@@ -120,18 +120,18 @@ class Scenario:
             )
         request_verification = Verification.succeed()
 
-        response_scenario_verification = self._response_scenario(
+        response_verification = self._response_scenario(
             body=response.body,
         )
 
         status = merge_statuses([
             request_verification.status,
-            response_scenario_verification.status,
+            response_verification.status,
         ])
         return ScenarioVerification(
             status=status,
             request=request_verification,
-            response_scenario=response_scenario_verification,
+            response=response_verification,
         )
 
     @property
