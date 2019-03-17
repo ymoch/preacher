@@ -23,7 +23,7 @@ class Application:
     def __init__(self, view: LoggingView) -> None:
         self._view = view
         self._is_succeeded = True
-        self._base_url = 'http://localhost'
+        self._base_url = 'http://localhost:5000'
 
     @property
     def is_succeeded(self) -> bool:
@@ -74,7 +74,7 @@ def main() -> None:
     for config_path in config_paths:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
-        scenario = compile_scenario(config['response'])
+        scenario = compile_scenario(config)
         app.consume_scenario(scenario)
 
     if not app.is_succeeded:
