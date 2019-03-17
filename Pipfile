@@ -2,6 +2,7 @@
 pyjq = "*"
 pyhamcrest = "*"
 ruamel-yaml = "*"
+requests = "*"
 
 [dev-packages]
 pytest = '*'
