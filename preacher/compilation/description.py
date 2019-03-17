@@ -11,30 +11,55 @@ from .extraction import compile as compile_extraction
 
 def compile(obj: Mapping) -> Description:
     """
-    >>> description = compile({
-    ...     'jq': '.foo',
-    ...     'it': {'ends_with': 'r'},
-    ... })
-    >>> description({}).status.name
-    'UNSTABLE'
-    >>> description({'foo': 'bar'}).status.name
-    'SUCCESS'
-    >>> description({'foo': 'baz'}).status.name
-    'UNSTABLE'
+    >>> from unittest.mock import patch, sentinel
+    >>> extraction_patch = patch(
+    ...     f'{__name__}.compile_extraction',
+    ...     return_value=sentinel.extraction,
+    ... )
+    >>> predicate_patch = patch(
+    ...     f'{__name__}.compile_predicate',
+    ...     return_value=sentinel.predicate,
+    ... )
 
-    >>> description = compile({
-    ...     'jq': '.foo',
-    ...     'it': [
-    ...         {'starts_with': 'b'},
-    ...         {'ends_with': 'z'},
-    ...     ],
-    ... })
-    >>> description({}).status.name
-    'UNSTABLE'
-    >>> description({'foo': 'bar'}).status.name
-    'UNSTABLE'
-    >>> description({'foo': 'baz'}).status.name
-    'SUCCESS'
+    >>> with extraction_patch as extraction_mock:
+    ...     compile({'it': 'str'})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: Description.it ...
+
+    >>> with extraction_patch as extraction_mock:
+    ...     compile({'it': [None]})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: Predicate ...
+
+    >>> with extraction_patch as extraction_mock, \\
+    ...      predicate_patch as predicate_mock:
+    ...     description = compile({
+    ...         'it': {'key': 'value'}
+    ...     })
+    ...     extraction_mock.call_args
+    ...     predicate_mock.call_args_list
+    call({'it': {'key': 'value'}})
+    [call({'key': 'value'})]
+    >>> description.extraction
+    sentinel.extraction
+    >>> description.predicates
+    [sentinel.predicate]
+
+    >>> with extraction_patch as extraction_mock, \\
+    ...      predicate_patch as predicate_mock:
+    ...     description = compile({
+    ...         'it': [{'key1': 'value1'}, {'key2': 'value2'}]
+    ...     })
+    ...     extraction_mock.call_args
+    ...     predicate_mock.call_args_list
+    call({'it': [{'key1': 'value1'}, {'key2': 'value2'}]})
+    [call({'key1': 'value1'}), call({'key2': 'value2'})]
+    >>> description.extraction
+    sentinel.extraction
+    >>> description.predicates
+    [sentinel.predicate, sentinel.predicate]
     """
     extraction = compile_extraction(obj)
 
@@ -43,8 +68,7 @@ def compile(obj: Mapping) -> Description:
         predicate_objs = [predicate_objs]
     if not isinstance(predicate_objs, list):
         raise CompilationError(
-            'Description.predicates must be a list or an object'
-            f': {predicate_objs}'
+            f'Description.it must be a list or a mapping: {predicate_objs}'
         )
 
     return Description(
