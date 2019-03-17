@@ -1,5 +1,7 @@
 """Preacher CLI."""
 
+from __future__ import annotations
+
 import argparse
 import logging
 import sys
@@ -20,16 +22,20 @@ LOGGER.setLevel(logging.INFO)
 
 
 class Application:
-    def __init__(self, view: LoggingView) -> None:
+    def __init__(
+        self: Application,
+        base_url: str,
+        view: LoggingView,
+    ) -> None:
         self._view = view
+        self._base_url = base_url
         self._is_succeeded = True
-        self._base_url = 'http://localhost:5000'
 
     @property
-    def is_succeeded(self) -> bool:
+    def is_succeeded(self: Application) -> bool:
         return self._is_succeeded
 
-    def consume_scenario(self, scenario: Scenario) -> None:
+    def consume_scenario(self: Application, scenario: Scenario) -> None:
         verification = scenario(base_url=self._base_url)
 
         self._is_succeeded &= verification.status.is_succeeded
@@ -49,6 +55,12 @@ def parse_args() -> argparse.Namespace:
         version=VERSION,
     )
     parser.add_argument(
+        '-u', '--url',
+        metavar='url',
+        help='specify the base URL',
+        default='http://localhost:5000',
+    )
+    parser.add_argument(
         '-q', '--quiet',
         action='store_true',
         help='show details on the console only when an any issue occurs',
@@ -60,17 +72,18 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     """Main."""
     args = parse_args()
-    config_paths = args.conf
-    should_be_quiet = args.quiet
 
     logging_level = logging.INFO
+    should_be_quiet = args.quiet
     if should_be_quiet:
         logging_level = logging.WARN
     HANDLER.setLevel(logging_level)
 
+    base_url = args.url
     view = LoggingView(LOGGER)
-    app = Application(view)
+    app = Application(base_url=base_url, view=view)
 
+    config_paths = args.conf
     for config_path in config_paths:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
