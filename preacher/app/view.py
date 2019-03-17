@@ -1,5 +1,7 @@
 """Preacher CLI View."""
 
+from __future__ import annotations
+
 import contextlib
 import logging
 import io
@@ -20,12 +22,12 @@ _LEVEL_MAP = {
 
 
 class LoggingView:
-    def __init__(self, logger: logging.Logger) -> None:
+    def __init__(self: LoggingView, logger: logging.Logger) -> None:
         self._logger = logger
         self._indent = ''
 
     def show_scenario_verification(
-        self,
+        self: LoggingView,
         verification: ScenarioVerification,
         label: str,
     ) -> None:
@@ -44,7 +46,7 @@ class LoggingView:
                 self.show_response_scenario_verification(response_scenario)
 
     def show_response_scenario_verification(
-        self,
+        self: LoggingView,
         verification: ResponseScenarioVerification,
         label: str = 'Response',
     ) -> None:
@@ -59,7 +61,7 @@ class LoggingView:
             )
 
     def show_verification(
-        self,
+        self: LoggingView,
         verification: Verification,
         label: str,
         child_label: str = 'Predicate'
@@ -84,7 +86,7 @@ class LoggingView:
             self._log(level, line.rstrip())
 
     @contextlib.contextmanager
-    def _nested(self) -> Iterator[None]:
+    def _nested(self: LoggingView) -> Iterator[None]:
         original = self._indent
         self._indent += '..'
         yield
