@@ -1,18 +1,18 @@
 """Extraction compilation."""
 
-from typing import Callable, Mapping
+from collections.abc import Mapping
 
 from preacher.core.extraction import Extraction, with_jq
 from .error import CompilationError
 
 
-_EXTRACTION_MAP: Mapping[str, Callable[[str], Extraction]] = {
+_EXTRACTION_MAP = {
     'jq': with_jq,
 }
 _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
 
 
-def compile(description_object: dict) -> Extraction:
+def compile(description_object: Mapping) -> Extraction:
     """
     >>> compile({})
     Traceback (most recent call last):

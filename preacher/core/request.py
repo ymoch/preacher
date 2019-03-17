@@ -1,7 +1,7 @@
 """Request."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
 
 import requests
 
@@ -9,12 +9,12 @@ import requests
 @dataclass
 class Response:
     status_code: int
-    headers: Mapping[str, str]
+    headers: Mapping
     body: str
 
 
 class Request:
-    def __init__(self, path: str, params: dict) -> None:
+    def __init__(self, path: str, params: Mapping) -> None:
         self._path = path
         self._params = params
 

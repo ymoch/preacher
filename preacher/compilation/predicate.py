@@ -1,22 +1,22 @@
 """Predicate compilation."""
 
-from typing import Any, Callable, Mapping, Union
+from collections.abc import Mapping
+from typing import Union
 
 import hamcrest
-from hamcrest.core.matcher import Matcher
 
 from preacher.core.predicate import Predicate, of_hamcrest_matcher
 from .error import CompilationError
 
 
-_STATIC_MATCHER_MAP: Mapping[str, Matcher] = {
+_STATIC_MATCHER_MAP = {
     # For objects.
     'is_null': hamcrest.is_(hamcrest.none()),
     'is_not_null': hamcrest.is_(hamcrest.not_none()),
     # For collections.
     'is_empty': hamcrest.is_(hamcrest.empty()),
 }
-_VALUE_MATCHER_FUNCTION_MAP: Mapping[str, Callable[[Any], Matcher]] = {
+_VALUE_MATCHER_FUNCTION_MAP = {
     # For objects.
     'is': lambda expected: hamcrest.is_(expected),
     'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
@@ -43,7 +43,7 @@ _VALUE_MATCHER_FUNCTION_MAP: Mapping[str, Callable[[Any], Matcher]] = {
 _PREDICATE_KEYS = frozenset(_VALUE_MATCHER_FUNCTION_MAP.keys())
 
 
-def compile(obj: Union[str, dict]) -> Predicate:
+def compile(obj: Union[str, Mapping]) -> Predicate:
     """
     >>> compile('invalid_key')
     Traceback (most recent call last):
