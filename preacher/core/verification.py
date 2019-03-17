@@ -75,9 +75,3 @@ class Verification:
             status=Status.FAILURE,
             message=f'{error.__class__.__name__}: {error}',
         )
-
-
-@dataclass
-class ResponseVerification:
-    status: Status
-    body: Verification

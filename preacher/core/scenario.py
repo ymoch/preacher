@@ -3,15 +3,22 @@
 from __future__ import annotations
 
 import json
+import dataclasses
 from typing import List
 
 from .description import Description
 from .request import Request
 from .verification import (
+    Status,
     Verification,
-    ResponseVerification,
     merge_statuses,
 )
+
+
+@dataclasses.dataclass
+class ResponseVerification:
+    status: Status
+    body: Verification
 
 
 class ResponseScenario:
