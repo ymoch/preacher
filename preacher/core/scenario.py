@@ -91,3 +91,11 @@ class Scenario:
             request=request_verification,
             response_scenario=response_scenario_verification,
         )
+
+    @property
+    def request(self: Scenario) -> Request:
+        return self._request
+
+    @property
+    def response_scenario(self: Scenario) -> ResponseScenario:
+        return self._response_scenario
