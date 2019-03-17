@@ -14,14 +14,14 @@ class Response:
 
 
 class Request:
-    def __init__(self, path: str, query: dict) -> None:
+    def __init__(self, path: str, params: dict) -> None:
         self._path = path
-        self._query = query
+        self._params = params
 
     def __call__(self, base_url: str) -> Response:
         res = requests.get(
             base_url + self._path,
-            query=self._query,
+            params=self._params,
         )
         return Response(
             status_code=res.status_code,

@@ -8,5 +8,5 @@ def compile(obj: dict) -> Request:
     >>> request = compile({})
     """
     path = obj.get('path', '')
-    query = obj.get('query', {})
-    return Request(path=path, query=query)
+    params = obj.get('params', {})
+    return Request(path=path, params=params)

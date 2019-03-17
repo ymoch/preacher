@@ -7,8 +7,8 @@ import sys
 import ruamel.yaml as yaml
 
 from preacher import __version__ as VERSION
-from preacher.core.scenario import ResponseScenario
-from preacher.compilation.scenario import compile_response_scenario
+from preacher.core.scenario import Scenario
+from preacher.compilation.scenario import compile_scenario
 from .view import LoggingView
 
 
@@ -23,17 +23,17 @@ class Application:
     def __init__(self, view: LoggingView) -> None:
         self._view = view
         self._is_succeeded = True
+        self._base_url = 'http://localhost'
 
     @property
     def is_succeeded(self) -> bool:
         return self._is_succeeded
 
-    def consume_scenario(self, scenario: ResponseScenario) -> None:
-        data = '{"foo": "bar"}'
-        verification = scenario(body=data)
+    def consume_scenario(self, scenario: Scenario) -> None:
+        verification = scenario(base_url=self._base_url)
 
         self._is_succeeded &= verification.status.is_succeeded
-        self._view.show_response_verification(verification, 'Response')
+        self._view.show_scenario_verification(verification, 'Response')
 
 
 def parse_args() -> argparse.Namespace:
@@ -74,8 +74,7 @@ def main() -> None:
     for config_path in config_paths:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
-        # TODO: Implement here,
-        scenario = compile_response_scenario(config['response'])
+        scenario = compile_scenario(config['response'])
         app.consume_scenario(scenario)
 
     if not app.is_succeeded:

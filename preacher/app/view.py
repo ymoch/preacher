@@ -6,7 +6,10 @@ import io
 from typing import Iterator
 
 from preacher.core.verification import Status, Verification
-from preacher.core.scenario import ResponseScenarioVerification
+from preacher.core.scenario import (
+    ResponseScenarioVerification,
+    ScenarioVerification,
+)
 
 
 _LEVEL_MAP = {
@@ -21,10 +24,29 @@ class LoggingView:
         self._logger = logger
         self._indent = ''
 
-    def show_response_verification(
+    def show_scenario_verification(
+        self,
+        verification: ScenarioVerification,
+        label: str,
+    ) -> None:
+        status = verification.status
+        level = _LEVEL_MAP[status]
+        self._log(level, f'{label}: {status.name}')
+
+        with self._nested():
+            self.show_verification(
+                verification=verification.request,
+                label='Request',
+            )
+
+            response_scenario = verification.response_scenario
+            if response_scenario:
+                self.show_response_scenario_verification(response_scenario)
+
+    def show_response_scenario_verification(
         self,
         verification: ResponseScenarioVerification,
-        label: str,
+        label: str = 'Response',
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
