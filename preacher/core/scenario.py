@@ -64,6 +64,44 @@ class ScenarioVerification:
 
 
 class Scenario:
+    """
+    >>> from unittest.mock import MagicMock
+    >>> scenario = Scenario(
+    ...     request=MagicMock(Request, side_effect=RuntimeError('message')),
+    ...     response_scenario=MagicMock(ResponseScenario),
+    ... )
+    >>> verification = scenario('base-url')
+    >>> scenario.request.call_args
+    call('base-url')
+    >>> verification.status.name
+    'FAILURE'
+    >>> verification.request.status.name
+    'FAILURE'
+    >>> verification.request.message
+    'RuntimeError: message'
+
+    >>> from .request import Response
+    >>> inner_response = MagicMock(Response, body='body')
+    >>> scenario = Scenario(
+    ...     request=MagicMock(Request, return_value=inner_response),
+    ...     response_scenario=MagicMock(
+    ...         ResponseScenario,
+    ...         return_value=ResponseScenarioVerification(
+    ...             status=Status.UNSTABLE,
+    ...             body=Verification(status=Status.UNSTABLE)
+    ...         ),
+    ...     ),
+    ... )
+    >>> verification = scenario('base-url')
+    >>> verification.status.name
+    'UNSTABLE'
+    >>> verification.request.status.name
+    'SUCCESS'
+    >>> verification.response_scenario.status.name
+    'UNSTABLE'
+    >>> verification.response_scenario.body.status.name
+    'UNSTABLE'
+    """
     def __init__(
         self: Scenario,
         request: Request,
