@@ -12,17 +12,60 @@ from .request import compile as compile_request
 
 def compile_response_scenario(obj: Mapping) -> ResponseScenario:
     """
-    >>> scenario = compile_response_scenario({})
-    >>> verification = scenario(body='{}')
-    >>> verification.body.status.name
-    'SUCCESS'
-    >>> verification.body.children
+    >>> from unittest.mock import patch, sentinel
+    >>> description_patch = patch(
+    ...     f'{__name__}.compile_description',
+    ...     return_value=sentinel.description,
+    ... )
+
+    >>> with description_patch as description_mock:
+    ...     response_scenario = compile_response_scenario({})
+    ...     description_mock.call_args_list
     []
+    >>> response_scenario.body_descriptions
+    []
+
+    >>> compile_response_scenario({'body': 'str'})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ResponseScenario.body ...
+
+    >>> compile_response_scenario({'body': ['str']})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: Description ...
+
+    >>> with description_patch as description_mock:
+    ...     response_scenario = compile_response_scenario({
+    ...        'body': {'key1': 'value1'},
+    ...     })
+    ...     description_mock.call_args_list
+    [call({'key1': 'value1'})]
+    >>> response_scenario.body_descriptions
+    [sentinel.description]
+
+    >>> with description_patch as description_mock:
+    ...     response_scenario = compile_response_scenario({
+    ...         'body': [{'key1': 'value1'}, {'key2': 'value2'}],
+    ...     })
+    ...     description_mock.call_args_list
+    [call({'key1': 'value1'}), call({'key2': 'value2'})]
+    >>> response_scenario.body_descriptions
+    [sentinel.description, sentinel.description]
     """
+    body_description_objs = obj.get('body', [])
+    if isinstance(body_description_objs, Mapping):
+        body_description_objs = [body_description_objs]
+    if not isinstance(body_description_objs, list):
+        raise CompilationError(
+            'ResponseScenario.body must be a list or a mapping'
+            f': {body_description_objs}'
+        )
     body_descriptions = [
-        _compile_description(description_obj)
-        for description_obj in obj.get('body', [])
+        _compile_description(body_description_obj)
+        for body_description_obj in body_description_objs
     ]
+
     return ResponseScenario(
         body_descriptions=body_descriptions,
     )

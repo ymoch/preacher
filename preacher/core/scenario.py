@@ -43,6 +43,10 @@ class ResponseScenario:
             body=body_verification,
         )
 
+    @property
+    def body_descriptions(self: ResponseScenario) -> List[Description]:
+        return self._body_descriptions
+
     def _verify_body(self: ResponseScenario, body: str) -> Verification:
         data = json.loads(body)
         verifications = [
