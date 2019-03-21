@@ -10,8 +10,8 @@ import ruamel.yaml as yaml
 
 from preacher import __version__ as VERSION
 from preacher.core.scenario import Scenario
-from preacher.compilation import compile as compile_conf
-from .view import LoggingView
+from preacher.compilation import compile
+from preacher.presentation.logger import LoggerPresentation
 
 
 HANDLER = logging.StreamHandler()
@@ -25,7 +25,7 @@ class Application:
     def __init__(
         self: Application,
         base_url: str,
-        view: LoggingView,
+        view: LoggerPresentation,
     ) -> None:
         self._view = view
         self._base_url = base_url
@@ -80,14 +80,14 @@ def main() -> None:
     HANDLER.setLevel(logging_level)
 
     base_url = args.url
-    view = LoggingView(LOGGER)
+    view = LoggerPresentation(LOGGER)
     app = Application(base_url=base_url, view=view)
 
     config_paths = args.conf
     for config_path in config_paths:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
-        scenarios = compile_conf(config)
+        scenarios = compile(config)
         for scenario in scenarios:
             app.consume_scenario(scenario)
 
