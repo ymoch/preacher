@@ -32,6 +32,11 @@ def compile_scenario(obj: Mapping) -> Scenario:
     >>> scenario.response_description
     sentinel.response_description
 
+    >>> compile_scenario({'label': []})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: Scenario.label ...
+
     >>> compile_scenario({'request': []})
     Traceback (most recent call last):
         ...
@@ -66,6 +71,9 @@ def compile_scenario(obj: Mapping) -> Scenario:
     >>> scenario.response_description
     sentinel.response_description
     """
+    label = obj.get('label', 'no label')
+    if not isinstance(label, str):
+        raise CompilationError(f'Scenario.label must be a string: {label}')
     request_obj = obj.get('request', {})
     if isinstance(request_obj, str):
         request_obj = {'path': request_obj}
@@ -82,4 +90,8 @@ def compile_scenario(obj: Mapping) -> Scenario:
         )
     response_description = compile_response_description(response_obj)
 
-    return Scenario(request=request, response_description=response_description)
+    return Scenario(
+        label=label,
+        request=request,
+        response_description=response_description,
+    )

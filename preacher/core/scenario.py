@@ -28,9 +28,12 @@ class Scenario:
     """
     >>> from unittest.mock import MagicMock
     >>> scenario = Scenario(
+    ...     label='Request should fail',
     ...     request=MagicMock(Request, side_effect=RuntimeError('message')),
     ...     response_description=MagicMock(ResponseDescription),
     ... )
+    >>> scenario.label
+    'Request should fail'
     >>> verification = scenario('base-url')
     >>> scenario.request.call_args
     call('base-url')
@@ -44,6 +47,7 @@ class Scenario:
     >>> from .request import Response
     >>> inner_response = MagicMock(Response, body='body')
     >>> scenario = Scenario(
+    ...     label='Response should be unstable',
     ...     request=MagicMock(Request, return_value=inner_response),
     ...     response_description=MagicMock(
     ...         ResponseDescription,
@@ -65,9 +69,11 @@ class Scenario:
     """
     def __init__(
         self: Scenario,
+        label: str,
         request: Request,
         response_description: ResponseDescription,
     ) -> None:
+        self._label = label
         self._request = request
         self._response_description = response_description
 
@@ -94,6 +100,10 @@ class Scenario:
             request=request_verification,
             response=response_verification,
         )
+
+    @property
+    def label(self: Scenario) -> str:
+        return self._label
 
     @property
     def request(self: Scenario) -> Request:
