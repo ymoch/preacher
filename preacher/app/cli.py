@@ -10,7 +10,7 @@ import ruamel.yaml as yaml
 
 from preacher import __version__ as VERSION
 from preacher.core.scenario import Scenario
-from preacher.compilation.scenario import compile_scenario
+from preacher.compilation import compile as compile_conf
 from .view import LoggingView
 
 
@@ -87,8 +87,9 @@ def main() -> None:
     for config_path in config_paths:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
-        scenario = compile_scenario(config)
-        app.consume_scenario(scenario)
+        scenarios = compile_conf(config)
+        for scenario in scenarios:
+            app.consume_scenario(scenario)
 
     if not app.is_succeeded:
         sys.exit(1)
