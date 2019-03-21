@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional
 
-from .description import Description
 from .request import Request
+from .response_description import (
+    ResponseDescription,
+    ResponseVerification,
+)
 from .verification import (
     Status,
     Verification,
@@ -16,97 +18,10 @@ from .verification import (
 
 
 @dataclass
-class ResponseScenarioVerification:
-    status: Status
-    body: Verification
-
-
-class ResponseScenario:
-    """
-    >>> scenario = ResponseScenario(
-    ...     body_descriptions=[],
-    ... )
-    >>> verification = scenario(body='')
-    >>> verification.status.name
-    'SUCCESS'
-
-    >>> from unittest.mock import MagicMock
-    >>> scenario = ResponseScenario(
-    ...     body_descriptions=[MagicMock(return_value=Verification.succeed())],
-    ... )
-    >>> verification = scenario(body='invalid-format')
-    >>> scenario.body_descriptions[0].call_count
-    0
-    >>> verification.status.name
-    'FAILURE'
-    >>> verification.body.status.name
-    'FAILURE'
-    >>> verification.body.message
-    'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
-
-    >>> from unittest.mock import MagicMock
-    >>> scenario = ResponseScenario(
-    ...     body_descriptions=[
-    ...         MagicMock(return_value=Verification(status=Status.UNSTABLE)),
-    ...         MagicMock(return_value=Verification.succeed()),
-    ...     ],
-    ... )
-    >>> verification = scenario(body='{}')
-    >>> scenario.body_descriptions[0].call_args
-    call({})
-    >>> scenario.body_descriptions[1].call_args
-    call({})
-    >>> verification.status.name
-    'UNSTABLE'
-    >>> verification.body.status.name
-    'UNSTABLE'
-    >>> verification.body.children[0].status.name
-    'UNSTABLE'
-    >>> verification.body.children[1].status.name
-    'SUCCESS'
-    """
-    def __init__(
-        self: ResponseScenario,
-        body_descriptions: List[Description],
-    ) -> None:
-        self._body_descriptions = body_descriptions
-
-    def __call__(
-        self: ResponseScenario,
-        body: str,
-    ) -> ResponseScenarioVerification:
-        try:
-            body_verification = self._verify_body(body)
-        except Exception as error:
-            body_verification = Verification.of_error(error)
-
-        status = body_verification.status
-        return ResponseScenarioVerification(
-            status=status,
-            body=body_verification,
-        )
-
-    @property
-    def body_descriptions(self: ResponseScenario) -> List[Description]:
-        return self._body_descriptions
-
-    def _verify_body(self: ResponseScenario, body: str) -> Verification:
-        if not self._body_descriptions:
-            return Verification.succeed()
-
-        data = json.loads(body)
-        verifications = [
-            describe(data) for describe in self._body_descriptions
-        ]
-        status = merge_statuses(v.status for v in verifications)
-        return Verification(status=status, children=verifications)
-
-
-@dataclass
 class ScenarioVerification:
     status: Status
     request: Verification
-    response: Optional[ResponseScenarioVerification] = None
+    response: Optional[ResponseVerification] = None
 
 
 class Scenario:
@@ -114,7 +29,7 @@ class Scenario:
     >>> from unittest.mock import MagicMock
     >>> scenario = Scenario(
     ...     request=MagicMock(Request, side_effect=RuntimeError('message')),
-    ...     response_scenario=MagicMock(ResponseScenario),
+    ...     response_description=MagicMock(ResponseDescription),
     ... )
     >>> verification = scenario('base-url')
     >>> scenario.request.call_args
@@ -130,9 +45,9 @@ class Scenario:
     >>> inner_response = MagicMock(Response, body='body')
     >>> scenario = Scenario(
     ...     request=MagicMock(Request, return_value=inner_response),
-    ...     response_scenario=MagicMock(
-    ...         ResponseScenario,
-    ...         return_value=ResponseScenarioVerification(
+    ...     response_description=MagicMock(
+    ...         ResponseDescription,
+    ...         return_value=ResponseVerification(
     ...             status=Status.UNSTABLE,
     ...             body=Verification(status=Status.UNSTABLE)
     ...         ),
@@ -151,10 +66,10 @@ class Scenario:
     def __init__(
         self: Scenario,
         request: Request,
-        response_scenario: ResponseScenario,
+        response_description: ResponseDescription,
     ) -> None:
         self._request = request
-        self._response_scenario = response_scenario
+        self._response_description = response_description
 
     def __call__(self: Scenario, base_url: str) -> ScenarioVerification:
         try:
@@ -166,7 +81,7 @@ class Scenario:
             )
         request_verification = Verification.succeed()
 
-        response_verification = self._response_scenario(
+        response_verification = self._response_description(
             body=response.body,
         )
 
@@ -185,5 +100,5 @@ class Scenario:
         return self._request
 
     @property
-    def response_scenario(self: Scenario) -> ResponseScenario:
-        return self._response_scenario
+    def response_description(self: Scenario) -> ResponseDescription:
+        return self._response_description

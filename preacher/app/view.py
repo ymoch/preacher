@@ -8,10 +8,8 @@ import io
 from typing import Iterator
 
 from preacher.core.verification import Status, Verification
-from preacher.core.scenario import (
-    ResponseScenarioVerification,
-    ScenarioVerification,
-)
+from preacher.core.response_description import ResponseVerification
+from preacher.core.scenario import ScenarioVerification
 
 
 _LEVEL_MAP = {
@@ -47,7 +45,7 @@ class LoggingView:
 
     def show_response_verification(
         self: LoggingView,
-        verification: ResponseScenarioVerification,
+        verification: ResponseVerification,
         label: str = 'Response',
     ) -> None:
         status = verification.status
