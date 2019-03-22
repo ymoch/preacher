@@ -9,3 +9,36 @@ Preacher
     :target: https://www.python.org/
 
 A Web API verification tool.
+
+Grammer
+-------
+
+`ResponseDecription` Object
+***************************
+
+A `ResponseDescription` is a mapping that consists of below:
+
+- status_code: `Integer`, `Predicate` or `List<Predicate>` (Optional)
+    - A predicate or predicates that match a status code as an integer value.
+- body: `Description` or `List<Description>` (Optional)
+    - A description or descriptions that desripts the response body.
+
+`Predicate` Object
+******************
+
+A `Predicate` is a string or a mapping. Allowed values are:
+
+- is_null
+- is_not_null
+- is_empty
+- is: `Scalar`
+- equals_to: `Scalar`
+- has_length: `Integer`
+- is_greater_than: `Numeric`
+- is_greater_than_or_equal_to: `Numeric`
+- is_less_than: `Numeric`
+- is_less_than_or_equal_to: `Numeric`
+- contains_string: `String`
+- starts_with: `String`
+- ends_with: `String`
+- matches_regexp: `String`

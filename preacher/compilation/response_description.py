@@ -5,23 +5,31 @@ from typing import Any
 
 from preacher.core.description import Description
 from preacher.core.response_description import ResponseDescription
-from .description import compile as compile_description
 from .error import CompilationError
+from .description import compile as compile_description
+from .predicate import compile as compile_predicate
 
 
 def compile(obj: Mapping) -> ResponseDescription:
     """
     >>> from unittest.mock import patch, sentinel
+    >>> predicate_patch = patch(
+    ...     f'{__name__}.compile_predicate',
+    ...     return_value=sentinel.predicate,
+    ... )
     >>> description_patch = patch(
     ...     f'{__name__}.compile_description',
     ...     return_value=sentinel.description,
     ... )
 
-    >>> with description_patch as description_mock:
-    ...     response_scenario = compile({})
-    ...     description_mock.call_args_list
+    >>> with predicate_patch as predicate_mock, \\
+    ...      description_patch as description_mock:
+    ...     response_description = compile({})
+    ...     assert predicate_mock.call_count == 0
+    ...     assert description_mock.call_count == 0
+    >>> response_description.status_code_predicates
     []
-    >>> response_scenario.body_descriptions
+    >>> response_description.body_descriptions
     []
 
     >>> compile({'body': 'str'})
@@ -34,22 +42,41 @@ def compile(obj: Mapping) -> ResponseDescription:
         ...
     preacher.compilation.error.CompilationError: Description ...
 
-    >>> with description_patch as description_mock:
-    ...     response_scenario = compile({'body': {'key1': 'value1'}})
+    >>> with predicate_patch as predicate_mock, \\
+    ...      description_patch as description_mock:
+    ...     response_description = compile({
+    ...         'status_code': 402,
+    ...         'body': {'key1': 'value1'}}
+    ...     )
+    ...     predicate_mock.call_args_list
     ...     description_mock.call_args_list
+    [call({'equals_to': 402})]
     [call({'key1': 'value1'})]
-    >>> response_scenario.body_descriptions
+    >>> response_description.body_descriptions
     [sentinel.description]
 
-    >>> with description_patch as description_mock:
-    ...     response_scenario = compile({
+    >>> with predicate_patch as predicate_mock, \\
+    ...      description_patch as description_mock:
+    ...     response_description = compile({
+    ...         'status_code': [{'is_greater_than': 0}, {'is_less_than': 400}],
     ...         'body': [{'key1': 'value1'}, {'key2': 'value2'}],
     ...     })
+    ...     predicate_mock.call_args_list
     ...     description_mock.call_args_list
+    [call({'is_greater_than': 0}), call({'is_less_than': 400})]
     [call({'key1': 'value1'}), call({'key2': 'value2'})]
-    >>> response_scenario.body_descriptions
+    >>> response_description.body_descriptions
     [sentinel.description, sentinel.description]
     """
+    status_code_predicate_objs = obj.get('status_code', [])
+    if isinstance(status_code_predicate_objs, int):
+        status_code_predicate_objs = {'equals_to': status_code_predicate_objs}
+    if not isinstance(status_code_predicate_objs, list):
+        status_code_predicate_objs = [status_code_predicate_objs]
+    status_code_predicates = [
+        compile_predicate(obj) for obj in status_code_predicate_objs
+    ]
+
     body_description_objs = obj.get('body', [])
     if isinstance(body_description_objs, Mapping):
         body_description_objs = [body_description_objs]
@@ -64,7 +91,7 @@ def compile(obj: Mapping) -> ResponseDescription:
     ]
 
     return ResponseDescription(
-        status_code_predicates=[],  # TODO: implement here.
+        status_code_predicates=status_code_predicates,
         body_descriptions=body_descriptions,
     )
 

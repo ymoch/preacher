@@ -93,6 +93,10 @@ class ResponseDescription:
         )
 
     @property
+    def status_code_predicates(self: ResponseDescription) -> List[Predicate]:
+        return self._status_code_predicates
+
+    @property
     def body_descriptions(self: ResponseDescription) -> List[Description]:
         return self._body_descriptions
 
