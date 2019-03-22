@@ -66,7 +66,10 @@ Scenario
 ********
 A ``Scenario`` is a mapping that consists of below:
 
-- request: ``Request``
+- label: ``String`` (Recommended)
+    - A label of this scenario.
+    - This field is actually optional but recommended to tell a scenario from another.
+- request: ``Request`` (Optional)
     - A request.
 - response: ``ResponseDescription`` (Optional)
     - A response description.
@@ -75,9 +78,9 @@ Request
 *******
 A ``Request`` is a mapping that consists of below:
 
-- path: ``String``
-    - A request path.
-- params: ``Mapping<String, String>``
+- path: ``String`` (Optional)
+    - A request path. The default value is ``''``.
+- params: ``Mapping<String, String>`` (Optional)
     - Query parameters as a mapping of keys to values.
 
 Response Decription
