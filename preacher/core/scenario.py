@@ -22,6 +22,7 @@ class ScenarioVerification:
     status: Status
     request: Verification
     response: Optional[ResponseVerification] = None
+    label: Optional[str] = None
 
 
 class Scenario:
@@ -35,6 +36,7 @@ class Scenario:
     >>> verification = scenario('base-url')
     >>> scenario.request.call_args
     call('base-url')
+    >>> verification.label
     >>> verification.status.name
     'FAILURE'
     >>> verification.request.status.name
@@ -56,6 +58,8 @@ class Scenario:
     ...     ),
     ... )
     >>> verification = scenario('base-url')
+    >>> verification.label
+    'Response should be unstable'
     >>> verification.status.name
     'UNSTABLE'
     >>> verification.request.status.name
@@ -97,6 +101,7 @@ class Scenario:
             status=status,
             request=request_verification,
             response=response_verification,
+            label=self._label,
         )
 
     @property

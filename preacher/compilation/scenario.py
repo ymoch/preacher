@@ -78,6 +78,7 @@ def compile_scenario(obj: Mapping) -> Scenario:
     label = obj.get('label')
     if label is not None and not isinstance(label, str):
         raise CompilationError(f'Scenario.label must be a string: {label}')
+
     request_obj = obj.get('request', {})
     if isinstance(request_obj, str):
         request_obj = {'path': request_obj}
