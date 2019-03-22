@@ -1,3 +1,4 @@
+========
 Preacher
 ========
 
@@ -10,11 +11,77 @@ Preacher
 
 A Web API verification tool.
 
+Writing Your Own Scenarios
+==========================
+
+Example
+-------
+Here is a simple configuration example.
+
+.. code-block:: yaml
+
+    scenarios:
+      - label: Simple
+        request:
+          path: /path/to/foo
+        response:
+          status_code: 200
+          body:
+            - describe:
+                jq: .foo
+              it:
+                equals_to: bar
+      - label: A Little Complecated
+        request:
+          path: /path/to/foo
+          params:
+            key1: value
+            key2:
+              - value1
+              - value2
+        response:
+          status_code:
+            - is_greater_or_equal_to: 200
+            - is_less_than: 400
+          body:
+            - describe:
+                jq: .foo
+              it:
+                - starts_with: x
+                - ends_wirh: y
+
 Grammer
 -------
 
-Response Decriptions
-********************
+Global
+******
+A ``Configuration`` is written in `YAML`_.
+A ``Configuration`` is a mapping that consists of below:
+
+- scenarios: ``List<Scenario>``
+    - Scenarios.
+
+
+Scenario
+********
+A ``Scenario`` is a mapping that consists of below:
+
+- request: ``Request``
+    - A request.
+- response: ``ResponseDescription`` (Optional)
+    - A response description.
+
+Request
+*******
+A ``Request`` is a mapping that consists of below:
+
+- path: ``String``
+    - A request path.
+- params: ``Mapping<String, String>``
+    - Query parameters as a mapping of keys to values.
+
+Response Decription
+*******************
 A ``ResponseDescription`` is a mapping that consists of below:
 
 - status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)
@@ -23,8 +90,8 @@ A ``ResponseDescription`` is a mapping that consists of below:
 - body: ``Description`` or ``List<Description>`` (Optional)
     - Descriptions that descript the response body.
 
-Descriptions
-************
+Description
+***********
 A ``Description`` is a mapping that consists of below:
 
 - describe: ``String`` or ``Extraction``
@@ -40,8 +107,8 @@ An ``Extraction`` is a mapping that has one of below:
 - jq: ``String``
     - A `jq`_ query.
 
-Predicates
-**********
+Predicate
+*********
 A ``Predicate`` is a string or a mapping. Allowed values are:
 
 - is_null
@@ -60,4 +127,5 @@ A ``Predicate`` is a string or a mapping. Allowed values are:
 - matches_regexp: ``String``
 
 
+.. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
