@@ -5,7 +5,7 @@ from __future__ import annotations
 import contextlib
 import logging
 import io
-from typing import Iterator
+from typing import Iterator, Optional
 
 from preacher.core.verification import Status, Verification
 from preacher.core.response_description import ResponseVerification
@@ -27,11 +27,13 @@ class LoggerPresentation:
     def show_scenario_verification(
         self: LoggerPresentation,
         verification: ScenarioVerification,
-        label: str,
+        label: Optional[str] = None,
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
-        self._log(level, f'{label}: {status.name}')
+
+        self._log(level, 'Label: %s', verification.label)
+        self._log(level, 'Status: %s', status.name)
 
         with self._nested():
             self.show_verification(
@@ -50,7 +52,7 @@ class LoggerPresentation:
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
-        self._log(level, f'{label}: {status.name}')
+        self._log(level, f'%s: %s', label, status.name)
         with self._nested():
             self.show_verification(
                 verification=verification.body,
@@ -66,7 +68,7 @@ class LoggerPresentation:
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
-        self._log(level, f'{label}: {status.name}')
+        self._log(level, f'%s: %s', label, status.name)
         message = verification.message
         if message:
             with self._nested():

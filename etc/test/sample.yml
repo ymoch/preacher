@@ -1,5 +1,6 @@
 scenarios:
-  - request:
+  - label: Test
+    request:
       path: /path/to/foo
       query:
         key: value
