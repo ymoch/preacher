@@ -11,6 +11,25 @@ Preacher
 
 A Web API verification tool.
 
+
+Usage
+=====
+
+Requirements
+------------
+Supports only Python 3.7+.
+
+With `Pipenv`_.
+---------------
+.. code-block:: sh
+
+    pipenv install preacher
+    pipenv run preacher-cli scenario.yml
+
+    # Help command is available.
+    pipenv run preacher-cli --help
+
+
 Writing Your Own Scenarios
 ==========================
 

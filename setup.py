@@ -36,7 +36,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            'preacher=preacher.app.cli.main:main'
+            'preacher-cli=preacher.app.cli.main:main'
         ]
     },
     install_requires=[
