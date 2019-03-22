@@ -1,10 +1,11 @@
 """Verification."""
 
 from __future__ import annotations
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
-from functools import reduce
-from typing import Collection, Iterable, Optional
+from functools import reduce, singledispatch
+from typing import Collection, Optional
 
 
 class Status(Enum):
@@ -49,13 +50,31 @@ class Status(Enum):
         return max(self, other, key=lambda status: status.value)
 
 
-def merge_statuses(statuses: Iterable[Status]):
+@singledispatch
+def merge_statuses(*args) -> Status:
     """
+    For varargs.
+    >>> merge_statuses(Status.UNSTABLE).name
+    'UNSTABLE'
+    >>> merge_statuses(Status.SUCCESS, Status.FAILURE, Status.UNSTABLE).name
+    'FAILURE'
+
+    For iterables.
     >>> merge_statuses([]).name
     'SUCCESS'
     >>> merge_statuses([Status.SUCCESS, Status.UNSTABLE, Status.FAILURE]).name
     'FAILURE'
     """
+    raise ValueError(str(args))
+
+
+@merge_statuses.register
+def _merge_statuses_for_varargs(*statuses: Status):
+    return merge_statuses(statuses)
+
+
+@merge_statuses.register
+def _merge_statuses_for_iterable(statuses: Iterable):
     return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SUCCESS)
 
 

@@ -17,6 +17,7 @@ from .verification import (
 @dataclass
 class ResponseVerification:
     status: Status
+    status_code: Verification
     body: Verification
 
 
@@ -74,14 +75,19 @@ class ResponseDescription:
         self: ResponseDescription,
         body: str,
     ) -> ResponseVerification:
+        status_code_verification = Verification.succeed()  # TODO: impl here.
         try:
             body_verification = self._verify_body(body)
         except Exception as error:
             body_verification = Verification.of_error(error)
 
-        status = body_verification.status
+        status = merge_statuses(
+            status_code_verification.status,
+            body_verification.status,
+        )
         return ResponseVerification(
             status=status,
+            status_code=status_code_verification,
             body=body_verification,
         )
 

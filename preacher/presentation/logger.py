@@ -55,6 +55,10 @@ class LoggerPresentation:
         self._log(level, f'%s: %s', label, status.name)
         with self._nested():
             self.show_verification(
+                verification=verification.status_code,
+                label='Status Code',
+            )
+            self.show_verification(
                 verification=verification.body,
                 label='Body',
                 child_label='Description',

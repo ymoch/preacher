@@ -8,6 +8,7 @@ scenarios:
           - value1
           - value2
     response:
+      status_code: 200
       body:
         - jq: .foo
           it:

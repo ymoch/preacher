@@ -53,6 +53,7 @@ class Scenario:
     ...         ResponseDescription,
     ...         return_value=ResponseVerification(
     ...             status=Status.UNSTABLE,
+    ...             status_code=Verification.succeed(),
     ...             body=Verification(status=Status.UNSTABLE)
     ...         ),
     ...     ),
