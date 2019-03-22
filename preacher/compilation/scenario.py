@@ -53,12 +53,14 @@ def compile_scenario(obj: Mapping) -> Scenario:
     ...     scenario = compile_scenario({'request': '/path'})
     ...     request_mock.call_args
     call({'path': '/path'})
+    >>> scenario.label
     >>> scenario.request
     sentinel.request
 
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
     ...     scenario = compile_scenario({
+    ...         'label': 'label',
     ...         'request': {'path': '/path'},
     ...         'response': {'key': 'value'},
     ...     })
@@ -66,13 +68,15 @@ def compile_scenario(obj: Mapping) -> Scenario:
     ...     response_description_mock.call_args
     call({'path': '/path'})
     call({'key': 'value'})
+    >>> scenario.label
+    'label'
     >>> scenario.request
     sentinel.request
     >>> scenario.response_description
     sentinel.response_description
     """
-    label = obj.get('label', 'no label')
-    if not isinstance(label, str):
+    label = obj.get('label')
+    if label is not None and not isinstance(label, str):
         raise CompilationError(f'Scenario.label must be a string: {label}')
     request_obj = obj.get('request', {})
     if isinstance(request_obj, str):
