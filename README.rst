@@ -20,6 +20,7 @@ A `ResponseDescription` is a mapping that consists of below:
 
 - status_code: `Integer`, `Predicate` or `List<Predicate>` (Optional)
     - A predicate or predicates that match a status code as an integer value.
+    - When given a number, that is equivalent to `{"equals_to": it}`.
 - body: `Description` or `List<Description>` (Optional)
     - A description or descriptions that desripts the response body.
 

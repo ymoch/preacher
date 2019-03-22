@@ -36,6 +36,8 @@ class Scenario:
     >>> verification = scenario('base-url')
     >>> scenario.request.call_args
     call('base-url')
+    >>> scenario.response_description.call_count
+    0
     >>> verification.label
     >>> verification.status.name
     'FAILURE'
@@ -45,7 +47,7 @@ class Scenario:
     'RuntimeError: message'
 
     >>> from .request import Response
-    >>> inner_response = MagicMock(Response, body='body')
+    >>> inner_response = MagicMock(Response, status_code=402, body='body')
     >>> scenario = Scenario(
     ...     label='Response should be unstable',
     ...     request=MagicMock(Request, return_value=inner_response),
@@ -59,6 +61,8 @@ class Scenario:
     ...     ),
     ... )
     >>> verification = scenario('base-url')
+    >>> scenario.response_description.call_args
+    call(body='body', status_code=402)
     >>> verification.label
     'Response should be unstable'
     >>> verification.status.name
@@ -91,6 +95,7 @@ class Scenario:
         request_verification = Verification.succeed()
 
         response_verification = self._response_description(
+            status_code=response.status_code,
             body=response.body,
         )
 

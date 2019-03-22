@@ -19,21 +19,27 @@ class ResponseVerification:
 
 class ResponseDescription:
     """
-    >>> scenario = ResponseDescription(
+    >>> description = ResponseDescription(
     ...     status_code_predicates=[],
     ...     body_descriptions=[],
     ... )
-    >>> verification = scenario(body='')
+    >>> verification = description(status_code=200, body='')
     >>> verification.status.name
     'SUCCESS'
 
     >>> from unittest.mock import MagicMock
-    >>> scenario = ResponseDescription(
-    ...     status_code_predicates=[],
-    ...     body_descriptions=[MagicMock(return_value=Verification.succeed())],
+    >>> description = ResponseDescription(
+    ...     status_code_predicates=[
+    ...         MagicMock(return_value=Verification.succeed()),
+    ...     ],
+    ...     body_descriptions=[
+    ...         MagicMock(return_value=Verification.succeed()),
+    ...     ],
     ... )
-    >>> verification = scenario(body='invalid-format')
-    >>> scenario.body_descriptions[0].call_count
+    >>> verification = description(status_code=200, body='invalid-format')
+    >>> description.status_code_predicates[0].call_args_list
+    [call(200)]
+    >>> description.body_descriptions[0].call_count
     0
     >>> verification.status.name
     'FAILURE'
@@ -43,17 +49,17 @@ class ResponseDescription:
     'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
 
     >>> from unittest.mock import MagicMock
-    >>> scenario = ResponseDescription(
+    >>> description = ResponseDescription(
     ...     status_code_predicates=[],
     ...     body_descriptions=[
     ...         MagicMock(return_value=Verification(status=Status.UNSTABLE)),
     ...         MagicMock(return_value=Verification.succeed()),
     ...     ],
     ... )
-    >>> verification = scenario(body='{}')
-    >>> scenario.body_descriptions[0].call_args
+    >>> verification = description(status_code=200, body='{}')
+    >>> description.body_descriptions[0].call_args
     call({})
-    >>> scenario.body_descriptions[1].call_args
+    >>> description.body_descriptions[1].call_args
     call({})
     >>> verification.status.name
     'UNSTABLE'
@@ -74,9 +80,10 @@ class ResponseDescription:
 
     def __call__(
         self: ResponseDescription,
+        status_code: int,
         body: str,
     ) -> ResponseVerification:
-        status_code_verification = self._verify_status_code(200)  # TODO
+        status_code_verification = self._verify_status_code(status_code)
         try:
             body_verification = self._verify_body(body)
         except Exception as error:
