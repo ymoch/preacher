@@ -9,7 +9,11 @@ Preacher
 .. image:: https://img.shields.io/badge/python-3.7+-blue.svg
     :target: https://www.python.org/
 
-A Web API verification tool.
+Preacher verifies API servers,
+which requests to API servers and verify the response along to given scenarios.
+
+Verifications are written in `YAML`_ and `jq`_ queries
+so that any developers can write without learning toughly.
 
 
 Usage
