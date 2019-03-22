@@ -32,8 +32,8 @@ A ``Predicate`` is a string or a mapping. Allowed values are:
 - is_null
 - is_not_null
 - is_empty
-- is: ``Scalar``
-- equals_to: ``Scalar``
+- is: ``Value``
+- equals_to: ``Value``
 - has_length: ``Integer``
 - is_greater_than: ``Numeric``
 - is_greater_than_or_equal_to: ``Numeric``
