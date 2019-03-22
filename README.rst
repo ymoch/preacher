@@ -12,7 +12,7 @@ Preacher
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Verifications are written in `YAML`_ and `jq`_ queries
+Scenarios are written in `YAML`_ and `jq`_ queries
 so that any developers can write without learning toughly.
 
 
