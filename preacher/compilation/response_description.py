@@ -64,6 +64,7 @@ def compile(obj: Mapping) -> ResponseDescription:
     ]
 
     return ResponseDescription(
+        status_code_predicates=[],  # TODO: implement here.
         body_descriptions=body_descriptions,
     )
 

@@ -53,6 +53,11 @@ class Status(Enum):
 @singledispatch
 def merge_statuses(*args) -> Status:
     """
+    >>> merge_statuses(1)
+    Traceback (most recent call last):
+        ...
+    ValueError: (1,)
+
     For varargs.
     >>> merge_statuses(Status.UNSTABLE).name
     'UNSTABLE'

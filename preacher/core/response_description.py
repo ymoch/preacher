@@ -6,12 +6,8 @@ import json
 from dataclasses import dataclass
 from typing import List
 
-from .description import Description
-from .verification import (
-    Status,
-    Verification,
-    merge_statuses,
-)
+from .description import Description, Predicate
+from .verification import Status, Verification, merge_statuses
 
 
 @dataclass
@@ -24,6 +20,7 @@ class ResponseVerification:
 class ResponseDescription:
     """
     >>> scenario = ResponseDescription(
+    ...     status_code_predicates=[],
     ...     body_descriptions=[],
     ... )
     >>> verification = scenario(body='')
@@ -32,6 +29,7 @@ class ResponseDescription:
 
     >>> from unittest.mock import MagicMock
     >>> scenario = ResponseDescription(
+    ...     status_code_predicates=[],
     ...     body_descriptions=[MagicMock(return_value=Verification.succeed())],
     ... )
     >>> verification = scenario(body='invalid-format')
@@ -46,6 +44,7 @@ class ResponseDescription:
 
     >>> from unittest.mock import MagicMock
     >>> scenario = ResponseDescription(
+    ...     status_code_predicates=[],
     ...     body_descriptions=[
     ...         MagicMock(return_value=Verification(status=Status.UNSTABLE)),
     ...         MagicMock(return_value=Verification.succeed()),
@@ -67,15 +66,17 @@ class ResponseDescription:
     """
     def __init__(
         self: ResponseDescription,
+        status_code_predicates: List[Predicate],
         body_descriptions: List[Description],
     ) -> None:
+        self._status_code_predicates = status_code_predicates
         self._body_descriptions = body_descriptions
 
     def __call__(
         self: ResponseDescription,
         body: str,
     ) -> ResponseVerification:
-        status_code_verification = Verification.succeed()  # TODO: impl here.
+        status_code_verification = self._verify_status_code(200)  # TODO
         try:
             body_verification = self._verify_body(body)
         except Exception as error:
@@ -94,6 +95,14 @@ class ResponseDescription:
     @property
     def body_descriptions(self: ResponseDescription) -> List[Description]:
         return self._body_descriptions
+
+    def _verify_status_code(
+        self: ResponseDescription,
+        code: int,
+    ) -> Verification:
+        children = [pred(code) for pred in self._status_code_predicates]
+        status = merge_statuses(v.status for v in children)
+        return Verification(status=status, children=children)
 
     def _verify_body(self: ResponseDescription, body: str) -> Verification:
         if not self._body_descriptions:
