@@ -41,7 +41,7 @@ Here is a simple configuration example.
               - value2
         response:
           status_code:
-            - is_greater_or_equal_to: 200
+            - is_greater_than_or_equal_to: 200
             - is_less_than: 400
           body:
             - describe:
