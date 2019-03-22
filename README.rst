@@ -155,3 +155,4 @@ A ``Predicate`` is a string or a mapping. Allowed values are:
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
+.. _pipenv: https://pipenv.readthedocs.io/
