@@ -62,7 +62,7 @@ class LoggerPresentation:
         self: LoggerPresentation,
         verification: Verification,
         label: str,
-        child_label: str = 'Predicate'
+        child_label: str = 'Predicate',
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
