@@ -23,7 +23,7 @@ Requirements
 ------------
 Supports only Python 3.7+.
 
-With `Pipenv`_.
+With `Pipenv`_
 ---------------
 .. code-block:: sh
 
