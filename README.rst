@@ -27,7 +27,7 @@ Descriptions
 ************
 A ``Description`` is a mapping that consists of below:
 
-- value_of: ``String`` or ``Extraction``
+- describes: ``String`` or ``Extraction``
     - An extraction process.
     - When given a string, that is passed to the default extraction.
 - it: ``Predicate``, or ``List<Predicate>>``
