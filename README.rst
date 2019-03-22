@@ -33,6 +33,12 @@ A ``Description`` is a mapping that consists of below:
 - it: ``Predicate``, or ``List<Predicate>>``
     - Predicates that match the extracted value.
 
+Extraction
+**********
+An ``Extraction`` is a mapping that has one of below:
+
+- jq: A `jq`_ query.
+
 Predicates
 **********
 A ``Predicate`` is a string or a mapping. Allowed values are:
@@ -51,3 +57,6 @@ A ``Predicate`` is a string or a mapping. Allowed values are:
 - starts_with: ``String``
 - ends_with: ``String``
 - matches_regexp: ``String``
+
+
+.. _jq: https://stedolan.github.io/jq/
