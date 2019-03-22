@@ -37,7 +37,8 @@ Extraction
 **********
 An ``Extraction`` is a mapping that has one of below:
 
-- jq: A `jq`_ query.
+- jq: ``String``
+    - A `jq`_ query.
 
 Predicates
 **********
