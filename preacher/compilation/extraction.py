@@ -12,7 +12,7 @@ _EXTRACTION_MAP = {
 _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
 
 
-def compile(description_object: Mapping) -> Extraction:
+def compile(extraction_obj: Mapping) -> Extraction:
     """
     >>> compile({})
     Traceback (most recent call last):
@@ -22,7 +22,7 @@ def compile(description_object: Mapping) -> Extraction:
     >>> compile({'jq': '.foo'})({'foo': 'bar'})
     'bar'
     """
-    keys = _EXTRACTION_KEYS.intersection(description_object.keys())
+    keys = _EXTRACTION_KEYS.intersection(extraction_obj.keys())
     if len(keys) != 1:
         raise CompilationError(
             'Description object must have only 1 valid extraction key'
@@ -30,4 +30,4 @@ def compile(description_object: Mapping) -> Extraction:
         )
     key = next(iter(keys))
 
-    return _EXTRACTION_MAP[key](description_object[key])
+    return _EXTRACTION_MAP[key](extraction_obj[key])

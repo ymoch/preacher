@@ -21,14 +21,19 @@ def compile(obj: Mapping) -> Description:
     ...     return_value=sentinel.predicate,
     ... )
 
+    >>> compile({})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: Description.describe ...
+
     >>> with extraction_patch as extraction_mock:
-    ...     compile({'it': 'str'})
+    ...     compile({'describe': 'foo', 'it': 'str'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Description.it ...
 
     >>> with extraction_patch as extraction_mock:
-    ...     compile({'it': [None]})
+    ...     compile({'describe': {}, 'it': [None]})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Predicate ...
@@ -36,11 +41,12 @@ def compile(obj: Mapping) -> Description:
     >>> with extraction_patch as extraction_mock, \\
     ...      predicate_patch as predicate_mock:
     ...     description = compile({
+    ...         'describe': 'foo',
     ...         'it': {'key': 'value'}
     ...     })
     ...     extraction_mock.call_args
     ...     predicate_mock.call_args_list
-    call({'it': {'key': 'value'}})
+    call({'jq': 'foo'})
     [call({'key': 'value'})]
     >>> description.extraction
     sentinel.extraction
@@ -50,18 +56,26 @@ def compile(obj: Mapping) -> Description:
     >>> with extraction_patch as extraction_mock, \\
     ...      predicate_patch as predicate_mock:
     ...     description = compile({
+    ...         'describe': {'key': 'value'},
     ...         'it': [{'key1': 'value1'}, {'key2': 'value2'}]
     ...     })
     ...     extraction_mock.call_args
     ...     predicate_mock.call_args_list
-    call({'it': [{'key1': 'value1'}, {'key2': 'value2'}]})
+    call({'key': 'value'})
     [call({'key1': 'value1'}), call({'key2': 'value2'})]
     >>> description.extraction
     sentinel.extraction
     >>> description.predicates
     [sentinel.predicate, sentinel.predicate]
     """
-    extraction = compile_extraction(obj)
+    extraction_obj = obj.get('describe')
+    if isinstance(extraction_obj, str):
+        extraction_obj = {'jq': extraction_obj}
+    if not isinstance(extraction_obj, Mapping):
+        raise CompilationError(
+            f'Description.describe must be a mapping: {extraction_obj}'
+        )
+    extraction = compile_extraction(extraction_obj)
 
     predicate_objs = obj.get('it', [])
     if isinstance(predicate_objs, Mapping):

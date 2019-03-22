@@ -13,20 +13,28 @@ A Web API verification tool.
 Grammer
 -------
 
-``ResponseDecription`` Object
-*****************************
-
+Response Decriptions
+********************
 A ``ResponseDescription`` is a mapping that consists of below:
 
 - status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)
-    - A predicate or predicates that match a status code as an integer value.
+    - Predicates that match a status code as an integer value.
     - When given a number, that is equivalent to ``{"equals_to": it}``.
 - body: ``Description`` or ``List<Description>`` (Optional)
-    - A description or descriptions that desripts the response body.
+    - Descriptions that descript the response body.
 
-``Predicate`` Object
-********************
+Descriptions
+************
+A ``Description`` is a mapping that consists of below:
 
+- value_of: ``String`` or ``Extraction``
+    - An extraction process.
+    - When given a string, that is passed to the default extraction.
+- it: ``Predicate``, or ``List<Predicate>>``
+    - Predicates that match the extracted value.
+
+Predicates
+**********
 A ``Predicate`` is a string or a mapping. Allowed values are:
 
 - is_null

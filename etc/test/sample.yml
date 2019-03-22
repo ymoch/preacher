@@ -10,7 +10,8 @@ scenarios:
     response:
       status_code: 200
       body:
-        - jq: .foo
+        - describe:
+            jq: .foo
           it:
             - is: bar
             - equals_to: bar
