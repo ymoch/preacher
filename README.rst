@@ -12,7 +12,7 @@ Preacher
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Verifications are written in `YAML`_ and `jq`_ queries
+Scenarios are written in `YAML`_ and `jq`_ queries
 so that any developers can write without learning toughly.
 
 
@@ -23,15 +23,13 @@ Requirements
 ------------
 Supports only Python 3.7+.
 
-With `Pipenv`_.
----------------
 .. code-block:: sh
 
-    pipenv install preacher
-    pipenv run preacher-cli scenario.yml
+    pip install preacher
+    preacher-cli scenario.yml
 
     # Help command is available.
-    pipenv run preacher-cli --help
+    preacher-cli --help
 
 
 Writing Your Own Scenarios
