@@ -6,7 +6,7 @@ install:
   - pip install pipenv
   - pipenv install --dev
 script:
-  - pipenv run py.test
+  - pipenv run pytest preacher
 after_success:
   - codecov
 notifications:
