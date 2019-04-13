@@ -47,7 +47,7 @@ def _compile_static_matcher(name: str) -> Matcher:
     return matcher
 
 
-_VALUE_MATCHER_FUNCTION_MAP = {
+_SINGLE_VALUE_MATCHER_FUNCTION_MAP = {
     # For objects.
     'is': lambda expected: hamcrest.is_(expected),
     'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
@@ -162,10 +162,11 @@ def _compile_single_value_matcher(obj: Mapping) -> Matcher:
         )
 
     key, value = next(iter(obj.items()))
-    if key not in _VALUE_MATCHER_FUNCTION_MAP:
+    func = _SINGLE_VALUE_MATCHER_FUNCTION_MAP.get(key)
+    if not func:
         raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
 
-    return _VALUE_MATCHER_FUNCTION_MAP[key](value)
+    return func(value)
 
 
 def compile(obj: Union[str, Mapping]) -> Matcher:
