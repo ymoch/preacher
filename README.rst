@@ -71,7 +71,7 @@ Here is a simple configuration example.
                 jq: .foo
               it:
                 - starts_with: x
-                - ends_wirh: y
+                - ends_with: y
 
 Grammer
 -------
