@@ -40,80 +40,22 @@ def compile(obj: Union[str, Mapping]) -> Predicate:
     """
     >>> from hamcrest.core.matcher import Matcher
     >>> from unittest.mock import MagicMock, patch
+
     >>> matcher = MagicMock(Matcher)
     >>> with patch(
     ...     f'{__name__}._compile_static_matcher',
     ...     return_value=matcher,
-    ... ) as static_matcher_mock:
+    ... ) as matcher_mock:
     ...     predicate = compile('string')
-    ...     static_matcher_mock.assert_called_with('string')
+    ...     matcher_mock.assert_called_with('string')
 
-    TODO: Move to preacher.compilation.matcher._compile_single_value_matcher
-    >>> predicate = compile({'is_greater_than': 0})
-    >>> predicate(-1).status.name
-    'UNSTABLE'
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate(1).status.name
-    'SUCCESS'
+    >>> with patch(
+    ...     f'{__name__}._compile_single_value_matcher',
+    ...     return_value=matcher,
+    ... ) as matcher_mock:
+    ...     predicate = compile({'key': 'value'})
+    ...     matcher_mock.assert_called_with({'key': 'value'})
 
-    >>> predicate = compile({'is_greater_than_or_equal_to': 0})
-    >>> predicate(-1).status.name
-    'UNSTABLE'
-    >>> predicate(0).status.name
-    'SUCCESS'
-    >>> predicate(1).status.name
-    'SUCCESS'
-
-    >>> predicate = compile({'is_less_than': 0})
-    >>> predicate(-1).status.name
-    'SUCCESS'
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate(1).status.name
-    'UNSTABLE'
-
-    >>> predicate = compile({'is_less_than_or_equal_to': 0})
-    >>> predicate(-1).status.name
-    'SUCCESS'
-    >>> predicate(0).status.name
-    'SUCCESS'
-    >>> predicate(1).status.name
-    'UNSTABLE'
-
-    >>> predicate = compile({'contains_string': '0'})
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate('012').status.name
-    'SUCCESS'
-    >>> predicate('123').status.name
-    'UNSTABLE'
-
-    >>> predicate = compile({'starts_with': 'AB'})
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate('ABC').status.name
-    'SUCCESS'
-    >>> predicate('ACB').status.name
-    'UNSTABLE'
-
-    >>> predicate = compile({'ends_with': 'BC'})
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate('ABC').status.name
-    'SUCCESS'
-    >>> predicate('ACB').status.name
-    'UNSTABLE'
-
-    >>> predicate = compile({'matches_regexp': '^A*B$'})
-    >>> predicate('B').status.name
-    'SUCCESS'
-    >>> predicate('ACB').status.name
-    'UNSTABLE'
-
-    TODO: Should return `False` when the value type is not `str`.
-    >>> predicate(0).status.name
-    'FAILURE'
     """
     if isinstance(obj, str):
         matcher = _compile_static_matcher(obj)

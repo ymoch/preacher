@@ -104,6 +104,55 @@ def _compile_single_value_matcher(obj: Mapping) -> Matcher:
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches('1')
     >>> assert matcher.matches(1)
+
+    >>> matcher = _compile_single_value_matcher({'is_greater_than': 0})
+    >>> assert not matcher.matches(-1)
+    >>> assert not matcher.matches(0)
+    >>> assert matcher.matches(1)
+
+    >>> matcher = _compile_single_value_matcher(
+    ...     {'is_greater_than_or_equal_to': 0}
+    ... )
+    >>> assert not matcher.matches(-1)
+    >>> assert matcher.matches(0)
+    >>> assert matcher.matches(1)
+
+    >>> matcher = _compile_single_value_matcher({'is_less_than': 0})
+    >>> assert matcher.matches(-1)
+    >>> assert not matcher.matches(0)
+    >>> assert not matcher.matches(1)
+
+    >>> matcher = _compile_single_value_matcher(
+    ...     {'is_less_than_or_equal_to': 0}
+    ... )
+    >>> assert matcher.matches(-1)
+    >>> assert matcher.matches(0)
+    >>> assert not matcher.matches(1)
+
+    >>> matcher = _compile_single_value_matcher({'contains_string': '0'})
+    >>> assert not matcher.matches(0)
+    >>> assert not matcher.matches('123')
+    >>> assert matcher.matches('21012')
+
+    >>> matcher = _compile_single_value_matcher({'starts_with': 'AB'})
+    >>> assert not matcher.matches(0)
+    >>> assert matcher.matches('ABC')
+    >>> assert not matcher.matches('ACB')
+
+    >>> matcher = _compile_single_value_matcher({'ends_with': 'BC'})
+    >>> assert not matcher.matches(0)
+    >>> assert matcher.matches('ABC')
+    >>> assert not matcher.matches('ACB')
+
+    >>> matcher = _compile_single_value_matcher({'matches_regexp': '^A*B$'})
+    >>> assert not matcher.matches('ACB')
+    >>> assert matcher.matches('B')
+
+    TODO: Should return `False` when the value type is not `str`.
+    >>> matcher.matches(0)
+    Traceback (most recent call last):
+        ...
+    TypeError: ...
     """
     if len(obj) != 1:
         raise CompilationError(
