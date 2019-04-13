@@ -1,7 +1,8 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from typing import Union
+from itertools import chain
+from typing import Any, Union
 
 import hamcrest
 from hamcrest.core.matcher import Matcher
@@ -47,7 +48,7 @@ def _compile_static_matcher(name: str) -> Matcher:
     return matcher
 
 
-_SINGLE_VALUE_MATCHER_FUNCTION_MAP = {
+_MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     # For objects.
     'is': lambda expected: hamcrest.is_(expected),
     'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
@@ -73,80 +74,66 @@ _SINGLE_VALUE_MATCHER_FUNCTION_MAP = {
 }
 
 
-def _compile_single_value_matcher(obj: Mapping) -> Matcher:
+def _compile_taking_value(key: str, value: Any) -> Matcher:
     """
-    >>> _compile_single_value_matcher({})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 0
-
-    >>> _compile_single_value_matcher({'equals_to': 0, 'not': {'equal_to': 1}})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 2
-
-    >>> _compile_single_value_matcher({'invalid_key': 0})
+    >>> _compile_taking_value('invalid_key', 0)
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_key'
 
-    >>> matcher = _compile_single_value_matcher({'has_length': 1})
+    >>> matcher = _compile_taking_value('has_length', 1)
     >>> assert not matcher.matches(None)
     >>> assert not matcher.matches('')
     >>> assert not matcher.matches([])
     >>> assert matcher.matches('A')
     >>> assert matcher.matches([1])
 
-    >>> matcher = _compile_single_value_matcher({'is': 1})
+    >>> matcher = _compile_taking_value('is', 1)
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches('1')
     >>> assert matcher.matches(1)
 
-    >>> matcher = _compile_single_value_matcher({'equals_to': 1})
+    >>> matcher = _compile_taking_value('equals_to', 1)
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches('1')
     >>> assert matcher.matches(1)
 
-    >>> matcher = _compile_single_value_matcher({'is_greater_than': 0})
+    >>> matcher = _compile_taking_value('is_greater_than', 0)
     >>> assert not matcher.matches(-1)
     >>> assert not matcher.matches(0)
     >>> assert matcher.matches(1)
 
-    >>> matcher = _compile_single_value_matcher(
-    ...     {'is_greater_than_or_equal_to': 0}
-    ... )
+    >>> matcher = _compile_taking_value('is_greater_than_or_equal_to', 0)
     >>> assert not matcher.matches(-1)
     >>> assert matcher.matches(0)
     >>> assert matcher.matches(1)
 
-    >>> matcher = _compile_single_value_matcher({'is_less_than': 0})
+    >>> matcher = _compile_taking_value('is_less_than', 0)
     >>> assert matcher.matches(-1)
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches(1)
 
-    >>> matcher = _compile_single_value_matcher(
-    ...     {'is_less_than_or_equal_to': 0}
-    ... )
+    >>> matcher = _compile_taking_value('is_less_than_or_equal_to', 0)
     >>> assert matcher.matches(-1)
     >>> assert matcher.matches(0)
     >>> assert not matcher.matches(1)
 
-    >>> matcher = _compile_single_value_matcher({'contains_string': '0'})
+    >>> matcher = _compile_taking_value('contains_string', '0')
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches('123')
     >>> assert matcher.matches('21012')
 
-    >>> matcher = _compile_single_value_matcher({'starts_with': 'AB'})
+    >>> matcher = _compile_taking_value('starts_with', 'AB')
     >>> assert not matcher.matches(0)
     >>> assert matcher.matches('ABC')
     >>> assert not matcher.matches('ACB')
 
-    >>> matcher = _compile_single_value_matcher({'ends_with': 'BC'})
+    >>> matcher = _compile_taking_value('ends_with', 'BC')
     >>> assert not matcher.matches(0)
     >>> assert matcher.matches('ABC')
     >>> assert not matcher.matches('ACB')
 
-    >>> matcher = _compile_single_value_matcher({'matches_regexp': '^A*B$'})
+    >>> matcher = _compile_taking_value('matches_regexp', '^A*B$')
     >>> assert not matcher.matches('ACB')
     >>> assert matcher.matches('B')
 
@@ -156,39 +143,127 @@ def _compile_single_value_matcher(obj: Mapping) -> Matcher:
         ...
     TypeError: ...
     """
+    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE.get(key)
+    if not func:
+        raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
+    return func(value)
+
+
+_MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
+    'not': lambda matcher: hamcrest.not_(matcher),
+}
+
+
+def _compile_taking_single_matcher(obj: Mapping):
+    """
+    >>> _compile_taking_single_matcher({})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ... has 0
+
+    >>> _compile_taking_single_matcher({'key1': 'value1', 'key2': 'value2'})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ... has 2
+
+    >>> _compile_taking_single_matcher({'invalid_key': ''})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ... 'invalid_key'
+
+    >>> matcher = _compile_taking_single_matcher({'not': 1})
+    >>> assert matcher.matches('A')
+    >>> assert matcher.matches(0)
+    >>> assert not matcher.matches(1)
+
+    >>> matcher = _compile_taking_single_matcher(
+    ...     {'not': {'contains_string': 'AB'}}
+    ... )
+    >>> assert matcher.matches(0)
+    >>> assert matcher.matches('A')
+    >>> assert not matcher.matches('AB')
+    """
     if len(obj) != 1:
         raise CompilationError(
             f'Must have only 1 element, but has {len(obj)}'
         )
 
     key, value = next(iter(obj.items()))
-    func = _SINGLE_VALUE_MATCHER_FUNCTION_MAP.get(key)
+    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.get(key)
     if not func:
         raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
 
-    return func(value)
+    if isinstance(value, str) or isinstance(value, Mapping):
+        inner = compile(value)
+    else:
+        inner = hamcrest.equal_to(value)
+
+    return func(inner)
+
+
+_MATCHER_MAP_KEYS = frozenset(chain(
+    _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE.keys(),
+    _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.keys(),
+))
 
 
 def compile(obj: Union[str, Mapping]) -> Matcher:
     """
     >>> from unittest.mock import patch, sentinel
 
+    >>> _compile_taking_single_matcher({})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ... has 0
+
+    >>> _compile_taking_single_matcher({'key1': 'value1', 'key2': 'value2'})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ... has 2
+
+    >>> _compile_taking_single_matcher({'invalid_key': ''})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ... 'invalid_key'
+
     >>> with patch(
     ...     f'{__name__}._compile_static_matcher',
     ...     return_value=sentinel.static_matcher,
     ... ) as matcher_mock:
-    ...     compile('string')
-    ...     matcher_mock.assert_called_with('string')
+    ...     compile('is_null')
+    ...     matcher_mock.assert_called_with('is_null')
     sentinel.static_matcher
 
     >>> with patch(
-    ...     f'{__name__}._compile_single_value_matcher',
-    ...     return_value=sentinel.static_value_matcher,
+    ...     f'{__name__}._compile_taking_value',
+    ...     return_value=sentinel.value_matcher,
     ... ) as matcher_mock:
-    ...     compile({'key': 'value'})
-    ...     matcher_mock.assert_called_with({'key': 'value'})
-    sentinel.static_value_matcher
+    ...     compile({'equals_to': 'value'})
+    ...     matcher_mock.assert_called_with('equals_to', 'value')
+    sentinel.value_matcher
+
+    >>> with patch(
+    ...     f'{__name__}._compile_taking_single_matcher',
+    ...     return_value=sentinel.single_matcher_matcher,
+    ... ) as matcher_mock:
+    ...     compile({'not': 'value'})
+    ...     matcher_mock.assert_called_with({'not': 'value'})
+    sentinel.single_matcher_matcher
     """
     if isinstance(obj, str):
         return _compile_static_matcher(obj)
-    return _compile_single_value_matcher(obj)
+
+    if len(obj) != 1:
+        raise CompilationError(
+            f'Must have only 1 element, but has {len(obj)}'
+        )
+
+    key, value = next(iter(obj.items()))
+
+    if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
+        return _compile_taking_value(key, value)
+
+    if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
+        return _compile_taking_single_matcher(obj)
+
+    raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
