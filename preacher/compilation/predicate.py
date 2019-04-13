@@ -6,7 +6,7 @@ from typing import Union
 import hamcrest
 
 from preacher.core.predicate import Predicate, of_hamcrest_matcher
-from .matcher import _compile_static_matcher, _compile_single_value_matcher
+from .matcher import compile as compile_matcher
 
 
 _VALUE_MATCHER_FUNCTION_MAP = {
@@ -38,27 +38,14 @@ _PREDICATE_KEYS = frozenset(_VALUE_MATCHER_FUNCTION_MAP.keys())
 
 def compile(obj: Union[str, Mapping]) -> Predicate:
     """
-    >>> from hamcrest.core.matcher import Matcher
-    >>> from unittest.mock import MagicMock, patch
-
-    >>> matcher = MagicMock(Matcher)
-    >>> with patch(
-    ...     f'{__name__}._compile_static_matcher',
-    ...     return_value=matcher,
-    ... ) as matcher_mock:
-    ...     predicate = compile('string')
-    ...     matcher_mock.assert_called_with('string')
+    >>> from unittest.mock import patch, sentinel
 
     >>> with patch(
-    ...     f'{__name__}._compile_single_value_matcher',
-    ...     return_value=matcher,
+    ...     f'{__name__}.compile_matcher',
+    ...     return_value=sentinel.matcher
     ... ) as matcher_mock:
-    ...     predicate = compile({'key': 'value'})
-    ...     matcher_mock.assert_called_with({'key': 'value'})
-
+    ...     predicate = compile('matcher')
+    ...     matcher_mock.assert_called_with('matcher')
     """
-    if isinstance(obj, str):
-        matcher = _compile_static_matcher(obj)
-    else:
-        matcher = _compile_single_value_matcher(obj)
+    matcher = compile_matcher(obj)
     return of_hamcrest_matcher(matcher)

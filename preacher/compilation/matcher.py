@@ -1,6 +1,8 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
+from typing import Union
+
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
@@ -164,3 +166,28 @@ def _compile_single_value_matcher(obj: Mapping) -> Matcher:
         raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
 
     return _VALUE_MATCHER_FUNCTION_MAP[key](value)
+
+
+def compile(obj: Union[str, Mapping]) -> Matcher:
+    """
+    >>> from unittest.mock import patch, sentinel
+
+    >>> with patch(
+    ...     f'{__name__}._compile_static_matcher',
+    ...     return_value=sentinel.static_matcher,
+    ... ) as matcher_mock:
+    ...     compile('string')
+    ...     matcher_mock.assert_called_with('string')
+    sentinel.static_matcher
+
+    >>> with patch(
+    ...     f'{__name__}._compile_single_value_matcher',
+    ...     return_value=sentinel.static_value_matcher,
+    ... ) as matcher_mock:
+    ...     compile({'key': 'value'})
+    ...     matcher_mock.assert_called_with({'key': 'value'})
+    sentinel.static_value_matcher
+    """
+    if isinstance(obj, str):
+        return _compile_static_matcher(obj)
+    return _compile_single_value_matcher(obj)
