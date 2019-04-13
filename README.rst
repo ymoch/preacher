@@ -84,7 +84,6 @@ A ``Configuration`` is a mapping that consists of below:
 - scenarios: ``List<Scenario>``
     - Scenarios.
 
-
 Scenario
 ********
 A ``Scenario`` is a mapping that consists of below:
@@ -135,7 +134,11 @@ An ``Extraction`` is a mapping that has one of below:
 
 Predicate
 *********
-A ``Predicate`` is a string or a mapping. Allowed values are:
+A ``Predicate`` is a ``Matcher`` (can be extended in the future).
+
+Matcher
+*******
+A ``Matcher`` is a string or a mapping. Allowed values are:
 
 - is_null
 - is_not_null
@@ -143,10 +146,10 @@ A ``Predicate`` is a string or a mapping. Allowed values are:
 - is: ``Value``
 - equals_to: ``Value``
 - has_length: ``Integer``
-- is_greater_than: ``Numeric``
-- is_greater_than_or_equal_to: ``Numeric``
-- is_less_than: ``Numeric``
-- is_less_than_or_equal_to: ``Numeric``
+- is_greater_than: ``Comparable``
+- is_greater_than_or_equal_to: ``Comparable``
+- is_less_than: ``Comparable``
+- is_less_than_or_equal_to: ``Comparable``
 - contains_string: ``String``
 - starts_with: ``String``
 - ends_with: ``String``
