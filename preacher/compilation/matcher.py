@@ -18,7 +18,6 @@ _STATIC_MATCHER_MAP = {
 }
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     # For objects.
-    'is': lambda expected: hamcrest.is_(expected),
     'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
     'has_length': lambda expected: hamcrest.has_length(expected),
     # For numbers.
@@ -41,7 +40,8 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     'matches_regexp': lambda value: hamcrest.matches_regexp(value),
 }
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
-    'not': lambda matcher: hamcrest.not_(matcher),
+    'is': hamcrest.is_,
+    'not': hamcrest.not_,
 }
 
 
@@ -87,11 +87,6 @@ def _compile_taking_value(key: str, value: Any) -> Matcher:
     >>> assert not matcher.matches([])
     >>> assert matcher.matches('A')
     >>> assert matcher.matches([1])
-
-    >>> matcher = _compile_taking_value('is', 1)
-    >>> assert not matcher.matches(0)
-    >>> assert not matcher.matches('1')
-    >>> assert matcher.matches(1)
 
     >>> matcher = _compile_taking_value('equals_to', 1)
     >>> assert not matcher.matches(0)
@@ -156,6 +151,11 @@ def _compile_taking_single_matcher(key: str, value: Any):
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_key'
 
+    >>> matcher = _compile_taking_single_matcher('is', 1)
+    >>> assert not matcher.matches(0)
+    >>> assert not matcher.matches('1')
+    >>> assert matcher.matches(1)
+
     >>> matcher = _compile_taking_single_matcher('not', 1)
     >>> assert matcher.matches('A')
     >>> assert matcher.matches(0)
@@ -192,10 +192,13 @@ def compile(obj: Union[str, Mapping]) -> Matcher:
         ...
     preacher.compilation.error.CompilationError: ... has 2
 
-    >>> compile({'invalid_key': ''})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... 'invalid_key'
+    >>> matcher = compile('invalid_name')
+    >>> assert not matcher.matches('')
+    >>> assert matcher.matches('invalid_name')
+
+    >>> matcher = compile({'invalid_key': ''})
+    >>> assert not matcher.matches('')
+    >>> assert matcher.matches({'invalid_key': ''})
 
     >>> with patch(
     ...     f'{__name__}._compile_static_matcher',
@@ -222,19 +225,21 @@ def compile(obj: Union[str, Mapping]) -> Matcher:
     sentinel.single_matcher_matcher
     """
     if isinstance(obj, str):
-        return _compile_static_matcher(obj)
+        if obj in _STATIC_MATCHER_MAP:
+            return _compile_static_matcher(obj)
 
-    if len(obj) != 1:
-        raise CompilationError(
-            f'Must have only 1 element, but has {len(obj)}'
-        )
+    if isinstance(obj, Mapping):
+        if len(obj) != 1:
+            raise CompilationError(
+                f'Must have only 1 element, but has {len(obj)}'
+            )
 
-    key, value = next(iter(obj.items()))
+        key, value = next(iter(obj.items()))
 
-    if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
-        return _compile_taking_value(key, value)
+        if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
+            return _compile_taking_value(key, value)
 
-    if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
-        return _compile_taking_single_matcher(key, value)
+        if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
+            return _compile_taking_single_matcher(key, value)
 
-    raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
+    return hamcrest.equal_to(obj)

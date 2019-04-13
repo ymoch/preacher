@@ -138,12 +138,18 @@ A ``Predicate`` is a ``Matcher`` (can be extended in the future).
 
 Matcher
 *******
-A ``Matcher`` is a string or a mapping. Allowed values are:
+A ``Matcher`` is a string or a mapping.
+
+Allowed strings are:
 
 - is_null
 - is_not_null
 - is_empty
-- is: ``Value``
+
+A mapping for ``Matcher`` has an item. Allowed items are:
+
+- is: ``Value`` or ``Matcher``
+- not: ``Value`` or ``Matcher``
 - equals_to: ``Value``
 - has_length: ``Integer``
 - is_greater_than: ``Comparable``
