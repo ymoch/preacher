@@ -1,7 +1,6 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from itertools import chain
 from typing import Any, Union
 
 import hamcrest
@@ -16,6 +15,33 @@ _STATIC_MATCHER_MAP = {
     'is_not_null': hamcrest.is_(hamcrest.not_none()),
     # For collections.
     'is_empty': hamcrest.is_(hamcrest.empty()),
+}
+_MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
+    # For objects.
+    'is': lambda expected: hamcrest.is_(expected),
+    'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
+    'has_length': lambda expected: hamcrest.has_length(expected),
+    # For numbers.
+    'is_greater_than': (
+        lambda value: hamcrest.is_(hamcrest.greater_than(value))
+    ),
+    'is_greater_than_or_equal_to': (
+        lambda value: hamcrest.is_(hamcrest.greater_than_or_equal_to(value))
+    ),
+    'is_less_than': (
+        lambda value: hamcrest.is_(hamcrest.less_than(value))
+    ),
+    'is_less_than_or_equal_to': (
+        lambda value: hamcrest.is_(hamcrest.less_than_or_equal_to(value))
+    ),
+    # For strings.
+    'contains_string': lambda value: hamcrest.contains_string(value),
+    'starts_with': lambda value: hamcrest.starts_with(value),
+    'ends_with': lambda value: hamcrest.ends_with(value),
+    'matches_regexp': lambda value: hamcrest.matches_regexp(value),
+}
+_MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
+    'not': lambda matcher: hamcrest.not_(matcher),
 }
 
 
@@ -46,32 +72,6 @@ def _compile_static_matcher(name: str) -> Matcher:
     if not matcher:
         raise CompilationError(f'Invalid matcher: \'{name}\'')
     return matcher
-
-
-_MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
-    # For objects.
-    'is': lambda expected: hamcrest.is_(expected),
-    'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
-    'has_length': lambda expected: hamcrest.has_length(expected),
-    # For numbers.
-    'is_greater_than': (
-        lambda value: hamcrest.is_(hamcrest.greater_than(value))
-    ),
-    'is_greater_than_or_equal_to': (
-        lambda value: hamcrest.is_(hamcrest.greater_than_or_equal_to(value))
-    ),
-    'is_less_than': (
-        lambda value: hamcrest.is_(hamcrest.less_than(value))
-    ),
-    'is_less_than_or_equal_to': (
-        lambda value: hamcrest.is_(hamcrest.less_than_or_equal_to(value))
-    ),
-    # For strings.
-    'contains_string': lambda value: hamcrest.contains_string(value),
-    'starts_with': lambda value: hamcrest.starts_with(value),
-    'ends_with': lambda value: hamcrest.ends_with(value),
-    'matches_regexp': lambda value: hamcrest.matches_regexp(value),
-}
 
 
 def _compile_taking_value(key: str, value: Any) -> Matcher:
@@ -149,11 +149,6 @@ def _compile_taking_value(key: str, value: Any) -> Matcher:
     return func(value)
 
 
-_MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
-    'not': lambda matcher: hamcrest.not_(matcher),
-}
-
-
 def _compile_taking_single_matcher(key: str, value: Any):
     """
     >>> _compile_taking_single_matcher('invalid_key', '')
@@ -181,12 +176,6 @@ def _compile_taking_single_matcher(key: str, value: Any):
         inner = hamcrest.equal_to(value)
 
     return func(inner)
-
-
-_MATCHER_MAP_KEYS = frozenset(chain(
-    _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE.keys(),
-    _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.keys(),
-))
 
 
 def compile(obj: Union[str, Mapping]) -> Matcher:
