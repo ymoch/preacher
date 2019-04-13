@@ -154,41 +154,23 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
 }
 
 
-def _compile_taking_single_matcher(obj: Mapping):
+def _compile_taking_single_matcher(key: str, value: Any):
     """
-    >>> _compile_taking_single_matcher({})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 0
-
-    >>> _compile_taking_single_matcher({'key1': 'value1', 'key2': 'value2'})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 2
-
-    >>> _compile_taking_single_matcher({'invalid_key': ''})
+    >>> _compile_taking_single_matcher('invalid_key', '')
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_key'
 
-    >>> matcher = _compile_taking_single_matcher({'not': 1})
+    >>> matcher = _compile_taking_single_matcher('not', 1)
     >>> assert matcher.matches('A')
     >>> assert matcher.matches(0)
     >>> assert not matcher.matches(1)
 
-    >>> matcher = _compile_taking_single_matcher(
-    ...     {'not': {'contains_string': 'AB'}}
-    ... )
+    >>> matcher = _compile_taking_single_matcher('not', {'is_greater_than': 0})
+    >>> assert matcher.matches(-1)
     >>> assert matcher.matches(0)
-    >>> assert matcher.matches('A')
-    >>> assert not matcher.matches('AB')
+    >>> assert not matcher.matches(1)
     """
-    if len(obj) != 1:
-        raise CompilationError(
-            f'Must have only 1 element, but has {len(obj)}'
-        )
-
-    key, value = next(iter(obj.items()))
     func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.get(key)
     if not func:
         raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
@@ -211,17 +193,17 @@ def compile(obj: Union[str, Mapping]) -> Matcher:
     """
     >>> from unittest.mock import patch, sentinel
 
-    >>> _compile_taking_single_matcher({})
+    >>> compile({})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ... has 0
 
-    >>> _compile_taking_single_matcher({'key1': 'value1', 'key2': 'value2'})
+    >>> compile({'key1': 'value1', 'key2': 'value2'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ... has 2
 
-    >>> _compile_taking_single_matcher({'invalid_key': ''})
+    >>> compile({'invalid_key': ''})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_key'
@@ -247,7 +229,7 @@ def compile(obj: Union[str, Mapping]) -> Matcher:
     ...     return_value=sentinel.single_matcher_matcher,
     ... ) as matcher_mock:
     ...     compile({'not': 'value'})
-    ...     matcher_mock.assert_called_with({'not': 'value'})
+    ...     matcher_mock.assert_called_with('not', 'value')
     sentinel.single_matcher_matcher
     """
     if isinstance(obj, str):
@@ -264,6 +246,6 @@ def compile(obj: Union[str, Mapping]) -> Matcher:
         return _compile_taking_value(key, value)
 
     if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
-        return _compile_taking_single_matcher(obj)
+        return _compile_taking_single_matcher(key, value)
 
     raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
