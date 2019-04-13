@@ -6,8 +6,7 @@ from typing import Union
 import hamcrest
 
 from preacher.core.predicate import Predicate, of_hamcrest_matcher
-from .error import CompilationError
-from .matcher import _compile_static_matcher
+from .matcher import _compile_static_matcher, _compile_single_value_matcher
 
 
 _VALUE_MATCHER_FUNCTION_MAP = {
@@ -49,49 +48,7 @@ def compile(obj: Union[str, Mapping]) -> Predicate:
     ...     predicate = compile('string')
     ...     static_matcher_mock.assert_called_with('string')
 
-    >>> compile({})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 0
-
-    >>> compile({'equals_to': 0, 'not': {'equal_to': 1}})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 2
-
-    >>> predicate = compile({'has_length': 1})
-    >>> predicate(None).status.name
-    'UNSTABLE'
-    >>> predicate('').status.name
-    'UNSTABLE'
-    >>> predicate([]).status.name
-    'UNSTABLE'
-    >>> predicate('A').status.name
-    'SUCCESS'
-    >>> predicate([1]).status.name
-    'SUCCESS'
-
-    >>> compile({'invalid_key': 0})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... 'invalid_key'
-
-    >>> predicate = compile({'is': 1})
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate('1').status.name
-    'UNSTABLE'
-    >>> predicate(1).status.name
-    'SUCCESS'
-
-    >>> predicate = compile({'equals_to': 1})
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate('1').status.name
-    'UNSTABLE'
-    >>> predicate(1).status.name
-    'SUCCESS'
-
+    TODO: Move to preacher.compilation.matcher._compile_single_value_matcher
     >>> predicate = compile({'is_greater_than': 0})
     >>> predicate(-1).status.name
     'UNSTABLE'
@@ -160,16 +117,6 @@ def compile(obj: Union[str, Mapping]) -> Predicate:
     """
     if isinstance(obj, str):
         matcher = _compile_static_matcher(obj)
-        return of_hamcrest_matcher(matcher)
-
-    if len(obj) != 1:
-        raise CompilationError(
-            'Predicate must have only 1 element'
-            f', but has {len(obj)}'
-        )
-    key, value = next(iter(obj.items()))
-    if key in _VALUE_MATCHER_FUNCTION_MAP:
-        matcher = _VALUE_MATCHER_FUNCTION_MAP[key](value)
-        return of_hamcrest_matcher(matcher)
-
-    raise CompilationError(f'Unrecognized predicate key: \'{key}\'')
+    else:
+        matcher = _compile_single_value_matcher(obj)
+    return of_hamcrest_matcher(matcher)
