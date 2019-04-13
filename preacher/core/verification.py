@@ -1,6 +1,7 @@
 """Verification."""
 
 from __future__ import annotations
+
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
@@ -12,30 +13,30 @@ class Status(Enum):
     """
     >>> Status.SUCCESS.is_succeeded
     True
-    >>> Status.SUCCESS.merge(Status.SUCCESS).name
-    'SUCCESS'
-    >>> Status.SUCCESS.merge(Status.UNSTABLE).name
-    'UNSTABLE'
-    >>> Status.SUCCESS.merge(Status.FAILURE).name
-    'FAILURE'
+    >>> Status.SUCCESS.merge(Status.SUCCESS)
+    SUCCESS
+    >>> Status.SUCCESS.merge(Status.UNSTABLE)
+    UNSTABLE
+    >>> Status.SUCCESS.merge(Status.FAILURE)
+    FAILURE
 
     >>> Status.UNSTABLE.is_succeeded
     False
-    >>> Status.UNSTABLE.merge(Status.SUCCESS).name
-    'UNSTABLE'
-    >>> Status.UNSTABLE.merge(Status.UNSTABLE).name
-    'UNSTABLE'
-    >>> Status.UNSTABLE.merge(Status.FAILURE).name
-    'FAILURE'
+    >>> Status.UNSTABLE.merge(Status.SUCCESS)
+    UNSTABLE
+    >>> Status.UNSTABLE.merge(Status.UNSTABLE)
+    UNSTABLE
+    >>> Status.UNSTABLE.merge(Status.FAILURE)
+    FAILURE
 
     >>> Status.FAILURE.is_succeeded
     False
-    >>> Status.FAILURE.merge(Status.SUCCESS).name
-    'FAILURE'
-    >>> Status.FAILURE.merge(Status.UNSTABLE).name
-    'FAILURE'
-    >>> Status.FAILURE.merge(Status.FAILURE).name
-    'FAILURE'
+    >>> Status.FAILURE.merge(Status.SUCCESS)
+    FAILURE
+    >>> Status.FAILURE.merge(Status.UNSTABLE)
+    FAILURE
+    >>> Status.FAILURE.merge(Status.FAILURE)
+    FAILURE
     """
     # Numbers stand for the priorities for merging.
     SUCCESS = 0
@@ -43,11 +44,17 @@ class Status(Enum):
     FAILURE = 2
 
     @property
-    def is_succeeded(self):
+    def is_succeeded(self: Status):
         return self is Status.SUCCESS
 
-    def merge(self, other: Status):
+    def merge(self: Status, other: Status):
         return max(self, other, key=lambda status: status.value)
+
+    def __str__(self: Status) -> str:
+        return self.name
+
+    def __repr__(self: Status) -> str:
+        return str(self)
 
 
 @singledispatch
@@ -59,16 +66,16 @@ def merge_statuses(*args) -> Status:
     ValueError: (1,)
 
     For varargs.
-    >>> merge_statuses(Status.UNSTABLE).name
-    'UNSTABLE'
-    >>> merge_statuses(Status.SUCCESS, Status.FAILURE, Status.UNSTABLE).name
-    'FAILURE'
+    >>> merge_statuses(Status.UNSTABLE)
+    UNSTABLE
+    >>> merge_statuses(Status.SUCCESS, Status.FAILURE, Status.UNSTABLE)
+    FAILURE
 
     For iterables.
-    >>> merge_statuses([]).name
-    'SUCCESS'
-    >>> merge_statuses([Status.SUCCESS, Status.UNSTABLE, Status.FAILURE]).name
-    'FAILURE'
+    >>> merge_statuses([])
+    SUCCESS
+    >>> merge_statuses([Status.SUCCESS, Status.UNSTABLE, Status.FAILURE])
+    FAILURE
     """
     raise ValueError(str(args))
 
