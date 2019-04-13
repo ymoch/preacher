@@ -7,15 +7,9 @@ import hamcrest
 
 from preacher.core.predicate import Predicate, of_hamcrest_matcher
 from .error import CompilationError
+from .matcher import _compile_static_matcher
 
 
-_STATIC_MATCHER_MAP = {
-    # For objects.
-    'is_null': hamcrest.is_(hamcrest.none()),
-    'is_not_null': hamcrest.is_(hamcrest.not_none()),
-    # For collections.
-    'is_empty': hamcrest.is_(hamcrest.empty()),
-}
 _VALUE_MATCHER_FUNCTION_MAP = {
     # For objects.
     'is': lambda expected: hamcrest.is_(expected),
@@ -45,36 +39,15 @@ _PREDICATE_KEYS = frozenset(_VALUE_MATCHER_FUNCTION_MAP.keys())
 
 def compile(obj: Union[str, Mapping]) -> Predicate:
     """
-    >>> compile('invalid_key')
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... 'invalid_key'
-
-    >>> predicate = compile('is_null')
-    >>> predicate(None).status.name
-    'SUCCESS'
-    >>> predicate('SUCCESS').status.name
-    'UNSTABLE'
-
-    >>> predicate = compile('is_not_null')
-    >>> predicate(None).status.name
-    'UNSTABLE'
-    >>> predicate('UNSTABLE').status.name
-    'SUCCESS'
-
-    >>> predicate = compile('is_empty')
-    >>> predicate(None).status.name
-    'UNSTABLE'
-    >>> predicate(0).status.name
-    'UNSTABLE'
-    >>> predicate('').status.name
-    'SUCCESS'
-    >>> predicate([]).status.name
-    'SUCCESS'
-    >>> predicate('A').status.name
-    'UNSTABLE'
-    >>> predicate([1]).status.name
-    'UNSTABLE'
+    >>> from hamcrest.core.matcher import Matcher
+    >>> from unittest.mock import MagicMock, patch
+    >>> matcher = MagicMock(Matcher)
+    >>> with patch(
+    ...     f'{__name__}._compile_static_matcher',
+    ...     return_value=matcher,
+    ... ) as static_matcher_mock:
+    ...     predicate = compile('string')
+    ...     static_matcher_mock.assert_called_with('string')
 
     >>> compile({})
     Traceback (most recent call last):
@@ -186,11 +159,7 @@ def compile(obj: Union[str, Mapping]) -> Predicate:
     'FAILURE'
     """
     if isinstance(obj, str):
-        matcher = _STATIC_MATCHER_MAP.get(obj)
-        if not matcher:
-            raise CompilationError(
-                f'Invalid predicate: \'{obj}\''
-            )
+        matcher = _compile_static_matcher(obj)
         return of_hamcrest_matcher(matcher)
 
     if len(obj) != 1:
