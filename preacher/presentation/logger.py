@@ -19,13 +19,13 @@ _LEVEL_MAP = {
 }
 
 
-class LoggerPresentation:
-    def __init__(self: LoggerPresentation, logger: logging.Logger) -> None:
+class LoggingPresentation:
+    def __init__(self: LoggingPresentation, logger: logging.Logger) -> None:
         self._logger = logger
         self._indent = ''
 
     def show_scenario_verification(
-        self: LoggerPresentation,
+        self: LoggingPresentation,
         verification: ScenarioVerification,
         label: Optional[str] = None,
     ) -> None:
@@ -46,7 +46,7 @@ class LoggerPresentation:
                 self.show_response_verification(response)
 
     def show_response_verification(
-        self: LoggerPresentation,
+        self: LoggingPresentation,
         verification: ResponseVerification,
         label: str = 'Response',
     ) -> None:
@@ -65,7 +65,7 @@ class LoggerPresentation:
             )
 
     def show_verification(
-        self: LoggerPresentation,
+        self: LoggingPresentation,
         verification: Verification,
         label: str,
         child_label: str = 'Predicate',
@@ -90,7 +90,7 @@ class LoggerPresentation:
             self._log(level, line.rstrip())
 
     @contextlib.contextmanager
-    def _nested(self: LoggerPresentation) -> Iterator[None]:
+    def _nested(self: LoggingPresentation) -> Iterator[None]:
         original = self._indent
         self._indent += '..'
         yield

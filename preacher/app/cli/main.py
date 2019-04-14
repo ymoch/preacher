@@ -10,7 +10,7 @@ import ruamel.yaml as yaml
 
 from preacher import __version__ as VERSION
 from preacher.compilation import compile
-from preacher.presentation.logger import LoggerPresentation
+from preacher.presentation.logger import LoggingPresentation
 from .application import Application
 
 
@@ -59,7 +59,7 @@ def main() -> None:
     HANDLER.setLevel(logging_level)
 
     base_url = args.url
-    view = LoggerPresentation(LOGGER)
+    view = LoggingPresentation(LOGGER)
     app = Application(base_url=base_url, view=view)
 
     config_paths = args.conf

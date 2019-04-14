@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from preacher.core.scenario import Scenario
-from preacher.presentation.logger import LoggerPresentation
+from preacher.presentation.logger import LoggingPresentation
 
 
 class Application:
     def __init__(
         self: Application,
         base_url: str,
-        view: LoggerPresentation,
+        view: LoggingPresentation,
     ) -> None:
         self._view = view
         self._base_url = base_url
