@@ -123,7 +123,7 @@ A ``Description`` is a mapping that consists of below:
 
 - describe: ``String`` or ``Extraction``
     - An extraction process.
-    - When given a string, that is passed to the default extraction.
+    - When given a string, that is equivalent to ``{"jq": it}``.
 - it: ``Predicate``, or ``List<Predicate>>``
     - Predicates that match the extracted value.
 
@@ -151,17 +151,31 @@ Allowed strings are:
 A mapping for ``Matcher`` has an item. Allowed items are:
 
 - is: ``Value`` or ``Matcher``
+    - Matches when it matches the given value or the given matcher.
+    - When given ``Value``, that is equivalent to ``{"equals_to": it}``.
 - not: ``Value`` or ``Matcher``
+    - Matches when it doesn't match the given value or the given matcher.
+    - When given ``Value``, that is equivalent to ``{"not": {"equals_to": it}}``
 - equals_to: ``Value``
+    - Matches when it equals to the given value.
 - has_length: ``Integer``
+    - Matches when it has a length and its length is equal to the given value.
 - is_greater_than: ``Comparable``
+    - Matches when it is greater than the given value (it > argument).
 - is_greater_than_or_equal_to: ``Comparable``
+    - Matches when it is greater than or equal to the given value (it >= argument).
 - is_less_than: ``Comparable``
+    - Matches when it is less than the given value (it < argument).
 - is_less_than_or_equal_to: ``Comparable``
+    - Matches when it is less than or equal to the given value (it < argument).
 - contains_string: ``String``
+    - Matches when it is an string and contains the given value.
 - starts_with: ``String``
+    - Matches when it is an string and starts with the given value.
 - ends_with: ``String``
+    - Matches when it is an string and ends with the given value.
 - matches_regexp: ``String``
+    - Matches when it is an string and matches the given regular expression.
 
 
 .. _YAML: https://yaml.org/
