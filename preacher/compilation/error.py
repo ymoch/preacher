@@ -13,7 +13,7 @@ class CompilationError(Exception):
         path: List[str] = [],
         cause: Optional[Exception] = None,
     ) -> None:
-        super(Exception, self).__init__(message)
+        super().__init__(message)
         self._message = message
         self._path = path
         self._cause = cause
@@ -29,7 +29,7 @@ class CompilationError(Exception):
         )
 
     def __str__(self: CompilationError):
-        message = super(Exception, self).__str__()
+        message = super().__str__()
         if not self._path:
             return message
 
