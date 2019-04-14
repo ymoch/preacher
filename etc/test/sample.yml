@@ -27,14 +27,11 @@ scenarios:
             - ends_with: ar
             - matches_regexp: ^b.r$
         - describe: .empty_string
-          it:
-            - is_empty
+          it: is_empty
         - describe: .empty_list
-          it:
-            - is_empty
+          it: is_empty
         - describe: .not_existing_key
-          it:
-            - is_null
+          it: is_null
 
   - label: /error/404 returns a failure result
     request:
@@ -49,8 +46,7 @@ scenarios:
         body:
           - describe:
               jq: .message
-            it:
-              is: not found
+            it: not found
 
   - label: No validations for text doesn't fail
     request:

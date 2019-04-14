@@ -27,16 +27,23 @@ def compile(obj: Mapping) -> Description:
     preacher.compilation.error.CompilationError: Description.describe ...
 
     >>> with extraction_patch as extraction_mock:
-    ...     compile({'describe': 'foo', 'it': 'str'})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: Description.it ...
-
-    >>> with extraction_patch as extraction_mock:
     ...     compile({'describe': {}, 'it': [None]})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Predicate ...
+
+    >>> with extraction_patch as extraction_mock, \\
+    ...      predicate_patch as predicate_mock:
+    ...     description = compile({
+    ...         'describe': 'foo',
+    ...         'it': 'string',
+    ...     })
+    ...     extraction_mock.assert_called_with({'jq': 'foo'})
+    ...     predicate_mock.assert_called_once_with('string')
+    >>> description.extraction
+    sentinel.extraction
+    >>> description.predicates
+    [sentinel.predicate]
 
     >>> with extraction_patch as extraction_mock, \\
     ...      predicate_patch as predicate_mock:
@@ -78,7 +85,7 @@ def compile(obj: Mapping) -> Description:
     extraction = compile_extraction(extraction_obj)
 
     predicate_objs = obj.get('it', [])
-    if isinstance(predicate_objs, Mapping):
+    if isinstance(predicate_objs, Mapping) or isinstance(predicate_objs, str):
         predicate_objs = [predicate_objs]
     if not isinstance(predicate_objs, list):
         raise CompilationError(
