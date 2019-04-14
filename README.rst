@@ -131,10 +131,14 @@ A ``Description`` is a mapping that consists of below:
 
 Extraction
 **********
-An ``Extraction`` is a mapping that has one of below:
+An ``Extraction`` is a mapping or a string.
+
+A mapping for ``Extraction`` has one of below:
 
 - jq: ``String``
     - A `jq`_ query.
+
+When fiven a string, that is equivalent to ``{"jq": it}``.
 
 Predicate
 *********

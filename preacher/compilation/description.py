@@ -15,7 +15,7 @@ _KEY_IT = 'it'
 
 def compile(obj: Mapping) -> Description:
     """
-    >>> from unittest.mock import patch, sentinel
+    >>> from unittest.mock import call, patch, sentinel
     >>> extraction_patch = patch(
     ...     f'{__name__}.compile_extraction',
     ...     return_value=sentinel.extraction,
@@ -36,7 +36,7 @@ def compile(obj: Mapping) -> Description:
     ...         'describe': 'foo',
     ...         'it': 'string',
     ...     })
-    ...     extraction_mock.assert_called_with({'jq': 'foo'})
+    ...     extraction_mock.assert_called_with('foo')
     ...     predicate_mock.assert_called_once_with('string')
     >>> description.extraction
     sentinel.extraction
@@ -49,10 +49,8 @@ def compile(obj: Mapping) -> Description:
     ...         'describe': 'foo',
     ...         'it': {'key': 'value'}
     ...     })
-    ...     extraction_mock.call_args
-    ...     predicate_mock.call_args_list
-    call({'jq': 'foo'})
-    [call({'key': 'value'})]
+    ...     extraction_mock.assert_called_once_with('foo')
+    ...     predicate_mock.assert_called_once_with({'key': 'value'})
     >>> description.extraction
     sentinel.extraction
     >>> description.predicates
@@ -64,19 +62,21 @@ def compile(obj: Mapping) -> Description:
     ...         'describe': {'key': 'value'},
     ...         'it': [{'key1': 'value1'}, {'key2': 'value2'}]
     ...     })
-    ...     extraction_mock.call_args
-    ...     predicate_mock.call_args_list
-    call({'key': 'value'})
-    [call({'key1': 'value1'}), call({'key2': 'value2'})]
+    ...     extraction_mock.assert_called_once_with({'key': 'value'})
+    ...     predicate_mock.assert_has_calls([
+    ...         call({'key1': 'value1'}),
+    ...         call({'key2': 'value2'}),
+    ...     ])
     >>> description.extraction
     sentinel.extraction
     >>> description.predicates
     [sentinel.predicate, sentinel.predicate]
     """
     extraction_obj = obj.get(_KEY_DESCRIBE)
-    if isinstance(extraction_obj, str):
-        extraction_obj = {'jq': extraction_obj}  # HACK: move
-    if not isinstance(extraction_obj, Mapping):
+    if (
+        not isinstance(extraction_obj, Mapping)
+        and not isinstance(extraction_obj, str)
+    ):
         raise CompilationError(
             message='Description.describe must be a mapping',
             path=[_KEY_DESCRIBE],
