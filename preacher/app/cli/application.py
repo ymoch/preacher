@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from preacher.core.scenario import Scenario
-from preacher.presentation.logger import LoggingPresentation
+from preacher.presentation.logging import LoggingPresentation
 
 
 class Application:

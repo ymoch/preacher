@@ -33,7 +33,7 @@ scenarios:
         - describe: .not_existing_key
           it: is_null
 
-  - label: /error/404 returns a failure result
+  - label: Returns a failure result
     request:
       path: /error/404
       response:
