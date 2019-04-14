@@ -5,17 +5,21 @@ from preacher.core.request import Request
 from .error import CompilationError
 
 
+_KEY_PATH = 'path'
+_KEY_PARAMS = 'params'
+
+
 def compile(obj: Mapping) -> Request:
     """
     >>> compile({'path': {'key': 'value'}})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Request.path ...
+    preacher.compilation.error.CompilationError: Request.path ...: path
 
     >>> compile({'params': ''})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Request.params ...
+    preacher.compilation.error.CompilationError: Request.params ...: params
 
     >>> request = compile({})
     >>> request.path
@@ -29,12 +33,18 @@ def compile(obj: Mapping) -> Request:
     >>> request.params
     {'key': 'value'}
     """
-    path = obj.get('path', '')
+    path = obj.get(_KEY_PATH, '')
     if not isinstance(path, str):
-        raise CompilationError(f'Request.path must be a string: {path}')
+        raise CompilationError(
+            message=f'Request.{_KEY_PATH} must be a string',
+            path=[_KEY_PATH],
+        )
 
-    params = obj.get('params', {})
+    params = obj.get(_KEY_PARAMS, {})
     if not isinstance(params, Mapping):
-        raise CompilationError(f'Request.params must be a mapping: {params}')
+        raise CompilationError(
+            message=f'Request.{_KEY_PARAMS} must be a mapping',
+            path=[_KEY_PARAMS],
+        )
 
     return Request(path=path, params=params)

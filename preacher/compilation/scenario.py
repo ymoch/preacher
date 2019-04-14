@@ -45,11 +45,32 @@ def compile_scenario(obj: Mapping) -> Scenario:
         ...
     preacher.compilation.error.CompilationError: Scenario.request ...: request
 
+    >>> with request_patch as request_mock:
+    ...     request_mock.side_effect=CompilationError(
+    ...         message='message',
+    ...         path=['foo'],
+    ...     )
+    ...     compile_scenario({})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: message: request.foo
+
     >>> with request_patch:
     ...     compile_scenario({'response': 'str'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.response...: response
+
+    >>> with request_patch as request_mock, \\
+    ...      response_description_patch as response_description_mock:
+    ...     response_description_mock.side_effect=CompilationError(
+    ...         message='message',
+    ...         path=['bar'],
+    ...     )
+    ...     scenario = compile_scenario({'request': '/path'})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: message: response.bar
 
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
@@ -90,7 +111,10 @@ def compile_scenario(obj: Mapping) -> Scenario:
             message=f'Scenario.{_KEY_REQUEST} must be a string or a mapping',
             path=[_KEY_REQUEST],
         )
-    request = compile_request(request_obj)
+    try:
+        request = compile_request(request_obj)
+    except CompilationError as error:
+        raise error.of_parent([_KEY_REQUEST])
 
     response_obj = obj.get('response', {})
     if not isinstance(response_obj, Mapping):
@@ -98,7 +122,10 @@ def compile_scenario(obj: Mapping) -> Scenario:
             message=f'Scenario.{_KEY_RESPONSE} object must be a mapping',
             path=[_KEY_RESPONSE],
         )
-    response_description = compile_response_description(response_obj)
+    try:
+        response_description = compile_response_description(response_obj)
+    except CompilationError as error:
+        raise error.of_parent([_KEY_RESPONSE])
 
     return Scenario(
         label=label,
