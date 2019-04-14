@@ -1,6 +1,8 @@
 """Request compilation."""
 
 from collections.abc import Mapping
+from typing import Union
+
 from preacher.core.request import Request
 from .error import CompilationError
 
@@ -9,7 +11,7 @@ _KEY_PATH = 'path'
 _KEY_PARAMS = 'params'
 
 
-def compile(obj: Mapping) -> Request:
+def compile(obj: Union[Mapping, str]) -> Request:
     """
     >>> compile({'path': {'key': 'value'}})
     Traceback (most recent call last):
@@ -20,6 +22,12 @@ def compile(obj: Mapping) -> Request:
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Request.params ...: params
+
+    >>> request = compile('/path')
+    >>> request.path
+    '/path'
+    >>> request.params
+    {}
 
     >>> request = compile({})
     >>> request.path
@@ -33,6 +41,9 @@ def compile(obj: Mapping) -> Request:
     >>> request.params
     {'key': 'value'}
     """
+    if isinstance(obj, str):
+        return compile({_KEY_PATH: obj})
+
     path = obj.get(_KEY_PATH, '')
     if not isinstance(path, str):
         raise CompilationError(

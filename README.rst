@@ -47,13 +47,11 @@ Here is a simple configuration example.
 
     scenarios:
       - label: Simple
-        request:
-          path: /path/to/foo
+        request: /path/to/foo
         response:
           status_code: 200
           body:
-            - describe:
-                jq: .foo
+            - describe: .foo
               it:
                 equals_to: bar
       - label: A Little Complecated
@@ -100,12 +98,16 @@ A ``Scenario`` is a mapping that consists of below:
 
 Request
 *******
-A ``Request`` is a mapping that consists of below:
+A ``Request`` is a mapping or a string.
+
+A mapping for ``Request`` has items below:
 
 - path: ``String`` (Optional)
     - A request path. The default value is ``''``.
 - params: ``Mapping<String, String>`` (Optional)
     - Query parameters as a mapping of keys to values.
+
+When given a string, that is equivalent to ``{"path": it}``.
 
 Response Decription
 *******************
@@ -129,10 +131,14 @@ A ``Description`` is a mapping that consists of below:
 
 Extraction
 **********
-An ``Extraction`` is a mapping that has one of below:
+An ``Extraction`` is a mapping or a string.
+
+A mapping for ``Extraction`` has one of below:
 
 - jq: ``String``
     - A `jq`_ query.
+
+When fiven a string, that is equivalent to ``{"jq": it}``.
 
 Predicate
 *********

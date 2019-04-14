@@ -17,7 +17,7 @@ _KEY_BODY = 'body'
 
 def compile(obj: Mapping) -> ResponseDescription:
     """
-    >>> from unittest.mock import patch, sentinel
+    >>> from unittest.mock import call, patch, sentinel
     >>> predicate_patch = patch(
     ...     f'{__name__}.compile_predicate',
     ...     return_value=sentinel.predicate,
@@ -30,8 +30,8 @@ def compile(obj: Mapping) -> ResponseDescription:
     >>> with predicate_patch as predicate_mock, \\
     ...      description_patch as description_mock:
     ...     response_description = compile({})
-    ...     assert predicate_mock.call_count == 0
-    ...     assert description_mock.call_count == 0
+    ...     predicate_mock.assert_not_called()
+    ...     description_mock.assert_not_called()
     >>> response_description.status_code_predicates
     []
     >>> response_description.body_descriptions
@@ -53,10 +53,8 @@ def compile(obj: Mapping) -> ResponseDescription:
     ...         'status_code': 402,
     ...         'body': {'key1': 'value1'}}
     ...     )
-    ...     predicate_mock.call_args_list
-    ...     description_mock.call_args_list
-    [call({'equals_to': 402})]
-    [call({'key1': 'value1'})]
+    ...     predicate_mock.assert_called_once_with(402)
+    ...     description_mock.assert_called_once_with({'key1': 'value1'})
     >>> response_description.body_descriptions
     [sentinel.description]
 
@@ -66,17 +64,18 @@ def compile(obj: Mapping) -> ResponseDescription:
     ...         'status_code': [{'is_greater_than': 0}, {'is_less_than': 400}],
     ...         'body': [{'key1': 'value1'}, {'key2': 'value2'}],
     ...     })
-    ...     predicate_mock.call_args_list
-    ...     description_mock.call_args_list
-    [call({'is_greater_than': 0}), call({'is_less_than': 400})]
-    [call({'key1': 'value1'}), call({'key2': 'value2'})]
+    ...     predicate_mock.assert_has_calls([
+    ...         call({'is_greater_than': 0}),
+    ...         call({'is_less_than': 400}),
+    ...     ])
+    ...     description_mock.assert_has_calls([
+    ...         call({'key1': 'value1'}),
+    ...         call({'key2': 'value2'}),
+    ...     ])
     >>> response_description.body_descriptions
     [sentinel.description, sentinel.description]
     """
     status_code_predicate_objs = obj.get(_KEY_STATUS_CODE, [])
-    if isinstance(status_code_predicate_objs, int):
-        # HACK: move
-        status_code_predicate_objs = {'equals_to': status_code_predicate_objs}
     if not isinstance(status_code_predicate_objs, list):
         status_code_predicate_objs = [status_code_predicate_objs]
     status_code_predicates = list(map_on_key(
