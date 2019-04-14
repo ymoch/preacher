@@ -6,6 +6,7 @@ from preacher.core.scenario import Scenario
 from .error import CompilationError
 from .request import compile as compile_request
 from .response_description import compile as compile_response_description
+from .util import run_on_key
 
 
 _KEY_LABEL = 'label'
@@ -111,10 +112,7 @@ def compile_scenario(obj: Mapping) -> Scenario:
             message=f'Scenario.{_KEY_REQUEST} must be a string or a mapping',
             path=[_KEY_REQUEST],
         )
-    try:
-        request = compile_request(request_obj)
-    except CompilationError as error:
-        raise error.of_parent([_KEY_REQUEST])
+    request = run_on_key(_KEY_REQUEST, compile_request, request_obj)
 
     response_obj = obj.get('response', {})
     if not isinstance(response_obj, Mapping):
@@ -122,10 +120,11 @@ def compile_scenario(obj: Mapping) -> Scenario:
             message=f'Scenario.{_KEY_RESPONSE} object must be a mapping',
             path=[_KEY_RESPONSE],
         )
-    try:
-        response_description = compile_response_description(response_obj)
-    except CompilationError as error:
-        raise error.of_parent([_KEY_RESPONSE])
+    response_description = run_on_key(
+        _KEY_RESPONSE,
+        compile_response_description,
+        response_obj,
+    )
 
     return Scenario(
         label=label,

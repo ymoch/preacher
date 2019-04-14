@@ -8,6 +8,7 @@ from typing import Any, Iterator
 from preacher.core.scenario import Scenario
 from .error import CompilationError
 from .scenario import compile_scenario
+from .util import map_on_key
 
 
 _KEY_SCENARIOS = 'scenarios'
@@ -44,11 +45,7 @@ def compile(obj: Mapping) -> Iterator[Scenario]:
     if not isinstance(scenario_objs, list):
         raise CompilationError(message='Must be a list', path=[_KEY_SCENARIOS])
 
-    for idx, scenario_obj in enumerate(scenario_objs):
-        try:
-            yield _compile_scenario(scenario_obj)
-        except CompilationError as error:
-            raise error.of_parent([f'{_KEY_SCENARIOS}[{idx}]'])
+    return map_on_key(_KEY_SCENARIOS, _compile_scenario, scenario_objs)
 
 
 def _compile_scenario(obj: Any) -> Scenario:

@@ -8,6 +8,11 @@ from preacher.core.response_description import ResponseDescription
 from .error import CompilationError
 from .description import compile as compile_description
 from .predicate import compile as compile_predicate
+from .util import map_on_key
+
+
+_KEY_STATUS_CODE = 'status_code'
+_KEY_BODY = 'body'
 
 
 def compile(obj: Mapping) -> ResponseDescription:
@@ -35,12 +40,12 @@ def compile(obj: Mapping) -> ResponseDescription:
     >>> compile({'body': 'str'})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: ResponseDescription.body ...
+    preacher.compilation.error.CompilationError: ...: body
 
     >>> compile({'body': ['str']})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Description ...
+    preacher.compilation.error.CompilationError: Description ...: body[0]
 
     >>> with predicate_patch as predicate_mock, \\
     ...      description_patch as description_mock:
@@ -68,27 +73,31 @@ def compile(obj: Mapping) -> ResponseDescription:
     >>> response_description.body_descriptions
     [sentinel.description, sentinel.description]
     """
-    status_code_predicate_objs = obj.get('status_code', [])
+    status_code_predicate_objs = obj.get(_KEY_STATUS_CODE, [])
     if isinstance(status_code_predicate_objs, int):
+        # HACK: move
         status_code_predicate_objs = {'equals_to': status_code_predicate_objs}
     if not isinstance(status_code_predicate_objs, list):
         status_code_predicate_objs = [status_code_predicate_objs]
-    status_code_predicates = [
-        compile_predicate(obj) for obj in status_code_predicate_objs
-    ]
+    status_code_predicates = list(map_on_key(
+        key=_KEY_STATUS_CODE,
+        func=compile_predicate,
+        items=status_code_predicate_objs,
+    ))
 
-    body_description_objs = obj.get('body', [])
+    body_description_objs = obj.get(_KEY_BODY, [])
     if isinstance(body_description_objs, Mapping):
         body_description_objs = [body_description_objs]
     if not isinstance(body_description_objs, list):
         raise CompilationError(
-            'ResponseDescription.body must be a list or a mapping'
-            f': {body_description_objs}'
+            message='ResponseDescription.body must be a list or a mapping',
+            path=[_KEY_BODY],
         )
-    body_descriptions = [
-        _compile_description(body_description_obj)
-        for body_description_obj in body_description_objs
-    ]
+    body_descriptions = list(map_on_key(
+        key=_KEY_BODY,
+        func=_compile_description,
+        items=body_description_objs,
+    ))
 
     return ResponseDescription(
         status_code_predicates=status_code_predicates,
@@ -98,7 +107,5 @@ def compile(obj: Mapping) -> ResponseDescription:
 
 def _compile_description(obj: Any) -> Description:
     if not isinstance(obj, Mapping):
-        raise CompilationError(
-            f'Description must be a mapping: {obj}'
-        )
+        raise CompilationError('Description must be a mapping')
     return compile_description(obj)
