@@ -1,7 +1,7 @@
 scenarios:
-  - label: Test
+  - label: returns a JSON result
     request:
-      path: /path/to/foo
+      path: /json
       query:
         key: value
         multi-key:
@@ -10,17 +10,48 @@ scenarios:
     response:
       status_code: 200
       body:
-        - describe:
-            jq: .foo
+        - describe: .foo
           it:
+            - is_not_null
+            - not: is_empty
             - is: bar
             - is:
                 not: baz
-            - not:
-                contains_string: x
+            - is:
+                not:
+                  contains_string: x
             - equals_to: bar
             - has_length: 3
             - contains_string: a
             - starts_with: ba
             - ends_with: ar
             - matches_regexp: ^b.r$
+        - describe: .empty_string
+          it:
+            - is_empty
+        - describe: .empty_list
+          it:
+            - is_empty
+        - describe: .not_existing_key
+          it:
+            - is_null
+
+  - label: /error/404 returns a failure result
+    request:
+      path: /error/404
+      response:
+        status:code:
+          - equal_to: 404
+          - greater_than: 399
+          - greater_than_or_equal_to: 400
+          - less_than_or_equal_to: 499
+          - less_than: 500
+        body:
+          - describe:
+              jq: .message
+            it:
+              is: not found
+
+  - label: No validations for text doesn't fail
+    request:
+      path: /text
