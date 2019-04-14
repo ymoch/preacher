@@ -32,9 +32,7 @@ class LoggingPresentation:
         status = verification.status
         level = _LEVEL_MAP[status]
 
-        self._log(level, 'Label: %s', verification.label)
-        self._log(level, 'Status: %s', status.name)
-
+        self._log(level, '%s: %s', verification.label, status)
         with self._nested():
             self.show_verification(
                 verification=verification.request,
@@ -45,6 +43,8 @@ class LoggingPresentation:
             if response:
                 self.show_response_verification(response)
 
+        self._log(level, '')
+
     def show_response_verification(
         self: LoggingPresentation,
         verification: ResponseVerification,
@@ -52,7 +52,7 @@ class LoggingPresentation:
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
-        self._log(level, f'%s: %s', label, status.name)
+        self._log(level, f'%s: %s', label, status)
         with self._nested():
             self.show_verification(
                 verification=verification.status_code,
@@ -72,7 +72,7 @@ class LoggingPresentation:
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
-        self._log(level, f'%s: %s', label, status.name)
+        self._log(level, f'%s: %s', label, status)
         message = verification.message
         if message:
             with self._nested():

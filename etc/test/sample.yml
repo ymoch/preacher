@@ -1,5 +1,5 @@
 scenarios:
-  - label: returns a JSON result
+  - label: Returns a JSON result
     request:
       path: /json
       query:
@@ -48,7 +48,7 @@ scenarios:
               jq: .message
             it: not found
 
-  - label: No description doesn't cause error.
+  - label: No description doesn't cause error
     request:
       path: /json
     response:
