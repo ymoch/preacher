@@ -76,7 +76,7 @@ def compile_scenario(obj: Mapping) -> Scenario:
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
     ...     scenario = compile_scenario({'request': '/path'})
-    ...     request_mock.assert_called_once_with({'path': '/path'})
+    ...     request_mock.assert_called_once_with('/path')
     >>> scenario.label
     >>> scenario.request
     sentinel.request
@@ -105,9 +105,10 @@ def compile_scenario(obj: Mapping) -> Scenario:
         )
 
     request_obj = obj.get(_KEY_REQUEST, {})
-    if isinstance(request_obj, str):
-        request_obj = {'path': request_obj}  # HACK: Move to request package.
-    if not isinstance(request_obj, Mapping):
+    if (
+        not isinstance(request_obj, Mapping)
+        and not isinstance(request_obj, str)
+    ):
         raise CompilationError(
             message=f'Scenario.{_KEY_REQUEST} must be a string or a mapping',
             path=[_KEY_REQUEST],
