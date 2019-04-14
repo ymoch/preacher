@@ -37,7 +37,7 @@ scenarios:
     request:
       path: /error/404
       response:
-        status:code:
+        status_code:
           - equal_to: 404
           - greater_than: 399
           - greater_than_or_equal_to: 400
@@ -47,6 +47,13 @@ scenarios:
           - describe:
               jq: .message
             it: not found
+
+  - label: No description doesn't cause error.
+    request:
+      path: /json
+    response:
+      body:
+        - describe: .foo
 
   - label: No validations for text doesn't fail
     request:

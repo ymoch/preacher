@@ -1,7 +1,7 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from typing import Any, Union
+from typing import Any
 
 import hamcrest
 from hamcrest.core.matcher import Matcher
@@ -178,7 +178,7 @@ def _compile_taking_single_matcher(key: str, value: Any):
     return func(inner)
 
 
-def compile(obj: Union[str, Mapping]) -> Matcher:
+def compile(obj: Any) -> Matcher:
     """
     >>> from unittest.mock import patch, sentinel
 

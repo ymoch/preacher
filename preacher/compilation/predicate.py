@@ -1,13 +1,12 @@
 """Predicate compilation."""
 
-from collections.abc import Mapping
-from typing import Union
+from typing import Any
 
 from preacher.core.predicate import Predicate, of_hamcrest_matcher
 from .matcher import compile as compile_matcher
 
 
-def compile(obj: Union[str, Mapping]) -> Predicate:
+def compile(obj: Any) -> Predicate:
     """
     >>> from unittest.mock import patch, sentinel
 

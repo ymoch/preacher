@@ -124,7 +124,7 @@ A ``Description`` is a mapping that consists of below:
 - describe: ``String`` or ``Extraction``
     - An extraction process.
     - When given a string, that is equivalent to ``{"jq": it}``.
-- it: ``Predicate``, or ``List<Predicate>>``
+- it: ``Predicate``, or ``List<Predicate>>`` (Optional)
     - Predicates that match the extracted value.
 
 Extraction
