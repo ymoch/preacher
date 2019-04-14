@@ -1,4 +1,4 @@
-"""Logginf presentation."""
+"""Logging presentation."""
 
 from __future__ import annotations
 
