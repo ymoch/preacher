@@ -25,8 +25,7 @@ def compile(extraction_obj: Mapping) -> Extraction:
     keys = _EXTRACTION_KEYS.intersection(extraction_obj.keys())
     if len(keys) != 1:
         raise CompilationError(
-            'Description object must have only 1 valid extraction key'
-            f', but has {len(keys)}'
+            f'Extraction must have only 1 valid key, but has {len(keys)}'
         )
     key = next(iter(keys))
 

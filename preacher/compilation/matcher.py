@@ -6,7 +6,8 @@ from typing import Any
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
-from preacher.compilation.error import CompilationError
+from .error import CompilationError
+from .util import run_on_key
 
 
 _STATIC_MATCHER_MAP = {
@@ -171,7 +172,7 @@ def _compile_taking_single_matcher(key: str, value: Any):
         raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
 
     if isinstance(value, str) or isinstance(value, Mapping):
-        inner = compile(value)
+        inner = run_on_key(key, compile, value)
     else:
         inner = hamcrest.equal_to(value)
 
