@@ -38,10 +38,8 @@ class ResponseDescription:
     ...     ],
     ... )
     >>> verification = description(status_code=200, body='invalid-format')
-    >>> description.status_code_predicates[0].call_args_list
-    [call(200)]
-    >>> description.body_descriptions[0].call_count
-    0
+    >>> description.status_code_predicates[0].assert_called_once_with(200)
+    >>> description.body_descriptions[0].assert_not_called()
     >>> verification.status
     FAILURE
     >>> verification.body.status
@@ -49,7 +47,7 @@ class ResponseDescription:
     >>> verification.body.message
     'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
 
-    >>> from unittest.mock import MagicMock
+    >>> from unittest.mock import MagicMock, call
     >>> description = ResponseDescription(
     ...     status_code_predicates=[],
     ...     body_descriptions=[
@@ -58,10 +56,8 @@ class ResponseDescription:
     ...     ],
     ... )
     >>> verification = description(status_code=200, body='{}')
-    >>> description.body_descriptions[0].call_args
-    call({})
-    >>> description.body_descriptions[1].call_args
-    call({})
+    >>> description.body_descriptions[0].assert_called_once_with({})
+    >>> description.body_descriptions[1].assert_called_once_with({})
     >>> verification.status
     UNSTABLE
     >>> verification.body.status
