@@ -6,7 +6,8 @@ from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher
 
 from .description import Predicate
-from .verification import Status, Verification
+from .status import Status
+from .verification import Verification
 
 
 def of_hamcrest_matcher(matcher: Matcher) -> Predicate:
@@ -23,8 +24,8 @@ def of_hamcrest_matcher(matcher: Matcher) -> Predicate:
     ...     predicate = of_hamcrest_matcher(matcher)
     ...     verification = predicate(0)
     ...     assert_that.assert_called_with(0, matcher)
-    >>> verification.status.name
-    'FAILURE'
+    >>> verification.status
+    FAILURE
     >>> verification.message
     'RuntimeError: message'
 
@@ -35,8 +36,8 @@ def of_hamcrest_matcher(matcher: Matcher) -> Predicate:
     ...     predicate = of_hamcrest_matcher(matcher)
     ...     verification = predicate(0)
     ...     assert_that.assert_called_with(0, matcher)
-    >>> verification.status.name
-    'UNSTABLE'
+    >>> verification.status
+    UNSTABLE
     >>> verification.message
     'message'
 
@@ -44,8 +45,8 @@ def of_hamcrest_matcher(matcher: Matcher) -> Predicate:
     ...     predicate = of_hamcrest_matcher(matcher)
     ...     verification = predicate(1)
     ...     assert_that.assert_called_with(1, matcher)
-    >>> verification.status.name
-    'SUCCESS'
+    >>> verification.status
+    SUCCESS
     """
     def _test(actual: Any) -> Verification:
         try:

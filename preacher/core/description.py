@@ -4,10 +4,8 @@ from __future__ import annotations
 
 from typing import Any, Callable, List
 
-from .verification import (
-    Verification,
-    merge_statuses,
-)
+from .status import merge_statuses
+from .verification import Verification
 
 Extraction = Callable[[Any], Any]
 Predicate = Callable[[Any], Verification]
@@ -17,7 +15,7 @@ class Description:
     """
     Description.
 
-    >>> from .verification import Status
+    >>> from .status import Status
     >>> from unittest.mock import MagicMock
 
     When extraction fails, then description fails.
@@ -26,8 +24,8 @@ class Description:
     ...     predicates=[]
     ... )
     >>> verification = description('described')
-    >>> verification.status.name
-    'FAILURE'
+    >>> verification.status
+    FAILURE
     >>> verification.message
     'Exception: message'
 
@@ -38,8 +36,8 @@ class Description:
     ...     predicates=[],
     ... )
     >>> verification = description('described')
-    >>> verification.status.name
-    'SUCCESS'
+    >>> verification.status
+    SUCCESS
     >>> len(verification.children)
     0
 
@@ -54,16 +52,16 @@ class Description:
     ...     ]
     ... )
     >>> verification = description('described')
-    >>> verification.status.name
-    'FAILURE'
+    >>> verification.status
+    FAILURE
     >>> len(verification.children)
     3
-    >>> verification.children[0].status.name
-    'UNSTABLE'
-    >>> verification.children[1].status.name
-    'FAILURE'
-    >>> verification.children[2].status.name
-    'SUCCESS'
+    >>> verification.children[0].status
+    UNSTABLE
+    >>> verification.children[1].status
+    FAILURE
+    >>> verification.children[2].status
+    SUCCESS
 
     When given only predicates that returns true,
     then describes that it is valid.
@@ -75,14 +73,14 @@ class Description:
     ...     ]
     ... )
     >>> verification = description('described')
-    >>> verification.status.name
-    'SUCCESS'
+    >>> verification.status
+    SUCCESS
     >>> len(verification.children)
     2
-    >>> verification.children[0].status.name
-    'SUCCESS'
-    >>> verification.children[1].status.name
-    'SUCCESS'
+    >>> verification.children[0].status
+    SUCCESS
+    >>> verification.children[1].status
+    SUCCESS
     """
     def __init__(
         self: Description,

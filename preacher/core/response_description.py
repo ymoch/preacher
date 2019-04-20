@@ -7,7 +7,8 @@ from dataclasses import dataclass
 from typing import List
 
 from .description import Description, Predicate
-from .verification import Status, Verification, merge_statuses
+from .status import Status, merge_statuses
+from .verification import Verification
 
 
 @dataclass
@@ -24,8 +25,8 @@ class ResponseDescription:
     ...     body_descriptions=[],
     ... )
     >>> verification = description(status_code=200, body='')
-    >>> verification.status.name
-    'SUCCESS'
+    >>> verification.status
+    SUCCESS
 
     >>> from unittest.mock import MagicMock
     >>> description = ResponseDescription(
@@ -37,18 +38,16 @@ class ResponseDescription:
     ...     ],
     ... )
     >>> verification = description(status_code=200, body='invalid-format')
-    >>> description.status_code_predicates[0].call_args_list
-    [call(200)]
-    >>> description.body_descriptions[0].call_count
-    0
-    >>> verification.status.name
-    'FAILURE'
-    >>> verification.body.status.name
-    'FAILURE'
+    >>> description.status_code_predicates[0].assert_called_once_with(200)
+    >>> description.body_descriptions[0].assert_not_called()
+    >>> verification.status
+    FAILURE
+    >>> verification.body.status
+    FAILURE
     >>> verification.body.message
     'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
 
-    >>> from unittest.mock import MagicMock
+    >>> from unittest.mock import MagicMock, call
     >>> description = ResponseDescription(
     ...     status_code_predicates=[],
     ...     body_descriptions=[
@@ -57,18 +56,16 @@ class ResponseDescription:
     ...     ],
     ... )
     >>> verification = description(status_code=200, body='{}')
-    >>> description.body_descriptions[0].call_args
-    call({})
-    >>> description.body_descriptions[1].call_args
-    call({})
-    >>> verification.status.name
-    'UNSTABLE'
-    >>> verification.body.status.name
-    'UNSTABLE'
-    >>> verification.body.children[0].status.name
-    'UNSTABLE'
-    >>> verification.body.children[1].status.name
-    'SUCCESS'
+    >>> description.body_descriptions[0].assert_called_once_with({})
+    >>> description.body_descriptions[1].assert_called_once_with({})
+    >>> verification.status
+    UNSTABLE
+    >>> verification.body.status
+    UNSTABLE
+    >>> verification.body.children[0].status
+    UNSTABLE
+    >>> verification.body.children[1].status
+    SUCCESS
     """
     def __init__(
         self: ResponseDescription,
