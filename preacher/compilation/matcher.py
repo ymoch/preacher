@@ -14,13 +14,16 @@ _STATIC_MATCHER_MAP = {
     # For objects.
     'is_null': hamcrest.is_(hamcrest.none()),
     'is_not_null': hamcrest.is_(hamcrest.not_none()),
+
     # For collections.
     'is_empty': hamcrest.is_(hamcrest.empty()),
 }
+
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     # For objects.
     'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
-    'has_length': lambda expected: hamcrest.has_length(expected),
+    'has_length': hamcrest.has_length,
+
     # For numbers.
     'is_greater_than': (
         lambda value: hamcrest.is_(hamcrest.greater_than(value))
@@ -34,15 +37,18 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     'is_less_than_or_equal_to': (
         lambda value: hamcrest.is_(hamcrest.less_than_or_equal_to(value))
     ),
+
     # For strings.
-    'contains_string': lambda value: hamcrest.contains_string(value),
-    'starts_with': lambda value: hamcrest.starts_with(value),
-    'ends_with': lambda value: hamcrest.ends_with(value),
-    'matches_regexp': lambda value: hamcrest.matches_regexp(value),
+    'contains_string': hamcrest.contains_string,
+    'starts_with': hamcrest.starts_with,
+    'ends_with': hamcrest.ends_with,
+    'matches_regexp': hamcrest.matches_regexp,
 }
+
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
     'is': hamcrest.is_,
     'not': hamcrest.not_,
+    'has_item': hamcrest.has_item,
 }
 
 
@@ -132,9 +138,7 @@ def _compile_taking_value(key: str, value: Any) -> Matcher:
     >>> matcher = _compile_taking_value('matches_regexp', '^A*B$')
     >>> assert not matcher.matches('ACB')
     >>> assert matcher.matches('B')
-
-    TODO: Should return `False` when the value type is not `str`.
-    >>> matcher.matches(0)
+    >>> matcher.matches(0)  # TODO: Should return `False` when given not `str`.
     Traceback (most recent call last):
         ...
     TypeError: ...
@@ -166,6 +170,12 @@ def _compile_taking_single_matcher(key: str, value: Any):
     >>> assert matcher.matches(-1)
     >>> assert matcher.matches(0)
     >>> assert not matcher.matches(1)
+
+    >>> matcher = _compile_taking_single_matcher('has_item', {'is': 1})
+    >>> assert not matcher.matches(None)
+    >>> assert not matcher.matches([])
+    >>> assert not matcher.matches([0, 'A'])
+    >>> assert matcher.matches([0, 1, 2])
     """
     func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.get(key)
     if not func:

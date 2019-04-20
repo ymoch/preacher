@@ -16,6 +16,7 @@ def foo() -> dict:
         'foo': 'bar',
         'empty_string': '',
         'empty_list': [],
+        'list': [1, 2, 'A'],
     })
 
 
