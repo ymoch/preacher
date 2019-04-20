@@ -14,13 +14,16 @@ _STATIC_MATCHER_MAP = {
     # For objects.
     'is_null': hamcrest.is_(hamcrest.none()),
     'is_not_null': hamcrest.is_(hamcrest.not_none()),
+
     # For collections.
     'is_empty': hamcrest.is_(hamcrest.empty()),
 }
+
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     # For objects.
     'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
     'has_length': hamcrest.has_length,
+
     # For numbers.
     'is_greater_than': (
         lambda value: hamcrest.is_(hamcrest.greater_than(value))
@@ -34,14 +37,17 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     'is_less_than_or_equal_to': (
         lambda value: hamcrest.is_(hamcrest.less_than_or_equal_to(value))
     ),
+
     # For strings.
     'contains_string': hamcrest.contains_string,
     'starts_with': hamcrest.starts_with,
     'ends_with': hamcrest.ends_with,
     'matches_regexp': hamcrest.matches_regexp,
+
     # For collections.
     'has_item': hamcrest.has_item,
 }
+
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
     'is': hamcrest.is_,
     'not': hamcrest.not_,
