@@ -43,14 +43,12 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     'starts_with': hamcrest.starts_with,
     'ends_with': hamcrest.ends_with,
     'matches_regexp': hamcrest.matches_regexp,
-
-    # For collections.
-    'has_item': hamcrest.has_item,
 }
 
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
     'is': hamcrest.is_,
     'not': hamcrest.not_,
+    'has_item': hamcrest.has_item,
 }
 
 
@@ -144,12 +142,6 @@ def _compile_taking_value(key: str, value: Any) -> Matcher:
     Traceback (most recent call last):
         ...
     TypeError: ...
-
-    >>> matcher = _compile_taking_value('has_item', 1)
-    >>> assert not matcher.matches(None)
-    >>> assert not matcher.matches([])
-    >>> assert not matcher.matches([0, 'A'])
-    >>> assert matcher.matches([0, 1, 2])
     """
     func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE.get(key)
     if not func:
@@ -178,6 +170,12 @@ def _compile_taking_single_matcher(key: str, value: Any):
     >>> assert matcher.matches(-1)
     >>> assert matcher.matches(0)
     >>> assert not matcher.matches(1)
+
+    >>> matcher = _compile_taking_single_matcher('has_item', {'is': 1})
+    >>> assert not matcher.matches(None)
+    >>> assert not matcher.matches([])
+    >>> assert not matcher.matches([0, 'A'])
+    >>> assert matcher.matches([0, 1, 2])
     """
     func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.get(key)
     if not func:

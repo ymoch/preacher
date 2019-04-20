@@ -10,6 +10,12 @@ scenarios:
     response:
       status_code: 200
       body:
+        - describe: .not_existing_key
+          it: is_null
+        - describe: .empty_string
+          it: is_empty
+        - describe: .empty_list
+          it: is_empty
         - describe: .foo
           it:
             - is_not_null
@@ -26,12 +32,11 @@ scenarios:
             - starts_with: ba
             - ends_with: ar
             - matches_regexp: ^b.r$
-        - describe: .empty_string
-          it: is_empty
-        - describe: .empty_list
-          it: is_empty
-        - describe: .not_existing_key
-          it: is_null
+        - describe: .list
+          it:
+            - not:
+                has_item: ''
+            - has_item: 1
 
   - label: Returns a failure result
     request:
