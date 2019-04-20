@@ -6,7 +6,8 @@ from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher
 
 from .description import Predicate
-from .verification import Status, Verification
+from .status import Status
+from .verification import Verification
 
 
 def of_hamcrest_matcher(matcher: Matcher) -> Predicate:

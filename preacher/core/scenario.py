@@ -10,11 +10,8 @@ from .response_description import (
     ResponseDescription,
     ResponseVerification,
 )
-from .verification import (
-    Status,
-    Verification,
-    merge_statuses,
-)
+from .status import Status, merge_statuses
+from .verification import Verification
 
 
 @dataclass
@@ -39,10 +36,10 @@ class Scenario:
     >>> scenario.response_description.call_count
     0
     >>> verification.label
-    >>> verification.status.name
-    'FAILURE'
-    >>> verification.request.status.name
-    'FAILURE'
+    >>> verification.status
+    FAILURE
+    >>> verification.request.status
+    FAILURE
     >>> verification.request.message
     'RuntimeError: message'
 
@@ -65,14 +62,14 @@ class Scenario:
     call(body='body', status_code=402)
     >>> verification.label
     'Response should be unstable'
-    >>> verification.status.name
-    'UNSTABLE'
-    >>> verification.request.status.name
-    'SUCCESS'
-    >>> verification.response.status.name
-    'UNSTABLE'
-    >>> verification.response.body.status.name
-    'UNSTABLE'
+    >>> verification.status
+    UNSTABLE
+    >>> verification.request.status
+    SUCCESS
+    >>> verification.response.status
+    UNSTABLE
+    >>> verification.response.body.status
+    UNSTABLE
     """
     def __init__(
         self: Scenario,

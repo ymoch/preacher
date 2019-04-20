@@ -7,7 +7,8 @@ from dataclasses import dataclass
 from typing import List
 
 from .description import Description, Predicate
-from .verification import Status, Verification, merge_statuses
+from .status import Status, merge_statuses
+from .verification import Verification
 
 
 @dataclass
@@ -24,8 +25,8 @@ class ResponseDescription:
     ...     body_descriptions=[],
     ... )
     >>> verification = description(status_code=200, body='')
-    >>> verification.status.name
-    'SUCCESS'
+    >>> verification.status
+    SUCCESS
 
     >>> from unittest.mock import MagicMock
     >>> description = ResponseDescription(
@@ -41,10 +42,10 @@ class ResponseDescription:
     [call(200)]
     >>> description.body_descriptions[0].call_count
     0
-    >>> verification.status.name
-    'FAILURE'
-    >>> verification.body.status.name
-    'FAILURE'
+    >>> verification.status
+    FAILURE
+    >>> verification.body.status
+    FAILURE
     >>> verification.body.message
     'JSONDecodeError: Expecting value: line 1 column 1 (char 0)'
 
@@ -61,14 +62,14 @@ class ResponseDescription:
     call({})
     >>> description.body_descriptions[1].call_args
     call({})
-    >>> verification.status.name
-    'UNSTABLE'
-    >>> verification.body.status.name
-    'UNSTABLE'
-    >>> verification.body.children[0].status.name
-    'UNSTABLE'
-    >>> verification.body.children[1].status.name
-    'SUCCESS'
+    >>> verification.status
+    UNSTABLE
+    >>> verification.body.status
+    UNSTABLE
+    >>> verification.body.children[0].status
+    UNSTABLE
+    >>> verification.body.children[1].status
+    SUCCESS
     """
     def __init__(
         self: ResponseDescription,

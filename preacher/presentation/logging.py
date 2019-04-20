@@ -7,7 +7,8 @@ import logging
 import io
 from typing import Iterator, Optional
 
-from preacher.core.verification import Status, Verification
+from preacher.core.status import Status
+from preacher.core.verification import Verification
 from preacher.core.response_description import ResponseVerification
 from preacher.core.scenario import ScenarioVerification
 
