@@ -43,9 +43,6 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     'starts_with': hamcrest.starts_with,
     'ends_with': hamcrest.ends_with,
     'matches_regexp': hamcrest.matches_regexp,
-
-    # For collections.
-    'has_item': hamcrest.has_item,
 }
 
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
