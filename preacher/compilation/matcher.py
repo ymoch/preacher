@@ -43,6 +43,9 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     'starts_with': hamcrest.starts_with,
     'ends_with': hamcrest.ends_with,
     'matches_regexp': hamcrest.matches_regexp,
+
+    # For collections.
+    'has_item': hamcrest.has_item,
 }
 
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
@@ -137,11 +140,16 @@ def _compile_taking_value(key: str, value: Any) -> Matcher:
     >>> matcher = _compile_taking_value('matches_regexp', '^A*B$')
     >>> assert not matcher.matches('ACB')
     >>> assert matcher.matches('B')
-
     >>> matcher.matches(0)  # TODO: Should return `False` when given not `str`.
     Traceback (most recent call last):
         ...
     TypeError: ...
+
+    >>> matcher = _compile_taking_value('has_item', 1)
+    >>> assert not matcher.matches(None)
+    >>> assert not matcher.matches([])
+    >>> assert not matcher.matches([0, 'A'])
+    >>> assert matcher.matches([0, 1, 2])
     """
     func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE.get(key)
     if not func:

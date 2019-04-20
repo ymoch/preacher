@@ -182,6 +182,8 @@ A mapping for ``Matcher`` has an item. Allowed items are:
     - Matches when it is an string and ends with the given value.
 - matches_regexp: ``String``
     - Matches when it is an string and matches the given regular expression.
+- has_item: ``Value``
+    - Matches when it is a collection and has the given item.
 
 
 .. _YAML: https://yaml.org/
