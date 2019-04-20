@@ -138,8 +138,7 @@ def _compile_taking_value(key: str, value: Any) -> Matcher:
     >>> assert not matcher.matches('ACB')
     >>> assert matcher.matches('B')
 
-    TODO: Should return `False` when the value type is not `str`.
-    >>> matcher.matches(0)
+    >>> matcher.matches(0)  # TODO: Should return `False` when given not `str`.
     Traceback (most recent call last):
         ...
     TypeError: ...
