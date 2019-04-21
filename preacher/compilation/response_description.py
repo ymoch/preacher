@@ -61,12 +61,12 @@ def compile(obj: Mapping) -> ResponseDescription:
     >>> with predicate_patch as predicate_mock, \\
     ...      description_patch as description_mock:
     ...     response_description = compile({
-    ...         'status_code': [{'is_greater_than': 0}, {'is_less_than': 400}],
+    ...         'status_code': [{'be_greater_than': 0}, {'be_less_than': 400}],
     ...         'body': [{'key1': 'value1'}, {'key2': 'value2'}],
     ...     })
     ...     predicate_mock.assert_has_calls([
-    ...         call({'is_greater_than': 0}),
-    ...         call({'is_less_than': 400}),
+    ...         call({'be_greater_than': 0}),
+    ...         call({'be_less_than': 400}),
     ...     ])
     ...     description_mock.assert_has_calls([
     ...         call({'key1': 'value1'}),

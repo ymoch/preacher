@@ -10,7 +10,7 @@ from .util import run_on_key, map_on_key
 
 
 _KEY_DESCRIBE = 'describe'
-_KEY_IT = 'it'
+_KEY_IT_SHOULD = 'it_should'
 
 
 def compile(obj: Mapping) -> Description:
@@ -34,7 +34,7 @@ def compile(obj: Mapping) -> Description:
     ...      predicate_patch as predicate_mock:
     ...     description = compile({
     ...         'describe': 'foo',
-    ...         'it': 'string',
+    ...         'it_should': 'string',
     ...     })
     ...     extraction_mock.assert_called_with('foo')
     ...     predicate_mock.assert_called_once_with('string')
@@ -47,7 +47,7 @@ def compile(obj: Mapping) -> Description:
     ...      predicate_patch as predicate_mock:
     ...     description = compile({
     ...         'describe': 'foo',
-    ...         'it': {'key': 'value'}
+    ...         'it_should': {'key': 'value'}
     ...     })
     ...     extraction_mock.assert_called_once_with('foo')
     ...     predicate_mock.assert_called_once_with({'key': 'value'})
@@ -60,7 +60,7 @@ def compile(obj: Mapping) -> Description:
     ...      predicate_patch as predicate_mock:
     ...     description = compile({
     ...         'describe': {'key': 'value'},
-    ...         'it': [{'key1': 'value1'}, {'key2': 'value2'}]
+    ...         'it_should': [{'key1': 'value1'}, {'key2': 'value2'}]
     ...     })
     ...     extraction_mock.assert_called_once_with({'key': 'value'})
     ...     predicate_mock.assert_has_calls([
@@ -83,9 +83,11 @@ def compile(obj: Mapping) -> Description:
         )
     extraction = run_on_key(_KEY_DESCRIBE, compile_extraction, extraction_obj)
 
-    predicate_objs = obj.get(_KEY_IT, [])
+    predicate_objs = obj.get(_KEY_IT_SHOULD, [])
     if not isinstance(predicate_objs, list):
         predicate_objs = [predicate_objs]
-    predicates = list(map_on_key(_KEY_IT, compile_predicate, predicate_objs))
+    predicates = list(
+        map_on_key(_KEY_IT_SHOULD, compile_predicate, predicate_objs)
+    )
 
     return Description(extraction=extraction, predicates=predicates)
