@@ -12,43 +12,43 @@ from .util import run_on_key
 
 _STATIC_MATCHER_MAP = {
     # For objects.
-    'is_null': hamcrest.is_(hamcrest.none()),
-    'is_not_null': hamcrest.is_(hamcrest.not_none()),
+    'be_null': hamcrest.is_(hamcrest.none()),
+    'not_be_null': hamcrest.is_(hamcrest.not_none()),
 
     # For collections.
-    'is_empty': hamcrest.is_(hamcrest.empty()),
+    'be_empty': hamcrest.is_(hamcrest.empty()),
 }
 
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     # For objects.
-    'equals_to': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
-    'has_length': hamcrest.has_length,
+    'equal': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
+    'have_length': hamcrest.has_length,
 
     # For numbers.
-    'is_greater_than': (
+    'be_greater_than': (
         lambda value: hamcrest.is_(hamcrest.greater_than(value))
     ),
-    'is_greater_than_or_equal_to': (
+    'be_greater_than_or_equal_to': (
         lambda value: hamcrest.is_(hamcrest.greater_than_or_equal_to(value))
     ),
-    'is_less_than': (
+    'be_less_than': (
         lambda value: hamcrest.is_(hamcrest.less_than(value))
     ),
-    'is_less_than_or_equal_to': (
+    'be_less_than_or_equal_to': (
         lambda value: hamcrest.is_(hamcrest.less_than_or_equal_to(value))
     ),
 
     # For strings.
-    'contains_string': hamcrest.contains_string,
-    'starts_with': hamcrest.starts_with,
-    'ends_with': hamcrest.ends_with,
-    'matches_regexp': hamcrest.matches_regexp,
+    'contain_string': hamcrest.contains_string,
+    'start_with': hamcrest.starts_with,
+    'end_with': hamcrest.ends_with,
+    'match_regexp': hamcrest.matches_regexp,
 }
 
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
-    'is': hamcrest.is_,
+    'be': hamcrest.is_,
     'not': hamcrest.not_,
-    'has_item': hamcrest.has_item,
+    'have_item': hamcrest.has_item,
 }
 
 
@@ -59,15 +59,15 @@ def _compile_static_matcher(name: str) -> Matcher:
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_name'
 
-    >>> matcher = _compile_static_matcher('is_null')
+    >>> matcher = _compile_static_matcher('be_null')
     >>> assert matcher.matches(None)
     >>> assert not matcher.matches(False)
 
-    >>> matcher = _compile_static_matcher('is_not_null')
+    >>> matcher = _compile_static_matcher('not_be_null')
     >>> assert not matcher.matches(None)
     >>> assert matcher.matches('False')
 
-    >>> matcher = _compile_static_matcher('is_empty')
+    >>> matcher = _compile_static_matcher('be_empty')
     >>> assert not matcher.matches(None)
     >>> assert not matcher.matches(0)
     >>> assert matcher.matches('')
@@ -88,54 +88,54 @@ def _compile_taking_value(key: str, value: Any) -> Matcher:
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_key'
 
-    >>> matcher = _compile_taking_value('has_length', 1)
+    >>> matcher = _compile_taking_value('have_length', 1)
     >>> assert not matcher.matches(None)
     >>> assert not matcher.matches('')
     >>> assert not matcher.matches([])
     >>> assert matcher.matches('A')
     >>> assert matcher.matches([1])
 
-    >>> matcher = _compile_taking_value('equals_to', 1)
+    >>> matcher = _compile_taking_value('equal', 1)
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches('1')
     >>> assert matcher.matches(1)
 
-    >>> matcher = _compile_taking_value('is_greater_than', 0)
+    >>> matcher = _compile_taking_value('be_greater_than', 0)
     >>> assert not matcher.matches(-1)
     >>> assert not matcher.matches(0)
     >>> assert matcher.matches(1)
 
-    >>> matcher = _compile_taking_value('is_greater_than_or_equal_to', 0)
+    >>> matcher = _compile_taking_value('be_greater_than_or_equal_to', 0)
     >>> assert not matcher.matches(-1)
     >>> assert matcher.matches(0)
     >>> assert matcher.matches(1)
 
-    >>> matcher = _compile_taking_value('is_less_than', 0)
+    >>> matcher = _compile_taking_value('be_less_than', 0)
     >>> assert matcher.matches(-1)
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches(1)
 
-    >>> matcher = _compile_taking_value('is_less_than_or_equal_to', 0)
+    >>> matcher = _compile_taking_value('be_less_than_or_equal_to', 0)
     >>> assert matcher.matches(-1)
     >>> assert matcher.matches(0)
     >>> assert not matcher.matches(1)
 
-    >>> matcher = _compile_taking_value('contains_string', '0')
+    >>> matcher = _compile_taking_value('contain_string', '0')
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches('123')
     >>> assert matcher.matches('21012')
 
-    >>> matcher = _compile_taking_value('starts_with', 'AB')
+    >>> matcher = _compile_taking_value('start_with', 'AB')
     >>> assert not matcher.matches(0)
     >>> assert matcher.matches('ABC')
     >>> assert not matcher.matches('ACB')
 
-    >>> matcher = _compile_taking_value('ends_with', 'BC')
+    >>> matcher = _compile_taking_value('end_with', 'BC')
     >>> assert not matcher.matches(0)
     >>> assert matcher.matches('ABC')
     >>> assert not matcher.matches('ACB')
 
-    >>> matcher = _compile_taking_value('matches_regexp', '^A*B$')
+    >>> matcher = _compile_taking_value('match_regexp', '^A*B$')
     >>> assert not matcher.matches('ACB')
     >>> assert matcher.matches('B')
     >>> matcher.matches(0)  # TODO: Should return `False` when given not `str`.
@@ -156,7 +156,7 @@ def _compile_taking_single_matcher(key: str, value: Any):
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_key'
 
-    >>> matcher = _compile_taking_single_matcher('is', 1)
+    >>> matcher = _compile_taking_single_matcher('be', 1)
     >>> assert not matcher.matches(0)
     >>> assert not matcher.matches('1')
     >>> assert matcher.matches(1)
@@ -166,12 +166,12 @@ def _compile_taking_single_matcher(key: str, value: Any):
     >>> assert matcher.matches(0)
     >>> assert not matcher.matches(1)
 
-    >>> matcher = _compile_taking_single_matcher('not', {'is_greater_than': 0})
+    >>> matcher = _compile_taking_single_matcher('not', {'be_greater_than': 0})
     >>> assert matcher.matches(-1)
     >>> assert matcher.matches(0)
     >>> assert not matcher.matches(1)
 
-    >>> matcher = _compile_taking_single_matcher('has_item', {'is': 1})
+    >>> matcher = _compile_taking_single_matcher('have_item', {'equal': 1})
     >>> assert not matcher.matches(None)
     >>> assert not matcher.matches([])
     >>> assert not matcher.matches([0, 'A'])
@@ -215,16 +215,16 @@ def compile(obj: Any) -> Matcher:
     ...     f'{__name__}._compile_static_matcher',
     ...     return_value=sentinel.static_matcher,
     ... ) as matcher_mock:
-    ...     compile('is_null')
-    ...     matcher_mock.assert_called_with('is_null')
+    ...     compile('be_null')
+    ...     matcher_mock.assert_called_with('be_null')
     sentinel.static_matcher
 
     >>> with patch(
     ...     f'{__name__}._compile_taking_value',
     ...     return_value=sentinel.value_matcher,
     ... ) as matcher_mock:
-    ...     compile({'equals_to': 'value'})
-    ...     matcher_mock.assert_called_with('equals_to', 'value')
+    ...     compile({'equal': 'value'})
+    ...     matcher_mock.assert_called_with('equal', 'value')
     sentinel.value_matcher
 
     >>> with patch(

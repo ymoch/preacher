@@ -11,47 +11,43 @@ scenarios:
       status_code: 200
       body:
         - describe: .not_existing_key
-          it: is_null
+          it_should: be_null
         - describe: .empty_string
-          it: is_empty
+          it_should: be_empty
         - describe: .empty_list
-          it: is_empty
+          it_should: be_empty
         - describe: .foo
-          it:
-            - is_not_null
-            - not: is_empty
-            - is: bar
-            - is:
+          it_should:
+            - not_be_null
+            - not: be_empty
+            - be: bar
+            - be:
                 not: baz
-            - is:
+            - be:
                 not:
-                  contains_string: x
-            - equals_to: bar
-            - has_length: 3
-            - contains_string: a
-            - starts_with: ba
-            - ends_with: ar
-            - matches_regexp: ^b.r$
+                  contain_string: x
+            - equal: bar
+            - have_length: 3
+            - contain_string: a
+            - start_with: ba
+            - end_with: ar
+            - match_regexp: ^b.r$
         - describe: .list
-          it:
+          it_should:
             - not:
-                has_item: ''
-            - has_item: 1
+                have_item: ''
+            - have_item: 1
 
   - label: Returns a failure result
     request:
       path: /error/404
-      response:
-        status_code:
-          - equal_to: 404
-          - greater_than: 399
-          - greater_than_or_equal_to: 400
-          - less_than_or_equal_to: 499
-          - less_than: 500
-        body:
-          - describe:
-              jq: .message
-            it: not found
+    response:
+      status_code:
+        - equal: 404
+        - be_greater_than: 399
+        - be_greater_than_or_equal_to: 400
+        - be_less_than_or_equal_to: 499
+        - be_less_than: 500
 
   - label: No description doesn't cause error
     request:

@@ -52,8 +52,8 @@ Here is a simple configuration example.
           status_code: 200
           body:
             - describe: .foo
-              it:
-                equals_to: bar
+              it_should:
+                equal_to: bar
       - label: A Little Complecated
         request:
           path: /path/to/foo
@@ -64,14 +64,14 @@ Here is a simple configuration example.
               - value2
         response:
           status_code:
-            - is_greater_than_or_equal_to: 200
-            - is_less_than: 400
+            - be_greater_than_or_equal_to: 200
+            - be_less_than: 400
           body:
             - describe:
                 jq: .foo
-              it:
-                - starts_with: x
-                - ends_with: y
+              it_should:
+                - start_with: x
+                - end_with: y
 
 Grammer
 -------
@@ -115,7 +115,7 @@ A ``ResponseDescription`` is a mapping that consists of below:
 
 - status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)
     - Predicates that match a status code as an integer value.
-    - When given a number, that is equivalent to ``{"equals_to": it}``.
+    - When given a number, that is equivalent to ``{"equal": it}``.
 - body: ``Description`` or ``List<Description>`` (Optional)
     - Descriptions that descript the response body.
 
@@ -126,7 +126,7 @@ A ``Description`` is a mapping that consists of below:
 - describe: ``String`` or ``Extraction``
     - An extraction process.
     - When given a string, that is equivalent to ``{"jq": it}``.
-- it: ``Predicate``, or ``List<Predicate>>`` (Optional)
+- it_should: ``Predicate``, or ``List<Predicate>>`` (Optional)
     - Predicates that match the extracted value.
 
 Extraction
@@ -150,41 +150,41 @@ A ``Matcher`` is a string or a mapping.
 
 Allowed strings are:
 
-- is_null
-- is_not_null
-- is_empty
+- be_null
+- not_be_null
+- be_empty
 
 A mapping for ``Matcher`` has an item. Allowed items are:
 
-- is: ``Value`` or ``Matcher``
+- be: ``Value`` or ``Matcher``
     - Matches when it matches the given value or the given matcher.
-    - When given ``Value``, that is equivalent to ``{"equals_to": it}``.
+    - When given ``Value``, that is equivalent to ``{"equal": it}``.
 - not: ``Value`` or ``Matcher``
     - Matches when it doesn't match the given value or the given matcher.
-    - When given ``Value``, that is equivalent to ``{"not": {"equals_to": it}}``
-- equals_to: ``Value``
-    - Matches when it equals to the given value.
-- has_length: ``Integer``
+    - When given ``Value``, that is equivalent to ``{"not": {"equal": it}}``
+- equal: ``Value``
+    - Matches when it equals the given value.
+- have_length: ``Integer``
     - Matches when it has a length and its length is equal to the given value.
-- is_greater_than: ``Comparable``
+- be_greater_than: ``Comparable``
     - Matches when it is greater than the given value (it > argument).
-- is_greater_than_or_equal_to: ``Comparable``
+- be_greater_than_or_equal_to: ``Comparable``
     - Matches when it is greater than or equal to the given value (it >= argument).
-- is_less_than: ``Comparable``
+- be_less_than: ``Comparable``
     - Matches when it is less than the given value (it < argument).
-- is_less_than_or_equal_to: ``Comparable``
+- be_less_than_or_equal_to: ``Comparable``
     - Matches when it is less than or equal to the given value (it < argument).
-- contains_string: ``String``
+- contain_string: ``String``
     - Matches when it is an string and contains the given value.
-- starts_with: ``String``
+- start_with: ``String``
     - Matches when it is an string and starts with the given value.
-- ends_with: ``String``
+- end_with: ``String``
     - Matches when it is an string and ends with the given value.
-- matches_regexp: ``String``
+- match_regexp: ``String``
     - Matches when it is an string and matches the given regular expression.
-- has_item: ``Value`` or ``Matcher``
+- have_item: ``Value`` or ``Matcher``
     - Matches when it is a collection and has the given item.
-    - When given ``Value``, that is equivalent to ``{"equals_to": it}``.
+    - When given ``Value``, that is equivalent to ``{"equal": it}``.
 
 
 .. _YAML: https://yaml.org/
