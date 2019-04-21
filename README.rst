@@ -53,7 +53,7 @@ Here is a simple configuration example.
           body:
             - describe: .foo
               it_should:
-                equal_to: bar
+                equal: bar
       - label: A Little Complecated
         request:
           path: /path/to/foo
