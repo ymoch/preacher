@@ -14,6 +14,27 @@ from .util import map_on_key
 _KEY_SCENARIOS = 'scenarios'
 
 
+class Compiler:
+    def __call__(self: Compiler, obj: Mapping) -> Iterator[Scenario]:
+        scenario_objs = obj.get(_KEY_SCENARIOS, [])
+        if not isinstance(scenario_objs, list):
+            raise CompilationError(
+                message='Must be a list',
+                path=[_KEY_SCENARIOS],
+            )
+
+        return map_on_key(
+            _KEY_SCENARIOS,
+            self._compile_scenario,
+            scenario_objs,
+        )
+
+    def _compile_scenario(self: Compiler, obj: Any) -> Scenario:
+        if not isinstance(obj, Mapping):
+            raise CompilationError(f'Scenario must be a mapping')
+        return compile_scenario(obj)
+
+
 def compile(obj: Mapping) -> Iterator[Scenario]:
     """
     >>> scenarios = list(compile({}))
@@ -41,14 +62,5 @@ def compile(obj: Mapping) -> Iterator[Scenario]:
         ...
     preacher.compilation.error.CompilationError: ...: scenarios[1]
     """
-    scenario_objs = obj.get(_KEY_SCENARIOS, [])
-    if not isinstance(scenario_objs, list):
-        raise CompilationError(message='Must be a list', path=[_KEY_SCENARIOS])
-
-    return map_on_key(_KEY_SCENARIOS, _compile_scenario, scenario_objs)
-
-
-def _compile_scenario(obj: Any) -> Scenario:
-    if not isinstance(obj, Mapping):
-        raise CompilationError(f'Scenario must be a mapping')
-    return compile_scenario(obj)
+    compiler = Compiler()
+    return compiler(obj)
