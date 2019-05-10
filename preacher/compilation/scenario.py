@@ -30,6 +30,7 @@ class ScenarioCompiler:
 
     >>> compiler = ScenarioCompiler()
 
+    When given an empty object, then generates a default scenario.
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
     ...     scenario = compiler.compile({})
