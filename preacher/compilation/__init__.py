@@ -15,7 +15,34 @@ _KEY_SCENARIOS = 'scenarios'
 
 
 class Compiler:
-    def __call__(self: Compiler, obj: Mapping) -> Iterator[Scenario]:
+    """
+    >>> compiler = Compiler()
+    >>> scenarios = list(compiler.compile({}))
+    >>> scenarios
+    []
+
+    >>> next(compiler.compile({'scenarios': ''}))
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ...: scenarios
+
+    >>> from unittest.mock import sentinel, patch
+    >>> scenario_patch = patch(
+    ...     f'{__name__}.compile_scenario',
+    ...     return_value=sentinel.scenario,
+    ... )
+    >>> scenarios = compiler.compile({'scenarios': [{}, '']})
+    >>> with scenario_patch as scenario_mock:
+    ...     next(scenarios)
+    ...     scenario_mock.assert_called_once_with({})
+    sentinel.scenario
+    >>> with scenario_patch as scenario_mock:
+    ...     next(scenarios)
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ...: scenarios[1]
+    """
+    def compile(self: Compiler, obj: Mapping) -> Iterator[Scenario]:
         scenario_objs = obj.get(_KEY_SCENARIOS, [])
         if not isinstance(scenario_objs, list):
             raise CompilationError(
@@ -33,34 +60,3 @@ class Compiler:
         if not isinstance(obj, Mapping):
             raise CompilationError(f'Scenario must be a mapping')
         return compile_scenario(obj)
-
-
-def compile(obj: Mapping) -> Iterator[Scenario]:
-    """
-    >>> scenarios = list(compile({}))
-    >>> scenarios
-    []
-
-    >>> next(compile({'scenarios': ''}))
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: scenarios
-
-    >>> from unittest.mock import sentinel, patch
-    >>> scenario_patch = patch(
-    ...     f'{__name__}.compile_scenario',
-    ...     return_value=sentinel.scenario,
-    ... )
-    >>> scenarios = compile({'scenarios': [{}, '']})
-    >>> with scenario_patch as scenario_mock:
-    ...     next(scenarios)
-    ...     scenario_mock.assert_called_once_with({})
-    sentinel.scenario
-    >>> with scenario_patch as scenario_mock:
-    ...     next(scenarios)
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: scenarios[1]
-    """
-    compiler = Compiler()
-    return compiler(obj)
