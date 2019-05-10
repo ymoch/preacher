@@ -42,6 +42,7 @@ class Compiler:
         ...
     preacher.compilation.error.CompilationError: ...: scenarios[1]
     """
+
     def compile(self: Compiler, obj: Mapping) -> Iterator[Scenario]:
         scenario_objs = obj.get(_KEY_SCENARIOS, [])
         if not isinstance(scenario_objs, list):

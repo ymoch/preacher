@@ -1,5 +1,7 @@
 """Scenario compilation."""
 
+from __future__ import annotations
+
 from collections.abc import Mapping
 
 from preacher.core.scenario import Scenario
@@ -12,6 +14,47 @@ from .util import run_on_key
 _KEY_LABEL = 'label'
 _KEY_REQUEST = 'request'
 _KEY_RESPONSE = 'response'
+
+
+class ScenarioCompiler:
+    def compile(self: ScenarioCompiler, obj: Mapping) -> Scenario:
+        label = obj.get(_KEY_LABEL)
+        if label is not None and not isinstance(label, str):
+            raise CompilationError(
+                message=f'Scenario.{_KEY_LABEL} must be a string',
+                path=[_KEY_LABEL],
+            )
+
+        request_obj = obj.get(_KEY_REQUEST, {})
+        if (
+            not isinstance(request_obj, Mapping)
+            and not isinstance(request_obj, str)
+        ):
+            raise CompilationError(
+                message=(
+                    f'Scenario.{_KEY_REQUEST} must be a string or a mapping'
+                ),
+                path=[_KEY_REQUEST],
+            )
+        request = run_on_key(_KEY_REQUEST, compile_request, request_obj)
+
+        response_obj = obj.get('response', {})
+        if not isinstance(response_obj, Mapping):
+            raise CompilationError(
+                message=f'Scenario.{_KEY_RESPONSE} object must be a mapping',
+                path=[_KEY_RESPONSE],
+            )
+        response_description = run_on_key(
+            _KEY_RESPONSE,
+            compile_response_description,
+            response_obj,
+        )
+
+        return Scenario(
+            label=label,
+            request=request,
+            response_description=response_description,
+        )
 
 
 def compile_scenario(obj: Mapping) -> Scenario:
@@ -97,38 +140,5 @@ def compile_scenario(obj: Mapping) -> Scenario:
     >>> scenario.response_description
     sentinel.response_description
     """
-    label = obj.get(_KEY_LABEL)
-    if label is not None and not isinstance(label, str):
-        raise CompilationError(
-            message=f'Scenario.{_KEY_LABEL} must be a string',
-            path=[_KEY_LABEL],
-        )
-
-    request_obj = obj.get(_KEY_REQUEST, {})
-    if (
-        not isinstance(request_obj, Mapping)
-        and not isinstance(request_obj, str)
-    ):
-        raise CompilationError(
-            message=f'Scenario.{_KEY_REQUEST} must be a string or a mapping',
-            path=[_KEY_REQUEST],
-        )
-    request = run_on_key(_KEY_REQUEST, compile_request, request_obj)
-
-    response_obj = obj.get('response', {})
-    if not isinstance(response_obj, Mapping):
-        raise CompilationError(
-            message=f'Scenario.{_KEY_RESPONSE} object must be a mapping',
-            path=[_KEY_RESPONSE],
-        )
-    response_description = run_on_key(
-        _KEY_RESPONSE,
-        compile_response_description,
-        response_obj,
-    )
-
-    return Scenario(
-        label=label,
-        request=request,
-        response_description=response_description,
-    )
+    compiler = ScenarioCompiler()
+    return compiler.compile(obj)
