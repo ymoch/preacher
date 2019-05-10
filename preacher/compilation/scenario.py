@@ -18,8 +18,6 @@ _KEY_RESPONSE = 'response'
 
 class ScenarioCompiler:
     """
-    >>> compile_scenario = ScenarioCompiler().compile
-
     >>> from unittest.mock import patch, sentinel
     >>> request_patch = patch(
     ...     f'{__name__}.compile_request',
@@ -30,9 +28,11 @@ class ScenarioCompiler:
     ...     return_value=sentinel.response_description
     ... )
 
+    >>> compiler = ScenarioCompiler()
+
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
-    ...     scenario = compile_scenario({})
+    ...     scenario = compiler.compile({})
     ...     request_mock.assert_called_once_with({})
     ...     response_description_mock.assert_called_once_with({})
     >>> scenario.request
@@ -40,54 +40,63 @@ class ScenarioCompiler:
     >>> scenario.response_description
     sentinel.response_description
 
-    >>> compile_scenario({'label': []})
+    When given a not string label, then raises a compilation error.
+    >>> compiler.compile({'label': []})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.label ...: label
 
-    >>> compile_scenario({'request': []})
+    When given an invalid type request, then raises a compilation error.
+    >>> compiler.compile({'request': []})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.request ...: request
 
+    When a request compilation fails, then raises a compilation error.
     >>> with request_patch as request_mock:
     ...     request_mock.side_effect=CompilationError(
     ...         message='message',
     ...         path=['foo'],
     ...     )
-    ...     compile_scenario({})
+    ...     compiler.compile({})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: message: request.foo
 
+    When given an invalid type response description,
+    then raises a compilation error.
     >>> with request_patch:
-    ...     compile_scenario({'response': 'str'})
+    ...     compiler.compile({'response': 'str'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.response...: response
 
+    When a response description compilation fails,
+    then raises a compilation error.
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
     ...     response_description_mock.side_effect=CompilationError(
     ...         message='message',
     ...         path=['bar'],
     ...     )
-    ...     scenario = compile_scenario({'request': '/path'})
+    ...     compiler.compile({'request': '/path'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: message: response.bar
 
+    Creates a scenario without response description.
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
-    ...     scenario = compile_scenario({'request': '/path'})
+    ...     scenario = compiler.compile({'request': '/path'})
     ...     request_mock.assert_called_once_with('/path')
     >>> scenario.label
     >>> scenario.request
     sentinel.request
 
+    Creates a scenario.
     >>> with request_patch as request_mock, \\
     ...      response_description_patch as response_description_mock:
-    ...     scenario = compile_scenario({
+    ...     scenario = compiler.compile({
     ...         'label': 'label',
     ...         'request': {'path': '/path'},
     ...         'response': {'key': 'value'},
