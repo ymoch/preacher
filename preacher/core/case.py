@@ -15,7 +15,7 @@ from .verification import Verification
 
 
 @dataclass
-class CaseVerification:
+class CaseResult:
     status: Status
     request: Verification
     response: Optional[ResponseVerification] = None
@@ -81,11 +81,11 @@ class Case:
         self._request = request
         self._response_description = response_description
 
-    def __call__(self: Case, base_url: str) -> CaseVerification:
+    def __call__(self: Case, base_url: str) -> CaseResult:
         try:
             response = self._request(base_url)
         except Exception as error:
-            return CaseVerification(
+            return CaseResult(
                 status=Status.FAILURE,
                 request=Verification.of_error(error),
             )
@@ -100,7 +100,7 @@ class Case:
             request_verification.status,
             response_verification.status,
         ])
-        return CaseVerification(
+        return CaseResult(
             status=status,
             request=request_verification,
             response=response_verification,

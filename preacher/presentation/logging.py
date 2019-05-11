@@ -10,7 +10,7 @@ from typing import Iterator, Optional
 from preacher.core.status import Status
 from preacher.core.verification import Verification
 from preacher.core.response_description import ResponseVerification
-from preacher.core.case import CaseVerification
+from preacher.core.case import CaseResult
 
 
 _LEVEL_MAP = {
@@ -27,7 +27,7 @@ class LoggingPresentation:
 
     def show_case_verification(
         self: LoggingPresentation,
-        verification: CaseVerification,
+        verification: CaseResult,
         label: Optional[str] = None,
     ) -> None:
         status = verification.status
