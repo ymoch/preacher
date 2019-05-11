@@ -15,30 +15,36 @@ _KEY_PARAMS = 'params'
 
 class RequestCompiler:
     """
-    >>> compile = RequestCompiler().compile
-    >>> compile({'path': {'key': 'value'}})
+    >>> compiler = RequestCompiler()
+    >>> compiler.compile({'path': {'key': 'value'}})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Request.path ...: path
 
-    >>> compile({'params': ''})
+    >>> compiler = RequestCompiler()
+    >>> compiler.compile({'params': ''})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Request.params ...: params
 
-    >>> request = compile('/path')
+    >>> compiler = RequestCompiler()
+    >>> request = compiler.compile('/path')
     >>> request.path
     '/path'
     >>> request.params
     {}
 
-    >>> request = compile({})
+    >>> compiler = RequestCompiler()
+    >>> request = compiler.compile({})
     >>> request.path
     ''
     >>> request.params
     {}
 
-    >>> request = compile({'path': '/path', 'params': {'key': 'value'}})
+    >>> compiler = RequestCompiler()
+    >>> request = compiler.compile(
+    ...     {'path': '/path', 'params': {'key': 'value'}}
+    ... )
     >>> request.path
     '/path'
     >>> request.params
@@ -46,7 +52,7 @@ class RequestCompiler:
     """
     def compile(self: RequestCompiler, obj: Union[Mapping, str]) -> Request:
         if isinstance(obj, str):
-            return compile({_KEY_PATH: obj})
+            return self.compile({_KEY_PATH: obj})
 
         path = obj.get(_KEY_PATH, '')
         if not isinstance(path, str):
@@ -63,37 +69,3 @@ class RequestCompiler:
             )
 
         return Request(path=path, params=params)
-
-
-def compile(obj: Union[Mapping, str]) -> Request:
-    """
-    >>> compile({'path': {'key': 'value'}})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: Request.path ...: path
-
-    >>> compile({'params': ''})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: Request.params ...: params
-
-    >>> request = compile('/path')
-    >>> request.path
-    '/path'
-    >>> request.params
-    {}
-
-    >>> request = compile({})
-    >>> request.path
-    ''
-    >>> request.params
-    {}
-
-    >>> request = compile({'path': '/path', 'params': {'key': 'value'}})
-    >>> request.path
-    '/path'
-    >>> request.params
-    {'key': 'value'}
-    """
-    compiler = RequestCompiler()
-    return compiler.compile(obj)
