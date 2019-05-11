@@ -7,35 +7,15 @@ from typing import Any
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher
 
-from .description import Predicate
 from .status import Status
 from .verification import Verification
 
 
 class MatcherPredicate:
-    def __init__(self: MatcherPredicate, matcher: Matcher) -> None:
-        self._matcher = matcher
-
-    def __call__(self: MatcherPredicate, actual: Any) -> Verification:
-        try:
-            assert_that(actual, self._matcher)
-        except AssertionError as error:
-            message = str(error).strip()
-            return Verification(status=Status.UNSTABLE, message=message)
-        except Exception as error:
-            return Verification.of_error(error)
-
-        return Verification.succeed()
-
-
-def of_hamcrest_matcher(matcher: Matcher) -> Predicate:
     """
-    Make a predicate from a Hamcrest matcher.
-
     >>> from unittest.mock import MagicMock, patch
     >>> matcher = MagicMock(Matcher)
-    >>> predicate = of_hamcrest_matcher(matcher)
-    >>> assert isinstance(predicate, MatcherPredicate)
+    >>> predicate = MatcherPredicate(matcher)
 
     >>> with patch(
     ...     f'{__name__}.assert_that',
@@ -65,4 +45,16 @@ def of_hamcrest_matcher(matcher: Matcher) -> Predicate:
     >>> verification.status
     SUCCESS
     """
-    return MatcherPredicate(matcher)
+    def __init__(self: MatcherPredicate, matcher: Matcher) -> None:
+        self._matcher = matcher
+
+    def __call__(self: MatcherPredicate, actual: Any) -> Verification:
+        try:
+            assert_that(actual, self._matcher)
+        except AssertionError as error:
+            message = str(error).strip()
+            return Verification(status=Status.UNSTABLE, message=message)
+        except Exception as error:
+            return Verification.of_error(error)
+
+        return Verification.succeed()
