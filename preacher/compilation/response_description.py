@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Optional
 
 from preacher.core.description import Description
 from preacher.core.response_description import ResponseDescription
 from .error import CompilationError
 from .description import compile as compile_description
-from .predicate import compile as compile_predicate
+from .predicate import PredicateCompiler
 from .util import map_on_key
 
 
@@ -19,26 +19,27 @@ _KEY_BODY = 'body'
 
 class ResponseDescriptionCompiler:
     """
-    >>> from unittest.mock import call, patch, sentinel
-    >>> predicate_patch = patch(
-    ...     f'{__name__}.compile_predicate',
-    ...     return_value=sentinel.predicate,
-    ... )
+    >>> from unittest.mock import MagicMock, call, patch, sentinel
     >>> description_patch = patch(
     ...     f'{__name__}.compile_description',
     ...     return_value=sentinel.description,
     ... )
+    >>> def default_predicate_compiler() -> PredicateCompiler:
+    ...     return MagicMock(
+    ...         spec=PredicateCompiler,
+    ...         return_value=sentinel.predicate,
+    ...     )
 
-    >>> compiler = ResponseDescriptionCompiler()
-    >>> with predicate_patch as predicate_mock, \\
-    ...      description_patch as description_mock:
+    >>> predicate_compiler = default_predicate_compiler()
+    >>> compiler = ResponseDescriptionCompiler(predicate_compiler)
+    >>> with description_patch as description_mock:
     ...     response_description = compiler.compile({})
-    ...     predicate_mock.assert_not_called()
     ...     description_mock.assert_not_called()
     >>> response_description.status_code_predicates
     []
     >>> response_description.body_descriptions
     []
+    >>> predicate_compiler.compile.assert_not_called()
 
     >>> compiler = ResponseDescriptionCompiler()
     >>> compiler.compile({'body': 'str'})
@@ -52,36 +53,42 @@ class ResponseDescriptionCompiler:
         ...
     preacher.compilation.error.CompilationError: Description ...: body[0]
 
-    >>> compiler = ResponseDescriptionCompiler()
-    >>> with predicate_patch as predicate_mock, \\
-    ...      description_patch as description_mock:
+    >>> predicate_compiler = default_predicate_compiler()
+    >>> compiler = ResponseDescriptionCompiler(predicate_compiler)
+    >>> with description_patch as description_mock:
     ...     response_description = compiler.compile({
     ...         'status_code': 402,
     ...         'body': {'key1': 'value1'}}
     ...     )
-    ...     predicate_mock.assert_called_once_with(402)
     ...     description_mock.assert_called_once_with({'key1': 'value1'})
     >>> response_description.body_descriptions
     [sentinel.description]
+    >>> predicate_compiler.compile.assert_called_once_with(402)
 
-    >>> compiler = ResponseDescriptionCompiler()
-    >>> with predicate_patch as predicate_mock, \\
-    ...      description_patch as description_mock:
+    >>> predicate_compiler = default_predicate_compiler()
+    >>> compiler = ResponseDescriptionCompiler(predicate_compiler)
+    >>> with description_patch as description_mock:
     ...     response_description = compiler.compile({
     ...         'status_code': [{'be_greater_than': 0}, {'be_less_than': 400}],
     ...         'body': [{'key1': 'value1'}, {'key2': 'value2'}],
     ...     })
-    ...     predicate_mock.assert_has_calls([
-    ...         call({'be_greater_than': 0}),
-    ...         call({'be_less_than': 400}),
-    ...     ])
     ...     description_mock.assert_has_calls([
     ...         call({'key1': 'value1'}),
     ...         call({'key2': 'value2'}),
     ...     ])
     >>> response_description.body_descriptions
     [sentinel.description, sentinel.description]
+    >>> predicate_compiler.compile.assert_has_calls([
+    ...     call({'be_greater_than': 0}),
+    ...     call({'be_less_than': 400}),
+    ... ])
     """
+    def __init__(
+        self: ResponseDescriptionCompiler,
+        predicate_compiler: Optional[PredicateCompiler] = None,
+    ) -> None:
+        self._predicate_compiler = predicate_compiler or PredicateCompiler()
+
     def compile(
         self: ResponseDescriptionCompiler,
         obj: Mapping,
@@ -91,7 +98,7 @@ class ResponseDescriptionCompiler:
             status_code_predicate_objs = [status_code_predicate_objs]
         status_code_predicates = list(map_on_key(
             key=_KEY_STATUS_CODE,
-            func=compile_predicate,
+            func=self._predicate_compiler.compile,
             items=status_code_predicate_objs,
         ))
 
