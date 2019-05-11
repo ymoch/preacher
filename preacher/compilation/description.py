@@ -1,5 +1,7 @@
 """Description compilation."""
 
+from __future__ import annotations
+
 from collections.abc import Mapping
 
 from preacher.core.description import Description
@@ -11,6 +13,33 @@ from .util import run_on_key, map_on_key
 
 _KEY_DESCRIBE = 'describe'
 _KEY_IT_SHOULD = 'it_should'
+
+
+class DescriptionCompiler:
+    def compile(self: DescriptionCompiler, obj: Mapping):
+        extraction_obj = obj.get(_KEY_DESCRIBE)
+        if (
+            not isinstance(extraction_obj, Mapping)
+            and not isinstance(extraction_obj, str)
+        ):
+            raise CompilationError(
+                message='Description.describe must be a mapping',
+                path=[_KEY_DESCRIBE],
+            )
+        extraction = run_on_key(
+            _KEY_DESCRIBE,
+            compile_extraction,
+            extraction_obj
+        )
+
+        predicate_objs = obj.get(_KEY_IT_SHOULD, [])
+        if not isinstance(predicate_objs, list):
+            predicate_objs = [predicate_objs]
+        predicates = list(
+            map_on_key(_KEY_IT_SHOULD, compile_predicate, predicate_objs)
+        )
+
+        return Description(extraction=extraction, predicates=predicates)
 
 
 def compile(obj: Mapping) -> Description:
@@ -72,22 +101,5 @@ def compile(obj: Mapping) -> Description:
     >>> description.predicates
     [sentinel.predicate, sentinel.predicate]
     """
-    extraction_obj = obj.get(_KEY_DESCRIBE)
-    if (
-        not isinstance(extraction_obj, Mapping)
-        and not isinstance(extraction_obj, str)
-    ):
-        raise CompilationError(
-            message='Description.describe must be a mapping',
-            path=[_KEY_DESCRIBE],
-        )
-    extraction = run_on_key(_KEY_DESCRIBE, compile_extraction, extraction_obj)
-
-    predicate_objs = obj.get(_KEY_IT_SHOULD, [])
-    if not isinstance(predicate_objs, list):
-        predicate_objs = [predicate_objs]
-    predicates = list(
-        map_on_key(_KEY_IT_SHOULD, compile_predicate, predicate_objs)
-    )
-
-    return Description(extraction=extraction, predicates=predicates)
+    compiler = DescriptionCompiler()
+    return compiler.compile(obj)
