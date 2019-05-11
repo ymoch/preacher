@@ -16,6 +16,65 @@ _KEY_IT_SHOULD = 'it_should'
 
 
 class DescriptionCompiler:
+    """
+    >>> from unittest.mock import call, patch, sentinel
+    >>> extraction_patch = patch(
+    ...     f'{__name__}.compile_extraction',
+    ...     return_value=sentinel.extraction,
+    ... )
+    >>> predicate_patch = patch(
+    ...     f'{__name__}.compile_predicate',
+    ...     return_value=sentinel.predicate,
+    ... )
+
+    >>> compiler = DescriptionCompiler()
+    >>> compiler.compile({})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: Description.describe ...
+
+    >>> with extraction_patch as extraction_mock, \\
+    ...      predicate_patch as predicate_mock:
+    ...     description = compiler.compile({
+    ...         'describe': 'foo',
+    ...         'it_should': 'string',
+    ...     })
+    ...     extraction_mock.assert_called_with('foo')
+    ...     predicate_mock.assert_called_once_with('string')
+    >>> description.extraction
+    sentinel.extraction
+    >>> description.predicates
+    [sentinel.predicate]
+
+    >>> with extraction_patch as extraction_mock, \\
+    ...      predicate_patch as predicate_mock:
+    ...     description = compiler.compile({
+    ...         'describe': 'foo',
+    ...         'it_should': {'key': 'value'}
+    ...     })
+    ...     extraction_mock.assert_called_once_with('foo')
+    ...     predicate_mock.assert_called_once_with({'key': 'value'})
+    >>> description.extraction
+    sentinel.extraction
+    >>> description.predicates
+    [sentinel.predicate]
+
+    >>> with extraction_patch as extraction_mock, \\
+    ...      predicate_patch as predicate_mock:
+    ...     description = compiler.compile({
+    ...         'describe': {'key': 'value'},
+    ...         'it_should': [{'key1': 'value1'}, {'key2': 'value2'}]
+    ...     })
+    ...     extraction_mock.assert_called_once_with({'key': 'value'})
+    ...     predicate_mock.assert_has_calls([
+    ...         call({'key1': 'value1'}),
+    ...         call({'key2': 'value2'}),
+    ...     ])
+    >>> description.extraction
+    sentinel.extraction
+    >>> description.predicates
+    [sentinel.predicate, sentinel.predicate]
+    """
     def compile(self: DescriptionCompiler, obj: Mapping):
         extraction_obj = obj.get(_KEY_DESCRIBE)
         if (
@@ -40,66 +99,3 @@ class DescriptionCompiler:
         )
 
         return Description(extraction=extraction, predicates=predicates)
-
-
-def compile(obj: Mapping) -> Description:
-    """
-    >>> from unittest.mock import call, patch, sentinel
-    >>> extraction_patch = patch(
-    ...     f'{__name__}.compile_extraction',
-    ...     return_value=sentinel.extraction,
-    ... )
-    >>> predicate_patch = patch(
-    ...     f'{__name__}.compile_predicate',
-    ...     return_value=sentinel.predicate,
-    ... )
-
-    >>> compile({})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: Description.describe ...
-
-    >>> with extraction_patch as extraction_mock, \\
-    ...      predicate_patch as predicate_mock:
-    ...     description = compile({
-    ...         'describe': 'foo',
-    ...         'it_should': 'string',
-    ...     })
-    ...     extraction_mock.assert_called_with('foo')
-    ...     predicate_mock.assert_called_once_with('string')
-    >>> description.extraction
-    sentinel.extraction
-    >>> description.predicates
-    [sentinel.predicate]
-
-    >>> with extraction_patch as extraction_mock, \\
-    ...      predicate_patch as predicate_mock:
-    ...     description = compile({
-    ...         'describe': 'foo',
-    ...         'it_should': {'key': 'value'}
-    ...     })
-    ...     extraction_mock.assert_called_once_with('foo')
-    ...     predicate_mock.assert_called_once_with({'key': 'value'})
-    >>> description.extraction
-    sentinel.extraction
-    >>> description.predicates
-    [sentinel.predicate]
-
-    >>> with extraction_patch as extraction_mock, \\
-    ...      predicate_patch as predicate_mock:
-    ...     description = compile({
-    ...         'describe': {'key': 'value'},
-    ...         'it_should': [{'key1': 'value1'}, {'key2': 'value2'}]
-    ...     })
-    ...     extraction_mock.assert_called_once_with({'key': 'value'})
-    ...     predicate_mock.assert_has_calls([
-    ...         call({'key1': 'value1'}),
-    ...         call({'key2': 'value2'}),
-    ...     ])
-    >>> description.extraction
-    sentinel.extraction
-    >>> description.predicates
-    [sentinel.predicate, sentinel.predicate]
-    """
-    compiler = DescriptionCompiler()
-    return compiler.compile(obj)
