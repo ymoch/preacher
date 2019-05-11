@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import Optional
 
 from preacher.core.scenario import Scenario
 from .error import CompilationError
-from .request import compile as compile_request
+from .request import RequestCompiler
 from .response_description import compile as compile_response_description
 from .util import run_on_key
 
@@ -18,64 +19,72 @@ _KEY_RESPONSE = 'response'
 
 class ScenarioCompiler:
     """
-    >>> from unittest.mock import patch, sentinel
-    >>> request_patch = patch(
-    ...     f'{__name__}.compile_request',
-    ...     return_value=sentinel.request,
-    ... )
+    >>> from unittest.mock import MagicMock, patch, sentinel
+    >>> request_compiler_ctor_patch = patch(f'{__name__}.RequestCompiler')
     >>> response_description_patch = patch(
     ...     f'{__name__}.compile_response_description',
     ...     return_value=sentinel.response_description
     ... )
 
-    >>> compiler = ScenarioCompiler()
+    >>> def default_request_compiler() -> RequestCompiler:
+    ...     return MagicMock(
+    ...         spec=RequestCompiler,
+    ...         compile=MagicMock(return_value=sentinel.request),
+    ...     )
 
     When given an empty object, then generates a default scenario.
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
+    >>> request_compiler = default_request_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> with response_description_patch as response_description_mock:
     ...     scenario = compiler.compile({})
-    ...     request_mock.assert_called_once_with({})
     ...     response_description_mock.assert_called_once_with({})
+    >>> request_compiler.compile.assert_called_once_with({})
     >>> scenario.request
     sentinel.request
     >>> scenario.response_description
     sentinel.response_description
 
     When given a not string label, then raises a compilation error.
+    >>> compiler = ScenarioCompiler()
     >>> compiler.compile({'label': []})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.label ...: label
 
     When given an invalid type request, then raises a compilation error.
+    >>> compiler = ScenarioCompiler()
     >>> compiler.compile({'request': []})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.request ...: request
 
     When a request compilation fails, then raises a compilation error.
-    >>> with request_patch as request_mock:
-    ...     request_mock.side_effect=CompilationError(
-    ...         message='message',
-    ...         path=['foo'],
-    ...     )
-    ...     compiler.compile({})
+    >>> request_compiler = MagicMock(
+    ...     spec=RequestCompiler,
+    ...     compile=MagicMock(
+    ...         side_effect=CompilationError(message='message', path=['foo'])
+    ...     ),
+    ... )
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> compiler.compile({})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: message: request.foo
 
     When given an invalid type response description,
     then raises a compilation error.
-    >>> with request_patch:
-    ...     compiler.compile({'response': 'str'})
+    >>> request_compiler = default_request_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> compiler.compile({'response': 'str'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.response...: response
 
     When a response description compilation fails,
     then raises a compilation error.
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
+    >>> request_compiler = default_request_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> with response_description_patch as response_description_mock:
     ...     response_description_mock.side_effect=CompilationError(
     ...         message='message',
     ...         path=['bar'],
@@ -85,25 +94,28 @@ class ScenarioCompiler:
         ...
     preacher.compilation.error.CompilationError: message: response.bar
 
-    Creates a scenario without response description.
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
+    Creates a scenario only with a request.
+    >>> request_compiler = default_request_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> with response_description_patch as response_description_mock:
     ...     scenario = compiler.compile({'request': '/path'})
-    ...     request_mock.assert_called_once_with('/path')
+    >>> request_compiler.compile.assert_called_once_with('/path')
     >>> scenario.label
     >>> scenario.request
     sentinel.request
 
     Creates a scenario.
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
+    >>> request_compiler.compile.reset_mock()
+    >>> request_compiler = default_request_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> with response_description_patch as response_description_mock:
     ...     scenario = compiler.compile({
     ...         'label': 'label',
     ...         'request': {'path': '/path'},
     ...         'response': {'key': 'value'},
     ...     })
-    ...     request_mock.assert_called_once_with({'path': '/path'})
     ...     response_description_mock.assert_called_once_with({'key': 'value'})
+    >>> request_compiler.compile.assert_called_once_with({'path': '/path'})
     >>> scenario.label
     'label'
     >>> scenario.request
@@ -111,6 +123,12 @@ class ScenarioCompiler:
     >>> scenario.response_description
     sentinel.response_description
     """
+    def __init__(
+        self: ScenarioCompiler,
+        request_compiler: Optional[RequestCompiler] = None,
+    ) -> None:
+        self._request_compiler = request_compiler or RequestCompiler()
+
     def compile(self: ScenarioCompiler, obj: Mapping) -> Scenario:
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
@@ -130,7 +148,11 @@ class ScenarioCompiler:
                 ),
                 path=[_KEY_REQUEST],
             )
-        request = run_on_key(_KEY_REQUEST, compile_request, request_obj)
+        request = run_on_key(
+            _KEY_REQUEST,
+            self._request_compiler.compile,
+            request_obj,
+        )
 
         response_obj = obj.get('response', {})
         if not isinstance(response_obj, Mapping):
