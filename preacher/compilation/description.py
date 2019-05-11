@@ -13,7 +13,7 @@ from .util import run_on_key, map_on_key
 
 
 _KEY_DESCRIBE = 'describe'
-_KEY_IT_SHOULD = 'it_should'
+_KEY_SHOULD = 'should'
 
 
 class DescriptionCompiler:
@@ -44,7 +44,7 @@ class DescriptionCompiler:
     ... )
     >>> description = compiler.compile({
     ...     'describe': 'foo',
-    ...     'it_should': 'string',
+    ...     'should': 'string',
     ... })
     >>> description.extraction
     sentinel.extraction
@@ -61,7 +61,7 @@ class DescriptionCompiler:
     ... )
     >>> description = compiler.compile({
     ...     'describe': 'foo',
-    ...     'it_should': {'key': 'value'}
+    ...     'should': {'key': 'value'}
     ... })
     >>> description.extraction
     sentinel.extraction
@@ -78,7 +78,7 @@ class DescriptionCompiler:
     ... )
     >>> description = compiler.compile({
     ...     'describe': {'key': 'value'},
-    ...     'it_should': [{'key1': 'value1'}, {'key2': 'value2'}]
+    ...     'should': [{'key1': 'value1'}, {'key2': 'value2'}]
     ... })
     >>> description.extraction
     sentinel.extraction
@@ -114,11 +114,11 @@ class DescriptionCompiler:
             extraction_obj
         )
 
-        predicate_objs = obj.get(_KEY_IT_SHOULD, [])
+        predicate_objs = obj.get(_KEY_SHOULD, [])
         if not isinstance(predicate_objs, list):
             predicate_objs = [predicate_objs]
         predicates = list(map_on_key(
-            _KEY_IT_SHOULD,
+            _KEY_SHOULD,
             self._predicate_compiler.compile,
             predicate_objs,
         ))

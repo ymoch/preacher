@@ -52,7 +52,7 @@ Here is a simple configuration example.
           status_code: 200
           body:
             - describe: .foo
-              it_should:
+              should:
                 equal: bar
       - label: A Little Complecated
         request:
@@ -69,7 +69,7 @@ Here is a simple configuration example.
           body:
             - describe:
                 jq: .foo
-              it_should:
+              should:
                 - start_with: x
                 - end_with: y
 
@@ -126,7 +126,7 @@ A ``Description`` is a mapping that consists of below:
 - describe: ``String`` or ``Extraction``
     - An extraction process.
     - When given a string, that is equivalent to ``{"jq": it}``.
-- it_should: ``Predicate``, or ``List<Predicate>>`` (Optional)
+- should: ``Predicate``, or ``List<Predicate>>`` (Optional)
     - Predicates that match the extracted value.
 
 Extraction

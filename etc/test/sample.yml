@@ -11,13 +11,13 @@ cases:
       status_code: 200
       body:
         - describe: .not_existing_key
-          it_should: be_null
+          should: be_null
         - describe: .empty_string
-          it_should: be_empty
+          should: be_empty
         - describe: .empty_list
-          it_should: be_empty
+          should: be_empty
         - describe: .foo
-          it_should:
+          should:
             - not_be_null
             - not: be_empty
             - be: bar
@@ -33,7 +33,7 @@ cases:
             - end_with: ar
             - match_regexp: ^b.r$
         - describe: .list
-          it_should:
+          should:
             - not:
                 have_item: ''
             - have_item: 1
