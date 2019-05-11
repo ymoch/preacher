@@ -8,7 +8,7 @@ from typing import Optional
 from preacher.core.description import Description
 from .error import CompilationError
 from .predicate import PredicateCompiler
-from .extraction import compile as compile_extraction
+from .extraction import ExtractionCompiler
 from .util import run_on_key, map_on_key
 
 
@@ -18,11 +18,12 @@ _KEY_IT_SHOULD = 'it_should'
 
 class DescriptionCompiler:
     """
-    >>> from unittest.mock import MagicMock, call, patch, sentinel
-    >>> extraction_patch = patch(
-    ...     f'{__name__}.compile_extraction',
-    ...     return_value=sentinel.extraction,
-    ... )
+    >>> from unittest.mock import MagicMock, call, sentinel
+    >>> def default_extraction_compiler() -> ExtractionCompiler:
+    ...     return MagicMock(
+    ...         spec=ExtractionCompiler,
+    ...         compile=MagicMock(return_value=sentinel.extraction),
+    ...     )
     >>> def default_predicate_compiler() -> PredicateCompiler:
     ...     return MagicMock(
     ...         spec=PredicateCompiler,
@@ -35,46 +36,55 @@ class DescriptionCompiler:
         ...
     preacher.compilation.error.CompilationError: Description.describe ...
 
+    >>> extraction_compiler = default_extraction_compiler()
     >>> predicate_compiler = default_predicate_compiler()
-    >>> compiler = DescriptionCompiler(predicate_compiler)
-    >>> with extraction_patch as extraction_mock:
-    ...     description = compiler.compile({
-    ...         'describe': 'foo',
-    ...         'it_should': 'string',
-    ...     })
-    ...     extraction_mock.assert_called_with('foo')
+    >>> compiler = DescriptionCompiler(
+    ...     extraction_compiler=extraction_compiler,
+    ...     predicate_compiler=predicate_compiler,
+    ... )
+    >>> description = compiler.compile({
+    ...     'describe': 'foo',
+    ...     'it_should': 'string',
+    ... })
     >>> description.extraction
     sentinel.extraction
     >>> description.predicates
     [sentinel.predicate]
+    >>> extraction_compiler.compile.assert_called_with('foo')
     >>> predicate_compiler.compile.assert_called_once_with('string')
 
+    >>> extraction_compiler = default_extraction_compiler()
     >>> predicate_compiler = default_predicate_compiler()
-    >>> compiler = DescriptionCompiler(predicate_compiler)
-    >>> with extraction_patch as extraction_mock:
-    ...     description = compiler.compile({
-    ...         'describe': 'foo',
-    ...         'it_should': {'key': 'value'}
-    ...     })
-    ...     extraction_mock.assert_called_once_with('foo')
+    >>> compiler = DescriptionCompiler(
+    ...     extraction_compiler=extraction_compiler,
+    ...     predicate_compiler=predicate_compiler,
+    ... )
+    >>> description = compiler.compile({
+    ...     'describe': 'foo',
+    ...     'it_should': {'key': 'value'}
+    ... })
     >>> description.extraction
     sentinel.extraction
     >>> description.predicates
     [sentinel.predicate]
+    >>> extraction_compiler.compile.assert_called_once_with('foo')
     >>> predicate_compiler.compile.assert_called_once_with({'key': 'value'})
 
+    >>> extraction_compiler = default_extraction_compiler()
     >>> predicate_compiler = default_predicate_compiler()
-    >>> compiler = DescriptionCompiler(predicate_compiler)
-    >>> with extraction_patch as extraction_mock:
-    ...     description = compiler.compile({
-    ...         'describe': {'key': 'value'},
-    ...         'it_should': [{'key1': 'value1'}, {'key2': 'value2'}]
-    ...     })
-    ...     extraction_mock.assert_called_once_with({'key': 'value'})
+    >>> compiler = DescriptionCompiler(
+    ...     extraction_compiler=extraction_compiler,
+    ...     predicate_compiler=predicate_compiler,
+    ... )
+    >>> description = compiler.compile({
+    ...     'describe': {'key': 'value'},
+    ...     'it_should': [{'key1': 'value1'}, {'key2': 'value2'}]
+    ... })
     >>> description.extraction
     sentinel.extraction
     >>> description.predicates
     [sentinel.predicate, sentinel.predicate]
+    >>> extraction_compiler.compile.assert_called_once_with({'key': 'value'})
     >>> predicate_compiler.compile.assert_has_calls([
     ...     call({'key1': 'value1'}),
     ...     call({'key2': 'value2'}),
@@ -82,8 +92,10 @@ class DescriptionCompiler:
     """
     def __init__(
         self: DescriptionCompiler,
+        extraction_compiler: Optional[ExtractionCompiler] = None,
         predicate_compiler: Optional[PredicateCompiler] = None,
     ) -> None:
+        self._extraction_compiler = extraction_compiler or ExtractionCompiler()
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
 
     def compile(self: DescriptionCompiler, obj: Mapping):
@@ -93,12 +105,12 @@ class DescriptionCompiler:
             and not isinstance(extraction_obj, str)
         ):
             raise CompilationError(
-                message='Description.describe must be a mapping',
+                message='Description.describe must be a mapping or a string',
                 path=[_KEY_DESCRIBE],
             )
         extraction = run_on_key(
             _KEY_DESCRIBE,
-            compile_extraction,
+            self._extraction_compiler.compile,
             extraction_obj
         )
 

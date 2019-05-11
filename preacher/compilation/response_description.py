@@ -107,7 +107,9 @@ class ResponseDescriptionCompiler:
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
         self._description_compiler = (
             description_compiler
-            or DescriptionCompiler(self._predicate_compiler)
+            or DescriptionCompiler(
+                predicate_compiler=self._predicate_compiler
+            )
         )
 
     def compile(
