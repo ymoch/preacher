@@ -1,11 +1,14 @@
 """Scenario compilation."""
 
+from __future__ import annotations
+
 from collections.abc import Mapping
+from typing import Optional
 
 from preacher.core.scenario import Scenario
 from .error import CompilationError
-from .request import compile as compile_request
-from .response_description import compile as compile_response_description
+from .request import RequestCompiler
+from .response_description import ResponseDescriptionCompiler
 from .util import run_on_key
 
 
@@ -14,121 +17,160 @@ _KEY_REQUEST = 'request'
 _KEY_RESPONSE = 'response'
 
 
-def compile_scenario(obj: Mapping) -> Scenario:
+class ScenarioCompiler:
     """
-    >>> from unittest.mock import patch, sentinel
-    >>> request_patch = patch(
-    ...     f'{__name__}.compile_request',
-    ...     return_value=sentinel.request,
-    ... )
-    >>> response_description_patch = patch(
-    ...     f'{__name__}.compile_response_description',
-    ...     return_value=sentinel.response_description
-    ... )
+    >>> from unittest.mock import MagicMock, sentinel
+    >>> def default_request_compiler() -> RequestCompiler:
+    ...     return MagicMock(
+    ...         spec=RequestCompiler,
+    ...         compile=MagicMock(return_value=sentinel.request),
+    ...     )
+    >>> def default_response_compiler() -> ResponseDescriptionCompiler:
+    ...     return MagicMock(
+    ...         spec=ResponseDescriptionCompiler,
+    ...         compile=MagicMock(return_value=sentinel.response_description),
+    ...     )
 
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
-    ...     scenario = compile_scenario({})
-    ...     request_mock.assert_called_once_with({})
-    ...     response_description_mock.assert_called_once_with({})
+    When given an empty object, then generates a default scenario.
+    >>> request_compiler = default_request_compiler()
+    >>> response_compiler = default_response_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
+    >>> scenario = compiler.compile({})
     >>> scenario.request
     sentinel.request
     >>> scenario.response_description
     sentinel.response_description
+    >>> request_compiler.compile.assert_called_once_with({})
+    >>> response_compiler.compile.assert_called_once_with({})
 
-    >>> compile_scenario({'label': []})
+    When given a not string label, then raises a compilation error.
+    >>> compiler = ScenarioCompiler()
+    >>> compiler.compile({'label': []})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.label ...: label
 
-    >>> compile_scenario({'request': []})
+    When given an invalid type request, then raises a compilation error.
+    >>> compiler = ScenarioCompiler()
+    >>> compiler.compile({'request': []})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.request ...: request
 
-    >>> with request_patch as request_mock:
-    ...     request_mock.side_effect=CompilationError(
-    ...         message='message',
-    ...         path=['foo'],
-    ...     )
-    ...     compile_scenario({})
+    When a request compilation fails, then raises a compilation error.
+    >>> request_compiler = MagicMock(
+    ...     spec=RequestCompiler,
+    ...     compile=MagicMock(
+    ...         side_effect=CompilationError(message='message', path=['foo'])
+    ...     ),
+    ... )
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> compiler.compile({})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: message: request.foo
 
-    >>> with request_patch:
-    ...     compile_scenario({'response': 'str'})
+    When given an invalid type response description,
+    then raises a compilation error.
+    >>> request_compiler = default_request_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> compiler.compile({'response': 'str'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: Scenario.response...: response
 
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
-    ...     response_description_mock.side_effect=CompilationError(
-    ...         message='message',
-    ...         path=['bar'],
-    ...     )
-    ...     scenario = compile_scenario({'request': '/path'})
+    When a response description compilation fails,
+    then raises a compilation error.
+    >>> request_compiler = default_request_compiler()
+    >>> response_compiler = MagicMock(
+    ...     spec=ResponseDescriptionCompiler,
+    ...     compile=MagicMock(
+    ...         side_effect=CompilationError(message='message', path=['bar']),
+    ...     ),
+    ... )
+    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
+    >>> compiler.compile({'request': '/path'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: message: response.bar
 
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
-    ...     scenario = compile_scenario({'request': '/path'})
-    ...     request_mock.assert_called_once_with('/path')
+    Creates a scenario only with a request.
+    >>> request_compiler = default_request_compiler()
+    >>> response_compiler = default_response_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
+    >>> scenario = compiler.compile({'request': '/path'})
     >>> scenario.label
     >>> scenario.request
     sentinel.request
+    >>> request_compiler.compile.assert_called_once_with('/path')
 
-    >>> with request_patch as request_mock, \\
-    ...      response_description_patch as response_description_mock:
-    ...     scenario = compile_scenario({
-    ...         'label': 'label',
-    ...         'request': {'path': '/path'},
-    ...         'response': {'key': 'value'},
-    ...     })
-    ...     request_mock.assert_called_once_with({'path': '/path'})
-    ...     response_description_mock.assert_called_once_with({'key': 'value'})
+    Creates a scenario.
+    >>> request_compiler = default_request_compiler()
+    >>> response_compiler = default_response_compiler()
+    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
+    >>> scenario = compiler.compile({
+    ...     'label': 'label',
+    ...     'request': {'path': '/path'},
+    ...     'response': {'key': 'value'},
+    ... })
     >>> scenario.label
     'label'
     >>> scenario.request
     sentinel.request
     >>> scenario.response_description
     sentinel.response_description
+    >>> request_compiler.compile.assert_called_once_with({'path': '/path'})
+    >>> response_compiler.compile.assert_called_once_with({'key': 'value'})
     """
-    label = obj.get(_KEY_LABEL)
-    if label is not None and not isinstance(label, str):
-        raise CompilationError(
-            message=f'Scenario.{_KEY_LABEL} must be a string',
-            path=[_KEY_LABEL],
+    def __init__(
+        self: ScenarioCompiler,
+        request_compiler: Optional[RequestCompiler] = None,
+        response_compiler: Optional[ResponseDescriptionCompiler] = None
+    ) -> None:
+        self._request_compiler = request_compiler or RequestCompiler()
+        self._response_compiler = (
+            response_compiler or ResponseDescriptionCompiler()
         )
 
-    request_obj = obj.get(_KEY_REQUEST, {})
-    if (
-        not isinstance(request_obj, Mapping)
-        and not isinstance(request_obj, str)
-    ):
-        raise CompilationError(
-            message=f'Scenario.{_KEY_REQUEST} must be a string or a mapping',
-            path=[_KEY_REQUEST],
-        )
-    request = run_on_key(_KEY_REQUEST, compile_request, request_obj)
+    def compile(self: ScenarioCompiler, obj: Mapping) -> Scenario:
+        label = obj.get(_KEY_LABEL)
+        if label is not None and not isinstance(label, str):
+            raise CompilationError(
+                message=f'Scenario.{_KEY_LABEL} must be a string',
+                path=[_KEY_LABEL],
+            )
 
-    response_obj = obj.get('response', {})
-    if not isinstance(response_obj, Mapping):
-        raise CompilationError(
-            message=f'Scenario.{_KEY_RESPONSE} object must be a mapping',
-            path=[_KEY_RESPONSE],
+        request_obj = obj.get(_KEY_REQUEST, {})
+        if (
+            not isinstance(request_obj, Mapping)
+            and not isinstance(request_obj, str)
+        ):
+            raise CompilationError(
+                message=(
+                    f'Scenario.{_KEY_REQUEST} must be a string or a mapping'
+                ),
+                path=[_KEY_REQUEST],
+            )
+        request = run_on_key(
+            _KEY_REQUEST,
+            self._request_compiler.compile,
+            request_obj,
         )
-    response_description = run_on_key(
-        _KEY_RESPONSE,
-        compile_response_description,
-        response_obj,
-    )
 
-    return Scenario(
-        label=label,
-        request=request,
-        response_description=response_description,
-    )
+        response_obj = obj.get('response', {})
+        if not isinstance(response_obj, Mapping):
+            raise CompilationError(
+                message=f'Scenario.{_KEY_RESPONSE} object must be a mapping',
+                path=[_KEY_RESPONSE],
+            )
+        response_description = run_on_key(
+            _KEY_RESPONSE,
+            self._response_compiler.compile,
+            response_obj,
+        )
+
+        return Scenario(
+            label=label,
+            request=request,
+            response_description=response_description,
+        )
