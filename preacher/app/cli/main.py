@@ -68,9 +68,9 @@ def main() -> None:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
 
-        scenarios = compiler.compile(config)
-        for scenario in scenarios:
-            app.consume_scenario(scenario)
+        cases = compiler.compile(config)
+        for case in cases:
+            app.consume_case(case)
 
     if not app.is_succeeded:
         sys.exit(1)

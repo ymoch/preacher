@@ -1,11 +1,11 @@
-"""Scenario compilation."""
+"""Case compilation."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
 from typing import Optional
 
-from preacher.core.scenario import Scenario
+from preacher.core.case import Case
 from .error import CompilationError
 from .request import RequestCompiler
 from .response_description import ResponseDescriptionCompiler
@@ -17,7 +17,7 @@ _KEY_REQUEST = 'request'
 _KEY_RESPONSE = 'response'
 
 
-class ScenarioCompiler:
+class CaseCompiler:
     """
     >>> from unittest.mock import MagicMock, sentinel
     >>> def default_request_compiler() -> RequestCompiler:
@@ -31,31 +31,31 @@ class ScenarioCompiler:
     ...         compile=MagicMock(return_value=sentinel.response_description),
     ...     )
 
-    When given an empty object, then generates a default scenario.
+    When given an empty object, then generates a default case.
     >>> request_compiler = default_request_compiler()
     >>> response_compiler = default_response_compiler()
-    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
-    >>> scenario = compiler.compile({})
-    >>> scenario.request
+    >>> compiler = CaseCompiler(request_compiler, response_compiler)
+    >>> case = compiler.compile({})
+    >>> case.request
     sentinel.request
-    >>> scenario.response_description
+    >>> case.response_description
     sentinel.response_description
     >>> request_compiler.compile.assert_called_once_with({})
     >>> response_compiler.compile.assert_called_once_with({})
 
     When given a not string label, then raises a compilation error.
-    >>> compiler = ScenarioCompiler()
+    >>> compiler = CaseCompiler()
     >>> compiler.compile({'label': []})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Scenario.label ...: label
+    preacher.compilation.error.CompilationError: Case.label ...: label
 
     When given an invalid type request, then raises a compilation error.
-    >>> compiler = ScenarioCompiler()
+    >>> compiler = CaseCompiler()
     >>> compiler.compile({'request': []})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Scenario.request ...: request
+    preacher.compilation.error.CompilationError: Case.request ...: request
 
     When a request compilation fails, then raises a compilation error.
     >>> request_compiler = MagicMock(
@@ -64,7 +64,7 @@ class ScenarioCompiler:
     ...         side_effect=CompilationError(message='message', path=['foo'])
     ...     ),
     ... )
-    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> compiler = CaseCompiler(request_compiler)
     >>> compiler.compile({})
     Traceback (most recent call last):
         ...
@@ -73,11 +73,11 @@ class ScenarioCompiler:
     When given an invalid type response description,
     then raises a compilation error.
     >>> request_compiler = default_request_compiler()
-    >>> compiler = ScenarioCompiler(request_compiler)
+    >>> compiler = CaseCompiler(request_compiler)
     >>> compiler.compile({'response': 'str'})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Scenario.response...: response
+    preacher.compilation.error.CompilationError: Case.response...: response
 
     When a response description compilation fails,
     then raises a compilation error.
@@ -88,42 +88,42 @@ class ScenarioCompiler:
     ...         side_effect=CompilationError(message='message', path=['bar']),
     ...     ),
     ... )
-    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
+    >>> compiler = CaseCompiler(request_compiler, response_compiler)
     >>> compiler.compile({'request': '/path'})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: message: response.bar
 
-    Creates a scenario only with a request.
+    Creates a case only with a request.
     >>> request_compiler = default_request_compiler()
     >>> response_compiler = default_response_compiler()
-    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
-    >>> scenario = compiler.compile({'request': '/path'})
-    >>> scenario.label
-    >>> scenario.request
+    >>> compiler = CaseCompiler(request_compiler, response_compiler)
+    >>> case = compiler.compile({'request': '/path'})
+    >>> case.label
+    >>> case.request
     sentinel.request
     >>> request_compiler.compile.assert_called_once_with('/path')
 
-    Creates a scenario.
+    Creates a case.
     >>> request_compiler = default_request_compiler()
     >>> response_compiler = default_response_compiler()
-    >>> compiler = ScenarioCompiler(request_compiler, response_compiler)
-    >>> scenario = compiler.compile({
+    >>> compiler = CaseCompiler(request_compiler, response_compiler)
+    >>> case = compiler.compile({
     ...     'label': 'label',
     ...     'request': {'path': '/path'},
     ...     'response': {'key': 'value'},
     ... })
-    >>> scenario.label
+    >>> case.label
     'label'
-    >>> scenario.request
+    >>> case.request
     sentinel.request
-    >>> scenario.response_description
+    >>> case.response_description
     sentinel.response_description
     >>> request_compiler.compile.assert_called_once_with({'path': '/path'})
     >>> response_compiler.compile.assert_called_once_with({'key': 'value'})
     """
     def __init__(
-        self: ScenarioCompiler,
+        self: CaseCompiler,
         request_compiler: Optional[RequestCompiler] = None,
         response_compiler: Optional[ResponseDescriptionCompiler] = None
     ) -> None:
@@ -132,11 +132,11 @@ class ScenarioCompiler:
             response_compiler or ResponseDescriptionCompiler()
         )
 
-    def compile(self: ScenarioCompiler, obj: Mapping) -> Scenario:
+    def compile(self: CaseCompiler, obj: Mapping) -> Case:
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
             raise CompilationError(
-                message=f'Scenario.{_KEY_LABEL} must be a string',
+                message=f'Case.{_KEY_LABEL} must be a string',
                 path=[_KEY_LABEL],
             )
 
@@ -147,7 +147,7 @@ class ScenarioCompiler:
         ):
             raise CompilationError(
                 message=(
-                    f'Scenario.{_KEY_REQUEST} must be a string or a mapping'
+                    f'Case.{_KEY_REQUEST} must be a string or a mapping'
                 ),
                 path=[_KEY_REQUEST],
             )
@@ -160,7 +160,7 @@ class ScenarioCompiler:
         response_obj = obj.get('response', {})
         if not isinstance(response_obj, Mapping):
             raise CompilationError(
-                message=f'Scenario.{_KEY_RESPONSE} object must be a mapping',
+                message=f'Case.{_KEY_RESPONSE} object must be a mapping',
                 path=[_KEY_RESPONSE],
             )
         response_description = run_on_key(
@@ -169,7 +169,7 @@ class ScenarioCompiler:
             response_obj,
         )
 
-        return Scenario(
+        return Case(
             label=label,
             request=request,
             response_description=response_description,

@@ -45,14 +45,14 @@ Here is a simple configuration example.
 
 .. code-block:: yaml
 
-    scenarios:
+    cases:
       - label: Simple
         request: /path/to/foo
         response:
           status_code: 200
           body:
             - describe: .foo
-              it_should:
+              should:
                 equal: bar
       - label: A Little Complecated
         request:
@@ -69,7 +69,7 @@ Here is a simple configuration example.
           body:
             - describe:
                 jq: .foo
-              it_should:
+              should:
                 - start_with: x
                 - end_with: y
 
@@ -81,16 +81,16 @@ Global
 A ``Configuration`` is written in `YAML`_.
 A ``Configuration`` is a mapping that consists of below:
 
-- scenarios: ``List<Scenario>``
-    - Scenarios.
+- cases: ``List<Case>``
+    - Test cases.
 
-Scenario
-********
-A ``Scenario`` is a mapping that consists of below:
+Case
+****
+A ``Case`` is a mapping that consists of below:
 
 - label: ``String`` (Recommended)
-    - A label of this scenario.
-    - This field is actually optional but recommended to tell a scenario from another.
+    - A label of this case.
+    - This field is actually optional but recommended to tell a case from another.
 - request: ``Request`` (Optional)
     - A request.
 - response: ``ResponseDescription`` (Optional)
@@ -126,7 +126,7 @@ A ``Description`` is a mapping that consists of below:
 - describe: ``String`` or ``Extraction``
     - An extraction process.
     - When given a string, that is equivalent to ``{"jq": it}``.
-- it_should: ``Predicate``, or ``List<Predicate>>`` (Optional)
+- should: ``Predicate``, or ``List<Predicate>>`` (Optional)
     - Predicates that match the extracted value.
 
 Extraction
