@@ -23,18 +23,3 @@ class PredicateCompiler:
     def compile(self: PredicateCompiler, obj: Any) -> Predicate:
         matcher = compile_matcher(obj)
         return MatcherPredicate(matcher)
-
-
-def compile(obj: Any) -> Predicate:
-    """
-    >>> from unittest.mock import patch, sentinel
-
-    >>> with patch(
-    ...     f'{__name__}.compile_matcher',
-    ...     return_value=sentinel.matcher
-    ... ) as matcher_mock:
-    ...     predicate = compile('matcher')
-    ...     matcher_mock.assert_called_with('matcher')
-    """
-    compiler = PredicateCompiler()
-    return compiler.compile(obj)
