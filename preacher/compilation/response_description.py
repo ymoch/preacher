@@ -106,7 +106,8 @@ class ResponseDescriptionCompiler:
     ) -> None:
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
         self._description_compiler = (
-            description_compiler or DescriptionCompiler()
+            description_compiler
+            or DescriptionCompiler(self._predicate_compiler)
         )
 
     def compile(
