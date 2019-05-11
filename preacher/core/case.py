@@ -1,4 +1,4 @@
-"""Scenario."""
+"""Test case."""
 
 from __future__ import annotations
 
@@ -15,25 +15,25 @@ from .verification import Verification
 
 
 @dataclass
-class ScenarioVerification:
+class CaseVerification:
     status: Status
     request: Verification
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
 
 
-class Scenario:
+class Case:
     """
     >>> from unittest.mock import MagicMock
-    >>> scenario = Scenario(
+    >>> case = Case(
     ...     request=MagicMock(Request, side_effect=RuntimeError('message')),
     ...     response_description=MagicMock(ResponseDescription),
     ... )
-    >>> scenario.label
-    >>> verification = scenario('base-url')
-    >>> scenario.request.call_args
+    >>> case.label
+    >>> verification = case('base-url')
+    >>> case.request.call_args
     call('base-url')
-    >>> scenario.response_description.call_count
+    >>> case.response_description.call_count
     0
     >>> verification.label
     >>> verification.status
@@ -45,7 +45,7 @@ class Scenario:
 
     >>> from .request import Response
     >>> inner_response = MagicMock(Response, status_code=402, body='body')
-    >>> scenario = Scenario(
+    >>> case = Case(
     ...     label='Response should be unstable',
     ...     request=MagicMock(Request, return_value=inner_response),
     ...     response_description=MagicMock(
@@ -57,8 +57,8 @@ class Scenario:
     ...         ),
     ...     ),
     ... )
-    >>> verification = scenario('base-url')
-    >>> scenario.response_description.call_args
+    >>> verification = case('base-url')
+    >>> case.response_description.call_args
     call(body='body', status_code=402)
     >>> verification.label
     'Response should be unstable'
@@ -72,7 +72,7 @@ class Scenario:
     UNSTABLE
     """
     def __init__(
-        self: Scenario,
+        self: Case,
         request: Request,
         response_description: ResponseDescription,
         label: Optional[str] = None,
@@ -81,11 +81,11 @@ class Scenario:
         self._request = request
         self._response_description = response_description
 
-    def __call__(self: Scenario, base_url: str) -> ScenarioVerification:
+    def __call__(self: Case, base_url: str) -> CaseVerification:
         try:
             response = self._request(base_url)
         except Exception as error:
-            return ScenarioVerification(
+            return CaseVerification(
                 status=Status.FAILURE,
                 request=Verification.of_error(error),
             )
@@ -100,7 +100,7 @@ class Scenario:
             request_verification.status,
             response_verification.status,
         ])
-        return ScenarioVerification(
+        return CaseVerification(
             status=status,
             request=request_verification,
             response=response_verification,
@@ -108,13 +108,13 @@ class Scenario:
         )
 
     @property
-    def label(self: Scenario) -> Optional[str]:
+    def label(self: Case) -> Optional[str]:
         return self._label
 
     @property
-    def request(self: Scenario) -> Request:
+    def request(self: Case) -> Request:
         return self._request
 
     @property
-    def response_description(self: Scenario) -> ResponseDescription:
+    def response_description(self: Case) -> ResponseDescription:
         return self._response_description
