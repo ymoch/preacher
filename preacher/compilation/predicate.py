@@ -3,7 +3,8 @@
 from __future__ import annotations
 from typing import Any
 
-from preacher.core.predicate import Predicate, of_hamcrest_matcher
+from preacher.core.description import Predicate
+from preacher.core.predicate import MatcherPredicate
 from .matcher import compile as compile_matcher
 
 
@@ -21,7 +22,7 @@ class PredicateCompiler:
     """
     def compile(self: PredicateCompiler, obj: Any) -> Predicate:
         matcher = compile_matcher(obj)
-        return of_hamcrest_matcher(matcher)
+        return MatcherPredicate(matcher)
 
 
 def compile(obj: Any) -> Predicate:
