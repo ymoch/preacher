@@ -11,7 +11,7 @@ from .case import CaseCompiler
 from .util import map_on_key
 
 
-_KEY_SCENARIOS = 'cases'
+_KEY_CASES = 'cases'
 
 
 class ScenarioCompiler:
@@ -54,18 +54,10 @@ class ScenarioCompiler:
         self._case_compiler = CaseCompiler()
 
     def compile(self: ScenarioCompiler, obj: Mapping) -> Iterator[Case]:
-        case_objs = obj.get(_KEY_SCENARIOS, [])
+        case_objs = obj.get(_KEY_CASES, [])
         if not isinstance(case_objs, list):
-            raise CompilationError(
-                message='Must be a list',
-                path=[_KEY_SCENARIOS],
-            )
-
-        return map_on_key(
-            _KEY_SCENARIOS,
-            self._compile_case,
-            case_objs,
-        )
+            raise CompilationError(message='Must be a list', path=[_KEY_CASES])
+        return map_on_key(_KEY_CASES, self._compile_case, case_objs)
 
     def _compile_case(self: ScenarioCompiler, obj: Any) -> Case:
         if not isinstance(obj, Mapping):
