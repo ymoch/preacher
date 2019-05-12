@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from preacher.core.case import Case
+from preacher.core.scenario import Scenario
 from preacher.presentation.logging import LoggingPresentation
 
 
@@ -18,8 +18,8 @@ class Application:
     def is_succeeded(self: Application) -> bool:
         return self._is_succeeded
 
-    def consume_case(self: Application, case: Case) -> None:
-        result = case(base_url=self._base_url)
+    def consume_scenario(self: Application, scenario: Scenario) -> None:
+        result = scenario(base_url=self._base_url)
 
         self._is_succeeded &= result.status.is_succeeded
-        self._view.show_case_result(result, 'Response')
+        self._view.show_scenario_result(result, 'Scenario')

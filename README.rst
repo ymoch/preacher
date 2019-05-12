@@ -78,8 +78,8 @@ Grammer
 
 Global
 ******
-A ``Configuration`` is written in `YAML`_.
-A ``Configuration`` is a mapping that consists of below:
+A ``Scenario`` is written in `YAML`_.
+A ``Scenario`` is a mapping that consists of below:
 
 - cases: ``List<Case>``
     - Test cases.
