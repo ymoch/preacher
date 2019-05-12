@@ -14,21 +14,21 @@ from .util import map_on_key
 _KEY_SCENARIOS = 'cases'
 
 
-class Compiler:
+class ScenarioCompiler:
     """
     When given an empty object, then generates empty iterator.
-    >>> cases = list(Compiler().compile({}))
+    >>> cases = list(ScenarioCompiler().compile({}))
     >>> cases
     []
 
     When given not an object, then raises a compilation error.
-    >>> next(Compiler().compile({'cases': ''}))
+    >>> next(ScenarioCompiler().compile({'cases': ''}))
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: cases
 
     When given a not string case, then raises a compilation error.
-    >>> next(Compiler().compile({'cases': ['']}))
+    >>> next(ScenarioCompiler().compile({'cases': ['']}))
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: cases[0]
@@ -43,18 +43,17 @@ class Compiler:
     ...     f'{__name__}.CaseCompiler',
     ...     return_value=case_compiler_mock
     ... ):
-    ...     compiler = Compiler()
+    ...     compiler = ScenarioCompiler()
     >>> cases = compiler.compile({'cases': [{}]})
     >>> list(cases)
     [sentinel.case]
     >>> list(cases)
     []
     """
-
-    def __init__(self: Compiler) -> None:
+    def __init__(self: ScenarioCompiler) -> None:
         self._case_compiler = CaseCompiler()
 
-    def compile(self: Compiler, obj: Mapping) -> Iterator[Case]:
+    def compile(self: ScenarioCompiler, obj: Mapping) -> Iterator[Case]:
         case_objs = obj.get(_KEY_SCENARIOS, [])
         if not isinstance(case_objs, list):
             raise CompilationError(
@@ -68,7 +67,7 @@ class Compiler:
             case_objs,
         )
 
-    def _compile_case(self: Compiler, obj: Any) -> Case:
+    def _compile_case(self: ScenarioCompiler, obj: Any) -> Case:
         if not isinstance(obj, Mapping):
             raise CompilationError(f'Case must be a mapping')
         return self._case_compiler.compile(obj)
