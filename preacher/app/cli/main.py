@@ -9,7 +9,7 @@ import sys
 import ruamel.yaml as yaml
 
 from preacher import __version__ as VERSION
-from preacher.compilation import Compiler
+from preacher.compilation.scenario import Compiler
 from preacher.presentation.logging import LoggingPresentation
 from .application import Application
 
