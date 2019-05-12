@@ -19,6 +19,8 @@ class Scenario:
     """
     When given no cases, then provides a success result.
     >>> scenario = Scenario()
+    >>> scenario.cases
+    []
     >>> result = scenario(base_url='')
     >>> result.status
     SUCCESS
@@ -30,6 +32,7 @@ class Scenario:
     >>> case1 = MagicMock(return_value=MagicMock(status=Status.UNSTABLE))
     >>> case2 = MagicMock(return_value=MagicMock(status=Status.SUCCESS))
     >>> scenario = Scenario(cases=[case1, case2])
+    >>> assert scenario.cases == [case1, case2]
     >>> result = scenario(base_url='url')
     >>> result.status
     UNSTABLE
@@ -47,3 +50,7 @@ class Scenario:
         case_results = [case(base_url=base_url) for case in self._cases]
         status = merge_statuses(res.status for res in case_results)
         return ScenarioResult(status=status, case_results=case_results)
+
+    @property
+    def cases(self: Scenario) -> List[Case]:
+        return self._cases
