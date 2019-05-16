@@ -19,7 +19,7 @@ class ScenarioCompiler:
     """
     When given an empty object, then generates empty iterator.
     >>> scenario = ScenarioCompiler().compile({})
-    >>> scenario.cases
+    >>> list(scenario.cases())
     []
 
     When given not an object, then raises a compilation error.
@@ -46,7 +46,7 @@ class ScenarioCompiler:
     ... ):
     ...     compiler = ScenarioCompiler()
     >>> scenario = compiler.compile({'cases': [{}, {'k': 'v'}]})
-    >>> scenario.cases
+    >>> list(scenario.cases())
     [sentinel.case, sentinel.case]
     >>> case_compiler.compile.assert_has_calls([call({}), call({'k': 'v'})])
     """
