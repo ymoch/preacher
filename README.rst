@@ -45,6 +45,7 @@ Here is a simple configuration example.
 
 .. code-block:: yaml
 
+    label: Scenario example
     cases:
       - label: Simple
         request: /path/to/foo
@@ -81,6 +82,9 @@ Global
 A ``Scenario`` is written in `YAML`_.
 A ``Scenario`` is a mapping that consists of below:
 
+- label: ``String`` (Recommended)
+    - A label of this scenario.
+    - This field is actually optional but recommended to tell this scenario from another.
 - cases: ``List<Case>``
     - Test cases.
 
@@ -90,7 +94,7 @@ A ``Case`` is a mapping that consists of below:
 
 - label: ``String`` (Recommended)
     - A label of this case.
-    - This field is actually optional but recommended to tell a case from another.
+    - This field is actually optional but recommended to tell this case from another.
 - request: ``Request`` (Optional)
     - A request.
 - response: ``ResponseDescription`` (Optional)
