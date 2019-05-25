@@ -9,8 +9,19 @@ from functools import reduce, singledispatch
 
 class Status(Enum):
     """
+    >>> Status.SKIPPED.is_succeeded
+    True
+    >>> Status.SKIPPED.merge(Status.SUCCESS)
+    SUCCESS
+    >>> Status.SKIPPED.merge(Status.UNSTABLE)
+    UNSTABLE
+    >>> Status.SKIPPED.merge(Status.FAILURE)
+    FAILURE
+
     >>> Status.SUCCESS.is_succeeded
     True
+    >>> Status.SUCCESS.merge(Status.SKIPPED)
+    SUCCESS
     >>> Status.SUCCESS.merge(Status.SUCCESS)
     SUCCESS
     >>> Status.SUCCESS.merge(Status.UNSTABLE)
@@ -20,6 +31,8 @@ class Status(Enum):
 
     >>> Status.UNSTABLE.is_succeeded
     False
+    >>> Status.UNSTABLE.merge(Status.SKIPPED)
+    UNSTABLE
     >>> Status.UNSTABLE.merge(Status.SUCCESS)
     UNSTABLE
     >>> Status.UNSTABLE.merge(Status.UNSTABLE)
@@ -29,6 +42,8 @@ class Status(Enum):
 
     >>> Status.FAILURE.is_succeeded
     False
+    >>> Status.FAILURE.merge(Status.SKIPPED)
+    FAILURE
     >>> Status.FAILURE.merge(Status.SUCCESS)
     FAILURE
     >>> Status.FAILURE.merge(Status.UNSTABLE)
@@ -37,13 +52,14 @@ class Status(Enum):
     FAILURE
     """
     # Numbers stand for the priorities for merging.
-    SUCCESS = 0
-    UNSTABLE = 1
-    FAILURE = 2
+    SKIPPED = 0
+    SUCCESS = 1
+    UNSTABLE = 2
+    FAILURE = 3
 
     @property
     def is_succeeded(self: Status):
-        return self is Status.SUCCESS
+        return self.value <= Status.SUCCESS.value
 
     def merge(self: Status, other: Status):
         return max(self, other, key=lambda status: status.value)
@@ -71,7 +87,7 @@ def merge_statuses(*args) -> Status:
 
     For iterables.
     >>> merge_statuses([])
-    SUCCESS
+    SKIPPED
     >>> merge_statuses([Status.SUCCESS, Status.UNSTABLE, Status.FAILURE])
     FAILURE
     """
@@ -85,4 +101,4 @@ def _merge_statuses_for_varargs(*statuses: Status):
 
 @merge_statuses.register
 def _merge_statuses_for_iterable(statuses: Iterable):
-    return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SUCCESS)
+    return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SKIPPED)

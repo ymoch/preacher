@@ -17,13 +17,13 @@ class ScenarioResult:
 
 class Scenario:
     """
-    When given no cases, then provides a success result.
+    When given no cases, then skips.
     >>> scenario = Scenario()
     >>> scenario.cases
     []
     >>> result = scenario(base_url='')
     >>> result.status
-    SUCCESS
+    SKIPPED
     >>> result.case_results
     []
 
