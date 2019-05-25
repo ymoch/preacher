@@ -7,10 +7,11 @@ import logging
 import io
 from typing import Iterator
 
+from preacher.core.case import CaseResult
+from preacher.core.response_description import ResponseVerification
+from preacher.core.scenario_running import ScenarioResult
 from preacher.core.status import Status
 from preacher.core.verification import Verification
-from preacher.core.response_description import ResponseVerification
-from preacher.core.case import CaseResult
 
 
 _LEVEL_MAP = {
@@ -26,6 +27,21 @@ class LoggingPresentation:
         self._logger = logger
         self._indent = ''
 
+    def show_scenario_result(
+        self: LoggingPresentation,
+        scenario_result: ScenarioResult,
+    ) -> None:
+        status = scenario_result.status
+        level = _LEVEL_MAP[status]
+
+        label = scenario_result.label or 'Not labeled scenario'
+        self._log(level, '%s: %s', label, status)
+        with self._nested():
+            for case_result in scenario_result.case_results:
+                self.show_case_result(case_result)
+
+        self._log(level, '')
+
     def show_case_result(
         self: LoggingPresentation,
         case_result: CaseResult,
@@ -33,7 +49,8 @@ class LoggingPresentation:
         status = case_result.status
         level = _LEVEL_MAP[status]
 
-        self._log(level, '%s: %s', case_result.label, status)
+        label = case_result.label or 'Not labeled case'
+        self._log(level, '%s: %s', label, status)
         with self._nested():
             self.show_verification(
                 verification=case_result.request,
@@ -43,8 +60,6 @@ class LoggingPresentation:
             response = case_result.response
             if response:
                 self.show_response_verification(response)
-
-        self._log(level, '')
 
     def show_response_verification(
         self: LoggingPresentation,
