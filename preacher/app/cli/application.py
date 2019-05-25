@@ -19,7 +19,7 @@ class Application:
         return self._is_succeeded
 
     def consume_scenario(self: Application, scenario: Scenario) -> None:
-        result = scenario(base_url=self._base_url)
-
-        self._is_succeeded &= result.status.is_succeeded
-        self._view.show_scenario_result(result, 'Scenario')
+        for case in scenario.cases():
+            result = case(base_url=self._base_url)
+            self._is_succeeded &= result.status.is_succeeded
+            self._view.show_case_result(result)
