@@ -9,7 +9,7 @@ from .case import Case
 
 class Scenario:
     """
-    When given no cases, then provides a success result.
+    When given no cases, then skips.
     >>> scenario = Scenario()
     >>> list(scenario.cases())
     []

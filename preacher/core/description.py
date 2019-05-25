@@ -30,14 +30,14 @@ class Description:
     'Exception: message'
 
     When given no predicates,
-    then describes that any described value is valid.
+    then describes that is skipped.
     >>> description = Description(
     ...     extraction=MagicMock(return_value='target'),
     ...     predicates=[],
     ... )
     >>> verification = description('described')
     >>> verification.status
-    SUCCESS
+    SKIPPED
     >>> len(verification.children)
     0
 

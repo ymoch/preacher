@@ -96,10 +96,10 @@ class Case:
             body=response.body,
         )
 
-        status = merge_statuses([
+        status = merge_statuses(
             request_verification.status,
             response_verification.status,
-        ])
+        )
         return CaseResult(
             status=status,
             request=request_verification,

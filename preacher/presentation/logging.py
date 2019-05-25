@@ -14,6 +14,7 @@ from preacher.core.case import CaseResult
 
 
 _LEVEL_MAP = {
+    Status.SKIPPED: logging.DEBUG,
     Status.SUCCESS: logging.INFO,
     Status.UNSTABLE: logging.WARN,
     Status.FAILURE: logging.ERROR,

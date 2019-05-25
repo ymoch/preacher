@@ -20,14 +20,20 @@ class ResponseVerification:
 
 class ResponseDescription:
     """
+    When given no descriptions, then skips.
     >>> description = ResponseDescription(
     ...     status_code_predicates=[],
     ...     body_descriptions=[],
     ... )
     >>> verification = description(status_code=200, body='')
+    >>> verification.status_code.status
+    SKIPPED
+    >>> verification.body.status
+    SKIPPED
     >>> verification.status
-    SUCCESS
+    SKIPPED
 
+    When given invalid body, then marks as failure.
     >>> from unittest.mock import MagicMock
     >>> description = ResponseDescription(
     ...     status_code_predicates=[
@@ -114,7 +120,7 @@ class ResponseDescription:
 
     def _verify_body(self: ResponseDescription, body: str) -> Verification:
         if not self._body_descriptions:
-            return Verification.succeed()
+            return Verification.skipped()
 
         data = json.loads(body)
         verifications = [

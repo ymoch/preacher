@@ -15,6 +15,10 @@ class Verification:
     children: Collection[Verification] = tuple()
 
     @staticmethod
+    def skipped() -> Verification:
+        return Verification(status=Status.SKIPPED)
+
+    @staticmethod
     def succeed() -> Verification:
         return Verification(status=Status.SUCCESS)
 

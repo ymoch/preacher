@@ -15,10 +15,16 @@ from .application import Application
 
 
 HANDLER = logging.StreamHandler()
-HANDLER.setLevel(logging.WARN)
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
-LOGGER.setLevel(logging.INFO)
+
+
+LOGGING_LEVEL_MAP = {
+    'skipped': logging.DEBUG,
+    'success': logging.INFO,
+    'unstable': logging.WARN,
+    'failure': logging.ERROR,
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -40,9 +46,10 @@ def parse_args() -> argparse.Namespace:
         default='http://localhost:5000',
     )
     parser.add_argument(
-        '-q', '--quiet',
-        action='store_true',
-        help='show details on the console only when an any issue occurs',
+        '-l', '--level',
+        choices=LOGGING_LEVEL_MAP.keys(),
+        help='show only above or equal to this level',
+        default='success',
     )
 
     return parser.parse_args()
@@ -52,11 +59,9 @@ def main() -> None:
     """Main."""
     args = parse_args()
 
-    logging_level = logging.INFO
-    should_be_quiet = args.quiet
-    if should_be_quiet:
-        logging_level = logging.WARN
-    HANDLER.setLevel(logging_level)
+    level = LOGGING_LEVEL_MAP[args.level]
+    HANDLER.setLevel(level)
+    LOGGER.setLevel(level)
 
     base_url = args.url
     view = LoggingPresentation(LOGGER)
