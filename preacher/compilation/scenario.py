@@ -25,13 +25,19 @@ class ScenarioCompiler:
     []
 
     When given not an object, then raises a compilation error.
-    >>> next(ScenarioCompiler().compile({'cases': ''}))
+    >>> ScenarioCompiler().compile({'cases': ''})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: cases
 
+    When given a not string label, then raises a compilation error.
+    >>> ScenarioCompiler().compile({'label': []})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ...: label
+
     When given a not string case, then raises a compilation error.
-    >>> next(ScenarioCompiler().compile({'cases': ['']}))
+    >>> ScenarioCompiler().compile({'cases': ['']})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: cases[0]
