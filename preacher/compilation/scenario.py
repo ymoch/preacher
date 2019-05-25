@@ -12,24 +12,32 @@ from .case import CaseCompiler
 from .util import map_on_key
 
 
+_KEY_LABEL = 'label'
 _KEY_CASES = 'cases'
 
 
 class ScenarioCompiler:
     """
-    When given an empty object, then generates empty iterator.
+    When given an empty object, then generates an empty scenario.
     >>> scenario = ScenarioCompiler().compile({})
+    >>> scenario.label
     >>> list(scenario.cases())
     []
 
     When given not an object, then raises a compilation error.
-    >>> next(ScenarioCompiler().compile({'cases': ''}))
+    >>> ScenarioCompiler().compile({'cases': ''})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: cases
 
+    When given a not string label, then raises a compilation error.
+    >>> ScenarioCompiler().compile({'label': []})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ...: label
+
     When given a not string case, then raises a compilation error.
-    >>> next(ScenarioCompiler().compile({'cases': ['']}))
+    >>> ScenarioCompiler().compile({'cases': ['']})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: cases[0]
@@ -45,7 +53,12 @@ class ScenarioCompiler:
     ...     return_value=case_compiler,
     ... ):
     ...     compiler = ScenarioCompiler()
-    >>> scenario = compiler.compile({'cases': [{}, {'k': 'v'}]})
+    >>> scenario = compiler.compile({
+    ...     'label': 'label',
+    ...     'cases': [{}, {'k': 'v'}],
+    ... })
+    >>> scenario.label
+    'label'
     >>> list(scenario.cases())
     [sentinel.case, sentinel.case]
     >>> case_compiler.compile.assert_has_calls([call({}), call({'k': 'v'})])
@@ -54,12 +67,19 @@ class ScenarioCompiler:
         self._case_compiler = CaseCompiler()
 
     def compile(self: ScenarioCompiler, obj: Mapping) -> Scenario:
+        label = obj.get(_KEY_LABEL)
+        if label is not None and not isinstance(label, str):
+            raise CompilationError(
+                message='Must be a string',
+                path=[_KEY_LABEL],
+            )
+
         case_objs = obj.get(_KEY_CASES, [])
         if not isinstance(case_objs, list):
             raise CompilationError(message='Must be a list', path=[_KEY_CASES])
         cases = map_on_key(_KEY_CASES, self._compile_case, case_objs)
 
-        return Scenario(cases=list(cases))
+        return Scenario(label=label, cases=list(cases))
 
     def _compile_case(self: ScenarioCompiler, obj: Any) -> Case:
         if not isinstance(obj, Mapping):

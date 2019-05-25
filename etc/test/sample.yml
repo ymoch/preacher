@@ -1,3 +1,4 @@
+label: 'Scenario label'
 cases:
   - label: Returns a JSON result
     request:
