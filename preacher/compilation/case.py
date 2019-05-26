@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Optional
+from typing import Any, Optional, Union
 
 from preacher.core.case import Case
 from .error import CompilationError
@@ -48,14 +48,14 @@ class CaseCompiler:
     >>> compiler.compile({'label': []})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Case.label ...: label
+    preacher.compilation.error.CompilationError: ...: label
 
     When given an invalid type request, then raises a compilation error.
     >>> compiler = CaseCompiler()
     >>> compiler.compile({'request': []})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Case.request ...: request
+    preacher.compilation.error.CompilationError: ...: request
 
     When a request compilation fails, then raises a compilation error.
     >>> request_compiler = MagicMock(
@@ -77,7 +77,7 @@ class CaseCompiler:
     >>> compiler.compile({'response': 'str'})
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: Case.response...: response
+    preacher.compilation.error.CompilationError: ...: response
 
     When a response description compilation fails,
     then raises a compilation error.
@@ -140,37 +140,35 @@ class CaseCompiler:
                 path=[_KEY_LABEL],
             )
 
-        request_obj = obj.get(_KEY_REQUEST, {})
-        if (
-            not isinstance(request_obj, Mapping)
-            and not isinstance(request_obj, str)
-        ):
-            raise CompilationError(
-                message=(
-                    f'Case.{_KEY_REQUEST} must be a string or a mapping'
-                ),
-                path=[_KEY_REQUEST],
-            )
         request = run_on_key(
             _KEY_REQUEST,
             self._request_compiler.compile,
-            request_obj,
+            _extract_request(obj)
         )
-
-        response_obj = obj.get('response', {})
-        if not isinstance(response_obj, Mapping):
-            raise CompilationError(
-                message=f'Case.{_KEY_RESPONSE} object must be a mapping',
-                path=[_KEY_RESPONSE],
-            )
         response_description = run_on_key(
             _KEY_RESPONSE,
             self._response_compiler.compile,
-            response_obj,
+            _extract_response(obj),
         )
-
         return Case(
             label=label,
             request=request,
             response_description=response_description,
         )
+
+
+def _extract_request(obj: Any) -> Union[Mapping, str]:
+    target = obj.get(_KEY_REQUEST, {})
+    if not isinstance(target, Mapping) and not isinstance(target, str):
+        raise CompilationError(
+            message='must be a string or a mapping',
+            path=[_KEY_REQUEST],
+        )
+    return target
+
+
+def _extract_response(obj: Any) -> Mapping:
+    target = obj.get('response', {})
+    if not isinstance(target, Mapping):
+        raise CompilationError('must be a mapping', path=[_KEY_RESPONSE])
+    return target
