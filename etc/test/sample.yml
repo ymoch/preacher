@@ -1,9 +1,11 @@
 label: 'Scenario label'
+default:
+  request:
+    path: /json
 cases:
   - label: Returns a JSON result
     request:
-      path: /json
-      query:
+      params:
         key: value
         multi-key:
           - value1
@@ -51,8 +53,6 @@ cases:
         - be_less_than: 500
 
   - label: No description doesn't cause error
-    request:
-      path: /json
     response:
       body:
         - describe: .foo
