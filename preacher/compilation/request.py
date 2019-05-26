@@ -50,18 +50,22 @@ class RequestCompiler:
     >>> request.params
     {'key': 'value'}
     """
+    def __init__(self: RequestCompiler) -> None:
+        self._default_path: str = ''
+        self._default_params: Mapping = {}
+
     def compile(self: RequestCompiler, obj: Union[Mapping, str]) -> Request:
         if isinstance(obj, str):
             return self.compile({_KEY_PATH: obj})
 
-        path = obj.get(_KEY_PATH, '')
+        path = obj.get(_KEY_PATH, self._default_path)
         if not isinstance(path, str):
             raise CompilationError(
                 message=f'Request.{_KEY_PATH} must be a string',
                 path=[_KEY_PATH],
             )
 
-        params = obj.get(_KEY_PARAMS, {})
+        params = obj.get(_KEY_PARAMS, self._default_params)
         if not isinstance(params, Mapping):
             raise CompilationError(
                 message=f'Request.{_KEY_PARAMS} must be a mapping',
