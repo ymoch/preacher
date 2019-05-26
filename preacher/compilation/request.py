@@ -54,10 +54,18 @@ class RequestCompiler:
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: path
+    >>> compiler.of_default({'path': {'key': 'value'}})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ...: path
 
     When given not a mapping parameters, then raises a compilation error.
     >>> compiler = RequestCompiler()
     >>> compiler.compile({'params': ''})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ...: params
+    >>> compiler.of_default({'params': ''})
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ...: params
@@ -71,20 +79,32 @@ class RequestCompiler:
     {}
 
     When given a string, then returns a request of the path.
-    >>> compiler = RequestCompiler(path='/default-path')
-    >>> request = compiler.compile({})
-    >>> request.path
-    '/default-path'
-    >>> request.params
-    {}
+    >>> compiler = RequestCompiler()
     >>> request = compiler.compile('/path')
     >>> request.path
     '/path'
     >>> request.params
     {}
+    >>> compiler = compiler.of_default('/default-path')
+    >>> request = compiler.compile({'params': {'k': 'v'}})
+    >>> request.path
+    '/default-path'
+    >>> request.params
+    {'k': 'v'}
 
     When given a filled mapping, then returns the request of it.
-    >>> compiler = RequestCompiler(path='/default-path', params={'k': 'v'})
+    >>> compiler = RequestCompiler()
+    >>> request = compiler.compile(
+    ...     {'path': '/path', 'params': {'key': 'value'}}
+    ... )
+    >>> request.path
+    '/path'
+    >>> request.params
+    {'key': 'value'}
+    >>> compiler = compiler.of_default({
+    ...     'path': '/default-path',
+    ...     'params': {'k': 'v'},
+    ... })
     >>> request = compiler.compile({})
     >>> request.path
     '/default-path'
@@ -116,4 +136,14 @@ class RequestCompiler:
         return compiled.to_request(
             default_path=self._path,
             default_params=self._params,
+        )
+
+    def of_default(
+        self: RequestCompiler,
+        obj: Union[Mapping, str],
+    ) -> RequestCompiler:
+        compiled = _compile(obj)
+        return RequestCompiler(
+            path=or_default(compiled.path, self._path),
+            params=or_default(compiled.params, self._params),
         )
