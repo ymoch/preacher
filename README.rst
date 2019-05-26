@@ -46,6 +46,9 @@ Here is a simple configuration example.
 .. code-block:: yaml
 
     label: Scenario example
+    default:
+      request:
+        path: /path
     cases:
       - label: Simple
         request: /path/to/foo
@@ -77,14 +80,16 @@ Here is a simple configuration example.
 Grammer
 -------
 
-Global
-******
+Scenario
+********
 A ``Scenario`` is written in `YAML`_.
 A ``Scenario`` is a mapping that consists of below:
 
 - label: ``String`` (Recommended)
     - A label of this scenario.
     - This field is actually optional but recommended to tell this scenario from another.
+- default: ``Default`` (Optional)
+    - Default of this scenario.
 - cases: ``List<Case>``
     - Test cases.
 
@@ -189,6 +194,13 @@ A mapping for ``Matcher`` has an item. Allowed items are:
 - have_item: ``Value`` or ``Matcher``
     - Matches when it is a collection and has the given item.
     - When given ``Value``, that is equivalent to ``{"equal": it}``.
+
+Default
+*******
+A ``Default`` is a mapping that consists of below:
+
+- request: ``Request`` (Optional)
+    - A request to override the default request values.
 
 
 .. _YAML: https://yaml.org/

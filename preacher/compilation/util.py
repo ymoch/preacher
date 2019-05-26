@@ -1,6 +1,6 @@
 """Utilities for compilations."""
 
-from typing import Callable, Iterable, Iterator, TypeVar
+from typing import Callable, Iterable, Iterator, Optional, TypeVar
 
 from .error import CompilationError
 
@@ -70,3 +70,9 @@ def map_on_key(
             yield func(item)
         except CompilationError as error:
             raise error.of_parent([f'{key}[{idx}]'])
+
+
+def or_default(value: Optional[T], default_value: T) -> T:
+    if value is None:
+        return default_value
+    return value
