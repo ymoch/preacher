@@ -154,10 +154,6 @@ class CaseCompiler:
     def request_compiler(self: CaseCompiler) -> RequestCompiler:
         return self._request_compiler
 
-    @property
-    def response_compiler(self: CaseCompiler) -> ResponseDescriptionCompiler:
-        return self._response_compiler
-
     def compile(self: CaseCompiler, obj: Mapping) -> Case:
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
