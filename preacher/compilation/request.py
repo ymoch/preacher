@@ -49,10 +49,6 @@ def _compile(obj: Union[Mapping, str]) -> _Compiled:
 class RequestCompiler:
     """
     When given not a string path, then raises a compiration error.
-    >>> RequestCompiler({'path': {'key': 'value'}})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: path
     >>> compiler = RequestCompiler()
     >>> compiler.compile({'path': {'key': 'value'}})
     Traceback (most recent call last):
@@ -60,10 +56,6 @@ class RequestCompiler:
     preacher.compilation.error.CompilationError: ...: path
 
     When given not a mapping parameters, then raises a compilation error.
-    >>> RequestCompiler({'params': ''})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: params
     >>> compiler = RequestCompiler()
     >>> compiler.compile({'params': ''})
     Traceback (most recent call last):
@@ -79,7 +71,7 @@ class RequestCompiler:
     {}
 
     When given a string, then returns a request of the path.
-    >>> compiler = RequestCompiler('/default-path')
+    >>> compiler = RequestCompiler(path='/default-path')
     >>> request = compiler.compile({})
     >>> request.path
     '/default-path'
@@ -92,19 +84,17 @@ class RequestCompiler:
     {}
 
     When given a filled mapping, then returns the request of it.
-    >>> compiler = RequestCompiler(
-    ...     defaults={'path': '/default-path', 'params': {'foo': 'bar'}},
-    ... )
+    >>> compiler = RequestCompiler(path='/default-path', params={'k': 'v'})
     >>> request = compiler.compile({})
     >>> request.path
     '/default-path'
     >>> request.params
-    {'foo': 'bar'}
+    {'k': 'v'}
     >>> request = compiler.compile('/path')
     >>> request.path
     '/path'
     >>> request.params
-    {'foo': 'bar'}
+    {'k': 'v'}
     >>> request = compiler.compile(
     ...     {'path': '/path', 'params': {'key': 'value'}}
     ... )
@@ -115,21 +105,11 @@ class RequestCompiler:
     """
     def __init__(
         self: RequestCompiler,
-        defaults: Union[Mapping, str, None] = None,
+        path: str = '',
+        params: Mapping = {},
     ) -> None:
-        self._path: str = ''
-        self._params: Mapping = {}
-
-        if defaults:
-            self.set_defaults(defaults)
-
-    def set_defaults(
-        self: RequestCompiler,
-        obj: Union[Mapping, str],
-    ) -> None:
-        compiled = _compile(obj)
-        self._path = or_default(compiled.path, self._path)
-        self._params = or_default(compiled.params, self._params)
+        self._path = path
+        self._params = params
 
     def compile(self: RequestCompiler, obj: Union[Mapping, str]) -> Request:
         compiled = _compile(obj)
