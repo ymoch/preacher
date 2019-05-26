@@ -121,6 +121,24 @@ class CaseCompiler:
     sentinel.response_description
     >>> request_compiler.compile.assert_called_once_with({'path': '/path'})
     >>> response_compiler.compile.assert_called_once_with({'key': 'value'})
+
+    When given invalid default request, then raises a compilation error.
+    >>> case_compiler = CaseCompiler()
+    >>> case_compiler.of_default({'request': []})
+    Traceback (most recent call last):
+        ...
+    preacher.compilation.error.CompilationError: ...: request
+
+    Accepts default values.
+    >>> request_compiler = MagicMock(
+    ...     RequestCompiler,
+    ...     of_default=MagicMock(return_value=sentinel.foo),
+    ... )
+    >>> response_compiler = default_response_compiler()
+    >>> compiler = CaseCompiler(request_compiler, response_compiler)
+    >>> default_compiler = compiler.of_default({})
+    >>> default_compiler.request_compiler
+    sentinel.foo
     """
     def __init__(
         self: CaseCompiler,
@@ -131,6 +149,14 @@ class CaseCompiler:
         self._response_compiler = (
             response_compiler or ResponseDescriptionCompiler()
         )
+
+    @property
+    def request_compiler(self: CaseCompiler) -> RequestCompiler:
+        return self._request_compiler
+
+    @property
+    def response_compiler(self: CaseCompiler) -> ResponseDescriptionCompiler:
+        return self._response_compiler
 
     def compile(self: CaseCompiler, obj: Mapping) -> Case:
         label = obj.get(_KEY_LABEL)
@@ -155,6 +181,14 @@ class CaseCompiler:
             request=request,
             response_description=response_description,
         )
+
+    def of_default(self: CaseCompiler, obj: Mapping) -> CaseCompiler:
+        request_compiler = run_on_key(
+            _KEY_REQUEST,
+            self._request_compiler.of_default,
+            _extract_request(obj),
+        )
+        return CaseCompiler(request_compiler=request_compiler)
 
 
 def _extract_request(obj: Any) -> Union[Mapping, str]:

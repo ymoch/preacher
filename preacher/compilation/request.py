@@ -15,7 +15,7 @@ _KEY_PATH = 'path'
 _KEY_PARAMS = 'params'
 
 
-@dataclass
+@dataclass(frozen=True)
 class _Compiled:
     path: Optional[str] = None
     params: Optional[Mapping] = None
