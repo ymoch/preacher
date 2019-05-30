@@ -7,6 +7,13 @@ from dataclasses import dataclass
 
 import requests
 
+from preacher import __version__ as _VERSION
+
+
+_DEFAULT_HEADERS = {
+    'User-Agent': f'Preacher {_VERSION}'
+}
+
 
 @dataclass
 class Response:
@@ -33,7 +40,7 @@ class Request:
     >>> with patch('requests.get', return_value=inner_response) as mock:
     ...     response = request('base-url')
     ...     mock.call_args
-    call('base-url/path', params={'key': 'value'})
+    call('base-url/path', headers={'User-Agent': ...}, params={'key': 'value'})
     >>> response.status_code
     402
     >>> response.headers
@@ -48,6 +55,7 @@ class Request:
     def __call__(self, base_url: str) -> Response:
         res = requests.get(
             base_url + self._path,
+            headers=_DEFAULT_HEADERS,
             params=self._params,
         )
         return Response(
