@@ -1,3 +1,6 @@
+from functools import wraps
+from time import sleep
+
 from flask import Flask, abort, jsonify
 
 
@@ -5,7 +8,18 @@ app = Flask(__name__)
 app.debug = True
 
 
+def latency(seconds):
+    def _latency(func):
+        @wraps(func)
+        def _latency_func(*args, **kwargs):
+            sleep(seconds)
+            return func(*args, **kwargs)
+        return _latency_func
+    return _latency
+
+
 @app.route('/text', methods=['GET'])
+@latency(1.0)
 def text() -> str:
     return 'text'
 

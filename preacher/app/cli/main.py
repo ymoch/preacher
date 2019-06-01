@@ -3,13 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import multiprocessing
 import logging
 import sys
 
-import ruamel.yaml as yaml
-
 from preacher import __version__ as VERSION
-from preacher.compilation.scenario import ScenarioCompiler
 from preacher.presentation.logging import LoggingPresentation
 from .application import Application
 
@@ -51,6 +49,12 @@ def parse_args() -> argparse.Namespace:
         help='show only above or equal to this level',
         default='success',
     )
+    parser.add_argument(
+        '-c', '--scenario-concurrency',
+        type=int,
+        help='concurrency for scenarios',
+        default=1,
+    )
 
     return parser.parse_args()
 
@@ -68,13 +72,9 @@ def main() -> None:
     app = Application(base_url=base_url, view=view)
 
     config_paths = args.conf
-    compiler = ScenarioCompiler()
-    for config_path in config_paths:
-        with open(config_path) as config_file:
-            config = yaml.safe_load(config_file)
-
-        scenario = compiler.compile(config)
-        app.consume_scenario(scenario)
+    scenario_concurrency = args.scenario_concurrency
+    with multiprocessing.Pool(scenario_concurrency) as pool:
+        app.run(config_paths, map_func=pool.imap)
 
     if not app.is_succeeded:
         sys.exit(1)
