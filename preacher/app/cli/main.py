@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import multiprocessing
 import logging
 import sys
 
@@ -73,8 +72,7 @@ def main() -> None:
 
     config_paths = args.conf
     scenario_concurrency = args.scenario_concurrency
-    with multiprocessing.Pool(scenario_concurrency) as pool:
-        app.run(config_paths, map_func=pool.imap)
+    app.run_concurrently(config_paths, concurrency=scenario_concurrency)
 
     if not app.is_succeeded:
         sys.exit(1)

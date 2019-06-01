@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from multiprocessing import Pool
 from typing import Callable, Iterable, Iterator
 
 import ruamel.yaml as yaml
@@ -37,12 +38,20 @@ class Application:
     def run(
         self: Application,
         config_paths: Iterable[str],
-        map_func: MapFunction = map
+        map_func: MapFunction = map,
     ) -> None:
         results = map_func(self._run_each, config_paths)
         for result in results:
             self._is_succeeded &= result.status.is_succeeded
             self._view.show_scenario_result(result)
+
+    def run_concurrently(
+        self: Application,
+        config_paths: Iterable[str],
+        concurrency: int,
+    ) -> None:
+        with Pool(concurrency) as pool:
+            self.run(config_paths, map_func=pool.imap)
 
     def _run_each(self: Application, config_path: str) -> ScenarioResult:
         with open(config_path) as config_file:
