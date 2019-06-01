@@ -9,6 +9,15 @@ from preacher.compilation.scenario import ScenarioCompiler
 from preacher.presentation.logging import LoggingPresentation
 
 
+MapFunction = Callable[
+    [
+        Callable[[str], ScenarioResult],
+        Iterable[str]
+    ],
+    Iterator[ScenarioResult]
+]
+
+
 class Application:
     def __init__(
         self: Application,
@@ -28,10 +37,7 @@ class Application:
     def run(
         self: Application,
         config_paths: Iterable[str],
-        map_func: Callable[
-            [Callable[[str], ScenarioResult], Iterable[str]],
-            Iterator[ScenarioResult]
-        ] = map
+        map_func: MapFunction = map
     ) -> None:
         results = map_func(self._run_each, config_paths)
         for result in results:
