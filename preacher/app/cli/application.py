@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Callable, Iterable, Iterator
 
 import ruamel.yaml as yaml
 
@@ -28,7 +28,10 @@ class Application:
     def run(
         self: Application,
         config_paths: Iterable[str],
-        map_func=map
+        map_func: Callable[
+            [Callable[[str], ScenarioResult], Iterable[str]],
+            Iterator[ScenarioResult]
+        ] = map
     ) -> None:
         results = map_func(self._run_each, config_paths)
         for result in results:
