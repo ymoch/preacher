@@ -24,6 +24,15 @@ LOGGING_LEVEL_MAP = {
 }
 
 
+def zero_or_positive_int(value: str) -> int:
+    int_value = int(value)
+    if int_value < 0:
+        raise argparse.ArgumentTypeError(
+            f"must be positive or 0, given {int_value}"
+        )
+    return int_value
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -49,6 +58,12 @@ def parse_args() -> argparse.Namespace:
         default='success',
     )
     parser.add_argument(
+        '-r', '--retry',
+        type=zero_or_positive_int,
+        help='max retry count',
+        default=0,
+    )
+    parser.add_argument(
         '-c', '--scenario-concurrency',
         type=int,
         help='concurrency for scenarios',
@@ -66,9 +81,10 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    base_url = args.url
     view = LoggingPresentation(LOGGER)
-    app = Application(base_url=base_url, view=view)
+    base_url = args.url
+    retry = args.retry
+    app = Application(view=view, base_url=base_url, retry=retry)
 
     config_paths = args.conf
     scenario_concurrency = args.scenario_concurrency

@@ -17,7 +17,11 @@ class ScenarioResult:
     case_results: List[CaseResult]
 
 
-def run_scenario(scenario: Scenario, base_url: str) -> ScenarioResult:
+def run_scenario(
+    scenario: Scenario,
+    base_url: str,
+    retry: int = 0,
+) -> ScenarioResult:
     """
     When given empty scenario, then runs and returns its result as skipped.
     >>> from unittest.mock import MagicMock, sentinel
@@ -43,17 +47,20 @@ def run_scenario(scenario: Scenario, base_url: str) -> ScenarioResult:
     ...     label='label',
     ...     cases=MagicMock(return_value=iter([case1, case2]))
     ... )
-    >>> result = run_scenario(scenario, base_url='base_url')
+    >>> result = run_scenario(scenario, base_url='base_url', retry=3)
     >>> result.label
     'label'
     >>> result.status
     UNSTABLE
     >>> result.case_results
     [sentinel.case_result1, sentinel.case_result2]
-    >>> case1.assert_called_once_with(base_url='base_url')
-    >>> case2.assert_called_once_with(base_url='base_url')
+    >>> case1.assert_called_once_with(base_url='base_url', retry=3)
+    >>> case2.assert_called_once_with(base_url='base_url', retry=3)
     """
-    case_results = [case(base_url=base_url) for case in scenario.cases()]
+    case_results = [
+        case(base_url=base_url, retry=retry)
+        for case in scenario.cases()
+    ]
     status = merge_statuses(result.status for result in case_results)
     return ScenarioResult(
         label=scenario.label,

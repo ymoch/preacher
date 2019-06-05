@@ -22,11 +22,13 @@ MapFunction = Callable[
 class Application:
     def __init__(
         self: Application,
-        base_url: str,
         view: LoggingPresentation,
+        base_url: str,
+        retry: int = 0,
     ) -> None:
         self._view = view
         self._base_url = base_url
+        self._retry = retry
 
         self._scenario_compiler = ScenarioCompiler()
         self._is_succeeded = True
@@ -57,4 +59,8 @@ class Application:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
         scenario = self._scenario_compiler.compile(config)
-        return run_scenario(scenario, base_url=self._base_url)
+        return run_scenario(
+            scenario,
+            base_url=self._base_url,
+            retry=self._retry,
+        )
