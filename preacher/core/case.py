@@ -30,11 +30,12 @@ class Case:
     ...     response_description=MagicMock(ResponseDescription),
     ... )
     >>> case.label
+    >>> case('base-url', -1)
+    Traceback (most recent call last):
+        ...
+    RuntimeError: ... -1
+
     >>> verification = case('base-url')
-    >>> case.request.call_args
-    call('base-url')
-    >>> case.response_description.call_count
-    0
     >>> verification.label
     >>> verification.status
     FAILURE
@@ -42,6 +43,10 @@ class Case:
     FAILURE
     >>> verification.request.message
     'RuntimeError: message'
+    >>> case.request.call_args
+    call('base-url')
+    >>> case.response_description.call_count
+    0
 
     >>> from .request import Response
     >>> inner_response = MagicMock(Response, status_code=402, body='body')
@@ -49,7 +54,7 @@ class Case:
     ...     label='Response should be unstable',
     ...     request=MagicMock(Request, return_value=inner_response),
     ...     response_description=MagicMock(
-    ...         ResponseDescription,
+    ...         spec=ResponseDescription,
     ...         return_value=ResponseVerification(
     ...             status=Status.UNSTABLE,
     ...             status_code=Verification.succeed(),
@@ -57,9 +62,7 @@ class Case:
     ...         ),
     ...     ),
     ... )
-    >>> verification = case('base-url')
-    >>> case.response_description.call_args
-    call(body='body', status_code=402)
+    >>> verification = case(base_url='base-url', retry=1)
     >>> verification.label
     'Response should be unstable'
     >>> verification.status
@@ -70,6 +73,37 @@ class Case:
     UNSTABLE
     >>> verification.response.body.status
     UNSTABLE
+    >>> case.response_description.call_args
+    call(body='body', status_code=402)
+
+    Retries.
+    >>> case = Case(
+    ...     label='Succeeds',
+    ...     request=MagicMock(
+    ...         spec=Request,
+    ...         side_effect=[RuntimeError(), inner_response, inner_response],
+    ...     ),
+    ...     response_description=MagicMock(
+    ...         spec=ResponseDescription,
+    ...         side_effect=[
+    ...             ResponseVerification(
+    ...                 status=Status.UNSTABLE,
+    ...                 status_code=Verification.succeed(),
+    ...                 body=Verification(status=Status.UNSTABLE),
+    ...             ),
+    ...             ResponseVerification(
+    ...                 status=Status.SUCCESS,
+    ...                 status_code=Verification.succeed(),
+    ...                 body=Verification.succeed(),
+    ...             ),
+    ...         ]
+    ...     ),
+    ... )
+    >>> verification = case(base_url='base-url', retry=2)
+    >>> verification.status
+    SUCCESS
+    >>> assert case.request.call_count == 3
+    >>> assert case.response_description.call_count == 2
     """
     def __init__(
         self: Case,
@@ -81,7 +115,19 @@ class Case:
         self._request = request
         self._response_description = response_description
 
-    def __call__(self: Case, base_url: str) -> CaseResult:
+    def __call__(self: Case, base_url: str, retry: int = 0) -> CaseResult:
+        if retry < 0:
+            raise RuntimeError(
+                f'Retry count must be positive or 0, given {retry}'
+            )
+        for _ in range(1 + retry):
+            result = self._run(base_url)
+            if result.status.is_succeeded:
+                break
+
+        return result
+
+    def _run(self: Case, base_url: str) -> CaseResult:
         try:
             response = self._request(base_url)
         except Exception as error:
