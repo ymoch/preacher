@@ -71,11 +71,12 @@ Here is a simple configuration example.
             - be_greater_than_or_equal_to: 200
             - be_less_than: 400
           body:
-            - describe:
-                jq: .foo
-              should:
-                - start_with: x
-                - end_with: y
+            interpreted_as: xml
+            descriptions:
+              - describe: /html/body/h1
+                should:
+                  - start_with: x
+                  - end_with: y
 
 Grammer
 -------
