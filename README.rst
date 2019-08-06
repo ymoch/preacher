@@ -214,3 +214,10 @@ A ``Default`` is a mapping that consists of below:
 .. _jq: https://stedolan.github.io/jq/
 .. _XPATH: https://www.w3.org/TR/xpath/all/
 .. _pipenv: https://pipenv.readthedocs.io/
+
+License
+=======
+.. image:: https://img.shields.io/badge/License-MIT-brightgreen.svg
+    :target: https://opensource.org/licenses/MIT
+
+Copyright (c) 2018 Yu MOCHIZUKI
