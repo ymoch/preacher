@@ -74,18 +74,14 @@ class ResponseDescription:
     SUCCESS
     """
     def __init__(
-        self: ResponseDescription,
+        self,
         status_code_predicates: List[Predicate],
         body_descriptions: List[Description],
     ) -> None:
         self._status_code_predicates = status_code_predicates
         self._body_descriptions = body_descriptions
 
-    def __call__(
-        self: ResponseDescription,
-        status_code: int,
-        body: str,
-    ) -> ResponseVerification:
+    def __call__(self, status_code: int, body: str) -> ResponseVerification:
         status_code_verification = self._verify_status_code(status_code)
         try:
             body_verification = self._verify_body(body)
@@ -103,22 +99,19 @@ class ResponseDescription:
         )
 
     @property
-    def status_code_predicates(self: ResponseDescription) -> List[Predicate]:
+    def status_code_predicates(self) -> List[Predicate]:
         return self._status_code_predicates
 
     @property
-    def body_descriptions(self: ResponseDescription) -> List[Description]:
+    def body_descriptions(self) -> List[Description]:
         return self._body_descriptions
 
-    def _verify_status_code(
-        self: ResponseDescription,
-        code: int,
-    ) -> Verification:
+    def _verify_status_code(self, code: int) -> Verification:
         children = [pred(code) for pred in self._status_code_predicates]
         status = merge_statuses(v.status for v in children)
         return Verification(status=status, children=children)
 
-    def _verify_body(self: ResponseDescription, body: str) -> Verification:
+    def _verify_body(self, body: str) -> Verification:
         if not self._body_descriptions:
             return Verification.skipped()
 

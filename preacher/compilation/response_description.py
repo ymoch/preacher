@@ -1,7 +1,5 @@
 """Response description compilations."""
 
-from __future__ import annotations
-
 from collections.abc import Mapping
 from typing import Any, Optional
 
@@ -100,7 +98,7 @@ class ResponseDescriptionCompiler:
     ... ])
     """
     def __init__(
-        self: ResponseDescriptionCompiler,
+        self,
         predicate_compiler: Optional[PredicateCompiler] = None,
         description_compiler: Optional[DescriptionCompiler] = None,
     ) -> None:
@@ -112,10 +110,7 @@ class ResponseDescriptionCompiler:
             )
         )
 
-    def compile(
-        self: ResponseDescriptionCompiler,
-        obj: Mapping,
-    ) -> ResponseDescription:
+    def compile(self, obj: Mapping) -> ResponseDescription:
         status_code_predicate_objs = obj.get(_KEY_STATUS_CODE, [])
         if not isinstance(status_code_predicate_objs, list):
             status_code_predicate_objs = [status_code_predicate_objs]
@@ -144,10 +139,7 @@ class ResponseDescriptionCompiler:
             body_descriptions=body_descriptions,
         )
 
-    def _compile_description(
-        self: ResponseDescriptionCompiler,
-        obj: Any,
-    ) -> Description:
+    def _compile_description(self, obj: Any) -> Description:
         if not isinstance(obj, Mapping):
             raise CompilationError('Description must be a mapping')
         return self._description_compiler.compile(obj)
