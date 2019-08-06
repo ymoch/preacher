@@ -49,6 +49,9 @@ Here is a simple configuration example.
     default:
       request:
         path: /path
+      response:
+        body:
+          interpreted_as: json
     cases:
       - label: Simple
         request: /path/to/foo
@@ -136,9 +139,9 @@ A ``BodyDescription`` is a mapping or a list.
 A mapping for ``BodyDescription`` has items below.
 
 - interpreted_as: ``String`` (Optional)
-    - The method to interpret the body.
+    - The method to interpret the body. The default value is ``json``.
     - When given ``json``, the body is interpreted as a JSON and analyzed by `jq`_ queries.
-    - When given ``xml``, the body i interpreted as an XML and analyzed by `XPATH`_ queries.
+    - When given ``xml``, the body is interpreted as an XML and analyzed by `XPATH`_ queries.
 - descriptions: ``Description`` or ``List<Description>``
 
 When given a list, that is equivalent to ``{"descritptions": it}``.
@@ -203,8 +206,9 @@ Default
 A ``Default`` is a mapping that consists of below:
 
 - request: ``Request`` (Optional)
-    - A request to override the default request values.
-
+    - A request to overwrite the default request values.
+- response: ``ResponseDescription`` (Optional)
+    - A response description to overwrite the default response description values.
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
