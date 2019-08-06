@@ -220,4 +220,4 @@ License
 .. image:: https://img.shields.io/badge/License-MIT-brightgreen.svg
     :target: https://opensource.org/licenses/MIT
 
-Copyright (c) 2018 Yu MOCHIZUKI
+Copyright (c) 2019 Yu MOCHIZUKI
