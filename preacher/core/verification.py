@@ -8,7 +8,7 @@ from typing import Collection, Optional
 from .status import Status
 
 
-@dataclass
+@dataclass(frozen=True)
 class Verification:
     status: Status
     message: Optional[str] = None

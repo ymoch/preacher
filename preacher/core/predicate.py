@@ -1,7 +1,5 @@
 """Predicate."""
 
-from __future__ import annotations
-
 from typing import Any
 
 from hamcrest import assert_that
@@ -45,10 +43,10 @@ class MatcherPredicate:
     >>> verification.status
     SUCCESS
     """
-    def __init__(self: MatcherPredicate, matcher: Matcher) -> None:
+    def __init__(self, matcher: Matcher):
         self._matcher = matcher
 
-    def __call__(self: MatcherPredicate, actual: Any) -> Verification:
+    def __call__(self, actual: Any) -> Verification:
         try:
             assert_that(actual, self._matcher)
         except AssertionError as error:

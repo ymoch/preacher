@@ -1,7 +1,5 @@
 """Request."""
 
-from __future__ import annotations
-
 from collections.abc import Mapping
 from dataclasses import dataclass
 
@@ -15,7 +13,7 @@ _DEFAULT_HEADERS = {
 }
 
 
-@dataclass
+@dataclass(frozen=True)
 class Response:
     status_code: int
     headers: Mapping
@@ -48,7 +46,7 @@ class Request:
     >>> response.body
     'text'
     """
-    def __init__(self, path: str, params: Mapping) -> None:
+    def __init__(self, path: str, params: Mapping):
         self._path = path
         self._params = params
 
@@ -65,9 +63,9 @@ class Request:
         )
 
     @property
-    def path(self: Request) -> str:
+    def path(self) -> str:
         return self._path
 
     @property
-    def params(self: Request) -> Mapping:
+    def params(self) -> Mapping:
         return self._params

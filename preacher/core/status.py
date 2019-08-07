@@ -58,16 +58,16 @@ class Status(Enum):
     FAILURE = 3
 
     @property
-    def is_succeeded(self: Status):
+    def is_succeeded(self):
         return self.value <= Status.SUCCESS.value
 
-    def merge(self: Status, other: Status):
+    def merge(self, other: Status):
         return max(self, other, key=lambda status: status.value)
 
-    def __str__(self: Status) -> str:
+    def __str__(self) -> str:
         return self.name
 
-    def __repr__(self: Status) -> str:
+    def __repr__(self) -> str:
         return str(self)
 
 

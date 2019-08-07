@@ -1,7 +1,5 @@
 """Scenario running helpers."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -10,7 +8,7 @@ from .scenario import Scenario
 from .status import Status, merge_statuses
 
 
-@dataclass
+@dataclass(frozen=True)
 class ScenarioResult:
     label: Optional[str]
     status: Status
