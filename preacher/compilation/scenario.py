@@ -1,7 +1,5 @@
 """Scenario compilation."""
 
-from __future__ import annotations
-
 from collections.abc import Mapping
 from functools import partial
 from typing import Any, Optional
@@ -79,13 +77,10 @@ class ScenarioCompiler:
     ...     call({'k': 'v'})],
     ... )
     """
-    def __init__(
-        self: ScenarioCompiler,
-        case_compiler: Optional[CaseCompiler] = None,
-    ) -> None:
+    def __init__(self, case_compiler: Optional[CaseCompiler] = None):
         self._case_compiler = case_compiler or CaseCompiler()
 
-    def compile(self: ScenarioCompiler, obj: Mapping) -> Scenario:
+    def compile(self, obj: Mapping) -> Scenario:
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
             raise CompilationError(

@@ -1,7 +1,5 @@
 """Description compilation."""
 
-from __future__ import annotations
-
 from collections.abc import Mapping
 from typing import Optional
 
@@ -91,14 +89,14 @@ class DescriptionCompiler:
     ... ])
     """
     def __init__(
-        self: DescriptionCompiler,
+        self,
         extraction_compiler: Optional[ExtractionCompiler] = None,
         predicate_compiler: Optional[PredicateCompiler] = None,
-    ) -> None:
+    ):
         self._extraction_compiler = extraction_compiler or ExtractionCompiler()
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
 
-    def compile(self: DescriptionCompiler, obj: Mapping):
+    def compile(self, obj: Mapping):
         extraction_obj = obj.get(_KEY_DESCRIBE)
         if (
             not isinstance(extraction_obj, Mapping)

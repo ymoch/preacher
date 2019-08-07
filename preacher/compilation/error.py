@@ -8,27 +8,24 @@ from typing import List, Optional
 class CompilationError(Exception):
     """Compilation errors."""
     def __init__(
-        self: CompilationError,
+        self,
         message: str,
         path: List[str] = [],
         cause: Optional[Exception] = None,
-    ) -> None:
+    ):
         super().__init__(message)
         self._message = message
         self._path = path
         self._cause = cause
 
-    def of_parent(
-        self: CompilationError,
-        parent_path: List[str],
-    ) -> CompilationError:
+    def of_parent(self, parent_path: List[str]) -> CompilationError:
         return CompilationError(
             message=self._message,
             path=parent_path + self._path,
             cause=self._cause,
         )
 
-    def __str__(self: CompilationError):
+    def __str__(self):
         message = super().__str__()
         if not self._path:
             return message

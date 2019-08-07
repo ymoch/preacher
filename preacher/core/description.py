@@ -1,7 +1,5 @@
 """Description."""
 
-from __future__ import annotations
-
 from typing import Any, Callable, List
 
 from .status import merge_statuses
@@ -82,15 +80,11 @@ class Description:
     >>> verification.children[1].status
     SUCCESS
     """
-    def __init__(
-        self: Description,
-        extraction: Extraction,
-        predicates: List[Predicate],
-    ):
+    def __init__(self, extraction: Extraction, predicates: List[Predicate]):
         self._extraction = extraction
         self._predicates = predicates
 
-    def __call__(self: Description, value: Any) -> Verification:
+    def __call__(self, value: Any) -> Verification:
         try:
             verified_value = self._extraction(value)
         except Exception as error:
@@ -101,9 +95,9 @@ class Description:
         return Verification(status, children=verifications)
 
     @property
-    def extraction(self: Description) -> Extraction:
+    def extraction(self) -> Extraction:
         return self._extraction
 
     @property
-    def predicates(self: Description) -> List[Predicate]:
+    def predicates(self) -> List[Predicate]:
         return self._predicates

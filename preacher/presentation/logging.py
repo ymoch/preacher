@@ -1,7 +1,5 @@
 """Logging presentation."""
 
-from __future__ import annotations
-
 import contextlib
 import logging
 import io
@@ -23,14 +21,11 @@ _LEVEL_MAP = {
 
 
 class LoggingPresentation:
-    def __init__(self: LoggingPresentation, logger: logging.Logger) -> None:
+    def __init__(self, logger: logging.Logger):
         self._logger = logger
         self._indent = ''
 
-    def show_scenario_result(
-        self: LoggingPresentation,
-        scenario_result: ScenarioResult,
-    ) -> None:
+    def show_scenario_result(self, scenario_result: ScenarioResult) -> None:
         status = scenario_result.status
         level = _LEVEL_MAP[status]
 
@@ -42,10 +37,7 @@ class LoggingPresentation:
 
         self._log(level, '')
 
-    def show_case_result(
-        self: LoggingPresentation,
-        case_result: CaseResult,
-    ) -> None:
+    def show_case_result(self, case_result: CaseResult) -> None:
         status = case_result.status
         level = _LEVEL_MAP[status]
 
@@ -62,7 +54,7 @@ class LoggingPresentation:
                 self.show_response_verification(response)
 
     def show_response_verification(
-        self: LoggingPresentation,
+        self,
         verification: ResponseVerification,
         label: str = 'Response',
     ) -> None:
@@ -81,7 +73,7 @@ class LoggingPresentation:
             )
 
     def show_verification(
-        self: LoggingPresentation,
+        self,
         verification: Verification,
         label: str,
         child_label: str = 'Predicate',
@@ -106,7 +98,7 @@ class LoggingPresentation:
             self._log(level, line.rstrip())
 
     @contextlib.contextmanager
-    def _nested(self: LoggingPresentation) -> Iterator[None]:
+    def _nested(self) -> Iterator[None]:
         original = self._indent
         self._indent += '..'
         yield
