@@ -1,6 +1,5 @@
 """Predicate compilation."""
 
-from __future__ import annotations
 from typing import Any
 
 from preacher.core.description import Predicate
@@ -20,6 +19,6 @@ class PredicateCompiler:
     ...     predicate = compiler.compile('matcher')
     ...     matcher_mock.assert_called_with('matcher')
     """
-    def compile(self: PredicateCompiler, obj: Any) -> Predicate:
+    def compile(self, obj: Any) -> Predicate:
         matcher = compile_matcher(obj)
         return MatcherPredicate(matcher)

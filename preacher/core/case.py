@@ -1,7 +1,5 @@
 """Test case."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Optional
 
@@ -14,7 +12,7 @@ from .status import Status, merge_statuses
 from .verification import Verification
 
 
-@dataclass
+@dataclass(frozen=True)
 class CaseResult:
     status: Status
     request: Verification
@@ -106,16 +104,16 @@ class Case:
     >>> assert case.response_description.call_count == 2
     """
     def __init__(
-        self: Case,
+        self,
         request: Request,
         response_description: ResponseDescription,
         label: Optional[str] = None,
-    ) -> None:
+    ):
         self._label = label
         self._request = request
         self._response_description = response_description
 
-    def __call__(self: Case, base_url: str, retry: int = 0) -> CaseResult:
+    def __call__(self, base_url: str, retry: int = 0) -> CaseResult:
         if retry < 0:
             raise RuntimeError(
                 f'Retry count must be positive or 0, given {retry}'
@@ -127,7 +125,7 @@ class Case:
 
         return result
 
-    def _run(self: Case, base_url: str) -> CaseResult:
+    def _run(self, base_url: str) -> CaseResult:
         try:
             response = self._request(base_url)
         except Exception as error:
@@ -154,13 +152,13 @@ class Case:
         )
 
     @property
-    def label(self: Case) -> Optional[str]:
+    def label(self) -> Optional[str]:
         return self._label
 
     @property
-    def request(self: Case) -> Request:
+    def request(self) -> Request:
         return self._request
 
     @property
-    def response_description(self: Case) -> ResponseDescription:
+    def response_description(self) -> ResponseDescription:
         return self._response_description

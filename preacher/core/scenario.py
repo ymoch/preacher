@@ -1,7 +1,5 @@
 """Scenario"""
 
-from __future__ import annotations
-
 from typing import Iterator, List, Optional
 
 from .case import Case
@@ -29,17 +27,13 @@ class Scenario:
     >>> next(cases)
     sentinel.case2
     """
-    def __init__(
-        self: Scenario,
-        label: Optional[str] = None,
-        cases: List[Case] = [],
-    ) -> None:
+    def __init__(self, label: Optional[str] = None, cases: List[Case] = []):
         self._label = label
         self._cases = cases
 
     @property
-    def label(self: Scenario) -> Optional[str]:
+    def label(self) -> Optional[str]:
         return self._label
 
-    def cases(self: Scenario) -> Iterator[Case]:
+    def cases(self) -> Iterator[Case]:
         return iter(self._cases)

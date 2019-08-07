@@ -1,7 +1,5 @@
 """Response descriptions."""
 
-from __future__ import annotations
-
 import json
 from dataclasses import dataclass
 from typing import List
@@ -11,7 +9,7 @@ from .status import Status, merge_statuses
 from .verification import Verification
 
 
-@dataclass
+@dataclass(frozen=True)
 class ResponseVerification:
     status: Status
     status_code: Verification
@@ -77,7 +75,7 @@ class ResponseDescription:
         self,
         status_code_predicates: List[Predicate],
         body_descriptions: List[Description],
-    ) -> None:
+    ):
         self._status_code_predicates = status_code_predicates
         self._body_descriptions = body_descriptions
 

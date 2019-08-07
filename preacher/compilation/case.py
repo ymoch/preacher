@@ -141,20 +141,20 @@ class CaseCompiler:
     sentinel.foo
     """
     def __init__(
-        self: CaseCompiler,
+        self,
         request_compiler: Optional[RequestCompiler] = None,
         response_compiler: Optional[ResponseDescriptionCompiler] = None
-    ) -> None:
+    ):
         self._request_compiler = request_compiler or RequestCompiler()
         self._response_compiler = (
             response_compiler or ResponseDescriptionCompiler()
         )
 
     @property
-    def request_compiler(self: CaseCompiler) -> RequestCompiler:
+    def request_compiler(self) -> RequestCompiler:
         return self._request_compiler
 
-    def compile(self: CaseCompiler, obj: Mapping) -> Case:
+    def compile(self, obj: Mapping) -> Case:
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
             raise CompilationError(
@@ -178,7 +178,7 @@ class CaseCompiler:
             response_description=response_description,
         )
 
-    def of_default(self: CaseCompiler, obj: Mapping) -> CaseCompiler:
+    def of_default(self, obj: Mapping) -> CaseCompiler:
         request_compiler = run_on_key(
             _KEY_REQUEST,
             self._request_compiler.of_default,

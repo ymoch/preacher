@@ -123,25 +123,18 @@ class RequestCompiler:
     >>> request.params
     {'key': 'value'}
     """
-    def __init__(
-        self: RequestCompiler,
-        path: str = '',
-        params: Mapping = {},
-    ) -> None:
+    def __init__(self, path: str = '', params: Mapping = {}):
         self._path = path
         self._params = params
 
-    def compile(self: RequestCompiler, obj: Union[Mapping, str]) -> Request:
+    def compile(self, obj: Union[Mapping, str]) -> Request:
         compiled = _compile(obj)
         return compiled.to_request(
             default_path=self._path,
             default_params=self._params,
         )
 
-    def of_default(
-        self: RequestCompiler,
-        obj: Union[Mapping, str],
-    ) -> RequestCompiler:
+    def of_default(self, obj: Union[Mapping, str]) -> RequestCompiler:
         compiled = _compile(obj)
         return RequestCompiler(
             path=or_default(compiled.path, self._path),

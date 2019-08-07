@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from multiprocessing import Pool
 from typing import Callable, Iterable, Iterator
 
@@ -21,11 +19,11 @@ MapFunction = Callable[
 
 class Application:
     def __init__(
-        self: Application,
+        self,
         view: LoggingPresentation,
         base_url: str,
         retry: int = 0,
-    ) -> None:
+    ):
         self._view = view
         self._base_url = base_url
         self._retry = retry
@@ -34,11 +32,11 @@ class Application:
         self._is_succeeded = True
 
     @property
-    def is_succeeded(self: Application) -> bool:
+    def is_succeeded(self) -> bool:
         return self._is_succeeded
 
     def run(
-        self: Application,
+        self,
         config_paths: Iterable[str],
         map_func: MapFunction = map,
     ) -> None:
@@ -48,14 +46,14 @@ class Application:
             self._view.show_scenario_result(result)
 
     def run_concurrently(
-        self: Application,
+        self,
         config_paths: Iterable[str],
         concurrency: int,
     ) -> None:
         with Pool(concurrency) as pool:
             self.run(config_paths, map_func=pool.imap)
 
-    def _run_each(self: Application, config_path: str) -> ScenarioResult:
+    def _run_each(self, config_path: str) -> ScenarioResult:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
         scenario = self._scenario_compiler.compile(config)
