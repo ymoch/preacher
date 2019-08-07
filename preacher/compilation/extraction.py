@@ -1,7 +1,5 @@
 """Extraction compilation."""
 
-from __future__ import annotations
-
 from collections.abc import Mapping
 from typing import Union
 
@@ -16,10 +14,7 @@ _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
 
 
 class ExtractionCompiler:
-    def compile(
-        self: ExtractionCompiler,
-        obj: Union[Mapping, str],
-    ) -> Extraction:
+    def compile(self, obj: Union[Mapping, str]) -> Extraction:
         if isinstance(obj, str):
             return compile({'jq': obj})
 
