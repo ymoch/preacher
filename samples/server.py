@@ -20,12 +20,12 @@ def latency(seconds):
 
 @app.route('/text', methods=['GET'])
 @latency(1.0)
-def text() -> str:
+def text():
     return 'text'
 
 
 @app.route('/json', methods=['GET'])
-def foo() -> dict:
+def foo():
     return jsonify({
         'foo': 'bar',
         'empty_string': '',
@@ -35,7 +35,7 @@ def foo() -> dict:
 
 
 @app.route('/error/404', methods=['GET'])
-def not_found() -> None:
+def not_found():
     return abort(404, {'message': 'not found'})
 
 
