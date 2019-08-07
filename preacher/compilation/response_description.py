@@ -101,7 +101,7 @@ class ResponseDescriptionCompiler:
         self,
         predicate_compiler: Optional[PredicateCompiler] = None,
         description_compiler: Optional[DescriptionCompiler] = None,
-    ) -> None:
+    ):
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
         self._description_compiler = (
             description_compiler
