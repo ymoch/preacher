@@ -10,7 +10,6 @@ Predicate = Callable[[Any], Verification]
 
 
 class Description:
-    """Description."""
 
     def __init__(self, extraction: Extraction, predicates: List[Predicate]):
         self._extraction = extraction
