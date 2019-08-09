@@ -64,17 +64,6 @@ def _compile_taking_single_matcher(key: str, value: Any):
 
 
 def compile(obj: Any) -> Matcher:
-    """
-    >>> from unittest.mock import patch, sentinel
-
-    >>> with patch(
-    ...     f'{__name__}._compile_taking_single_matcher',
-    ...     return_value=sentinel.single_matcher_matcher,
-    ... ) as matcher_mock:
-    ...     compile({'not': 'value'})
-    ...     matcher_mock.assert_called_with('not', 'value')
-    sentinel.single_matcher_matcher
-    """
     if isinstance(obj, str):
         if obj in _STATIC_MATCHER_MAP:
             return _STATIC_MATCHER_MAP[obj]
