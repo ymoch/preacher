@@ -52,18 +52,6 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
 }
 
 
-def _compile_static_matcher(name: str) -> Matcher:
-    matcher = _STATIC_MATCHER_MAP[name]
-    return matcher
-
-
-def _compile_taking_value(key: str, value: Any) -> Matcher:
-    """
-    """
-    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key]
-    return func(value)
-
-
 def _compile_taking_single_matcher(key: str, value: Any):
     """
     >>> _compile_taking_single_matcher('invalid_key', '')
@@ -127,22 +115,6 @@ def compile(obj: Any) -> Matcher:
     >>> assert matcher.matches({'invalid_key': ''})
 
     >>> with patch(
-    ...     f'{__name__}._compile_static_matcher',
-    ...     return_value=sentinel.static_matcher,
-    ... ) as matcher_mock:
-    ...     compile('be_null')
-    ...     matcher_mock.assert_called_with('be_null')
-    sentinel.static_matcher
-
-    >>> with patch(
-    ...     f'{__name__}._compile_taking_value',
-    ...     return_value=sentinel.value_matcher,
-    ... ) as matcher_mock:
-    ...     compile({'equal': 'value'})
-    ...     matcher_mock.assert_called_with('equal', 'value')
-    sentinel.value_matcher
-
-    >>> with patch(
     ...     f'{__name__}._compile_taking_single_matcher',
     ...     return_value=sentinel.single_matcher_matcher,
     ... ) as matcher_mock:
@@ -152,7 +124,8 @@ def compile(obj: Any) -> Matcher:
     """
     if isinstance(obj, str):
         if obj in _STATIC_MATCHER_MAP:
-            return _compile_static_matcher(obj)
+            matcher = _STATIC_MATCHER_MAP[obj]
+            return matcher
 
     if isinstance(obj, Mapping):
         if len(obj) != 1:
@@ -163,7 +136,8 @@ def compile(obj: Any) -> Matcher:
         key, value = next(iter(obj.items()))
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
-            return _compile_taking_value(key, value)
+            func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key]
+            return func(value)
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
             return _compile_taking_single_matcher(key, value)
