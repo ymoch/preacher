@@ -53,99 +53,14 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
 
 
 def _compile_static_matcher(name: str) -> Matcher:
-    """
-    >>> _compile_static_matcher('invalid_name')
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... 'invalid_name'
-
-    >>> matcher = _compile_static_matcher('be_null')
-    >>> assert matcher.matches(None)
-    >>> assert not matcher.matches(False)
-
-    >>> matcher = _compile_static_matcher('not_be_null')
-    >>> assert not matcher.matches(None)
-    >>> assert matcher.matches('False')
-
-    >>> matcher = _compile_static_matcher('be_empty')
-    >>> assert not matcher.matches(None)
-    >>> assert not matcher.matches(0)
-    >>> assert matcher.matches('')
-    >>> assert not matcher.matches('A')
-    >>> assert matcher.matches([])
-    >>> assert not matcher.matches([1])
-    """
-    matcher = _STATIC_MATCHER_MAP.get(name)
-    if not matcher:
-        raise CompilationError(f'Invalid matcher: \'{name}\'')
+    matcher = _STATIC_MATCHER_MAP[name]
     return matcher
 
 
 def _compile_taking_value(key: str, value: Any) -> Matcher:
     """
-    >>> _compile_taking_value('invalid_key', 0)
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... 'invalid_key'
-
-    >>> matcher = _compile_taking_value('have_length', 1)
-    >>> assert not matcher.matches(None)
-    >>> assert not matcher.matches('')
-    >>> assert not matcher.matches([])
-    >>> assert matcher.matches('A')
-    >>> assert matcher.matches([1])
-
-    >>> matcher = _compile_taking_value('equal', 1)
-    >>> assert not matcher.matches(0)
-    >>> assert not matcher.matches('1')
-    >>> assert matcher.matches(1)
-
-    >>> matcher = _compile_taking_value('be_greater_than', 0)
-    >>> assert not matcher.matches(-1)
-    >>> assert not matcher.matches(0)
-    >>> assert matcher.matches(1)
-
-    >>> matcher = _compile_taking_value('be_greater_than_or_equal_to', 0)
-    >>> assert not matcher.matches(-1)
-    >>> assert matcher.matches(0)
-    >>> assert matcher.matches(1)
-
-    >>> matcher = _compile_taking_value('be_less_than', 0)
-    >>> assert matcher.matches(-1)
-    >>> assert not matcher.matches(0)
-    >>> assert not matcher.matches(1)
-
-    >>> matcher = _compile_taking_value('be_less_than_or_equal_to', 0)
-    >>> assert matcher.matches(-1)
-    >>> assert matcher.matches(0)
-    >>> assert not matcher.matches(1)
-
-    >>> matcher = _compile_taking_value('contain_string', '0')
-    >>> assert not matcher.matches(0)
-    >>> assert not matcher.matches('123')
-    >>> assert matcher.matches('21012')
-
-    >>> matcher = _compile_taking_value('start_with', 'AB')
-    >>> assert not matcher.matches(0)
-    >>> assert matcher.matches('ABC')
-    >>> assert not matcher.matches('ACB')
-
-    >>> matcher = _compile_taking_value('end_with', 'BC')
-    >>> assert not matcher.matches(0)
-    >>> assert matcher.matches('ABC')
-    >>> assert not matcher.matches('ACB')
-
-    >>> matcher = _compile_taking_value('match_regexp', '^A*B$')
-    >>> assert not matcher.matches('ACB')
-    >>> assert matcher.matches('B')
-    >>> matcher.matches(0)  # TODO: Should return `False` when given not `str`.
-    Traceback (most recent call last):
-        ...
-    TypeError: ...
     """
-    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE.get(key)
-    if not func:
-        raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
+    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key]
     return func(value)
 
 
