@@ -21,31 +21,6 @@ class Response:
 
 
 class Request:
-    """
-    >>> request = Request(path='/path', params={'key': 'value'})
-    >>> request.path
-    '/path'
-    >>> request.params
-    {'key': 'value'}
-
-    >>> from unittest.mock import MagicMock, patch
-    >>> inner_response = MagicMock(
-    ...     requests.Response,
-    ...     status_code=402,
-    ...     headers={'header-key': 'header-value'},
-    ...     text='text',
-    ... )
-    >>> with patch('requests.get', return_value=inner_response) as mock:
-    ...     response = request('base-url')
-    ...     mock.call_args
-    call('base-url/path', headers={'User-Agent': ...}, params={'key': 'value'})
-    >>> response.status_code
-    402
-    >>> response.headers
-    {'header-key': 'header-value'}
-    >>> response.body
-    'text'
-    """
     def __init__(self, path: str, params: Mapping):
         self._path = path
         self._params = params
