@@ -1,6 +1,7 @@
-from preacher.compilation.matcher import compile
-
 from pytest import raises
+
+from preacher.compilation.error import CompilationError
+from preacher.compilation.matcher import compile
 
 
 def test_invalid_string():
@@ -11,6 +12,13 @@ def test_invalid_string():
 
 
 def test_invalid_mapping():
+    with raises(CompilationError):
+        compile({})
+    with raises(CompilationError):
+        compile({'key1': 'value1', 'key2': 'value2'})
+
+
+def test_undefined_mapping():
     matcher = compile({'_undefined_key': 'value'})
     assert not matcher.matches(None)
     assert not matcher.matches(0)

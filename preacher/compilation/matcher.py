@@ -67,24 +67,6 @@ def compile(obj: Any) -> Matcher:
     """
     >>> from unittest.mock import patch, sentinel
 
-    >>> compile({})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 0
-
-    >>> compile({'key1': 'value1', 'key2': 'value2'})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 2
-
-    >>> matcher = compile('invalid_name')
-    >>> assert not matcher.matches('')
-    >>> assert matcher.matches('invalid_name')
-
-    >>> matcher = compile({'invalid_key': ''})
-    >>> assert not matcher.matches('')
-    >>> assert matcher.matches({'invalid_key': ''})
-
     >>> with patch(
     ...     f'{__name__}._compile_taking_single_matcher',
     ...     return_value=sentinel.single_matcher_matcher,
