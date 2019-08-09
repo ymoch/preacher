@@ -53,15 +53,7 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
 
 
 def _compile_taking_single_matcher(key: str, value: Any):
-    """
-    >>> _compile_taking_single_matcher('invalid_key', '')
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... 'invalid_key'
-    """
-    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.get(key)
-    if not func:
-        raise CompilationError(f'Unrecognized matcher key: \'{key}\'')
+    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER[key]
 
     if isinstance(value, str) or isinstance(value, Mapping):
         inner = run_on_key(key, compile, value)
