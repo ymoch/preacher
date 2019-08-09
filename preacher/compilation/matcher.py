@@ -124,8 +124,7 @@ def compile(obj: Any) -> Matcher:
     """
     if isinstance(obj, str):
         if obj in _STATIC_MATCHER_MAP:
-            matcher = _STATIC_MATCHER_MAP[obj]
-            return matcher
+            return _STATIC_MATCHER_MAP[obj]
 
     if isinstance(obj, Mapping):
         if len(obj) != 1:
@@ -136,8 +135,7 @@ def compile(obj: Any) -> Matcher:
         key, value = next(iter(obj.items()))
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
-            func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key]
-            return func(value)
+            return _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key](value)
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
             return _compile_taking_single_matcher(key, value)
