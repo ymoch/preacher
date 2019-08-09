@@ -114,3 +114,30 @@ def test_match_regexp():
     with raises(TypeError):
         # TODO: Should return `False` when given not `str`.
         matcher.matches(0)
+
+
+def test_be():
+    matcher = compile({'be': 1})
+    assert not matcher.matches(0)
+    assert not matcher.matches('1')
+    assert matcher.matches(1)
+
+
+def test_not():
+    matcher = compile({'not': 1})
+    assert matcher.matches('A')
+    assert matcher.matches(0)
+    assert not matcher.matches(1)
+
+    matcher = compile({'not': {'be_greater_than': 0}})
+    assert matcher.matches(-1)
+    assert matcher.matches(0)
+    assert not matcher.matches(1)
+
+
+def test_have_item():
+    matcher = compile({'have_item': {'equal': 1}})
+    assert not matcher.matches(None)
+    assert not matcher.matches([])
+    assert not matcher.matches([0, 'A'])
+    assert matcher.matches([0, 1, 2])

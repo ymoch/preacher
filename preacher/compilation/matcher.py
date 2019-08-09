@@ -58,27 +58,6 @@ def _compile_taking_single_matcher(key: str, value: Any):
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: ... 'invalid_key'
-
-    >>> matcher = _compile_taking_single_matcher('be', 1)
-    >>> assert not matcher.matches(0)
-    >>> assert not matcher.matches('1')
-    >>> assert matcher.matches(1)
-
-    >>> matcher = _compile_taking_single_matcher('not', 1)
-    >>> assert matcher.matches('A')
-    >>> assert matcher.matches(0)
-    >>> assert not matcher.matches(1)
-
-    >>> matcher = _compile_taking_single_matcher('not', {'be_greater_than': 0})
-    >>> assert matcher.matches(-1)
-    >>> assert matcher.matches(0)
-    >>> assert not matcher.matches(1)
-
-    >>> matcher = _compile_taking_single_matcher('have_item', {'equal': 1})
-    >>> assert not matcher.matches(None)
-    >>> assert not matcher.matches([])
-    >>> assert not matcher.matches([0, 'A'])
-    >>> assert matcher.matches([0, 1, 2])
     """
     func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER.get(key)
     if not func:
