@@ -24,17 +24,14 @@ def predicate_compiler() -> PredicateCompiler:
     )
 
 
-def test_when_given_an_empty_mapping():
+def test_given_an_empty_mapping():
     compiler = DescriptionCompiler()
     with raises(CompilationError) as error_info:
         compiler.compile({})
     assert str(error_info.value).startswith('Description.describe')
 
 
-def test_when_given_a_string_predicate(
-    extraction_compiler,
-    predicate_compiler,
-):
+def test_given_a_string_predicate(extraction_compiler, predicate_compiler):
     compiler = DescriptionCompiler(
         extraction_compiler=extraction_compiler,
         predicate_compiler=predicate_compiler,
@@ -50,10 +47,7 @@ def test_when_given_a_string_predicate(
     predicate_compiler.compile.assert_called_once_with('string')
 
 
-def test_when_given_a_mapping_predicate(
-    extraction_compiler,
-    predicate_compiler,
-):
+def test_given_a_mapping_predicate(extraction_compiler, predicate_compiler):
     compiler = DescriptionCompiler(
         extraction_compiler=extraction_compiler,
         predicate_compiler=predicate_compiler,
@@ -69,7 +63,7 @@ def test_when_given_a_mapping_predicate(
     predicate_compiler.compile.assert_called_once_with({'key': 'value'})
 
 
-def test_when_given_a_list_of_mapping_predicates(
+def test_given_a_list_of_mapping_predicates(
     extraction_compiler,
     predicate_compiler,
 ):
