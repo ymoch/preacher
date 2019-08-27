@@ -15,7 +15,7 @@ class MatcherPredicate:
     def __init__(self, matcher: Matcher):
         self._matcher = matcher
 
-    def __call__(self, actual: Any) -> Verification:
+    def __call__(self, actual: Any, **kwargs: Any) -> Verification:
         try:
             assert_that(actual, self._matcher)
         except AssertionError as error:
