@@ -1,10 +1,9 @@
 """Utilities for compilations."""
 
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Callable, Iterable, Iterator, Optional, TypeVar
 
-from preacher.core.util import now
 from .error import CompilationError
 
 
@@ -85,15 +84,10 @@ def or_default(value: Optional[T], default_value: T) -> T:
     return value
 
 
-def compile_datetime(value: str, origin: Optional[datetime] = None):
-    origin = origin or now()
-    return origin + _compile_relative_datetime(value)
-
-
-def _compile_relative_datetime(value: str) -> timedelta:
+def compile_relative_datetime(value: str) -> timedelta:
     match = RELATIVE_DATETIME_PATTERN.search(value.lower())
     if not match:
-        raise ValueError(f'Invalid datetime format: {value}')
+        raise CompilationError(f'Invalid datetime format: {value}')
     offset = int(match.group(1))
     unit = match.group(2) + 's'
     return timedelta(**{unit: offset})

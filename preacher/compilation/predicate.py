@@ -8,10 +8,10 @@ from hamcrest.core.matcher import Matcher
 
 from preacher.core.description import Predicate
 from preacher.core.predicate import MatcherPredicate, DynamicMatcherPredicate
-from preacher.core.util import parse_datetime
+from preacher.core.util import now, parse_datetime
 from .error import CompilationError
 from .matcher import compile as compile_matcher
-from .util import compile_datetime
+from .util import compile_relative_datetime
 
 
 def before(obj: Any) -> Predicate:
@@ -36,9 +36,16 @@ def _compile_datetime_predicate(
 ) -> DynamicMatcherPredicate:
     if not isinstance(obj, str):
         raise CompilationError(f'Predicate.{key} must be a string')
+    try:
+        delta = compile_relative_datetime(obj)
+    except CompilationError as error:
+        raise CompilationError(
+            message=f'Predicate.{key} has a nvalid format value: {obj}',
+            cause=error,
+        )
 
     def _matcher_factory(*args: Any, **kwargs: Any) -> Matcher:
-        return matcher_func(compile_datetime(obj))
+        return matcher_func(now() + delta)
 
     return DynamicMatcherPredicate(
         matcher_factory=_matcher_factory,
