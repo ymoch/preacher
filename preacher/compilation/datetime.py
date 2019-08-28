@@ -11,7 +11,7 @@ RELATIVE_DATETIME_PATTERN = re.compile(
 )
 
 
-def compile_relative_datetime(value: str) -> timedelta:
+def compile_timedelta(value: str) -> timedelta:
     match = RELATIVE_DATETIME_PATTERN.search(value.lower())
     if not match:
         raise CompilationError(f'Invalid datetime format: {value}')

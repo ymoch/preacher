@@ -3,12 +3,12 @@ from datetime import timedelta
 from pytest import mark
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.datetime import compile_relative_datetime
+from preacher.compilation.datetime import compile_timedelta
 
 
 @mark.xfail(raises=CompilationError)
 def test_compile_datetime_given_an_invalid_format():
-    compile_relative_datetime('invalid')
+    compile_timedelta('invalid')
 
 
 @mark.parametrize('value, expected', (
@@ -33,6 +33,6 @@ def test_compile_datetime_given_an_invalid_format():
     ('+60 seconds', timedelta(minutes=1)),
     ('-120 seconds', timedelta(minutes=-2)),
 ))
-def test_compile_relative_datetime(value, expected):
-    actual = compile_relative_datetime(value)
+def test_compile_timedelta(value, expected):
+    actual = compile_timedelta(value)
     assert actual == expected
