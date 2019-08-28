@@ -28,6 +28,7 @@ class MatcherPredicate:
 
 
 class DynamicMatcherPredicate:
+    """Predicate of a dynamic Hamcrest matcher and conversion."""
 
     def __init__(
         self,
