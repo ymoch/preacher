@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from unittest.mock import patch, sentinel
 
-from pytest import mark
+from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.predicate import PredicateCompiler
@@ -19,6 +19,18 @@ REQUEST_DATETIME = datetime(2019, 8, 28, tzinfo=timezone.utc)
 @mark.xfail(raises=CompilationError)
 def test_invalid_mapping(obj):
     PredicateCompiler().compile(obj)
+
+
+@mark.parametrize('obj, expected_path', (
+    ({'before': 0}, ['before']),
+    ({'after': 'invalid'}, ['after']),
+))
+def test_invalid_datetime_predicate(obj, expected_path):
+    compiler = PredicateCompiler()
+    with raises(CompilationError) as error_info:
+        compiler.compile(obj)
+
+    assert error_info.value.path == expected_path
 
 
 @mark.parametrize('value, expected', (

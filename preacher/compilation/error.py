@@ -19,6 +19,10 @@ class CompilationError(Exception):
         self._path = path
         self._cause = cause
 
+    @property
+    def path(self) -> List[str]:
+        return self._path
+
     def of_parent(self, parent_path: List[str]) -> CompilationError:
         return CompilationError(
             message=self._message,

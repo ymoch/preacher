@@ -47,7 +47,7 @@ def _compile_datetime_predicate(
     matcher_func: Callable[[datetime], Matcher],
 ) -> DynamicMatcherPredicate:
     if not isinstance(obj, str):
-        raise CompilationError(f'Must be a string')
+        raise CompilationError(message=f'Must be a string', path=[key])
 
     delta = run_on_key(key, compile_timedelta, obj)
 
