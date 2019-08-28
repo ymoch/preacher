@@ -85,12 +85,12 @@ def or_default(value: Optional[T], default_value: T) -> T:
     return value
 
 
-def parse_datetime(value: str, origin: Optional[datetime] = None):
+def compile_datetime(value: str, origin: Optional[datetime] = None):
     origin = origin or now()
-    return origin + _parse_relative_datetime(value)
+    return origin + _compile_relative_datetime(value)
 
 
-def _parse_relative_datetime(value: str) -> timedelta:
+def _compile_relative_datetime(value: str) -> timedelta:
     match = RELATIVE_DATETIME_PATTERN.search(value.lower())
     if not match:
         raise ValueError(f'Invalid datetime format: {value}')

@@ -1,15 +1,25 @@
 """Predicate compilation."""
 
-from datetime import timedelta
-from typing import Any
+from datetime import datetime
+from typing import Any, Callable
 
-from hamcrest import greater_than
+from hamcrest import greater_than, less_than
+from hamcrest.core.matcher import Matcher
 
 from preacher.core.description import Predicate
 from preacher.core.predicate import MatcherPredicate, DynamicMatcherPredicate
-from preacher.core.util import now, parse_datetime
+from preacher.core.util import parse_datetime
 from .error import CompilationError
 from .matcher import compile as compile_matcher
+from .util import compile_datetime
+
+
+def before(obj: Any) -> Predicate:
+    return _compile_datetime_predicate('before', obj, less_than)
+
+
+def after(obj: Any) -> Predicate:
+    return _compile_datetime_predicate('after', obj, greater_than)
 
 
 class PredicateCompiler:
@@ -19,18 +29,18 @@ class PredicateCompiler:
         return MatcherPredicate(matcher)
 
 
-def after(obj: Any) -> Predicate:
-    if not isinstance(obj, int):
-        raise CompilationError('must be an integer')
-    delta_seconds: int = obj
+def _compile_datetime_predicate(
+    key: str,
+    obj: Any,
+    matcher_func: Callable[[datetime], Matcher],
+) -> DynamicMatcherPredicate:
+    if not isinstance(obj, str):
+        raise CompilationError(f'Predicate.{key} must be a string')
 
-    delta = timedelta(seconds=delta_seconds)
+    def _matcher_factory(*args: Any, **kwargs: Any) -> Matcher:
+        return matcher_func(compile_datetime(obj))
 
-    def _matcher_factory(*args, **kwargs):
-        return greater_than(now() + delta)
-
-    converter = parse_datetime
     return DynamicMatcherPredicate(
         matcher_factory=_matcher_factory,
-        converter=converter,
+        converter=parse_datetime,
     )

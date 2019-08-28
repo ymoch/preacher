@@ -2,15 +2,15 @@ from datetime import datetime
 
 from pytest import mark, raises
 
-from preacher.compilation.util import parse_datetime
+from preacher.compilation.util import compile_datetime
 
 
 ORIGIN = datetime(2019, 8, 28)
 
 
-def test_parse_datetime_given_an_invalid_format():
+def test_compile_datetime_given_an_invalid_format():
     with raises(ValueError):
-        parse_datetime('invalid')
+        compile_datetime('invalid')
 
 
 @mark.parametrize('value, expected', (
@@ -20,8 +20,8 @@ def test_parse_datetime_given_an_invalid_format():
     ('365 days', '2020-08-27'),
     (' -1  days ', '2019-08-27'),
 ))
-def test_parse_datetime_given_a_relative_day(value, expected):
-    actual = parse_datetime(value, origin=ORIGIN)
+def test_compile_datetime_given_a_relative_day(value, expected):
+    actual = compile_datetime(value, origin=ORIGIN)
     assert f'{actual:%Y-%m-%d}' == expected
 
 
@@ -32,8 +32,8 @@ def test_parse_datetime_given_a_relative_day(value, expected):
     ('24 hours', '2019-08-29 00:00:00'),
     ('-48 hours', '2019-08-26 00:00:00'),
 ))
-def test_parse_datetime_given_a_relative_hour(value, expected):
-    actual = parse_datetime(value, origin=ORIGIN)
+def test_compile_datetime_given_a_relative_hour(value, expected):
+    actual = compile_datetime(value, origin=ORIGIN)
     assert f'{actual:%Y-%m-%d %H:%M:%S}' == expected
 
 
@@ -44,8 +44,8 @@ def test_parse_datetime_given_a_relative_hour(value, expected):
     ('+60 minutes', '2019-08-28 01:00:00'),
     ('-120 minutes', '2019-08-27 22:00:00'),
 ))
-def test_parse_datetime_given_a_relative_minute(value, expected):
-    actual = parse_datetime(value, origin=ORIGIN)
+def test_compile_datetime_given_a_relative_minute(value, expected):
+    actual = compile_datetime(value, origin=ORIGIN)
     assert f'{actual:%Y-%m-%d %H:%M:%S}' == expected
 
 
@@ -56,6 +56,6 @@ def test_parse_datetime_given_a_relative_minute(value, expected):
     ('+60 seconds', '2019-08-28 00:01:00'),
     ('-120 seconds', '2019-08-27 23:58:00'),
 ))
-def test_parse_datetime_given_a_relative_seconds(value, expected):
-    actual = parse_datetime(value, origin=ORIGIN)
+def test_compile_datetime_given_a_relative_seconds(value, expected):
+    actual = compile_datetime(value, origin=ORIGIN)
     assert f'{actual:%Y-%m-%d %H:%M:%S}' == expected
