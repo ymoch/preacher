@@ -6,7 +6,7 @@ from .status import merge_statuses
 from .verification import Verification
 
 Extraction = Callable[[Any], Any]
-Predicate = Callable[[Any], Verification]
+Predicate = Callable
 
 
 class Description:

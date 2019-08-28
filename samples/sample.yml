@@ -40,6 +40,10 @@ cases:
             - not:
                 have_item: ''
             - have_item: 1
+        - describe: .now
+          should:
+            - before: 1 minute
+            - after: -1 minute
 
   - label: Returns a failure result
     request:

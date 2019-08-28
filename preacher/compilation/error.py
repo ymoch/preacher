@@ -7,6 +7,7 @@ from typing import List, Optional
 
 class CompilationError(Exception):
     """Compilation errors."""
+
     def __init__(
         self,
         message: str,
@@ -17,6 +18,10 @@ class CompilationError(Exception):
         self._message = message
         self._path = path
         self._cause = cause
+
+    @property
+    def path(self) -> List[str]:
+        return self._path
 
     def of_parent(self, parent_path: List[str]) -> CompilationError:
         return CompilationError(
