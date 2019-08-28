@@ -29,8 +29,13 @@ class MatcherPredicate:
 
 class DynamicMatcherPredicate:
 
-    def __init__(self, matcher_factory: Callable):
+    def __init__(
+        self,
+        matcher_factory: Callable,
+        converter: Callable[[Any], Any] = lambda x: x,
+    ):
         self._matcher_factory = matcher_factory
+        self._converter = converter
 
     def __call__(self, actual: Any, *args: Any, **kwargs: Any) -> Verification:
         try:
@@ -39,4 +44,5 @@ class DynamicMatcherPredicate:
             return Verification.of_error(error)
 
         predicate = MatcherPredicate(matcher)
-        return predicate(actual, *args, **kwargs)
+        predicated_value = self._converter(actual)
+        return predicate(predicated_value, *args, **kwargs)
