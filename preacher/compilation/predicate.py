@@ -52,7 +52,8 @@ def _compile_datetime_predicate(
     delta = run_on_key(key, compile_timedelta, obj)
 
     def _matcher_factory(*args: Any, **kwargs: Any) -> Matcher:
-        return matcher_func(now() + delta)
+        origin = kwargs.get('request_datetime') or now()
+        return matcher_func(origin + delta)
 
     return DynamicMatcherPredicate(
         matcher_factory=_matcher_factory,
