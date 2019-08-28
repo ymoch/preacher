@@ -7,6 +7,7 @@ from typing import List, Optional
 
 class CompilationError(Exception):
     """Compilation errors."""
+
     def __init__(
         self,
         message: str,

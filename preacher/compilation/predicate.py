@@ -1,5 +1,6 @@
 """Predicate compilation."""
 
+from collections.abc import Mapping
 from datetime import datetime
 from typing import Any, Callable
 
@@ -12,19 +13,30 @@ from preacher.core.util import now, parse_datetime
 from .datetime import compile_timedelta
 from .error import CompilationError
 from .matcher import compile as compile_matcher
+from .util import run_on_key
 
 
-def before(obj: Any) -> Predicate:
-    return _compile_datetime_predicate('before', obj, less_than)
-
-
-def after(obj: Any) -> Predicate:
-    return _compile_datetime_predicate('after', obj, greater_than)
+PREDICATE_MAP = {
+    'before': lambda value:
+        _compile_datetime_predicate('before', value, less_than),
+    'after': lambda value:
+        _compile_datetime_predicate('after', value, greater_than),
+}
 
 
 class PredicateCompiler:
 
     def compile(self, obj: Any) -> Predicate:
+        if isinstance(obj, Mapping):
+            if len(obj) != 1:
+                raise CompilationError(
+                    f'Must have only 1 element, but has {len(obj)}'
+                )
+
+            key, value = next(iter(obj.items()))
+            if key in PREDICATE_MAP:
+                return PREDICATE_MAP[key](value)
+
         matcher = compile_matcher(obj)
         return MatcherPredicate(matcher)
 
@@ -35,14 +47,9 @@ def _compile_datetime_predicate(
     matcher_func: Callable[[datetime], Matcher],
 ) -> DynamicMatcherPredicate:
     if not isinstance(obj, str):
-        raise CompilationError(f'Predicate.{key} must be a string')
-    try:
-        delta = compile_timedelta(obj)
-    except CompilationError as error:
-        raise CompilationError(
-            message=f'Predicate.{key} has a nvalid format value: {obj}',
-            cause=error,
-        )
+        raise CompilationError(f'Must be a string')
+
+    delta = run_on_key(key, compile_timedelta, obj)
 
     def _matcher_factory(*args: Any, **kwargs: Any) -> Matcher:
         return matcher_func(now() + delta)
