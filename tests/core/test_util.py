@@ -33,7 +33,7 @@ def test_now_pdt(localtime):
 def test_parse_date_given_invalid_format():
     with raises(ValueError) as error_info:
         parse_datetime('XXX')
-    assert str(error_info.value).endswith('XXX')
+    assert 'XXX' in str(error_info.value)
 
 
 def test_parse_datetime_given_iso_expanded_format():
