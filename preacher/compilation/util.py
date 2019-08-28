@@ -1,7 +1,5 @@
 """Utilities for compilations."""
 
-import re
-from datetime import timedelta
 from typing import Callable, Iterable, Iterator, Optional, TypeVar
 
 from .error import CompilationError
@@ -9,10 +7,6 @@ from .error import CompilationError
 
 T = TypeVar('T')
 U = TypeVar('U')
-
-RELATIVE_DATETIME_PATTERN = re.compile(
-    r'([+\-]?\d+)\s*(day|hour|minute|second)s?'
-)
 
 
 def run_on_key(
@@ -82,12 +76,3 @@ def or_default(value: Optional[T], default_value: T) -> T:
     if value is None:
         return default_value
     return value
-
-
-def compile_relative_datetime(value: str) -> timedelta:
-    match = RELATIVE_DATETIME_PATTERN.search(value.lower())
-    if not match:
-        raise CompilationError(f'Invalid datetime format: {value}')
-    offset = int(match.group(1))
-    unit = match.group(2) + 's'
-    return timedelta(**{unit: offset})

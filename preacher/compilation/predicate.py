@@ -9,9 +9,9 @@ from hamcrest.core.matcher import Matcher
 from preacher.core.description import Predicate
 from preacher.core.predicate import MatcherPredicate, DynamicMatcherPredicate
 from preacher.core.util import now, parse_datetime
+from .datetime import compile_relative_datetime
 from .error import CompilationError
 from .matcher import compile as compile_matcher
-from .util import compile_relative_datetime
 
 
 def before(obj: Any) -> Predicate:

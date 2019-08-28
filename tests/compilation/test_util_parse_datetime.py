@@ -3,7 +3,7 @@ from datetime import timedelta
 from pytest import mark
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.util import compile_relative_datetime
+from preacher.compilation.datetime import compile_relative_datetime
 
 
 @mark.xfail(raises=CompilationError)
