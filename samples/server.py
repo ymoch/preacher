@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from functools import wraps
 from time import sleep
 
@@ -31,6 +32,7 @@ def foo():
         'empty_string': '',
         'empty_list': [],
         'list': [1, 2, 'A'],
+        'now': datetime.now(timezone.utc).isoformat(),
     })
 
 

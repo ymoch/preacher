@@ -40,9 +40,9 @@ class DynamicMatcherPredicate:
     def __call__(self, actual: Any, *args: Any, **kwargs: Any) -> Verification:
         try:
             matcher = self._matcher_factory(*args, **kwargs)
+            predicated_value = self._converter(actual)
         except Exception as error:
             return Verification.of_error(error)
 
         predicate = MatcherPredicate(matcher)
-        predicated_value = self._converter(actual)
         return predicate(predicated_value, *args, **kwargs)
