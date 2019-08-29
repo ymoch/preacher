@@ -42,9 +42,9 @@ cases:
             - have_item: 1
         - describe: .now
           should:
-            - before: 1 minute
-            - after: -2 minutes
-            - after: 1 second  # Must be processed after 1 seconds.
+            - be_before: 1 minute
+            - be_after: -2 minutes
+            - be_after: 1 second  # Must be processed after 1 seconds.
 
   - label: Returns a failure result
     request:

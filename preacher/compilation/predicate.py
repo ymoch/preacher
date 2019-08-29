@@ -17,10 +17,10 @@ from .util import run_on_key
 
 
 PREDICATE_MAP = {
-    'before': lambda value:
-        _compile_datetime_predicate('before', value, less_than),
-    'after': lambda value:
-        _compile_datetime_predicate('after', value, greater_than),
+    'be_before': lambda value:
+        _compile_datetime_predicate('be_before', value, less_than),
+    'be_after': lambda value:
+        _compile_datetime_predicate('be_after', value, greater_than),
 }
 
 

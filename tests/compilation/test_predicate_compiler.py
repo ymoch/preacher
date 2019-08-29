@@ -22,8 +22,8 @@ def test_invalid_mapping(obj):
 
 
 @mark.parametrize('obj, expected_path', (
-    ({'before': 0}, ['before']),
-    ({'after': 'invalid'}, ['after']),
+    ({'be_before': 0}, ['be_before']),
+    ({'be_after': 'invalid'}, ['be_after']),
 ))
 def test_invalid_datetime_predicate(obj, expected_path):
     compiler = PredicateCompiler()
@@ -40,7 +40,19 @@ def test_invalid_datetime_predicate(obj, expected_path):
 ))
 def test_given_valid_before(value: str, expected: Status):
     compiler = PredicateCompiler()
-    predicate = compiler.compile({'before': '1 day'})
+    predicate = compiler.compile({'be_before': '1 day'})
+    result = predicate(value, request_datetime=REQUEST_DATETIME)
+    assert result.status == expected
+
+
+@mark.parametrize('value, expected', (
+    ('2019-08-26T00:00:00Z', Status.UNSTABLE),
+    ('2019-08-27T00:00:00Z', Status.UNSTABLE),
+    ('2019-08-28T00:00:00Z', Status.SUCCESS),
+))
+def test_given_valid_after(value: str, expected: Status):
+    compiler = PredicateCompiler()
+    predicate = compiler.compile({'be_after': '-1 day'})
     result = predicate(value, request_datetime=REQUEST_DATETIME)
     assert result.status == expected
 
