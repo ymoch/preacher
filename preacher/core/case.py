@@ -57,6 +57,7 @@ class Case:
         response_verification = self._response_description(
             status_code=response.status_code,
             body=response.body,
+            request_datetime=response.request_datetime,
         )
 
         status = merge_statuses(

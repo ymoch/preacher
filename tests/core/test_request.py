@@ -1,12 +1,16 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, sentinel
 
 from requests import Response
 
 from preacher.core.request import Request
 
 
+PACKAGE = 'preacher.core.request'
+
+
+@patch(f'{PACKAGE}.now', return_value=sentinel.now)
 @patch('requests.get')
-def test_request(requests_get):
+def test_request(requests_get, now):
     inner_response = MagicMock(
         spec=Response,
         status_code=402,
@@ -23,6 +27,7 @@ def test_request(requests_get):
     assert response.status_code == 402
     assert response.headers == {'header-key': 'header-value'}
     assert response.body == 'text'
+    assert response.request_datetime == sentinel.now
 
     args, kwargs = requests_get.call_args
     assert args == ('base-url/path',)

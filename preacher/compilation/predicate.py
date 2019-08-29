@@ -8,8 +8,8 @@ from hamcrest import greater_than, less_than
 from hamcrest.core.matcher import Matcher
 
 from preacher.core.description import Predicate
+from preacher.core.datetime import now, parse_datetime
 from preacher.core.predicate import MatcherPredicate, DynamicMatcherPredicate
-from preacher.core.util import now, parse_datetime
 from .datetime import compile_timedelta
 from .error import CompilationError
 from .matcher import compile as compile_matcher

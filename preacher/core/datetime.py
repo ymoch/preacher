@@ -1,4 +1,4 @@
-"""Utilities for Preacher Core."""
+"""Datetime utilities for Preacher core."""
 
 import datetime
 import time
