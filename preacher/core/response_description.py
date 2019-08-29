@@ -2,7 +2,7 @@
 
 import json
 from dataclasses import dataclass
-from typing import List
+from typing import Any, List
 
 from .description import Description, Predicate
 from .status import Status, merge_statuses
@@ -26,10 +26,22 @@ class ResponseDescription:
         self._status_code_predicates = status_code_predicates
         self._body_descriptions = body_descriptions
 
-    def __call__(self, status_code: int, body: str) -> ResponseVerification:
-        status_code_verification = self._verify_status_code(status_code)
+    def __call__(
+        self,
+        status_code: int,
+        body: str,
+        *args: Any,
+        **kwargs: Any,
+    ) -> ResponseVerification:
+        """`*args` and `**kwargs` will be delegated to descriptions."""
+
+        status_code_verification = self._verify_status_code(
+            status_code,
+            *args,
+            **kwargs,
+        )
         try:
-            body_verification = self._verify_body(body)
+            body_verification = self._verify_body(body, *args, **kwargs)
         except Exception as error:
             body_verification = Verification.of_error(error)
 
@@ -51,18 +63,32 @@ class ResponseDescription:
     def body_descriptions(self) -> List[Description]:
         return self._body_descriptions
 
-    def _verify_status_code(self, code: int) -> Verification:
-        children = [pred(code) for pred in self._status_code_predicates]
+    def _verify_status_code(
+        self,
+        code: int,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Verification:
+        children = [
+            predicate(code, *args, **kwargs)
+            for predicate in self._status_code_predicates
+        ]
         status = merge_statuses(v.status for v in children)
         return Verification(status=status, children=children)
 
-    def _verify_body(self, body: str) -> Verification:
+    def _verify_body(
+        self,
+        body: str,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Verification:
         if not self._body_descriptions:
             return Verification.skipped()
 
         data = json.loads(body)
         verifications = [
-            describe(data) for describe in self._body_descriptions
+            describe(data, *args, **kwargs)
+            for describe in self._body_descriptions
         ]
         status = merge_statuses(v.status for v in verifications)
         return Verification(status=status, children=verifications)

@@ -1,12 +1,22 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, sentinel
 
-from pytest import raises
-from requests import Response
+from pytest import fixture, raises
 
 from preacher.core.case import Case
+from preacher.core.request import Response
 from preacher.core.response_description import ResponseVerification
 from preacher.core.status import Status
 from preacher.core.verification import Verification
+
+
+@fixture
+def response():
+    return Response(
+        status_code=402,
+        headers={},
+        body='body',
+        request_datetime=sentinel.request_datetime,
+    )
 
 
 def test_when_given_an_invalid_retry_count():
@@ -33,11 +43,10 @@ def test_when_the_request_fails():
     case.response_description.assert_not_called()
 
 
-def test_when_given_an_response():
-    inner_response = MagicMock(Response, status_code=402, body='body')
+def test_when_given_an_response(response):
     case = Case(
         label='Response should be unstable',
-        request=MagicMock(return_value=inner_response),
+        request=MagicMock(return_value=response),
         response_description=MagicMock(
             return_value=ResponseVerification(
                 status=Status.UNSTABLE,
@@ -53,16 +62,17 @@ def test_when_given_an_response():
     assert verification.response.status == Status.UNSTABLE
     assert verification.response.body.status == Status.UNSTABLE
 
-    case.response_description.assert_called_with(body='body', status_code=402)
+    case.response_description.assert_called_with(
+        status_code=402,
+        body='body',
+        request_datetime=sentinel.request_datetime,
+    )
 
 
-def test_when_retrying():
-    inner_response = MagicMock(Response, status_code=402, body='body')
+def test_when_retrying(response):
     case = Case(
         label='Succeeds',
-        request=MagicMock(
-            side_effect=[RuntimeError(), inner_response, inner_response],
-        ),
+        request=MagicMock(side_effect=[RuntimeError(), response, response]),
         response_description=MagicMock(
             side_effect=[
                 ResponseVerification(

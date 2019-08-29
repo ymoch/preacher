@@ -20,12 +20,12 @@ def latency(seconds):
 
 
 @app.route('/text', methods=['GET'])
-@latency(1.0)
 def text():
     return 'text'
 
 
 @app.route('/json', methods=['GET'])
+@latency(1.0)
 def foo():
     return jsonify({
         'foo': 'bar',

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-from preacher.core.util import now, parse_datetime
+from preacher.core.datetime import now, parse_datetime
 
 
 @patch('time.localtime')

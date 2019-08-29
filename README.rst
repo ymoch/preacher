@@ -194,19 +194,19 @@ A mapping for ``Matcher`` has an item. Allowed items are:
 - have_item: ``Value`` or ``Matcher``
     - Matches when it is a collection and has the given item.
     - When given ``Value``, that is equivalent to ``{"equal": it}``.
-- before:
+- be_before:
     - Matches when it is a datetime and before the given datetime.
     - Predicated values must be in extended ISO 8601 format
       like ``2019-01-23T12:34:56Z``.
-    - When given an offset, then compares to the current time.
+    - When given an offset, then compares to the datetime when the request starts.
         - Days, hours, minutes and seconds offsets are available.
         - When given a positive offset like ``1 day`` or ``+2 hours``,
           then compares to the future datetime.
         - When given a negative offset like ``-1 minute`` or ``-2 seconds``,
           then compares to the past datetime.
-- after:
+- be_after:
     - Matches when it is a datetime and after the given datetime.
-    - Usage is the same as ``before``.
+    - Usage is the same as ``be_before``.
 
 Default
 *******
