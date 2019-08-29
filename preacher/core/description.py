@@ -6,7 +6,7 @@ from .status import merge_statuses
 from .verification import Verification
 
 Extraction = Callable[[Any], Any]
-Predicate = Callable[[Any], Verification]
+Predicate = Callable
 
 
 class Description:
@@ -15,13 +15,18 @@ class Description:
         self._extraction = extraction
         self._predicates = predicates
 
-    def __call__(self, value: Any) -> Verification:
+    def __call__(self, value: Any, *args: Any, **kwargs: Any) -> Verification:
+        """`*args` and `**kwargs` will be delegated to predicates."""
+
         try:
             verified_value = self._extraction(value)
         except Exception as error:
             return Verification.of_error(error)
 
-        verifications = [pred(verified_value) for pred in self._predicates]
+        verifications = [
+            predicate(verified_value, *args, **kwargs)
+            for predicate in self._predicates
+        ]
         status = merge_statuses(v.status for v in verifications)
         return Verification(status, children=verifications)
 

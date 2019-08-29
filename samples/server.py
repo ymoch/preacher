@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from functools import wraps
 from time import sleep
 
@@ -19,18 +20,19 @@ def latency(seconds):
 
 
 @app.route('/text', methods=['GET'])
-@latency(1.0)
 def text():
     return 'text'
 
 
 @app.route('/json', methods=['GET'])
+@latency(1.0)
 def foo():
     return jsonify({
         'foo': 'bar',
         'empty_string': '',
         'empty_list': [],
         'list': [1, 2, 'A'],
+        'now': datetime.now(timezone.utc).isoformat(),
     })
 
 

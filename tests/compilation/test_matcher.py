@@ -1,4 +1,4 @@
-from pytest import raises
+from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.matcher import compile
@@ -11,11 +11,13 @@ def test_invalid_string():
     assert matcher.matches('_undefined')
 
 
-def test_invalid_mapping():
-    with raises(CompilationError):
-        compile({})
-    with raises(CompilationError):
-        compile({'key1': 'value1', 'key2': 'value2'})
+@mark.parametrize('obj', (
+    {},
+    {'key1': 'value1', 'key2': 'value2'},
+))
+@mark.xfail(raises=CompilationError)
+def test_invalid_mapping(obj):
+    compile(obj)
 
 
 def test_undefined_mapping():
