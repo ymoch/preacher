@@ -33,7 +33,13 @@ class ResponseDescription:
         *args: Any,
         **kwargs: Any,
     ) -> ResponseVerification:
-        status_code_verification = self._verify_status_code(status_code)
+        """`*args` and `**kwargs` will be delegated to descriptions."""
+
+        status_code_verification = self._verify_status_code(
+            status_code,
+            *args,
+            **kwargs,
+        )
         try:
             body_verification = self._verify_body(body, *args, **kwargs)
         except Exception as error:
@@ -57,8 +63,16 @@ class ResponseDescription:
     def body_descriptions(self) -> List[Description]:
         return self._body_descriptions
 
-    def _verify_status_code(self, code: int) -> Verification:
-        children = [pred(code) for pred in self._status_code_predicates]
+    def _verify_status_code(
+        self,
+        code: int,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Verification:
+        children = [
+            predicate(code, *args, **kwargs)
+            for predicate in self._status_code_predicates
+        ]
         status = merge_statuses(v.status for v in children)
         return Verification(status=status, children=children)
 

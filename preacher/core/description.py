@@ -16,6 +16,8 @@ class Description:
         self._predicates = predicates
 
     def __call__(self, value: Any, *args: Any, **kwargs: Any) -> Verification:
+        """`*args` and `**kwargs` will be delegated to predicates."""
+
         try:
             verified_value = self._extraction(value)
         except Exception as error:
