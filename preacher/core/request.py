@@ -1,9 +1,9 @@
 """Request."""
 
-from collections.abc import Mapping
 from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Mapping
 
 import requests
 
@@ -18,7 +18,7 @@ _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_VERSION}'}
 @dataclass(frozen=True)
 class Response:
     status_code: int
-    headers: Mapping
+    headers: Mapping[str, str]
     body: str
     request_datetime: datetime
 
@@ -27,8 +27,8 @@ class Request:
     def __init__(
         self,
         path: str = '',
-        headers: Mapping = {},
-        params: Mapping = {},
+        headers: Mapping[str, str] = {},
+        params: Mapping[str, Any] = {},
     ):
         self._path = path
         self._headers = headers

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Optional, Union
+from typing import Any, Mapping as MappingType, Optional, Union
 
 from preacher.core.request import Request
 from .error import CompilationError
@@ -19,8 +19,8 @@ _KEY_PARAMS = 'params'
 @dataclass(frozen=True)
 class _Compiled:
     path: Optional[str] = None
-    headers: Optional[Mapping] = None
-    params: Optional[Mapping] = None
+    headers: Optional[MappingType[str, str]] = None
+    params: Optional[MappingType[str, Any]] = None
 
     def to_request(
         self: _Compiled,

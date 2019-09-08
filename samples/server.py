@@ -41,6 +41,11 @@ def not_found(req, res) -> None:
     res.media = {'message': 'not found'}
 
 
+@api.route('/header')
+def header(req, res) -> None:
+    res.media = {key: value for (key, value) in req.headers.items()}
+
+
 def main() -> None:
     api.run()
 
