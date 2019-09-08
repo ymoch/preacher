@@ -12,7 +12,12 @@ RELATIVE_DATETIME_PATTERN = re.compile(
 
 
 def compile_timedelta(value: str) -> timedelta:
-    match = RELATIVE_DATETIME_PATTERN.search(value.lower())
+    normalized = value.strip().lower()
+
+    if normalized == 'now':
+        return timedelta()
+
+    match = RELATIVE_DATETIME_PATTERN.match(normalized)
     if not match:
         raise CompilationError(f'Invalid datetime format: {value}')
     offset = int(match.group(1))
