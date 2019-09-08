@@ -1,6 +1,7 @@
 """Request."""
 
 from collections.abc import Mapping
+from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -11,9 +12,7 @@ from .datetime import now
 from preacher import __version__ as _VERSION
 
 
-_DEFAULT_HEADERS = {
-    'User-Agent': f'Preacher {_VERSION}'
-}
+_DEFAULT_HEADERS = {'User-Agent': f'Preacher {_VERSION}'}
 
 
 @dataclass(frozen=True)
@@ -36,11 +35,13 @@ class Request:
         self._params = params
 
     def __call__(self, base_url: str) -> Response:
+        headers = copy(_DEFAULT_HEADERS)
+        headers.update(self._headers)
         request_datetime = now()
 
         res = requests.get(
             base_url + self._path,
-            headers=_DEFAULT_HEADERS,
+            headers=headers,
             params=self._params,
         )
 
