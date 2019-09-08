@@ -115,6 +115,8 @@ A mapping for ``Request`` has items below:
 
 - path: ``String`` (Optional)
     - A request path. The default value is ``''``.
+- Headers: ``Mapping<String, String>`` (Optional)
+    - Request headers as a mapping of names to values.
 - params: ``Mapping<String, String>`` (Optional)
     - Query parameters as a mapping of keys to values.
 
