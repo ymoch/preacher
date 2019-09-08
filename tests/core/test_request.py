@@ -9,16 +9,13 @@ PACKAGE = 'preacher.core.request'
 
 
 @patch(f'{PACKAGE}.now', return_value=sentinel.now)
-@patch('requests.get')
+@patch('requests.get', return_value=MagicMock(
+    spec=Response,
+    status_code=402,
+    headers={'header-key': 'header-value'},
+    text='text',
+))
 def test_request(requests_get, now):
-    inner_response = MagicMock(
-        spec=Response,
-        status_code=402,
-        headers={'header-key': 'header-value'},
-        text='text',
-    )
-    requests_get.return_value = inner_response
-
     request = Request(path='/path', params={'key': 'value'})
     assert request.path == '/path'
     assert request.params == {'key': 'value'}
