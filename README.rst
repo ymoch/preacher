@@ -61,6 +61,8 @@ Here is a simple configuration example.
       - label: A Little Complecated
         request:
           path: /path/to/foo
+          headers:
+            Content-Type: application/json
           params:
             key1: value
             key2:

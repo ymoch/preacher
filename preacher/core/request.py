@@ -25,8 +25,14 @@ class Response:
 
 
 class Request:
-    def __init__(self, path: str, params: Mapping):
+    def __init__(
+        self,
+        path: str = '',
+        headers: Mapping = {},
+        params: Mapping = {},
+    ):
         self._path = path
+        self._headers = headers
         self._params = params
 
     def __call__(self, base_url: str) -> Response:
@@ -48,6 +54,10 @@ class Request:
     @property
     def path(self) -> str:
         return self._path
+
+    @property
+    def headers(self) -> Mapping:
+        return self._headers
 
     @property
     def params(self) -> Mapping:
