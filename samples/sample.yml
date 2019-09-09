@@ -12,6 +12,10 @@ cases:
           - value2
     response:
       status_code: 200
+      headers:
+        - describe: ."Content-Type"
+          should:
+            equal: application/json
       body:
         - describe: .not_existing_key
           should: be_null
