@@ -67,6 +67,11 @@ class LoggingPresentation:
                 label='Status Code',
             )
             self.show_verification(
+                verification=verification.headers,
+                label='Headers',
+                child_label='Description',
+            )
+            self.show_verification(
                 verification=verification.body,
                 label='Body',
                 child_label='Description',
