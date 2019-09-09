@@ -58,13 +58,9 @@ class ResponseDescriptionCompiler:
             message = f'ResponseDescription.{key} must be a list or a mapping'
             raise CompilationError(message=message, path=[key])
 
-        return map_on_key(
-            key=key,
-            func=self._compile_description,
-            items=desc_objs,
-        )
+        return map_on_key(key=key, func=self._compile_desc, items=desc_objs)
 
-    def _compile_description(self, obj: Any) -> Description:
+    def _compile_desc(self, obj: Any) -> Description:
         if not isinstance(obj, Mapping):
             raise CompilationError('Description must be a mapping')
         return self._description_compiler.compile(obj)
