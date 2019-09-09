@@ -12,6 +12,7 @@ from .util import map_on_key
 
 
 _KEY_STATUS_CODE = 'status_code'
+_KEY_HEADERS = 'headers'
 _KEY_BODY = 'body'
 
 
@@ -40,19 +41,17 @@ class ResponseDescriptionCompiler:
             items=status_code_predicate_objs,
         ))
 
-        body_descriptions = list(self._compile_descriptions(_KEY_BODY, obj))
+        headers_descriptions = list(self._compile_descs(_KEY_HEADERS, obj))
+        body_descriptions = list(self._compile_descs(_KEY_BODY, obj))
 
         return ResponseDescription(
             status_code_predicates=status_code_predicates,
+            headers_descriptions=headers_descriptions,
             body_descriptions=body_descriptions,
         )
 
-    def _compile_descriptions(
-        self,
-        key: str,
-        obj: Any,
-    ) -> Iterator[Description]:
-        desc_objs = obj.get(_KEY_BODY, [])
+    def _compile_descs(self, key: str, obj: Any) -> Iterator[Description]:
+        desc_objs = obj.get(key, [])
         if isinstance(desc_objs, Mapping):
             desc_objs = [desc_objs]
         if not isinstance(desc_objs, list):

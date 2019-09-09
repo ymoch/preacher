@@ -51,6 +51,7 @@ def test_when_given_an_response(response):
             return_value=ResponseVerification(
                 status=Status.UNSTABLE,
                 status_code=Verification.succeed(),
+                headers=Verification.succeed(),
                 body=Verification(status=Status.UNSTABLE)
             ),
         ),
@@ -79,11 +80,13 @@ def test_when_retrying(response):
                 ResponseVerification(
                     status=Status.UNSTABLE,
                     status_code=Verification.succeed(),
+                    headers=Verification.succeed(),
                     body=Verification(status=Status.UNSTABLE),
                 ),
                 ResponseVerification(
                     status=Status.SUCCESS,
                     status_code=Verification.succeed(),
+                    headers=Verification.succeed(),
                     body=Verification.succeed(),
                 ),
             ]

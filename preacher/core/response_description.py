@@ -13,6 +13,7 @@ from .verification import Verification
 class ResponseVerification:
     status: Status
     status_code: Verification
+    headers: Verification
     body: Verification
 
 
@@ -21,11 +22,11 @@ class ResponseDescription:
     def __init__(
         self,
         status_code_predicates: List[Predicate] = [],
-        header_descriptions: List[Description] = [],
+        headers_descriptions: List[Description] = [],
         body_descriptions: List[Description] = [],
     ):
         self._status_code_predicates = status_code_predicates
-        self._header_descriptions = header_descriptions
+        self._headers_descriptions = headers_descriptions
         self._body_descriptions = body_descriptions
 
     def __call__(
@@ -42,9 +43,9 @@ class ResponseDescription:
         )
 
         try:
-            header_verification = self._verify_headers(headers, **kwargs)
+            headers_verification = self._verify_headers(headers, **kwargs)
         except Exception as error:
-            header_verification = Verification.of_error(error)
+            headers_verification = Verification.of_error(error)
 
         try:
             body_verification = self._verify_body(body, **kwargs)
@@ -53,18 +54,23 @@ class ResponseDescription:
 
         status = merge_statuses(
             status_code_verification.status,
-            header_verification.status,
+            headers_verification.status,
             body_verification.status,
         )
         return ResponseVerification(
             status=status,
             status_code=status_code_verification,
+            headers=headers_verification,
             body=body_verification,
         )
 
     @property
     def status_code_predicates(self) -> List[Predicate]:
         return self._status_code_predicates
+
+    @property
+    def headers_descriptions(self) -> List[Description]:
+        return self._headers_descriptions
 
     @property
     def body_descriptions(self) -> List[Description]:
@@ -89,7 +95,7 @@ class ResponseDescription:
     ) -> Verification:
         verifications = [
             describe(header, **kwargs)
-            for describe in self._header_descriptions
+            for describe in self._headers_descriptions
         ]
         status = merge_statuses(v.status for v in verifications)
         return Verification(status=status, children=verifications)
