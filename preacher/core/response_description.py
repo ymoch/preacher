@@ -30,18 +30,15 @@ class ResponseDescription:
         self,
         status_code: int,
         body: str,
-        *args: Any,
         **kwargs: Any,
     ) -> ResponseVerification:
-        """`*args` and `**kwargs` will be delegated to descriptions."""
-
+        """`**kwargs` will be delegated to descriptions."""
         status_code_verification = self._verify_status_code(
             status_code,
-            *args,
             **kwargs,
         )
         try:
-            body_verification = self._verify_body(body, *args, **kwargs)
+            body_verification = self._verify_body(body, **kwargs)
         except Exception as error:
             body_verification = Verification.of_error(error)
 
@@ -66,11 +63,10 @@ class ResponseDescription:
     def _verify_status_code(
         self,
         code: int,
-        *args: Any,
         **kwargs: Any,
     ) -> Verification:
         children = [
-            predicate(code, *args, **kwargs)
+            predicate(code, **kwargs)
             for predicate in self._status_code_predicates
         ]
         status = merge_statuses(v.status for v in children)
@@ -79,7 +75,6 @@ class ResponseDescription:
     def _verify_body(
         self,
         body: str,
-        *args: Any,
         **kwargs: Any,
     ) -> Verification:
         if not self._body_descriptions:
@@ -87,7 +82,7 @@ class ResponseDescription:
 
         data = json.loads(body)
         verifications = [
-            describe(data, *args, **kwargs)
+            describe(data, **kwargs)
             for describe in self._body_descriptions
         ]
         status = merge_statuses(v.status for v in verifications)

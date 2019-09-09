@@ -15,16 +15,15 @@ class Description:
         self._extraction = extraction
         self._predicates = predicates
 
-    def __call__(self, value: Any, *args: Any, **kwargs: Any) -> Verification:
-        """`*args` and `**kwargs` will be delegated to predicates."""
-
+    def __call__(self, value: Any, **kwargs: Any) -> Verification:
+        """`**kwargs` will be delegated to predicates."""
         try:
             verified_value = self._extraction(value)
         except Exception as error:
             return Verification.of_error(error)
 
         verifications = [
-            predicate(verified_value, *args, **kwargs)
+            predicate(verified_value, **kwargs)
             for predicate in self._predicates
         ]
         status = merge_statuses(v.status for v in verifications)
