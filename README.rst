@@ -64,6 +64,8 @@ Here is a simple configuration example.
       - label: A Little Complecated
         request:
           path: /path/to/foo
+          headers:
+            Content-Type: application/json
           params:
             key1: value
             key2:
@@ -117,6 +119,8 @@ A mapping for ``Request`` has items below:
 
 - path: ``String`` (Optional)
     - A request path. The default value is ``''``.
+- Headers: ``Mapping<String, String>`` (Optional)
+    - Request headers as a mapping of names to values.
 - params: ``Mapping<String, String>`` (Optional)
     - Query parameters as a mapping of keys to values.
 
@@ -202,8 +206,9 @@ A mapping for ``Matcher`` has an item. Allowed items are:
     - When given ``Value``, that is equivalent to ``{"equal": it}``.
 - be_before:
     - Matches when it is a datetime and before the given datetime.
-    - Predicated values must be in extended ISO 8601 format
+    - Predicated values must be in ISO 8601 format
       like ``2019-01-23T12:34:56Z``.
+    - When given ``now``, then compares to the datetime just when the request starts.
     - When given an offset, then compares to the datetime when the request starts.
         - Days, hours, minutes and seconds offsets are available.
         - When given a positive offset like ``1 day`` or ``+2 hours``,

@@ -7,11 +7,17 @@ from preacher.compilation.datetime import compile_timedelta
 
 
 @mark.xfail(raises=CompilationError)
-def test_compile_datetime_given_an_invalid_format():
-    compile_timedelta('invalid')
+@mark.parametrize('value', (
+    'invalid',
+    'now +1 day',
+))
+def test_compile_datetime_given_an_invalid_format(value):
+    compile_timedelta(value)
 
 
 @mark.parametrize('value, expected', (
+    ('now', timedelta()),
+    (' now ', timedelta()),
     ('0day', timedelta()),
     ('1day', timedelta(days=1)),
     ('2 DaYs', timedelta(days=2)),

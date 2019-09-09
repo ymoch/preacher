@@ -57,6 +57,23 @@ cases:
         - be_less_than_or_equal_to: 499
         - be_less_than: 500
 
+  - label: Send headers
+    request:
+      path: /header
+      headers:
+        header-string: xxx
+        Header-String: yyy
+        user-agent: custom
+    response:
+      status_code: 200
+      body:
+        - describe: ."header-string"
+          should:
+            equal: yyy
+        - describe: ."user-agent"
+          should:
+            equal: custom
+
   - label: No description doesn't cause error
     response:
       body:

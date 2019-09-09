@@ -3,18 +3,18 @@
 import datetime
 import time
 
+import aniso8601
+
 
 def now() -> datetime.datetime:
     return datetime.datetime.now(_system_timezone())
 
 
 def parse_datetime(value: str) -> datetime.datetime:
-    """
-    Only takes ISO 6801 expanded format.
-    """
-    if value.endswith('Z'):
-        value = value[:-1] + '+00:00'
-    return datetime.datetime.fromisoformat(value)
+    try:
+        return aniso8601.parse_datetime(value)
+    except ValueError:
+        raise ValueError(f'An invalid datetime format: {value}')
 
 
 def _system_timezone() -> datetime.timezone:
