@@ -12,7 +12,7 @@ PACKAGE = 'preacher.core.request'
 @patch('requests.get', return_value=MagicMock(
     spec=Response,
     status_code=402,
-    headers={'header-key': 'header-value'},
+    headers={'Header-Name': 'Header-Value'},
     text='text',
 ))
 def test_request(requests_get, now):
@@ -23,7 +23,7 @@ def test_request(requests_get, now):
 
     response = request('base-url')
     assert response.status_code == 402
-    assert response.headers == {'header-key': 'header-value'}
+    assert response.headers == {'header-name': 'Header-Value'}
     assert response.body == 'text'
     assert response.request_datetime == sentinel.now
 
