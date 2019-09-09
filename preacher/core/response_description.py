@@ -2,7 +2,7 @@
 
 import json
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, List, Mapping
 
 from .description import Description, Predicate
 from .status import Status, merge_statuses
@@ -20,15 +20,18 @@ class ResponseDescription:
 
     def __init__(
         self,
-        status_code_predicates: List[Predicate],
-        body_descriptions: List[Description],
+        status_code_predicates: List[Predicate] = [],
+        header_descriptions: List[Description] = [],
+        body_descriptions: List[Description] = [],
     ):
         self._status_code_predicates = status_code_predicates
+        self._header_descriptions = header_descriptions
         self._body_descriptions = body_descriptions
 
     def __call__(
         self,
         status_code: int,
+        headers: Mapping[str, str],
         body: str,
         **kwargs: Any,
     ) -> ResponseVerification:
@@ -37,6 +40,12 @@ class ResponseDescription:
             status_code,
             **kwargs,
         )
+
+        try:
+            header_verification = self._verify_headers(headers, **kwargs)
+        except Exception as error:
+            header_verification = Verification.of_error(error)
+
         try:
             body_verification = self._verify_body(body, **kwargs)
         except Exception as error:
@@ -44,6 +53,7 @@ class ResponseDescription:
 
         status = merge_statuses(
             status_code_verification.status,
+            header_verification.status,
             body_verification.status,
         )
         return ResponseVerification(
@@ -72,11 +82,19 @@ class ResponseDescription:
         status = merge_statuses(v.status for v in children)
         return Verification(status=status, children=children)
 
-    def _verify_body(
+    def _verify_headers(
         self,
-        body: str,
+        header: Mapping[str, str],
         **kwargs: Any,
     ) -> Verification:
+        verifications = [
+            describe(header, **kwargs)
+            for describe in self._header_descriptions
+        ]
+        status = merge_statuses(v.status for v in verifications)
+        return Verification(status=status, children=verifications)
+
+    def _verify_body(self, body: str, **kwargs: Any) -> Verification:
         if not self._body_descriptions:
             return Verification.skipped()
 

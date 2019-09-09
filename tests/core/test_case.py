@@ -64,6 +64,7 @@ def test_when_given_an_response(response):
 
     case.response_description.assert_called_with(
         status_code=402,
+        headers={},
         body='body',
         request_datetime=sentinel.request_datetime,
     )

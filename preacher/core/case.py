@@ -56,6 +56,7 @@ class Case:
 
         response_verification = self._response_description(
             status_code=response.status_code,
+            headers=response.headers,
             body=response.body,
             request_datetime=response.request_datetime,
         )
