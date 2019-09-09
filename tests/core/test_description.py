@@ -34,24 +34,31 @@ def test_when_given_a_predicate_to_fail():
             MagicMock(return_value=Verification(Status.SUCCESS)),
         ]
     )
-    verification = description('described')
+    verification = description('described', k='v')
     assert verification.status == Status.FAILURE
     assert len(verification.children) == 3
     assert verification.children[0].status == Status.UNSTABLE
     assert verification.children[1].status == Status.FAILURE
     assert verification.children[2].status == Status.SUCCESS
 
+    description.predicates[0].assert_called_once_with(sentinel.target, k='v')
+    description.predicates[1].assert_called_once_with(sentinel.target, k='v')
+    description.predicates[2].assert_called_once_with(sentinel.target, k='v')
+
 
 def test_when_given_predicates_to_success():
     description = Description(
-        extraction=MagicMock(return_value='target'),
+        extraction=MagicMock(return_value=sentinel.target),
         predicates=[
             MagicMock(return_value=Verification(Status.SUCCESS)),
             MagicMock(return_value=Verification(Status.SUCCESS)),
         ]
     )
-    verification = description('described')
+    verification = description('described', k='v')
     assert verification.status == Status.SUCCESS
     assert len(verification.children) == 2
     assert verification.children[0].status == Status.SUCCESS
     assert verification.children[1].status == Status.SUCCESS
+
+    description.predicates[0].assert_called_once_with(sentinel.target, k='v')
+    description.predicates[1].assert_called_once_with(sentinel.target, k='v')

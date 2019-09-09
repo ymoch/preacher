@@ -75,6 +75,10 @@ Here is a simple configuration example.
           status_code:
             - be_greater_than_or_equal_to: 200
             - be_less_than: 400
+          headers:
+            - describe: ."content-type"
+              should:
+                equal_to: application-json
           body:
             interpreted_as: xml
             descriptions:
@@ -133,6 +137,11 @@ A ``ResponseDescription`` is a mapping that consists of below:
 - status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)
     - Predicates that match a status code as an integer value.
     - When given a number, that is equivalent to ``{"equal": it}``.
+- headers:
+    - Descriptions that descript the response headers.
+    - Response headers are validated as a mapping of names to values
+      and can be descripted by `jq_` query (e.g. ``."content-type"``).
+      *Note that Names are lower-cased* to normalize.
 - body: ``BodyDescription`` (Optional)
     - A description that descript the response body.
 
