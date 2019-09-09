@@ -52,17 +52,17 @@ class ResponseDescriptionCompiler:
         key: str,
         obj: Any,
     ) -> Iterator[Description]:
-        description_objs = obj.get(_KEY_BODY, [])
-        if isinstance(description_objs, Mapping):
-            description_objs = [description_objs]
-        if not isinstance(description_objs, list):
+        desc_objs = obj.get(_KEY_BODY, [])
+        if isinstance(desc_objs, Mapping):
+            desc_objs = [desc_objs]
+        if not isinstance(desc_objs, list):
             message = f'ResponseDescription.{key} must be a list or a mapping'
             raise CompilationError(message=message, path=[key])
 
         return map_on_key(
             key=key,
             func=self._compile_description,
-            items=description_objs,
+            items=desc_objs,
         )
 
     def _compile_description(self, obj: Any) -> Description:
