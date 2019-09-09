@@ -30,7 +30,7 @@ def test_when_the_assertion_fails(assert_that):
 @patch(f'{PACKAGE}.assert_that')
 def test_when_the_assertion_succeeds(assert_that):
     predicate = MatcherPredicate(sentinel.matcher)
-    verification = predicate(sentinel.actual)
+    verification = predicate(sentinel.actual, k='v')
 
     assert verification.status == Status.SUCCESS
     assert_that.assert_called_once_with(sentinel.actual, sentinel.matcher)

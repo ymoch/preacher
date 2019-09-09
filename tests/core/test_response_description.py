@@ -10,11 +10,7 @@ def test_when_given_no_description():
         status_code_predicates=[],
         body_descriptions=[],
     )
-    verification = description(
-        status_code=200,
-        body='',
-        key='value',
-    )
+    verification = description(status_code=200, body='', key='value')
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.SKIPPED
     assert verification.status == Status.SKIPPED
@@ -29,11 +25,7 @@ def test_when_given_invalid_body():
             MagicMock(return_value=Verification.succeed()),
         ],
     )
-    verification = description(
-        status_code=200,
-        body='invalid-format',
-        key='value',
-    )
+    verification = description(status_code=200, body='invalid', key='value')
     assert verification.status == Status.FAILURE
     assert verification.status_code.status == Status.SUCCESS
     assert verification.body.status == Status.FAILURE
@@ -54,11 +46,7 @@ def test_when_given_descriptions():
             MagicMock(return_value=Verification.succeed()),
         ],
     )
-    verification = description(
-        status_code=200,
-        body='{}',
-        key='value',
-    )
+    verification = description(status_code=200, body='{}', key='value')
     assert verification.status == Status.UNSTABLE
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.UNSTABLE
