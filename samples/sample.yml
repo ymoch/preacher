@@ -13,7 +13,7 @@ cases:
     response:
       status_code: 200
       headers:
-        - describe: ."Content-Type"
+        - describe: ."content-type"
           should:
             equal: application/json
       body:
@@ -81,8 +81,13 @@ cases:
   - label: No description doesn't cause error
     response:
       body:
-        - describe: .foo
+        describe: .foo
 
   - label: No validations for text doesn't fail
     request:
       path: /text
+    response:
+      headers:
+        describe: ."content-type"
+        should:
+          equal: text/plain

@@ -47,7 +47,8 @@ class Request:
 
         return Response(
             status_code=res.status_code,
-            headers=res.headers,
+            # Convert to the normal dictionary to adapt jq.
+            headers={name: value for (name, value) in res.headers.items()},
             body=res.text,
             request_datetime=request_datetime
         )
