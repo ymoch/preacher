@@ -5,13 +5,24 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - run: sudo pip install poetry
+      - run:
+          name: Set up
+          command: sudo pip install poetry
 
-      - run: poetry install --no-dev
-      - run: poetry run preacher-cli --help
+      - run:
+          name: Run with no dev package
+          command: |
+            poetry install --no-dev
+            poetry run preacher-cli --help
 
-      - run: poetry install
-      - run: poetry run pytest
+      - run:
+          name: Run unit tests
+          command: |
+            poetry install
+            poetry run pytest
 
-      - run: sudo pip install codecov
-      - run: codecov
+      - run:
+          name: Send the test coverage report
+          command: |
+            sudo pip install codecov
+            codecov
