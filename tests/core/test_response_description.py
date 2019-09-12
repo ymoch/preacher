@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, sentinel
 
 from pytest import mark
 
@@ -49,10 +49,14 @@ def test_when_given_descriptions():
         MagicMock(return_value=Verification(status=Status.UNSTABLE)),
         MagicMock(return_value=Verification.succeed()),
     ]
+    analyze_headers = MagicMock(return_value=sentinel.headers)
+    analyze_body = MagicMock(return_value=sentinel.body)
     description = ResponseDescription(
         status_code_predicates=[],
         headers_descriptions=headers_descriptions,
         body_descriptions=body_descriptions,
+        analyze_headers=analyze_headers,
+        analyze_body=analyze_body,
     )
     verification = description(status_code=200, headers={}, body='{}', k='v')
     assert verification.status == Status.UNSTABLE
@@ -61,8 +65,12 @@ def test_when_given_descriptions():
     assert verification.body.children[0].status == Status.UNSTABLE
     assert verification.body.children[1].status == Status.SUCCESS
 
-    body_descriptions[0].assert_called_once_with({}, k='v')
-    body_descriptions[1].assert_called_once_with({}, k='v')
+    analyze_headers.assert_called_once_with({})
+    analyze_body.assert_called_once_with('{}')
+    headers_descriptions[0].assert_called_once_with(sentinel.headers, k='v')
+    headers_descriptions[1].assert_called_once_with(sentinel.headers, k='v')
+    body_descriptions[0].assert_called_once_with(sentinel.body, k='v')
+    body_descriptions[1].assert_called_once_with(sentinel.body, k='v')
 
 
 @mark.parametrize(
