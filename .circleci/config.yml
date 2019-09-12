@@ -1,7 +1,8 @@
 version: 2
 jobs:
   build:
-    docker: circleci/python:3.7
+    docker:
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run: sudo pip install poetry
