@@ -34,7 +34,7 @@ class DescriptionCompiler:
                 message='Description.describe must be a mapping or a string',
                 path=[_KEY_DESCRIBE],
             )
-        extraction = run_on_key(
+        extractor = run_on_key(
             _KEY_DESCRIBE,
             self._extraction_compiler.compile,
             extraction_obj
@@ -49,4 +49,4 @@ class DescriptionCompiler:
             predicate_objs,
         ))
 
-        return Description(extraction=extraction, predicates=predicates)
+        return Description(extractor=extractor, predicates=predicates)

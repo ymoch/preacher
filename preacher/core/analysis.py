@@ -1,7 +1,5 @@
 import json
-from typing import Any, Union
-
-from .extraction import Extraction
+from typing import Any, Callable, Union
 
 
 class JsonAnalyzer:
@@ -9,7 +7,7 @@ class JsonAnalyzer:
     def __init__(self, json_body: Any):
         self._json_body = json_body
 
-    def jq(self, extract: Extraction) -> Any:
+    def jq(self, extract: Callable[[Any], Any]) -> Any:
         return extract(self._json_body)
 
 

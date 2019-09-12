@@ -3,18 +3,18 @@
 from collections.abc import Mapping
 from typing import Union
 
-from preacher.core.extraction import Extraction, with_jq
+from preacher.core.extraction import Extractor, JqExtractor
 from .error import CompilationError
 
 
 _EXTRACTION_MAP = {
-    'jq': with_jq,
+    'jq': JqExtractor,
 }
 _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
 
 
 class ExtractionCompiler:
-    def compile(self, obj: Union[Mapping, str]) -> Extraction:
+    def compile(self, obj: Union[Mapping, str]) -> Extractor:
         if isinstance(obj, str):
             return compile({'jq': obj})
 
@@ -28,18 +28,6 @@ class ExtractionCompiler:
         return _EXTRACTION_MAP[key](obj[key])
 
 
-def compile(obj: Union[Mapping, str]) -> Extraction:
-    """
-    >>> compile({})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ... has 0
-
-    >>> compile('.foo')({'foo': 'bar'})
-    'bar'
-
-    >>> compile({'jq': '.foo'})({'foo': 'bar'})
-    'bar'
-    """
+def compile(obj: Union[Mapping, str]) -> Extractor:
     compiler = ExtractionCompiler()
     return compiler.compile(obj)
