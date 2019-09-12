@@ -14,4 +14,4 @@ jobs:
       - run: poetry run pytest
 
       - run: pip install codecov
-        run: codecov
+      - run: codecov
