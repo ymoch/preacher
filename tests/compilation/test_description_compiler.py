@@ -12,7 +12,7 @@ from preacher.compilation.error import CompilationError
 def extraction_compiler() -> ExtractionCompiler:
     return MagicMock(
         spec=ExtractionCompiler,
-        compile=MagicMock(return_value=sentinel.extraction),
+        compile=MagicMock(return_value=sentinel.extractor),
     )
 
 
@@ -40,7 +40,7 @@ def test_given_a_string_predicate(extraction_compiler, predicate_compiler):
         'describe': 'foo',
         'should': 'string',
     })
-    assert description.extraction == sentinel.extraction
+    assert description.extractor == sentinel.extractor
     assert description.predicates == [sentinel.predicate]
 
     extraction_compiler.compile.assert_called_with('foo')
@@ -56,7 +56,7 @@ def test_given_a_mapping_predicate(extraction_compiler, predicate_compiler):
         'describe': 'foo',
         'should': {'key': 'value'}
     })
-    assert description.extraction == sentinel.extraction
+    assert description.extractor == sentinel.extractor
     assert description.predicates == [sentinel.predicate]
 
     extraction_compiler.compile.assert_called_once_with('foo')
@@ -75,7 +75,7 @@ def test_given_a_list_of_mapping_predicates(
         'describe': {'key': 'value'},
         'should': [{'key1': 'value1'}, {'key2': 'value2'}]
     })
-    assert description.extraction == sentinel.extraction
+    assert description.extractor == sentinel.extractor
     assert description.predicates == [sentinel.predicate, sentinel.predicate]
 
     extraction_compiler.compile.assert_called_once_with({'key': 'value'})
