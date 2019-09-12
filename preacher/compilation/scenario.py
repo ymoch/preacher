@@ -17,66 +17,7 @@ _KEY_CASES = 'cases'
 
 
 class ScenarioCompiler:
-    """
-    When given an empty object, then generates an empty scenario.
-    >>> from unittest.mock import MagicMock, call, patch, sentinel
-    >>> case_compiler = MagicMock(CaseCompiler)
-    >>> compiler = ScenarioCompiler(case_compiler=case_compiler)
-    >>> scenario = compiler.compile({})
-    >>> scenario.label
-    >>> list(scenario.cases())
-    []
-    >>> case_compiler.of_default.assert_called_once_with({})
 
-    When given not an object, then raises a compilation error.
-    >>> ScenarioCompiler().compile({'cases': ''})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: cases
-
-    When given a not string label, then raises a compilation error.
-    >>> ScenarioCompiler().compile({'label': []})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: label
-
-    When given not mapping default, then raises a compilation error.
-    >>> ScenarioCompiler().compile({'default': ''})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: default
-
-    When given a not mapping case, then raises a compilation error.
-    >>> ScenarioCompiler().compile({'cases': ['']})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: cases[0]
-
-    Generates an iterator of cases.
-    >>> default_case_compiler = MagicMock(
-    ...     CaseCompiler,
-    ...     compile=MagicMock(return_value=sentinel.case),
-    ... )
-    >>> case_compiler = MagicMock(
-    ...     CaseCompiler,
-    ...     of_default=MagicMock(return_value=default_case_compiler),
-    ... )
-    >>> compiler = ScenarioCompiler(case_compiler=case_compiler)
-    >>> scenario = compiler.compile({
-    ...     'label': 'label',
-    ...     'default': {'a': 'b'},
-    ...     'cases': [{}, {'k': 'v'}],
-    ... })
-    >>> scenario.label
-    'label'
-    >>> list(scenario.cases())
-    [sentinel.case, sentinel.case]
-    >>> case_compiler.of_default.assert_called_once_with({'a': 'b'})
-    >>> default_case_compiler.compile.assert_has_calls([
-    ...     call({}),
-    ...     call({'k': 'v'})],
-    ... )
-    """
     def __init__(self, case_compiler: Optional[CaseCompiler] = None):
         self._case_compiler = case_compiler or CaseCompiler()
 
