@@ -9,13 +9,14 @@ license = "MIT"
 
 [tool.poetry.scripts]
 preacher-cli = "preacher.app.cli.main:main"
+
 [tool.poetry.dependencies]
 python = "^3.7"
+aniso8601 = "^8.0"
 pyhamcrest = "^1.9"
 pyjq = "^2.3"
 requests = "^2.21"
 "ruamel.yaml" = "^0.15.89"
-aniso8601 = "^8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.3"
