@@ -1,0 +1,28 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Set up
+          command: sudo pip install poetry
+
+      - run:
+          name: Run with no dev package
+          command: |
+            poetry install --no-dev
+            poetry run preacher-cli --help
+
+      - run:
+          name: Run unit tests
+          command: |
+            poetry install
+            poetry run pytest
+
+      - run:
+          name: Send the test coverage report
+          command: |
+            sudo pip install codecov
+            codecov

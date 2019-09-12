@@ -6,8 +6,8 @@ Preacher
     :target: https://www.python.org/
 .. image:: https://badge.fury.io/py/preacher.svg
     :target: https://badge.fury.io/py/preacher
-.. image:: https://travis-ci.org/ymoch/preacher.svg?branch=master
-    :target: https://travis-ci.org/ymoch/preacher
+.. image:: https://circleci.com/gh/ymoch/preacher.svg?style=svg
+    :target: https://circleci.com/gh/ymoch/preacher
 .. image:: https://codecov.io/gh/ymoch/preacher/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/ymoch/preacher
 .. image:: https://img.shields.io/lgtm/grade/python/g/ymoch/preacher.svg

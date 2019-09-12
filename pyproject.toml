@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "preacher"
-version = "0.9.7"
+version = "0.9.8"
 description = "A web API verification tool."
 authors = ["Yu Mochizuki <ymoch.dev@gmail.com>"]
 readme = "README.rst"
@@ -9,13 +9,14 @@ license = "MIT"
 
 [tool.poetry.scripts]
 preacher-cli = "preacher.app.cli.main:main"
+
 [tool.poetry.dependencies]
 python = "^3.7"
+aniso8601 = "^8.0"
 pyhamcrest = "^1.9"
 pyjq = "^2.3"
 requests = "^2.21"
 "ruamel.yaml" = "^0.15.89"
-iso8601 = "^0.1.12"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.3"
@@ -24,7 +25,6 @@ pytest-flakes = "^4.0"
 pytest-pycodestyle = "^1.4"
 pytest-mypy = "^0.3.2"
 pytest-cov = "^2.6"
-codecov = "^2.0"
 responder = "^1.3"
 
 [build-system]

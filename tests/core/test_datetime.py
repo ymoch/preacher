@@ -53,7 +53,7 @@ def test_parse_datetime_given_iso_8601_format_ends_with_z():
 
 
 def test_parse_datetime_given_iso_8601_expanded_format():
-    dt = parse_datetime('2019-08-28T02:45:43.477123-09:00')
+    dt = parse_datetime('2019-08-28T02:45:43,477123-09:00')
     assert dt.year == 2019
     assert dt.month == 8
     assert dt.day == 28
