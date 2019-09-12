@@ -1,9 +1,9 @@
 """Response descriptions."""
 
-import json
 from dataclasses import dataclass
-from typing import Any, List, Mapping
+from typing import Any, Callable, List, Mapping
 
+from .analysis import Analyzer, JsonAnalyzer, analyze_json_str
 from .description import Description, Predicate
 from .status import Status, merge_statuses
 from .verification import Verification
@@ -24,10 +24,15 @@ class ResponseDescription:
         status_code_predicates: List[Predicate] = [],
         headers_descriptions: List[Description] = [],
         body_descriptions: List[Description] = [],
+        analyze_headers:
+            Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
+        analyze_body: Callable[[str], Analyzer] = analyze_json_str,
     ):
         self._status_code_predicates = status_code_predicates
         self._headers_descriptions = headers_descriptions
         self._body_descriptions = body_descriptions
+        self._analyze_headers = analyze_headers
+        self._analyze_body = analyze_body
 
     def __call__(
         self,
@@ -93,8 +98,9 @@ class ResponseDescription:
         header: Mapping[str, str],
         **kwargs: Any,
     ) -> Verification:
+        analyzer = self._analyze_headers(header)
         verifications = [
-            describe(header, **kwargs)
+            describe(analyzer, **kwargs)
             for describe in self._headers_descriptions
         ]
         status = merge_statuses(v.status for v in verifications)
@@ -104,9 +110,9 @@ class ResponseDescription:
         if not self._body_descriptions:
             return Verification.skipped()
 
-        data = json.loads(body)
+        analyzer = self._analyze_body(body)
         verifications = [
-            describe(data, **kwargs)
+            describe(analyzer, **kwargs)
             for describe in self._body_descriptions
         ]
         status = merge_statuses(v.status for v in verifications)

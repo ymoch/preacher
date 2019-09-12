@@ -1,8 +1,11 @@
 """Extraction."""
 
-from .description import Extraction
+from typing import Any, Callable
 
 from pyjq import compile as jq_compile
+
+
+Extraction = Callable[[Any], Any]
 
 
 def with_jq(query: str) -> Extraction:
