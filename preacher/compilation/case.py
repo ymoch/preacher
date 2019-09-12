@@ -31,32 +31,6 @@ class CaseCompiler:
     ...         compile=MagicMock(return_value=sentinel.response_description),
     ...     )
 
-    When given an empty object, then generates a default case.
-    >>> request_compiler = default_request_compiler()
-    >>> response_compiler = default_response_compiler()
-    >>> compiler = CaseCompiler(request_compiler, response_compiler)
-    >>> case = compiler.compile({})
-    >>> case.request
-    sentinel.request
-    >>> case.response_description
-    sentinel.response_description
-    >>> request_compiler.compile.assert_called_once_with({})
-    >>> response_compiler.compile.assert_called_once_with({})
-
-    When given a not string label, then raises a compilation error.
-    >>> compiler = CaseCompiler()
-    >>> compiler.compile({'label': []})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: label
-
-    When given an invalid type request, then raises a compilation error.
-    >>> compiler = CaseCompiler()
-    >>> compiler.compile({'request': []})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: request
-
     When a request compilation fails, then raises a compilation error.
     >>> request_compiler = MagicMock(
     ...     spec=RequestCompiler,
@@ -69,15 +43,6 @@ class CaseCompiler:
     Traceback (most recent call last):
         ...
     preacher.compilation.error.CompilationError: message: request.foo
-
-    When given an invalid type response description,
-    then raises a compilation error.
-    >>> request_compiler = default_request_compiler()
-    >>> compiler = CaseCompiler(request_compiler)
-    >>> compiler.compile({'response': 'str'})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: response
 
     When a response description compilation fails,
     then raises a compilation error.
@@ -121,13 +86,6 @@ class CaseCompiler:
     sentinel.response_description
     >>> request_compiler.compile.assert_called_once_with({'path': '/path'})
     >>> response_compiler.compile.assert_called_once_with({'key': 'value'})
-
-    When given invalid default request, then raises a compilation error.
-    >>> case_compiler = CaseCompiler()
-    >>> case_compiler.of_default({'request': []})
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: ...: request
 
     Accepts default values.
     >>> request_compiler = MagicMock(
