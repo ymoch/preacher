@@ -1,9 +1,10 @@
 """Response descriptions."""
 
 from dataclasses import dataclass
-from typing import Any, Callable, List, Mapping
+from typing import Any, Callable, List, Mapping, Optional
 
-from .analysis import Analyzer, JsonAnalyzer, analyze_json_str
+from .analysis import Analyzer, JsonAnalyzer
+from .body_description import BodyDescription
 from .description import Description, Predicate
 from .status import Status, merge_statuses
 from .verification import Verification
@@ -23,16 +24,14 @@ class ResponseDescription:
         self,
         status_code_predicates: List[Predicate] = [],
         headers_descriptions: List[Description] = [],
-        body_descriptions: List[Description] = [],
+        body_description: Optional[BodyDescription] = None,
         analyze_headers:
             Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
-        analyze_body: Callable[[str], Analyzer] = analyze_json_str,
     ):
         self._status_code_predicates = status_code_predicates
         self._headers_descriptions = headers_descriptions
-        self._body_descriptions = body_descriptions
+        self._body_description = body_description
         self._analyze_headers = analyze_headers
-        self._analyze_body = analyze_body
 
     def __call__(
         self,
@@ -52,10 +51,9 @@ class ResponseDescription:
         except Exception as error:
             headers_verification = Verification.of_error(error)
 
-        try:
-            body_verification = self._verify_body(body, **kwargs)
-        except Exception as error:
-            body_verification = Verification.of_error(error)
+        body_verification = Verification.skipped()
+        if self._body_description:
+            body_verification = self._body_description.verify(body, **kwargs)
 
         status = merge_statuses(
             status_code_verification.status,
@@ -78,8 +76,8 @@ class ResponseDescription:
         return self._headers_descriptions
 
     @property
-    def body_descriptions(self) -> List[Description]:
-        return self._body_descriptions
+    def body_description(self) -> Optional[BodyDescription]:
+        return self._body_description
 
     def _verify_status_code(
         self,
@@ -102,18 +100,6 @@ class ResponseDescription:
         verifications = [
             describe(analyzer, **kwargs)
             for describe in self._headers_descriptions
-        ]
-        status = merge_statuses(v.status for v in verifications)
-        return Verification(status=status, children=verifications)
-
-    def _verify_body(self, body: str, **kwargs: Any) -> Verification:
-        if not self._body_descriptions:
-            return Verification.skipped()
-
-        analyzer = self._analyze_body(body)
-        verifications = [
-            describe(analyzer, **kwargs)
-            for describe in self._body_descriptions
         ]
         status = merge_statuses(v.status for v in verifications)
         return Verification(status=status, children=verifications)

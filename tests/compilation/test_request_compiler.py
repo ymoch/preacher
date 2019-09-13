@@ -1,43 +1,25 @@
-from pytest import raises
+from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.request import RequestCompiler
 
 
-def test_given_not_a_string_path():
+@mark.parametrize('value, expected_suffix', (
+    ([], ''),
+    ({'path': {'key': 'value'}}, ': path'),
+    ({'headers': ''}, ': headers'),
+    ({'params': ''}, ': params'),
+))
+def test_given_invalid_values(value, expected_suffix):
     compiler = RequestCompiler()
 
     with raises(CompilationError) as error_info:
-        compiler.compile({'path': {'key': 'value'}})
-    assert str(error_info.value).endswith(': path')
+        compiler.compile(value)
+    assert str(error_info.value).endswith(expected_suffix)
 
     with raises(CompilationError) as error_info:
-        compiler.of_default({'path': {'key': 'value'}})
-    assert str(error_info.value).endswith(': path')
-
-
-def test_given_not_a_mapping_headers():
-    compiler = RequestCompiler()
-
-    with raises(CompilationError) as error_info:
-        compiler.compile({'headers': ''})
-    assert str(error_info.value).endswith(': headers')
-
-    with raises(CompilationError) as error_info:
-        compiler.of_default({'headers': ''})
-    assert str(error_info.value).endswith(': headers')
-
-
-def test_given_not_a_mapping_params():
-    compiler = RequestCompiler()
-
-    with raises(CompilationError) as error_info:
-        compiler.compile({'params': ''})
-    assert str(error_info.value).endswith(': params')
-
-    with raises(CompilationError) as error_info:
-        compiler.of_default({'params': ''})
-    assert str(error_info.value).endswith(': params')
+        compiler.of_default(value)
+    assert str(error_info.value).endswith(expected_suffix)
 
 
 def test_given_an_empty_mapping():
