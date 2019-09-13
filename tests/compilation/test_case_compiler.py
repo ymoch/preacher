@@ -29,7 +29,6 @@ def response_compiler() -> ResponseDescriptionCompiler:
 @mark.parametrize('value, expected_suffix', (
     ('', ''),
     ({'label': []}, ': label'),
-    ({'response': 'str'}, ': response'),
 ))
 def test_given_invalid_values(
     value,

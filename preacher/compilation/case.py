@@ -54,7 +54,7 @@ class CaseCompiler:
         response_description = run_on_key(
             _KEY_RESPONSE,
             self._response_compiler.compile,
-            _extract_response(obj),
+            obj.get(_KEY_RESPONSE, {}),
         )
         return Case(
             label=label,
@@ -69,10 +69,3 @@ class CaseCompiler:
             obj.get(_KEY_REQUEST, {}),
         )
         return CaseCompiler(request_compiler=request_compiler)
-
-
-def _extract_response(obj: Any) -> Mapping:
-    target = obj.get('response', {})
-    if not isinstance(target, Mapping):
-        raise CompilationError('must be a mapping', path=[_KEY_RESPONSE])
-    return target

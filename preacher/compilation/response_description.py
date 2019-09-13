@@ -32,6 +32,11 @@ class ResponseDescriptionCompiler:
         )
 
     def compile(self, obj: Mapping) -> ResponseDescription:
+        """`obj` should be a mapping."""
+
+        if not isinstance(obj, Mapping):
+            raise CompilationError('Must be a mapping')
+
         status_code_predicate_objs = obj.get(_KEY_STATUS_CODE, [])
         if not isinstance(status_code_predicate_objs, list):
             status_code_predicate_objs = [status_code_predicate_objs]
