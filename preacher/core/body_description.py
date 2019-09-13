@@ -17,9 +17,6 @@ class BodyDescription:
         self._analyze = analyze
 
     def verify(self, body: str, **kwargs: Any) -> Verification:
-        if not self._descriptions:
-            return Verification.skipped()
-
         try:
             analyzer = self._analyze(body)
         except Exception as error:

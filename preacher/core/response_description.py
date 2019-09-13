@@ -30,7 +30,7 @@ class ResponseDescription:
     ):
         self._status_code_predicates = status_code_predicates
         self._headers_descriptions = headers_descriptions
-        self._body_description = body_description or BodyDescription()
+        self._body_description = body_description
         self._analyze_headers = analyze_headers
 
     def __call__(
@@ -51,7 +51,9 @@ class ResponseDescription:
         except Exception as error:
             headers_verification = Verification.of_error(error)
 
-        body_verification = self._body_description.verify(body, **kwargs)
+        body_verification = Verification.skipped()
+        if self._body_description:
+            body_verification = self._body_description.verify(body, **kwargs)
 
         status = merge_statuses(
             status_code_verification.status,
@@ -74,7 +76,7 @@ class ResponseDescription:
         return self._headers_descriptions
 
     @property
-    def body_description(self) -> BodyDescription:
+    def body_description(self) -> Optional[BodyDescription]:
         return self._body_description
 
     def _verify_status_code(

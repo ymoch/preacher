@@ -48,11 +48,11 @@ def test_given_an_empty_mapping(
     response_description = compiler.compile({})
     assert response_description.status_code_predicates == []
     assert response_description.headers_descriptions == []
-    assert response_description.body_description == sentinel.body_desc
+    assert response_description.body_description is None
 
     pred_compiler.compile.assert_not_called()
     desc_compiler.compile.assert_not_called()
-    body_desc_compiler.compile.assert_called_once_with([])
+    body_desc_compiler.compile.assert_not_called()
 
 
 @mark.parametrize('obj, error_suffix', (

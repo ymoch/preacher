@@ -54,11 +54,12 @@ class ResponseDescriptionCompiler:
 
         headers_descriptions = list(self._compile_descs(_KEY_HEADERS, obj))
 
+        body_obj = obj.get(_KEY_BODY)
         body_description = run_on_key(
             _KEY_BODY,
             self._body_description_compiler.compile,
-            obj.get(_KEY_BODY, []),
-        )
+            body_obj,
+        ) if body_obj is not None else None
 
         return ResponseDescription(
             status_code_predicates=status_code_predicates,
