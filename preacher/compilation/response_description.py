@@ -57,7 +57,7 @@ class ResponseDescriptionCompiler:
         body_description = run_on_key(
             _KEY_BODY,
             self._body_description_compiler.compile,
-            obj.get(_KEY_BODY, {}),
+            obj.get(_KEY_BODY, []),
         )
 
         return ResponseDescription(

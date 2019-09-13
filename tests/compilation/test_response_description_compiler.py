@@ -52,7 +52,7 @@ def test_given_an_empty_mapping(
 
     pred_compiler.compile.assert_not_called()
     desc_compiler.compile.assert_not_called()
-    body_desc_compiler.compile.assert_called_once_with({})
+    body_desc_compiler.compile.assert_called_once_with([])
 
 
 @mark.parametrize('obj, error_suffix', (

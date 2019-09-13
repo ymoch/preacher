@@ -21,13 +21,21 @@ class BodyDescriptionCompiler:
         )
 
     def compile(self, obj: Any) -> BodyDescription:
-        desc_objs = obj
-        if isinstance(obj, Mapping):
-            desc_objs = obj.get(_KEY_DESCRIPTIONS, [])
+        """`obj` should be a mapping or a list."""
+
+        if isinstance(obj, list):
+            return self.compile({_KEY_DESCRIPTIONS: obj})
+
+        if not isinstance(obj, Mapping):
+            raise CompilationError('Must be a mapping or a list')
+
+        desc_objs = obj.get(_KEY_DESCRIPTIONS)
+        if desc_objs is None:
+            description = self._description_compiler.compile(obj)
+            return BodyDescription(descriptions=[description])
 
         if not isinstance(desc_objs, list):
-            message = f'must be a list or a mapping'
-            raise CompilationError(message=message)
+            desc_objs = [desc_objs]
 
         descriptions = list(map_on_key(
             _KEY_DESCRIPTIONS,
