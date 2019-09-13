@@ -1,11 +1,9 @@
 """Scenario compilation."""
 
 from collections.abc import Mapping
-from functools import partial
 from typing import Any, Optional
 
 from preacher.core.scenario import Scenario
-from preacher.core.case import Case
 from .error import CompilationError
 from .case import CaseCompiler
 from .util import map_on_key, run_on_key
@@ -21,7 +19,12 @@ class ScenarioCompiler:
     def __init__(self, case_compiler: Optional[CaseCompiler] = None):
         self._case_compiler = case_compiler or CaseCompiler()
 
-    def compile(self, obj: Mapping) -> Scenario:
+    def compile(self, obj: Any) -> Scenario:
+        """`obj` should be a mapping."""
+
+        if not isinstance(obj, Mapping):
+            raise CompilationError('Must be a mapping')
+
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
             raise CompilationError(
@@ -44,16 +47,6 @@ class ScenarioCompiler:
         case_objs = obj.get(_KEY_CASES, [])
         if not isinstance(case_objs, list):
             raise CompilationError(message='Must be a list', path=[_KEY_CASES])
-        cases = map_on_key(
-            _KEY_CASES,
-            partial(_compile_case, case_compiler),
-            case_objs,
-        )
+        cases = map_on_key(_KEY_CASES, case_compiler.compile, case_objs)
 
         return Scenario(label=label, cases=list(cases))
-
-
-def _compile_case(case_compiler: CaseCompiler, obj: Any) -> Case:
-    if not isinstance(obj, Mapping):
-        raise CompilationError(f'Case must be a mapping')
-    return case_compiler.compile(obj)

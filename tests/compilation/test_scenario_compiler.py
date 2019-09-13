@@ -8,6 +8,7 @@ from preacher.compilation.scenario import ScenarioCompiler
 
 
 @mark.parametrize('value, expected_suffix', (
+    ('', ''),
     ({'label': []}, ': label'),
     ({'cases': ''}, ': cases'),
     ({'cases': ['']}, ': cases[0]'),
