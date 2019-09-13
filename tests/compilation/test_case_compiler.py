@@ -27,6 +27,7 @@ def response_compiler() -> ResponseDescriptionCompiler:
 
 
 @mark.parametrize('value, expected_suffix', (
+    ('', ''),
     ({'label': []}, ': label'),
     ({'request': []}, ': request'),
     ({'response': 'str'}, ': response'),

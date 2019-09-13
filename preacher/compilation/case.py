@@ -33,7 +33,12 @@ class CaseCompiler:
     def request_compiler(self) -> RequestCompiler:
         return self._request_compiler
 
-    def compile(self, obj: Mapping) -> Case:
+    def compile(self, obj: Any) -> Case:
+        """`obj` should be a mapping."""
+
+        if not isinstance(obj, Mapping):
+            raise CompilationError('Must be a mapping')
+
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
             raise CompilationError(
