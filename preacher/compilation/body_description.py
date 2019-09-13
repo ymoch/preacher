@@ -21,7 +21,10 @@ class BodyDescriptionCompiler:
         )
 
     def compile(self, obj: Any) -> BodyDescription:
-        """`obj` should be a mapping or a list."""
+        """
+        `obj` should be a mapping or a list.
+        An empty list results in an empty description.
+        """
 
         if isinstance(obj, list):
             return self.compile({_KEY_DESCRIPTIONS: obj})
@@ -31,6 +34,7 @@ class BodyDescriptionCompiler:
 
         desc_objs = obj.get(_KEY_DESCRIPTIONS)
         if desc_objs is None:
+            # Compile as a description to be compatible.
             description = self._description_compiler.compile(obj)
             return BodyDescription(descriptions=[description])
 
