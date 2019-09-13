@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, sentinel
 
 from pytest import mark
 
+from preacher.core.body_description import BodyDescription
 from preacher.core.response_description import ResponseDescription
 from preacher.core.status import Status
 from preacher.core.verification import Verification
@@ -23,54 +24,31 @@ def test_when_header_verification_fails():
     assert verification.headers.status == Status.FAILURE
 
 
-def test_when_given_invalid_body():
-    status_code_predicates = [MagicMock(return_value=Verification.succeed())]
-    body_descriptions = [MagicMock(return_value=Verification.succeed())]
-    description = ResponseDescription(
-        status_code_predicates=status_code_predicates,
-        body_descriptions=body_descriptions,
-    )
-    verification = description(status_code=200, headers={}, body='xxx', k='v')
-    assert verification.status == Status.FAILURE
-    assert verification.status_code.status == Status.SUCCESS
-    assert verification.body.status == Status.FAILURE
-    assert verification.body.message.startswith('JSONDecodeError:')
-
-    status_code_predicates[0].assert_called_once_with(200, k='v')
-    body_descriptions[0].assert_not_called()
-
-
 def test_when_given_descriptions():
     headers_descriptions = [
         MagicMock(return_value=Verification(status=Status.UNSTABLE)),
         MagicMock(return_value=Verification.succeed()),
     ]
-    body_descriptions = [
-        MagicMock(return_value=Verification(status=Status.UNSTABLE)),
-        MagicMock(return_value=Verification.succeed()),
-    ]
+    body_description = MagicMock(
+        spec=BodyDescription,
+        verify=MagicMock(return_value=Verification(status=Status.UNSTABLE)),
+    )
     analyze_headers = MagicMock(return_value=sentinel.headers)
-    analyze_body = MagicMock(return_value=sentinel.body)
     description = ResponseDescription(
         status_code_predicates=[],
         headers_descriptions=headers_descriptions,
-        body_descriptions=body_descriptions,
+        body_description=body_description,
         analyze_headers=analyze_headers,
-        analyze_body=analyze_body,
     )
     verification = description(status_code=200, headers={}, body='{}', k='v')
     assert verification.status == Status.UNSTABLE
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.UNSTABLE
-    assert verification.body.children[0].status == Status.UNSTABLE
-    assert verification.body.children[1].status == Status.SUCCESS
 
     analyze_headers.assert_called_once_with({})
-    analyze_body.assert_called_once_with('{}')
     headers_descriptions[0].assert_called_once_with(sentinel.headers, k='v')
     headers_descriptions[1].assert_called_once_with(sentinel.headers, k='v')
-    body_descriptions[0].assert_called_once_with(sentinel.body, k='v')
-    body_descriptions[1].assert_called_once_with(sentinel.body, k='v')
+    body_description.verify.assert_called_once_with('{}', k='v')
 
 
 @mark.parametrize(
@@ -94,13 +72,14 @@ def test_merge_statuses(
     headers_descriptions = [
         MagicMock(return_value=Verification(status=headers_status)),
     ]
-    body_descriptions = [
-        MagicMock(return_value=Verification(status=body_status)),
-    ]
+    body_description = MagicMock(
+        spec=BodyDescription,
+        verify=MagicMock(return_value=Verification(status=body_status)),
+    )
     description = ResponseDescription(
         status_code_predicates=status_code_predicates,
         headers_descriptions=headers_descriptions,
-        body_descriptions=body_descriptions,
+        body_description=body_description,
     )
     verification = description(status_code=200, headers={}, body='{}')
     assert verification.status == expected
