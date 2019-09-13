@@ -39,6 +39,9 @@ def _compile(obj: Union[Mapping, str]) -> _Compiled:
     if isinstance(obj, str):
         return _compile({_KEY_PATH: obj})
 
+    if not isinstance(obj, Mapping):
+        raise CompilationError('Must be a mapping or a string')
+
     path = obj.get(_KEY_PATH)
     if path is not None and not isinstance(path, str):
         raise CompilationError('Must be a string', path=[_KEY_PATH])
@@ -66,6 +69,8 @@ class RequestCompiler:
         self._params = params
 
     def compile(self, obj: Union[Mapping, str]) -> Request:
+        """`obj` should be a mapping or a string."""
+
         compiled = _compile(obj)
         return compiled.to_request(
             default_path=self._path,

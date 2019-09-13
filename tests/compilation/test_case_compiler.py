@@ -29,7 +29,6 @@ def response_compiler() -> ResponseDescriptionCompiler:
 @mark.parametrize('value, expected_suffix', (
     ('', ''),
     ({'label': []}, ': label'),
-    ({'request': []}, ': request'),
     ({'response': 'str'}, ': response'),
 ))
 def test_given_invalid_values(
@@ -41,21 +40,6 @@ def test_given_invalid_values(
     compiler = CaseCompiler(request_compiler, response_compiler)
     with raises(CompilationError) as error_info:
         compiler.compile(value)
-    assert str(error_info.value).endswith(expected_suffix)
-
-
-@mark.parametrize('value, expected_suffix', (
-    ({'request': []}, ': request'),
-))
-def test_given_invalid_default_values(
-    value,
-    expected_suffix,
-    request_compiler,
-    response_compiler,
-):
-    compiler = CaseCompiler(request_compiler, response_compiler)
-    with raises(CompilationError) as error_info:
-        compiler.of_default(value)
     assert str(error_info.value).endswith(expected_suffix)
 
 

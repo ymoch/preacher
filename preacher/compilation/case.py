@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from preacher.core.case import Case
 from .error import CompilationError
@@ -49,7 +49,7 @@ class CaseCompiler:
         request = run_on_key(
             _KEY_REQUEST,
             self._request_compiler.compile,
-            _extract_request(obj)
+            obj.get(_KEY_REQUEST, {}),
         )
         response_description = run_on_key(
             _KEY_RESPONSE,
@@ -66,19 +66,9 @@ class CaseCompiler:
         request_compiler = run_on_key(
             _KEY_REQUEST,
             self._request_compiler.of_default,
-            _extract_request(obj),
+            obj.get(_KEY_REQUEST, {}),
         )
         return CaseCompiler(request_compiler=request_compiler)
-
-
-def _extract_request(obj: Any) -> Union[Mapping, str]:
-    target = obj.get(_KEY_REQUEST, {})
-    if not isinstance(target, Mapping) and not isinstance(target, str):
-        raise CompilationError(
-            message='must be a string or a mapping',
-            path=[_KEY_REQUEST],
-        )
-    return target
 
 
 def _extract_response(obj: Any) -> Mapping:
