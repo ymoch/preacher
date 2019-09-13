@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, List, Mapping
 
 from .analysis import Analyzer, JsonAnalyzer, analyze_json_str
+from .body_description import BodyDescription
 from .description import Description, Predicate
 from .status import Status, merge_statuses
 from .verification import Verification
@@ -30,7 +31,10 @@ class ResponseDescription:
     ):
         self._status_code_predicates = status_code_predicates
         self._headers_descriptions = headers_descriptions
-        self._body_descriptions = body_descriptions
+        self._body_description = BodyDescription(
+            descriptions=body_descriptions,
+            analyze=analyze_body,
+        )
         self._analyze_headers = analyze_headers
         self._analyze_body = analyze_body
 
@@ -79,7 +83,7 @@ class ResponseDescription:
 
     @property
     def body_descriptions(self) -> List[Description]:
-        return self._body_descriptions
+        return self._body_description.descriptions
 
     def _verify_status_code(
         self,
@@ -107,13 +111,4 @@ class ResponseDescription:
         return Verification(status=status, children=verifications)
 
     def _verify_body(self, body: str, **kwargs: Any) -> Verification:
-        if not self._body_descriptions:
-            return Verification.skipped()
-
-        analyzer = self._analyze_body(body)
-        verifications = [
-            describe(analyzer, **kwargs)
-            for describe in self._body_descriptions
-        ]
-        status = merge_statuses(v.status for v in verifications)
-        return Verification(status=status, children=verifications)
+        return self._body_description.verify(body, **kwargs)
