@@ -59,7 +59,7 @@ class ResponseDescriptionCompiler:
             _KEY_BODY,
             self._body_description_compiler.compile,
             body_obj,
-        ) if body_obj else None
+        ) if body_obj is not None else None
 
         return ResponseDescription(
             status_code_predicates=status_code_predicates,
