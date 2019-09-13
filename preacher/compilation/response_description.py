@@ -9,7 +9,7 @@ from .body_description import BodyDescriptionCompiler
 from .error import CompilationError
 from .description import DescriptionCompiler
 from .predicate import PredicateCompiler
-from .util import map_on_key
+from .util import map_on_key, run_on_key
 
 
 _KEY_STATUS_CODE = 'status_code'
@@ -49,12 +49,13 @@ class ResponseDescriptionCompiler:
 
         headers_descriptions = list(self._compile_descs(_KEY_HEADERS, obj))
 
-        try:
-            body_description = BodyDescriptionCompiler(
+        body_description = run_on_key(
+            _KEY_BODY,
+            BodyDescriptionCompiler(
                 description_compiler=self._description_compiler,
-            ).compile(obj.get(_KEY_BODY, {}))
-        except CompilationError as error:
-            raise error.of_parent(['body'])
+            ).compile,
+            obj.get(_KEY_BODY, {}),
+        )
 
         return ResponseDescription(
             status_code_predicates=status_code_predicates,
