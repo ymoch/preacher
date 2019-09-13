@@ -16,7 +16,7 @@ Preacher
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Scenarios are written in `YAML`_ and bodies are analyzed `jq`_ or `XPATH`_ queries
+Scenarios are written in `YAML`_ and bodies are analyzed `jq`_ or `XPath`_ queries
 so that any developers can write without learning toughly.
 
 
@@ -151,10 +151,10 @@ A ``BodyDescription`` is a mapping or a list.
 
 A mapping for ``BodyDescription`` has items below.
 
-- interpreted_as: ``String`` (Optional)
+- analyzed_as: ``String`` (Optional)
     - The method to interpret the body. The default value is ``json``.
-    - When given ``json``, the body is interpreted as a JSON and analyzed by `jq`_ queries.
-    - When given ``xml``, the body is interpreted as an XML and analyzed by `XPATH`_ queries.
+    - When given ``json``, the body is analyzed as a JSON.
+    - When given ``xml``, the body is analyzed as an XML.
 - descriptions: ``Description`` or ``List<Description>``
 
 When given a list, that is equivalent to ``{"descritptions": it}``.
@@ -163,10 +163,34 @@ Description
 ***********
 A ``Description`` is a mapping that consists of below:
 
-- describe: ``String``
-    - An analysis as a `jq`_ or an `XPATH`_ query to find the descripted value.
+- describe: ``Extraction``
+    - An extraction process.
 - should: ``Predicate``, or ``List<Predicate>>`` (Optional)
     - Predicates that match the descripted value.
+
+Extraction
+**********
+
+An Extraction is a mapping or a string.
+
+A mapping for Extraction has one of below:
+
+- jq: String
+    - A `jq`_ query.
+- xpath: String
+    - A `XPath`_ query
+
+When fiven a string, that is equivalent to {"jq": it}.
+
+Note that the extraction must be compatible for the body analysis.
+
++----------------------------+----+-------+
+| Body Analysis / Extraction | jq | xpath |
++============================+====+=======+
+| JSON                       |  o |     x |
++----------------------------+----+-------+
+| XML                        |  x |     y |
++----------------------------+----+-------+
 
 Predicate
 *********
