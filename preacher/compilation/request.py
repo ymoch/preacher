@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Mapping as MappingType, Optional, Union
+from typing import Any, Mapping as MappingType, Optional
 
 from preacher.core.request import Request
 from .error import CompilationError
@@ -35,7 +35,9 @@ class _Compiled:
         )
 
 
-def _compile(obj: Union[Mapping, str]) -> _Compiled:
+def _compile(obj: Any) -> _Compiled:
+    """`obj` should be a mapping or a string."""
+
     if isinstance(obj, str):
         return _compile({_KEY_PATH: obj})
 
@@ -68,7 +70,7 @@ class RequestCompiler:
         self._headers = headers
         self._params = params
 
-    def compile(self, obj: Union[Mapping, str]) -> Request:
+    def compile(self, obj: Any) -> Request:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)
@@ -78,7 +80,9 @@ class RequestCompiler:
             default_params=self._params,
         )
 
-    def of_default(self, obj: Union[Mapping, str]) -> RequestCompiler:
+    def of_default(self, obj: Any) -> RequestCompiler:
+        """`obj` should be a mapping or a string."""
+
         compiled = _compile(obj)
         return RequestCompiler(
             path=or_default(compiled.path, self._path),
