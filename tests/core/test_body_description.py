@@ -5,12 +5,6 @@ from preacher.core.status import Status
 from preacher.core.verification import Verification
 
 
-def test_given_no_descriptions():
-    description = BodyDescription()
-    verification = description.verify('')
-    assert verification.status == Status.SKIPPED
-
-
 def test_given_invalid_body():
     descriptions = [MagicMock(return_value=Verification.succeed())]
     analyze = MagicMock(side_effect=RuntimeError('parse error'))
