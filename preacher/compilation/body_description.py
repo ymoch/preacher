@@ -2,7 +2,6 @@ from collections.abc import Mapping
 from typing import Any, Optional
 
 from preacher.core.body_description import BodyDescription
-from preacher.core.description import Description
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .util import map_on_key
@@ -31,13 +30,8 @@ class BodyDescriptionCompiler:
             raise CompilationError(message=message)
 
         descriptions = list(map_on_key(
-            key=_KEY_DESCRIPTIONS,
-            func=self._compile_description,
-            items=desc_objs,
+            _KEY_DESCRIPTIONS,
+            self._description_compiler.compile,
+            desc_objs,
         ))
         return BodyDescription(descriptions=descriptions)
-
-    def _compile_description(self, obj: Any) -> Description:
-        if not isinstance(obj, Mapping):
-            raise CompilationError('Description must be a mapping')
-        return self._description_compiler.compile(obj)
