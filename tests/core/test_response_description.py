@@ -23,7 +23,7 @@ def test_when_header_verification_fails():
     assert verification.headers.status == Status.FAILURE
 
 
-def test_when_given_invalid_body():
+def test_given_invalid_body():
     status_code_predicates = [MagicMock(return_value=Verification.succeed())]
     body_descriptions = [MagicMock(return_value=Verification.succeed())]
     description = ResponseDescription(

@@ -56,10 +56,7 @@ class ResponseDescription:
         except Exception as error:
             headers_verification = Verification.of_error(error)
 
-        try:
-            body_verification = self._verify_body(body, **kwargs)
-        except Exception as error:
-            body_verification = Verification.of_error(error)
+        body_verification = self._body_description.verify(body, **kwargs)
 
         status = merge_statuses(
             status_code_verification.status,
@@ -109,6 +106,3 @@ class ResponseDescription:
         ]
         status = merge_statuses(v.status for v in verifications)
         return Verification(status=status, children=verifications)
-
-    def _verify_body(self, body: str, **kwargs: Any) -> Verification:
-        return self._body_description.verify(body, **kwargs)

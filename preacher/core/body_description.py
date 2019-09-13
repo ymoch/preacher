@@ -20,7 +20,11 @@ class BodyDescription:
         if not self._descriptions:
             return Verification.skipped()
 
-        analyzer = self._analyze(body)
+        try:
+            analyzer = self._analyze(body)
+        except Exception as error:
+            return Verification.of_error(error)
+
         verifications = [
             describe(analyzer, **kwargs)
             for describe in self._descriptions
