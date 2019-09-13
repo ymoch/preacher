@@ -1,19 +1,19 @@
 """Extraction."""
 
-from .description import Extraction
+from typing import Any, Union
 
-from pyjq import compile as jq_compile
+import pyjq as jq
+
+from .analysis import Analyzer
 
 
-def with_jq(query: str) -> Extraction:
-    """
-    Returns a extractor of given `jq`.
+class JqExtractor:
 
-    >>> extract = with_jq('.foo')
-    >>> extract({'not_foo': 'bar'})
-    >>> extract({'foo': 'bar'})
-    'bar'
-    >>> extract({'foo': ['bar', 'baz', 1, 2]})
-    ['bar', 'baz', 1, 2]
-    """
-    return jq_compile(query).first
+    def __init__(self, query: str):
+        self._jq = jq.compile(query).first
+
+    def extract(self, analyzer: Analyzer) -> Any:
+        return analyzer.jq(self._jq)
+
+
+Extractor = Union[JqExtractor]

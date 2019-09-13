@@ -2,23 +2,25 @@
 
 from typing import Any, Callable, List
 
+from .analysis import Analyzer
+from .extraction import Extractor
 from .status import merge_statuses
 from .verification import Verification
 
-Extraction = Callable[[Any], Any]
+
 Predicate = Callable
 
 
 class Description:
 
-    def __init__(self, extraction: Extraction, predicates: List[Predicate]):
-        self._extraction = extraction
+    def __init__(self, extractor: Extractor, predicates: List[Predicate]):
+        self._extractor = extractor
         self._predicates = predicates
 
-    def __call__(self, value: Any, **kwargs: Any) -> Verification:
+    def __call__(self, analyzer: Analyzer, **kwargs: Any) -> Verification:
         """`**kwargs` will be delegated to predicates."""
         try:
-            verified_value = self._extraction(value)
+            verified_value = self._extractor.extract(analyzer)
         except Exception as error:
             return Verification.of_error(error)
 
@@ -30,8 +32,8 @@ class Description:
         return Verification(status, children=verifications)
 
     @property
-    def extraction(self) -> Extraction:
-        return self._extraction
+    def extractor(self) -> Extractor:
+        return self._extractor
 
     @property
     def predicates(self) -> List[Predicate]:
