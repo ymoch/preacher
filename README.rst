@@ -181,7 +181,7 @@ A mapping for Extraction has one of below:
 - xpath: String
     - A `XPath`_ query
 
-When fiven a string, that is equivalent to {"jq": it}.
+When given a string, that is equivalent to {"jq": it}.
 
 Note that the extraction must be compatible for the body analysis.
 
@@ -190,7 +190,7 @@ Note that the extraction must be compatible for the body analysis.
 +============================+====+=======+
 | JSON                       |  o |     x |
 +----------------------------+----+-------+
-| XML                        |  x |     y |
+| XML                        |  x |     o |
 +----------------------------+----+-------+
 
 Predicate
