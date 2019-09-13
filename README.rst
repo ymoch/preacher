@@ -51,7 +51,7 @@ Here is a simple configuration example.
         path: /path
       response:
         body:
-          interpreted_as: json
+          analyzed_as: json
     cases:
       - label: Simple
         request: /path/to/foo
@@ -65,7 +65,7 @@ Here is a simple configuration example.
         request:
           path: /path/to/foo
           headers:
-            Content-Type: application/json
+            user-agent: custom-value
           params:
             key1: value
             key2:
@@ -152,7 +152,7 @@ A ``BodyDescription`` is a mapping or a list.
 A mapping for ``BodyDescription`` has items below.
 
 - analyzed_as: ``String`` (Optional)
-    - The method to interpret the body. The default value is ``json``.
+    - The method to analyze the body. The default value is ``json``.
     - When given ``json``, the body is analyzed as a JSON.
     - When given ``xml``, the body is analyzed as an XML.
 - descriptions: ``Description`` or ``List<Description>``
