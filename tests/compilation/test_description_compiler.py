@@ -24,6 +24,12 @@ def predicate_compiler() -> PredicateCompiler:
     )
 
 
+def test_given_not_a_mapping():
+    compiler = DescriptionCompiler()
+    with raises(CompilationError):
+        compiler.compile([])
+
+
 def test_given_an_empty_mapping():
     compiler = DescriptionCompiler()
     with raises(CompilationError) as error_info:

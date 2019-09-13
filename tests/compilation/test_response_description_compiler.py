@@ -43,9 +43,7 @@ def test_given_an_empty_mapping(predicate_compiler, description_compiler):
 @mark.parametrize('obj, error_suffix', (
     ('', ''),
     ({'headers': 'str'}, ': headers'),
-    ({'headers': ['str']}, ': headers[0]'),
     ({'body': 'str'}, ': body'),
-    ({'body': ['str']}, ': body[0]'),
 ))
 def test_given_an_invalid_value(obj, error_suffix):
     compiler = ResponseDescriptionCompiler()

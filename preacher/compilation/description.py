@@ -25,6 +25,11 @@ class DescriptionCompiler:
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
 
     def compile(self, obj: Mapping):
+        """`obj` should be a mapping."""
+
+        if not isinstance(obj, Mapping):
+            raise CompilationError('Must be a mapping')
+
         extraction_obj = obj.get(_KEY_DESCRIBE)
         if (
             not isinstance(extraction_obj, Mapping)
