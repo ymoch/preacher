@@ -78,9 +78,9 @@ Here is a simple configuration example.
           headers:
             - describe: ."content-type"
               should:
-                equal_to: application-json
+                equal_to: application/xml
           body:
-            interpreted_as: xml
+            analyzed_as: xml
             descriptions:
               - describe: /html/body/h1
                 should:
@@ -156,6 +156,7 @@ A mapping for ``BodyDescription`` has items below.
     - When given ``json``, the body is analyzed as a JSON.
     - When given ``xml``, the body is analyzed as an XML.
 - descriptions: ``Description`` or ``List<Description>``
+    - Descriptions that descript the response body.
 
 When given a list, that is equivalent to ``{"descritptions": it}``.
 
