@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable, List, Mapping
 
-from .analysis import Analyzer, JsonAnalyzer, analyze_json_str
+from .analysis import Analyzer, JsonAnalyzer
 from .body_description import BodyDescription
 from .description import Description, Predicate
 from .status import Status, merge_statuses
@@ -24,19 +24,14 @@ class ResponseDescription:
         self,
         status_code_predicates: List[Predicate] = [],
         headers_descriptions: List[Description] = [],
-        body_descriptions: List[Description] = [],
+        body_description: BodyDescription = BodyDescription(),
         analyze_headers:
             Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
-        analyze_body: Callable[[str], Analyzer] = analyze_json_str,
     ):
         self._status_code_predicates = status_code_predicates
         self._headers_descriptions = headers_descriptions
-        self._body_description = BodyDescription(
-            descriptions=body_descriptions,
-            analyze=analyze_body,
-        )
+        self._body_description = body_description
         self._analyze_headers = analyze_headers
-        self._analyze_body = analyze_body
 
     def __call__(
         self,

@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, sentinel
 
 from pytest import mark
 
+from preacher.core.body_description import BodyDescription
 from preacher.core.response_description import ResponseDescription
 from preacher.core.status import Status
 from preacher.core.verification import Verification
@@ -26,9 +27,10 @@ def test_when_header_verification_fails():
 def test_given_invalid_body():
     status_code_predicates = [MagicMock(return_value=Verification.succeed())]
     body_descriptions = [MagicMock(return_value=Verification.succeed())]
+    body_description = BodyDescription(descriptions=body_descriptions)
     description = ResponseDescription(
         status_code_predicates=status_code_predicates,
-        body_descriptions=body_descriptions,
+        body_description=body_description,
     )
     verification = description(status_code=200, headers={}, body='xxx', k='v')
     assert verification.status == Status.FAILURE
@@ -51,12 +53,15 @@ def test_when_given_descriptions():
     ]
     analyze_headers = MagicMock(return_value=sentinel.headers)
     analyze_body = MagicMock(return_value=sentinel.body)
+    body_description = BodyDescription(
+        descriptions=body_descriptions,
+        analyze=analyze_body,
+    )
     description = ResponseDescription(
         status_code_predicates=[],
         headers_descriptions=headers_descriptions,
-        body_descriptions=body_descriptions,
+        body_description=body_description,
         analyze_headers=analyze_headers,
-        analyze_body=analyze_body,
     )
     verification = description(status_code=200, headers={}, body='{}', k='v')
     assert verification.status == Status.UNSTABLE
@@ -97,10 +102,11 @@ def test_merge_statuses(
     body_descriptions = [
         MagicMock(return_value=Verification(status=body_status)),
     ]
+    body_description = BodyDescription(descriptions=body_descriptions)
     description = ResponseDescription(
         status_code_predicates=status_code_predicates,
         headers_descriptions=headers_descriptions,
-        body_descriptions=body_descriptions,
+        body_description=body_description,
     )
     verification = description(status_code=200, headers={}, body='{}')
     assert verification.status == expected

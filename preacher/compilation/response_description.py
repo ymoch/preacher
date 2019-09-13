@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 from typing import Any, Optional, Iterator
 
+from preacher.core.body_description import BodyDescription
 from preacher.core.description import Description
 from preacher.core.response_description import ResponseDescription
 from .error import CompilationError
@@ -48,11 +49,12 @@ class ResponseDescriptionCompiler:
 
         headers_descriptions = list(self._compile_descs(_KEY_HEADERS, obj))
         body_descriptions = list(self._compile_descs(_KEY_BODY, obj))
+        body_description = BodyDescription(descriptions=body_descriptions)
 
         return ResponseDescription(
             status_code_predicates=status_code_predicates,
             headers_descriptions=headers_descriptions,
-            body_descriptions=body_descriptions,
+            body_description=body_description,
         )
 
     def _compile_descs(self, key: str, obj: Any) -> Iterator[Description]:
