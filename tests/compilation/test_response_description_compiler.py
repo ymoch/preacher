@@ -44,6 +44,7 @@ def test_given_an_empty_mapping(predicate_compiler, description_compiler):
     ('', ''),
     ({'headers': 'str'}, ': headers'),
     ({'body': 'str'}, ': body'),
+    ({'body': ['str']}, ': body.descriptions[0]'),
 ))
 def test_given_an_invalid_value(obj, error_suffix):
     compiler = ResponseDescriptionCompiler()
@@ -60,7 +61,7 @@ def test_given_simple_values(predicate_compiler, description_compiler):
     response_description = compiler.compile({
         'status_code': 402,
         'headers': {'k1': 'v1'},
-        'body': {'k2': 'v2'},
+        'body': [{'k2': 'v2'}],
     })
     assert response_description.status_code_predicates == [sentinel.predicate]
     assert response_description.body_descriptions == [sentinel.description]
@@ -78,7 +79,7 @@ def test_given_fill_values(predicate_compiler, description_compiler):
     )
     response_description = compiler.compile({
         'status_code': [{'be_greater_than': 0}, {'be_less_than': 400}],
-        'body': [{'key1': 'value1'}, {'key2': 'value2'}],
+        'body': {'descriptions': [{'key1': 'value1'}, {'key2': 'value2'}]},
     })
     assert response_description.status_code_predicates == [
         sentinel.predicate,

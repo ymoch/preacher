@@ -1,7 +1,7 @@
 """Response descriptions."""
 
 from dataclasses import dataclass
-from typing import Any, Callable, List, Mapping
+from typing import Any, Callable, List, Mapping, Optional
 
 from .analysis import Analyzer, JsonAnalyzer
 from .body_description import BodyDescription
@@ -24,13 +24,13 @@ class ResponseDescription:
         self,
         status_code_predicates: List[Predicate] = [],
         headers_descriptions: List[Description] = [],
-        body_description: BodyDescription = BodyDescription(),
+        body_description: Optional[BodyDescription] = None,
         analyze_headers:
             Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
     ):
         self._status_code_predicates = status_code_predicates
         self._headers_descriptions = headers_descriptions
-        self._body_description = body_description
+        self._body_description = body_description or BodyDescription()
         self._analyze_headers = analyze_headers
 
     def __call__(
