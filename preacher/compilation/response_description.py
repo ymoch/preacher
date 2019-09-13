@@ -6,8 +6,8 @@ from typing import Any, Optional, Iterator
 from preacher.core.description import Description
 from preacher.core.response_description import ResponseDescription
 from .body_description import BodyDescriptionCompiler
-from .error import CompilationError
 from .description import DescriptionCompiler
+from .error import CompilationError
 from .predicate import PredicateCompiler
 from .util import map_on_key, run_on_key
 
@@ -23,12 +23,17 @@ class ResponseDescriptionCompiler:
         self,
         predicate_compiler: Optional[PredicateCompiler] = None,
         description_compiler: Optional[DescriptionCompiler] = None,
+        body_description_compiler: Optional[BodyDescriptionCompiler] = None,
     ):
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
         self._description_compiler = (
             description_compiler
-            or DescriptionCompiler(
-                predicate_compiler=self._predicate_compiler
+            or DescriptionCompiler(predicate_compiler=self._predicate_compiler)
+        )
+        self._body_description_compiler = (
+            body_description_compiler
+            or BodyDescriptionCompiler(
+                description_compiler=self._description_compiler
             )
         )
 
@@ -42,18 +47,16 @@ class ResponseDescriptionCompiler:
         if not isinstance(status_code_predicate_objs, list):
             status_code_predicate_objs = [status_code_predicate_objs]
         status_code_predicates = list(map_on_key(
-            key=_KEY_STATUS_CODE,
-            func=self._predicate_compiler.compile,
-            items=status_code_predicate_objs,
+            _KEY_STATUS_CODE,
+            self._predicate_compiler.compile,
+            status_code_predicate_objs,
         ))
 
         headers_descriptions = list(self._compile_descs(_KEY_HEADERS, obj))
 
         body_description = run_on_key(
             _KEY_BODY,
-            BodyDescriptionCompiler(
-                description_compiler=self._description_compiler,
-            ).compile,
+            self._body_description_compiler.compile,
             obj.get(_KEY_BODY, {}),
         )
 

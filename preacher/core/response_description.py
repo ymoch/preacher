@@ -74,8 +74,8 @@ class ResponseDescription:
         return self._headers_descriptions
 
     @property
-    def body_descriptions(self) -> List[Description]:
-        return self._body_description.descriptions
+    def body_description(self) -> BodyDescription:
+        return self._body_description
 
     def _verify_status_code(
         self,
