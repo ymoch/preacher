@@ -6,7 +6,7 @@ from pytest import fixture, mark
 from preacher.core.extraction import XPathExtractor
 
 
-XML_VALUE = '''
+VALUE = '''
 <root>
     <foo id="foo1">foo-text</foo>
     <foo id="foo2">
@@ -19,7 +19,7 @@ XML_VALUE = '''
 
 @fixture
 def analyzer():
-    elem = fromstring(XML_VALUE, parser=XMLParser())
+    elem = fromstring(VALUE, parser=XMLParser())
     return MagicMock(
         xpath=MagicMock(side_effect=lambda x: x(elem))
     )
