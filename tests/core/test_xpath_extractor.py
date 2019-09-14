@@ -5,13 +5,13 @@ from preacher.core.extraction import XPathExtractor
 
 
 XML_VALUE = '''
-<html>
+<root>
     <foo id="foo1">foo-text</foo>
     <foo id="foo2">
         <bar>text</bar>
         <baz attr="baz-attr" />
     </foo>
-</html>
+</root>
 '''
 
 
@@ -21,10 +21,11 @@ def analyzer() -> Analyzer:
 
 
 @mark.parametrize('query, expected', (
-    ('.//foo[1]', 'foo-text'),
-    ('.//foo[@id="foo1"]', 'foo-text'),
+    ('/root/foo[1]', 'foo-text'),
+    ('./foo[1]', 'foo-text'),
+    ('//foo[@id="foo1"]', 'foo-text'),
     ('.//foo[2]/bar', 'text'),
-    ('.//foo/baz/@attr', 'baz-attr'),
+    ('//baz/@attr', 'baz-attr'),
 ))
 def test_extract(query, expected, analyzer):
     extractor = XPathExtractor(query)
