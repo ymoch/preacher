@@ -1,6 +1,8 @@
+from unittest.mock import MagicMock
+
+from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark
 
-from preacher.core.analysis import Analyzer, analyze_xml_str
 from preacher.core.extraction import XPathExtractor
 
 
@@ -16,8 +18,11 @@ XML_VALUE = '''
 
 
 @fixture
-def analyzer() -> Analyzer:
-    return analyze_xml_str(XML_VALUE)
+def analyzer():
+    elem = fromstring(XML_VALUE, parser=XMLParser())
+    return MagicMock(
+        xpath=MagicMock(side_effect=lambda x: x(elem))
+    )
 
 
 @mark.parametrize('query, expected', (

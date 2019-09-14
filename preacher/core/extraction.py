@@ -42,8 +42,8 @@ class XPathExtractor:
 
         return str(elem)
 
-    def _extract(self, etree: Element) -> List[Any]:
-        return etree.xpath(self._query)
+    def _extract(self, elem: Element) -> List[Any]:
+        return elem.xpath(self._query)
 
 
 Extractor = Union[JqExtractor, XPathExtractor]
