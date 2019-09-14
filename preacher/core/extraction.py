@@ -13,7 +13,7 @@ class JqExtractor:
     def __init__(self, query: str):
         self._jq = jq.compile(query).first
 
-    def extract(self, analyzer: Analyzer) -> Any:
+    def extract(self, analyzer: Analyzer) -> Optional[Any]:
         return analyzer.jq(self._jq)
 
 
@@ -33,7 +33,7 @@ class XPathExtractor:
 
         return str(elem)
 
-    def _extract(self, etree: Element) -> List[Element]:
+    def _extract(self, etree: Element) -> List[Any]:
         return etree.xpath(self._query)
 
 
