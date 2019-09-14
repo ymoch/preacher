@@ -1,13 +1,20 @@
 from collections.abc import Mapping
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
+from preacher.core.analysis import Analyzer, analyze_json_str, analyze_xml_str
 from preacher.core.body_description import BodyDescription
 from .description import DescriptionCompiler
 from .error import CompilationError
-from .util import map_on_key
+from .util import map_on_key, run_on_key
 
 
+_KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
+
+_ANALYSIS_MAP = {
+    'json': analyze_json_str,
+    'xml': analyze_xml_str,
+}
 
 
 class BodyDescriptionCompiler:
@@ -32,6 +39,8 @@ class BodyDescriptionCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping or a list')
 
+        analyze = run_on_key(_KEY_ANALYSIS, self._compile_analysis, obj)
+
         desc_objs = obj.get(_KEY_DESCRIPTIONS)
         if desc_objs is None:
             # Compile as a description to be compatible.
@@ -46,4 +55,15 @@ class BodyDescriptionCompiler:
             self._description_compiler.compile,
             desc_objs,
         ))
-        return BodyDescription(descriptions=descriptions)
+        return BodyDescription(descriptions=descriptions, analyze=analyze)
+
+    def _compile_analysis(self, obj: Mapping) -> Callable[[str], Analyzer]:
+        analysis_key = obj.get(_KEY_ANALYSIS, 'json')
+        if not isinstance(analysis_key, str):
+            raise CompilationError('Must be a string')
+
+        analysis = _ANALYSIS_MAP.get(analysis_key)
+        if not analysis:
+            raise CompilationError(f'Invalid key: {analysis_key}')
+
+        return analysis
