@@ -21,7 +21,8 @@ def analyzer() -> Analyzer:
 
 
 @mark.parametrize('query, expected', (
-    ('/root/foo[1]', 'foo-text'),
+    ('/root/xxx', None),
+    ('/root/foo', 'foo-text'),
     ('./foo[1]', 'foo-text'),
     ('//foo[@id="foo1"]', 'foo-text'),
     ('.//foo[2]/bar', 'text'),
