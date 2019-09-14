@@ -11,7 +11,12 @@ from .analysis import Analyzer
 class JqExtractor:
 
     def __init__(self, query: str):
-        self._jq = jq.compile(query).first
+        self._query = query
+        self._jq = jq.compile(self._query).first
+
+    @property
+    def query(self) -> str:
+        return self._query
 
     def extract(self, analyzer: Analyzer) -> Optional[Any]:
         return analyzer.jq(self._jq)
@@ -21,6 +26,10 @@ class XPathExtractor:
 
     def __init__(self, query: str):
         self._query = query
+
+    @property
+    def query(self) -> str:
+        return self._query
 
     def extract(self, analyzer: Analyzer) -> Optional[str]:
         elems = analyzer.xpath(self._extract)

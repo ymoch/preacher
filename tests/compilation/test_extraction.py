@@ -1,7 +1,6 @@
-from unittest.mock import MagicMock, sentinel
+from pytest import mark, raises
 
-from pytest import raises
-
+from preacher.core.extraction import JqExtractor, XPathExtractor
 from preacher.compilation.extraction import compile
 from preacher.compilation.error import CompilationError
 
@@ -12,17 +11,17 @@ def test_when_given_not_a_string():
     assert str(error_info.value).endswith(' has 0')
 
 
-def test_when_given_a_string():
-    analyzer = MagicMock(jq=MagicMock(return_value=sentinel.value))
-    value = compile('.foo').extract(analyzer)
-    assert value == sentinel.value
+@mark.parametrize('value, expected_query', (
+    ('.foo', '.foo'),
+    ({'jq': '.foo'}, '.foo'),
+))
+def test_when_given_a_jq(value, expected_query):
+    extractor = compile('.foo')
+    assert isinstance(extractor, JqExtractor)
+    assert extractor.query == expected_query
 
-    analyzer.jq.assert_called()
 
-
-def test_when_given_a_jq():
-    analyzer = MagicMock(jq=MagicMock(return_value=sentinel.value))
-    value = compile({'jq': '.foo'}).extract(analyzer)
-    assert value == sentinel.value
-
-    analyzer.jq.assert_called()
+def test_when_given_an_xpath():
+    compiler = compile({'xpath': './foo'})
+    assert isinstance(compiler, XPathExtractor)
+    assert compiler.query == './foo'
