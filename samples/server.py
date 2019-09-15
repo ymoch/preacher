@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from time import sleep
 
@@ -6,16 +6,6 @@ import responder
 
 
 api = responder.API()
-
-
-def pre_latency(seconds):
-    def _latency(func):
-        @wraps(func)
-        def _latency_func(*args, **kwargs):
-            sleep(seconds)
-            return func(*args, **kwargs)
-        return _latency_func
-    return _latency
 
 
 @api.route('/json')
@@ -47,12 +37,10 @@ def xml(req, res) -> None:
     )    
 
 
-@api.route('/now')
-@pre_latency(1.0)
-def now(req, res) -> None:
-    res.media = {
-        'now': datetime.now(timezone.utc).isoformat(),
-    }
+@api.route('/later/{seconds}')
+def now(req, res, *, seconds) -> None:
+    dt = datetime.now(timezone.utc) + timedelta(seconds=int(seconds))
+    res.media = {'now': dt.isoformat()}
 
 
 @api.route('/text')

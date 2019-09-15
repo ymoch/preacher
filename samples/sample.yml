@@ -66,7 +66,7 @@ cases:
               equal: baz1
 
   - label: Datetime verifications
-    request: /now
+    request: /later/1
     response:
       status_code: 200
       body:
