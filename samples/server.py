@@ -1,7 +1,5 @@
 import os
 from datetime import datetime, timedelta, timezone
-from functools import wraps
-from time import sleep
 
 import responder
 
