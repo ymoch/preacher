@@ -67,16 +67,8 @@ def _compile(obj: Any) -> _Compiled:
 
 
 class RequestCompiler:
-    def __init__(
-        self,
-        path: str = '',
-        headers: Mapping = {},
-        params: Mapping = {},
-    ):
-        self._default = _Compiled(path=path, headers=headers, params=params)
-        self._path = path
-        self._headers = headers
-        self._params = params
+    def __init__(self, default: _Compiled = None):
+        self._default = default or _Compiled()
 
     def compile(self, obj: Any) -> Request:
         """`obj` should be a mapping or a string."""
@@ -87,9 +79,5 @@ class RequestCompiler:
     def of_default(self, obj: Any) -> RequestCompiler:
         """`obj` should be a mapping or a string."""
 
-        compiled = _compile(obj)
-        return RequestCompiler(
-            path=or_default(compiled.path, self._path),
-            headers=or_default(compiled.headers, self._headers),
-            params=or_default(compiled.params, self._params),
-        )
+        default = _compile(obj)
+        return RequestCompiler(default=default)
