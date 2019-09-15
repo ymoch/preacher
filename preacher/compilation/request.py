@@ -22,23 +22,18 @@ class _Compiled:
     headers: Optional[MappingType[str, str]] = None
     params: Optional[MappingType[str, Any]] = None
 
-    def of_default(self, default: _Compiled) -> Request:
-        return self.to_request(
-            default_path=or_default(default.path, ''),
-            default_headers=or_default(default.headers, {}),
-            default_params=or_default(default.params, {}),
+    def updated(self, updater: _Compiled) -> _Compiled:
+        return _Compiled(
+            path=or_default(updater.path, self.path),
+            headers=or_default(updater.headers, self.headers),
+            params=or_default(updater.params, self.params),
         )
 
-    def to_request(
-        self,
-        default_path: str = '',
-        default_headers: Mapping = {},
-        default_params: Mapping = {},
-    ) -> Request:
+    def to_request(self) -> Request:
         return Request(
-            path=or_default(self.path, default_path),
-            headers=or_default(self.headers, default_headers),
-            params=or_default(self.params, default_params),
+            path=or_default(self.path, ''),
+            headers=or_default(self.headers, {}),
+            params=or_default(self.params, {}),
         )
 
 
@@ -74,10 +69,10 @@ class RequestCompiler:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)
-        return compiled.of_default(self._default)
+        return self._default.updated(compiled).to_request()
 
     def of_default(self, obj: Any) -> RequestCompiler:
         """`obj` should be a mapping or a string."""
 
-        default = _compile(obj)
-        return RequestCompiler(default=default)
+        compiled = _compile(obj)
+        return RequestCompiler(default=self._default.updated(compiled))
