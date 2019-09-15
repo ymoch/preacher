@@ -32,6 +32,7 @@ class XmlAnalyzer:
 
 
 Analyzer = Union[JsonAnalyzer, XmlAnalyzer]
+Analysis = Callable[[str], Analyzer]
 
 
 def analyze_json_str(value: str) -> Analyzer:
