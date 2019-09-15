@@ -19,6 +19,6 @@ class AnalysisCompiler:
 
         analysis = _ANALYSIS_MAP.get(obj)
         if not analysis:
-            raise CompilationError(f'Invalid key: {analysis_key}')
+            raise CompilationError(f'Invalid key: {obj}')
 
         return analysis
