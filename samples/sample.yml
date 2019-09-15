@@ -44,11 +44,6 @@ cases:
             - not:
                 have_item: ''
             - have_item: 1
-        - describe: .now
-          should:
-            - be_before: 1 minute
-            - be_after: -2 minutes
-            - be_after: 1 second  # Must be processed after 1 seconds.
 
   - label: Returns an XML result
     request: /xml
@@ -69,6 +64,17 @@ cases:
               xpath: //baz/@id
             should:
               equal: baz1
+
+  - label: Datetime verifications
+    request: /now
+    response:
+      status_code: 200
+      body:
+        describe: .now
+        should:
+          - be_before: 1 minute
+          - be_after: -2 minutes
+          - be_after: 1 second  # Must be processed after 1 seconds.
 
   - label: Returns a failure result
     request:

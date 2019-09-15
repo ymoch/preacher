@@ -19,14 +19,12 @@ def pre_latency(seconds):
 
 
 @api.route('/json')
-@pre_latency(1.0)
 def json(req, res) -> None:
     res.media = {
         'foo': 'bar',
         'empty_string': '',
         'empty_list': [],
         'list': [1, 2, 'A'],
-        'now': datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -47,6 +45,14 @@ def xml(req, res) -> None:
 </root>
 '''
     )    
+
+
+@api.route('/now')
+@pre_latency(1.0)
+def now(req, res) -> None:
+    res.media = {
+        'now': datetime.now(timezone.utc).isoformat(),
+    }
 
 
 @api.route('/text')
