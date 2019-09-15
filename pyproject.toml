@@ -6,6 +6,12 @@ authors = ["Yu Mochizuki <ymoch.dev@gmail.com>"]
 readme = "README.rst"
 repository = "https://github.com/ymoch/preacher"
 license = "MIT"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Topic :: Software Development :: Testing",
+  "Topic :: System :: Monitoring"
+]
 
 [tool.poetry.scripts]
 preacher-cli = "preacher.app.cli.main:main"
