@@ -11,13 +11,17 @@ from .util import map_on_key, run_on_key
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
 
+_DEFAULT_ANALYSIS = 'json'
+
 
 class BodyDescriptionCompiler:
 
     def __init__(
         self,
+        analysis_compiler: Optional[AnalysisCompiler] = None,
         description_compiler: Optional[DescriptionCompiler] = None,
     ):
+        self._analysis_compiler = analysis_compiler or AnalysisCompiler()
         self._description_compiler = (
             description_compiler or DescriptionCompiler()
         )
@@ -34,11 +38,10 @@ class BodyDescriptionCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping or a list')
 
-        analysis_compiler = AnalysisCompiler()
         analyze = run_on_key(
             _KEY_ANALYSIS,
-            analysis_compiler.compile,
-            obj.get(_KEY_ANALYSIS, 'json'),
+            self._analysis_compiler.compile,
+            obj.get(_KEY_ANALYSIS, _DEFAULT_ANALYSIS),
         )
 
         desc_objs = obj.get(_KEY_DESCRIPTIONS)
