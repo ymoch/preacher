@@ -22,16 +22,18 @@ class _Compiled:
     headers: Optional[MappingType[str, str]] = None
     params: Optional[MappingType[str, Any]] = None
 
-    def to_request(
-        self: _Compiled,
-        default_path: str = '',
-        default_headers: Mapping = {},
-        default_params: Mapping = {},
-    ) -> Request:
+    def updated(self, updater: _Compiled) -> _Compiled:
+        return _Compiled(
+            path=or_default(updater.path, self.path),
+            headers=or_default(updater.headers, self.headers),
+            params=or_default(updater.params, self.params),
+        )
+
+    def to_request(self) -> Request:
         return Request(
-            path=or_default(self.path, default_path),
-            headers=or_default(self.headers, default_headers),
-            params=or_default(self.params, default_params),
+            path=or_default(self.path, ''),
+            headers=or_default(self.headers, {}),
+            params=or_default(self.params, {}),
         )
 
 
@@ -60,32 +62,17 @@ def _compile(obj: Any) -> _Compiled:
 
 
 class RequestCompiler:
-    def __init__(
-        self,
-        path: str = '',
-        headers: Mapping = {},
-        params: Mapping = {},
-    ):
-        self._path = path
-        self._headers = headers
-        self._params = params
+    def __init__(self, default: _Compiled = None):
+        self._default = default or _Compiled()
 
     def compile(self, obj: Any) -> Request:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)
-        return compiled.to_request(
-            default_path=self._path,
-            default_headers=self._headers,
-            default_params=self._params,
-        )
+        return self._default.updated(compiled).to_request()
 
     def of_default(self, obj: Any) -> RequestCompiler:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)
-        return RequestCompiler(
-            path=or_default(compiled.path, self._path),
-            headers=or_default(compiled.headers, self._headers),
-            params=or_default(compiled.params, self._params),
-        )
+        return RequestCompiler(default=self._default.updated(compiled))

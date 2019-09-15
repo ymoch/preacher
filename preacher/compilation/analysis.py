@@ -1,6 +1,6 @@
-from typing import Any, Callable
+from typing import Any
 
-from preacher.core.analysis import Analyzer, analyze_json_str, analyze_xml_str
+from preacher.core.analysis import Analysis, analyze_json_str, analyze_xml_str
 from .error import CompilationError
 
 
@@ -12,7 +12,7 @@ _ANALYSIS_MAP = {
 
 class AnalysisCompiler:
 
-    def compile(self, obj: Any) -> Callable[[str], Analyzer]:
+    def compile(self, obj: Any) -> Analysis:
         """`obj` should be a string."""
         if not isinstance(obj, str):
             raise CompilationError('Must be a string')

@@ -1,6 +1,6 @@
-from typing import Any, Callable, List
+from typing import Any, List
 
-from .analysis import Analyzer, analyze_json_str
+from .analysis import Analysis, analyze_json_str
 from .description import Description
 from .status import merge_statuses
 from .verification import Verification
@@ -11,7 +11,7 @@ class BodyDescription:
     def __init__(
         self,
         descriptions: List[Description] = [],
-        analyze: Callable[[str], Analyzer] = analyze_json_str,
+        analyze: Analysis = analyze_json_str,
     ):
         self._descriptions = descriptions
         self._analyze = analyze
