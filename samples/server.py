@@ -18,14 +18,9 @@ def pre_latency(seconds):
     return _latency
 
 
-@api.route('/text')
-def text(req, res) -> None:
-    res.text = 'text'
-
-
 @api.route('/json')
 @pre_latency(1.0)
-def foo(req, res) -> None:
+def json(req, res) -> None:
     res.media = {
         'foo': 'bar',
         'empty_string': '',
@@ -33,6 +28,30 @@ def foo(req, res) -> None:
         'list': [1, 2, 'A'],
         'now': datetime.now(timezone.utc).isoformat(),
     }
+
+
+@api.route('/xml')
+def xml(req, res) -> None:
+    res.headers['content-type'] = 'application/xml'
+    res.text = (
+'''<?xml version="1.0"?>
+<root>
+    <foo id="foo1">foo1-text</foo>
+    <foo id="foo2">foo2-text</foo>
+    <bar id="bar1">
+        <baz id="baz1"/>
+    </bar>
+    <bar id="bar2">
+        <baz id="baz2"/>
+    </bar>
+</root>
+'''
+    )    
+
+
+@api.route('/text')
+def text(req, res) -> None:
+    res.text = 'text'
 
 
 @api.route('/error/404')

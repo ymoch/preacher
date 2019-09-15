@@ -50,6 +50,26 @@ cases:
             - be_after: -2 minutes
             - be_after: 1 second  # Must be processed after 1 seconds.
 
+  - label: Returns an XML result
+    request: /xml
+    response:
+      status_code: 200
+      body:
+        analyze_as: xml
+        descriptions:
+          - describe:
+              xpath: /root/foo
+            should:
+              equal: foo1-text
+          - describe:
+              xpath: ./foo[1]/@id
+            should:
+              equal: foo1
+          - describe:
+              xpath: //baz/@id
+            should:
+              equal: baz1
+
   - label: Returns a failure result
     request:
       path: /error/404
