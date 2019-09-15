@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from time import sleep
@@ -5,7 +6,9 @@ from time import sleep
 import responder
 
 
-api = responder.API()
+api = responder.API(
+    templates_dir=os.path.join(os.path.dirname(__file__), 'templates'),
+)
 
 
 @api.route('/json')
@@ -21,20 +24,7 @@ def json(req, res) -> None:
 @api.route('/xml')
 def xml(req, res) -> None:
     res.headers['content-type'] = 'application/xml'
-    res.text = (
-'''<?xml version="1.0"?>
-<root>
-    <foo id="foo1">foo1-text</foo>
-    <foo id="foo2">foo2-text</foo>
-    <bar id="bar1">
-        <baz id="baz1"/>
-    </bar>
-    <bar id="bar2">
-        <baz id="baz2"/>
-    </bar>
-</root>
-'''
-    )    
+    res.text = api.template('sample.xml')
 
 
 @api.route('/later/{seconds}')
