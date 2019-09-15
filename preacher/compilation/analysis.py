@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any
 
 from preacher.core.analysis import Analysis, analyze_json_str, analyze_xml_str
 from .error import CompilationError

@@ -1,4 +1,4 @@
-from typing import Any, Callable, List
+from typing import Any, List
 
 from .analysis import Analysis, analyze_json_str
 from .description import Description
