@@ -1,38 +1,39 @@
-from datetime import datetime, timezone
-from functools import wraps
-from time import sleep
+import os
+from datetime import datetime, timedelta, timezone
 
 import responder
 
 
-api = responder.API()
-
-
-def pre_latency(seconds):
-    def _latency(func):
-        @wraps(func)
-        def _latency_func(*args, **kwargs):
-            sleep(seconds)
-            return func(*args, **kwargs)
-        return _latency_func
-    return _latency
-
-
-@api.route('/text')
-def text(req, res) -> None:
-    res.text = 'text'
+api = responder.API(
+    templates_dir=os.path.join(os.path.dirname(__file__), 'templates'),
+)
 
 
 @api.route('/json')
-@pre_latency(1.0)
-def foo(req, res) -> None:
+def json(req, res) -> None:
     res.media = {
         'foo': 'bar',
         'empty_string': '',
         'empty_list': [],
         'list': [1, 2, 'A'],
-        'now': datetime.now(timezone.utc).isoformat(),
     }
+
+
+@api.route('/xml')
+def xml(req, res) -> None:
+    res.headers['content-type'] = 'application/xml'
+    res.text = api.template('sample.xml')
+
+
+@api.route('/later/{seconds}')
+def now(req, res, *, seconds) -> None:
+    dt = datetime.now(timezone.utc) + timedelta(seconds=int(seconds))
+    res.media = {'now': dt.isoformat()}
+
+
+@api.route('/text')
+def text(req, res) -> None:
+    res.text = 'text'
 
 
 @api.route('/error/404')

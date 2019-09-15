@@ -16,7 +16,7 @@ Preacher
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Scenarios are written in `YAML`_ and `jq`_ queries
+Scenarios are written in `YAML`_ and bodies are analyzed `jq`_ or `XPath`_ queries
 so that any developers can write without learning toughly.
 
 
@@ -49,6 +49,9 @@ Here is a simple configuration example.
     default:
       request:
         path: /path
+      response:
+        body:
+          analyzed_as: json
     cases:
       - label: Simple
         request: /path/to/foo
@@ -62,7 +65,7 @@ Here is a simple configuration example.
         request:
           path: /path/to/foo
           headers:
-            Content-Type: application/json
+            user-agent: custom-value
           params:
             key1: value
             key2:
@@ -75,13 +78,14 @@ Here is a simple configuration example.
           headers:
             - describe: ."content-type"
               should:
-                equal_to: application-json
+                equal_to: application/xml
           body:
-            - describe:
-                jq: .foo
-              should:
-                - start_with: x
-                - end_with: y
+            analyzed_as: xml
+            descriptions:
+              - describe: /html/body/h1
+                should:
+                  - start_with: x
+                  - end_with: y
 
 Grammer
 -------
@@ -138,29 +142,56 @@ A ``ResponseDescription`` is a mapping that consists of below:
     - Response headers are validated as a mapping of names to values
       and can be descripted by `jq_` query (e.g. ``."content-type"``).
       *Note that Names are lower-cased* to normalize.
-- body: ``Description`` or ``List<Description>`` (Optional)
+- body: ``BodyDescription`` (Optional)
+    - A description that descript the response body.
+
+Body Description
+****************
+A ``BodyDescription`` is a mapping or a list.
+
+A mapping for ``BodyDescription`` has items below.
+
+- analyzed_as: ``String`` (Optional)
+    - The method to analyze the body. The default value is ``json``.
+    - When given ``json``, the body is analyzed as a JSON.
+    - When given ``xml``, the body is analyzed as an XML.
+- descriptions: ``Description`` or ``List<Description>``
     - Descriptions that descript the response body.
+
+When given a list, that is equivalent to ``{"descritptions": it}``.
 
 Description
 ***********
 A ``Description`` is a mapping that consists of below:
 
-- describe: ``String`` or ``Extraction``
+- describe: ``Extraction``
     - An extraction process.
-    - When given a string, that is equivalent to ``{"jq": it}``.
 - should: ``Predicate``, or ``List<Predicate>>`` (Optional)
-    - Predicates that match the extracted value.
+    - Predicates that match the descripted value.
 
 Extraction
 **********
-An ``Extraction`` is a mapping or a string.
 
-A mapping for ``Extraction`` has one of below:
+An Extraction is a mapping or a string.
 
-- jq: ``String``
+A mapping for Extraction has one of below:
+
+- jq: String
     - A `jq`_ query.
+- xpath: String
+    - A `XPath`_ query
 
-When fiven a string, that is equivalent to ``{"jq": it}``.
+When given a string, that is equivalent to {"jq": it}.
+
+Note that the extraction must be compatible for the body analysis.
+
++----------------------------+----+-------+
+| Body Analysis / Extraction | jq | xpath |
++============================+====+=======+
+| JSON                       |  o |     x |
++----------------------------+----+-------+
+| XML                        |  x |     o |
++----------------------------+----+-------+
 
 Predicate
 *********
@@ -227,9 +258,16 @@ Default
 A ``Default`` is a mapping that consists of below:
 
 - request: ``Request`` (Optional)
-    - A request to override the default request values.
-
+    - A request to overwrite the default request values.
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
+.. _XPATH: https://www.w3.org/TR/xpath/all/
 .. _pipenv: https://pipenv.readthedocs.io/
+
+License
+=======
+.. image:: https://img.shields.io/badge/License-MIT-brightgreen.svg
+    :target: https://opensource.org/licenses/MIT
+
+Copyright (c) 2019 Yu MOCHIZUKI

@@ -17,6 +17,7 @@ pyhamcrest = "^1.9"
 pyjq = "^2.3"
 requests = "^2.21"
 "ruamel.yaml" = "^0.15.89"
+lxml = "^4.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.3"
