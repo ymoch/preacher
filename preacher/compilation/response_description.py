@@ -6,10 +6,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Optional, List
 
-from preacher.core.body_description import BodyDescription
 from preacher.core.description import Description, Predicate
 from preacher.core.response_description import ResponseDescription
-from .body_description import BodyDescriptionCompiler
+from .body_description import BodyDescriptionCompiler, BodyDescriptionCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .predicate import PredicateCompiler
@@ -25,7 +24,7 @@ _KEY_BODY = 'body'
 class Compiled:
     status_code: Optional[List[Predicate]] = None
     headers: Optional[List[Description]] = None
-    body: Optional[BodyDescription] = None
+    body: Optional[BodyDescriptionCompiled] = None
 
     def updated(self, updater: Compiled) -> Compiled:
         return Compiled(
@@ -38,7 +37,7 @@ class Compiled:
         return ResponseDescription(
             status_code_predicates=or_default(self.status_code, []),
             headers_descriptions=or_default(self.headers, []),
-            body_description=self.body,
+            body_description=self.body.convert() if self.body else None,
         )
 
 
@@ -91,7 +90,7 @@ class ResponseDescriptionCompiler:
                 _KEY_BODY,
                 self._body_description_compiler.compile,
                 body_obj,
-            ).convert()
+            )
 
         return Compiled(status_code=status_code, headers=headers, body=body)
 
