@@ -93,6 +93,7 @@ class BodyDescriptionCompiler:
         desc_objs = obj.get(_KEY_DESCRIPTIONS)
         if desc_objs is None:
             # Compile as a description to be compatible.
+            # TODO: default values cannot have descriptions.
             return [self._description_compiler.compile(obj)]
 
         if not isinstance(desc_objs, list):

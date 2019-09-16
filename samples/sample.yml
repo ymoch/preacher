@@ -2,6 +2,7 @@ label: 'Scenario label'
 default:
   request:
     path: /json
+
 cases:
   - label: Returns a JSON result
     request:
