@@ -39,7 +39,7 @@ def test_given_empty_values(value, analysis_compiler, desc_compiler):
     desc = compiler.compile(value)
     assert desc.descriptions == []
 
-    analysis_compiler.compile.assert_called_once_with('json')
+    analysis_compiler.compile.assert_not_called()
     desc_compiler.compile.assert_not_called()
 
 
@@ -51,7 +51,7 @@ def test_given_a_list(analysis_compiler, desc_compiler):
     desc = compiler.compile(['d1', 'd2'])
     assert desc.descriptions == [sentinel.desc, sentinel.desc]
 
-    analysis_compiler.compile.assert_called_once_with('json')
+    analysis_compiler.compile.assert_not_called()
     desc_compiler.compile.assert_has_calls([call('d1'), call('d2')])
 
 

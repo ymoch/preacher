@@ -1,4 +1,6 @@
-from typing import Any, List
+from __future__ import annotations
+
+from typing import Any, List, Optional
 
 from .analysis import Analysis, analyze_json_str
 from .description import Description
@@ -10,11 +12,11 @@ class BodyDescription:
 
     def __init__(
         self,
-        descriptions: List[Description] = [],
         analyze: Analysis = analyze_json_str,
+        descriptions: List[Description] = [],
     ):
-        self._descriptions = descriptions
         self._analyze = analyze
+        self._descriptions = descriptions
 
     def verify(self, body: str, **kwargs: Any) -> Verification:
         try:
@@ -28,6 +30,19 @@ class BodyDescription:
         ]
         status = merge_statuses(v.status for v in verifications)
         return Verification(status=status, children=verifications)
+
+    def replace(
+        self,
+        analyze: Optional[Analysis] = None,
+        descriptions: Optional[List[Description]] = None,
+    ) -> BodyDescription:
+        return BodyDescription(
+            descriptions=(
+                descriptions if descriptions is not None
+                else self._descriptions
+            ),
+            analyze=analyze if analyze is not None else self._analyze,
+        )
 
     @property
     def descriptions(self) -> List[Description]:
