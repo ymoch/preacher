@@ -66,7 +66,7 @@ class ResponseDescriptionCompiler:
 
     def compile(self, obj: Any) -> ResponseDescription:
         compiled = self._compile(obj)
-        return compiled.to_response_description()
+        return self._default.updated(compiled).to_response_description()
 
     def _compile(self, obj: Any):
         """`obj` should be a mapping."""
@@ -82,17 +82,7 @@ class ResponseDescriptionCompiler:
         headers = None
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
-            if isinstance(headers_obj, Mapping):
-                headers_obj = [headers_obj]
-            if not isinstance(headers_obj, list):
-                message = 'Must be a list or a mapping'
-                raise CompilationError(message=message, path=[_KEY_HEADERS])
-
-            headers = list(map_on_key(
-                _KEY_HEADERS,
-                self._description_compiler.compile,
-                headers_obj,
-            ))
+            headers = self._compile_headers(headers_obj)
 
         body = None
         body_obj = obj.get(_KEY_BODY)
@@ -111,5 +101,17 @@ class ResponseDescriptionCompiler:
         return list(map_on_key(
             _KEY_STATUS_CODE,
             self._predicate_compiler.compile,
+            obj,
+        ))
+
+    def _compile_headers(self, obj: Any) -> List[Description]:
+        if isinstance(obj, Mapping):
+            obj = [obj]
+        if not isinstance(obj, list):
+            message = 'Must be a list or a mapping'
+            raise CompilationError(message=message, path=[_KEY_HEADERS])
+        return list(map_on_key(
+            _KEY_HEADERS,
+            self._description_compiler.compile,
             obj,
         ))
