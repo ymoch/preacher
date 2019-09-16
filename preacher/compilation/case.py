@@ -68,4 +68,12 @@ class CaseCompiler:
             self._request_compiler.of_default,
             obj.get(_KEY_REQUEST, {}),
         )
-        return CaseCompiler(request_compiler=request_compiler)
+        response_compiler = run_on_key(
+            _KEY_RESPONSE,
+            self._response_compiler.of_default,
+            obj.get(_KEY_RESPONSE, {}),
+        )
+        return CaseCompiler(
+            request_compiler=request_compiler,
+            response_compiler=response_compiler,
+        )
