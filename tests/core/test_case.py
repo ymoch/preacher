@@ -47,14 +47,14 @@ def test_when_given_an_response(response):
     case = Case(
         label='Response should be unstable',
         request=MagicMock(return_value=response),
-        response_description=MagicMock(
+        response_description=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
                 status=Status.UNSTABLE,
                 status_code=Verification.succeed(),
                 headers=Verification.succeed(),
                 body=Verification(status=Status.UNSTABLE)
             ),
-        ),
+        )),
     )
     verification = case(base_url='base-url', retry=1)
     assert verification.label == 'Response should be unstable'
@@ -63,7 +63,7 @@ def test_when_given_an_response(response):
     assert verification.response.status == Status.UNSTABLE
     assert verification.response.body.status == Status.UNSTABLE
 
-    case.response_description.assert_called_with(
+    case.response_description.verify.assert_called_with(
         status_code=402,
         headers={},
         body='body',
@@ -75,7 +75,7 @@ def test_when_retrying(response):
     case = Case(
         label='Succeeds',
         request=MagicMock(side_effect=[RuntimeError(), response, response]),
-        response_description=MagicMock(
+        response_description=MagicMock(verify=MagicMock(
             side_effect=[
                 ResponseVerification(
                     status=Status.UNSTABLE,
@@ -90,10 +90,10 @@ def test_when_retrying(response):
                     body=Verification.succeed(),
                 ),
             ]
-        ),
+        )),
     )
     verification = case(base_url='base-url', retry=2)
     assert verification.status == Status.SUCCESS
 
     assert case.request.call_count == 3
-    assert case.response_description.call_count == 2
+    assert case.response_description.verify.call_count == 2

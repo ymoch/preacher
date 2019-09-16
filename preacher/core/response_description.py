@@ -33,7 +33,7 @@ class ResponseDescription:
         self._body_description = body_description
         self._analyze_headers = analyze_headers
 
-    def __call__(
+    def verify(
         self,
         status_code: int,
         headers: Mapping[str, str],

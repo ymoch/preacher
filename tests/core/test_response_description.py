@@ -10,7 +10,7 @@ from preacher.core.verification import Verification
 
 def test_when_given_no_description():
     description = ResponseDescription()
-    verification = description(status_code=200, headers={}, body='xxx')
+    verification = description.verify(status_code=200, headers={}, body='xxx')
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.SKIPPED
     assert verification.status == Status.SKIPPED
@@ -20,7 +20,7 @@ def test_when_header_verification_fails():
     headers_descs = [MagicMock(side_effect=RuntimeError('message'))]
     description = ResponseDescription(headers_descriptions=headers_descs)
 
-    verification = description(status_code=200, headers={}, body='xxx')
+    verification = description.verify(status_code=200, headers={}, body='xxx')
     assert verification.headers.status == Status.FAILURE
 
 
@@ -40,7 +40,12 @@ def test_when_given_descriptions():
         body_description=body_description,
         analyze_headers=analyze_headers,
     )
-    verification = description(status_code=200, headers={}, body='{}', k='v')
+    verification = description.verify(
+        status_code=200,
+        headers={},
+        body='{}',
+        k='v',
+    )
     assert verification.status == Status.UNSTABLE
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.UNSTABLE
@@ -81,5 +86,5 @@ def test_merge_statuses(
         headers_descriptions=headers_descriptions,
         body_description=body_description,
     )
-    verification = description(status_code=200, headers={}, body='{}')
+    verification = description.verify(status_code=200, headers={}, body='{}')
     assert verification.status == expected

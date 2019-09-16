@@ -54,7 +54,7 @@ class Case:
             )
         request_verification = Verification.succeed()
 
-        response_verification = self._response_description(
+        response_verification = self._response_description.verify(
             status_code=response.status_code,
             headers=response.headers,
             body=response.body,
