@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Optional, List, Iterator
+from typing import Any, Optional, List
 
 from preacher.core.body_description import BodyDescription
 from preacher.core.description import Description, Predicate
@@ -75,15 +75,9 @@ class ResponseDescriptionCompiler:
             raise CompilationError('Must be a mapping')
 
         status_code = None
-        status_code_predicates_obj = obj.get(_KEY_STATUS_CODE)
-        if status_code_predicates_obj is not None:
-            if not isinstance(status_code_predicates_obj, list):
-                status_code_predicates_obj = [status_code_predicates_obj]
-            status_code = list(map_on_key(
-                _KEY_STATUS_CODE,
-                self._predicate_compiler.compile,
-                status_code_predicates_obj,
-            ))
+        status_code_obj = obj.get(_KEY_STATUS_CODE)
+        if status_code_obj is not None:
+            status_code = self._compile_status_code(status_code_obj)
 
         headers = None
         headers_obj = obj.get(_KEY_HEADERS)
@@ -111,12 +105,11 @@ class ResponseDescriptionCompiler:
 
         return Compiled(status_code=status_code, headers=headers, body=body)
 
-    def _compile_descs(self, key: str, obj: Any) -> Iterator[Description]:
-        desc_objs = obj.get(key, [])
-        if isinstance(desc_objs, Mapping):
-            desc_objs = [desc_objs]
-        if not isinstance(desc_objs, list):
-            message = f'ResponseDescription.{key} must be a list or a mapping'
-            raise CompilationError(message=message, path=[key])
-
-        return map_on_key(key, self._description_compiler.compile, desc_objs)
+    def _compile_status_code(self, obj: Any) -> List[Predicate]:
+        if not isinstance(obj, list):
+            obj = [obj]
+        return list(map_on_key(
+            _KEY_STATUS_CODE,
+            self._predicate_compiler.compile,
+            obj,
+        ))
