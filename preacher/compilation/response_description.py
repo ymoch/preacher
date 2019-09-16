@@ -63,6 +63,17 @@ class ResponseDescriptionCompiler:
             )
         )
 
+    def of_default(self, obj: Any) -> ResponseDescriptionCompiler:
+        compiled = self._compile(obj)
+        return ResponseDescriptionCompiler(
+            default=compiled,
+            predicate_compiler=self._predicate_compiler,
+            description_compiler=self._description_compiler,
+            body_description_compiler=(
+                self._body_description_compiler.of_default(compiled.body)
+            ),
+        )
+
     def compile(self, obj: Any) -> ResponseDescription:
         compiled = self._compile(obj)
         return self._default.replace(compiled).convert()

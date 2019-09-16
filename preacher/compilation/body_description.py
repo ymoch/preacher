@@ -52,15 +52,12 @@ class BodyDescriptionCompiler:
             description_compiler or DescriptionCompiler()
         )
 
-    def of_default(self, obj: Any) -> BodyDescriptionCompiler:
-        """
-        `obj` should be a mapping or a list.
-        An empty list results in an empty description.
-        """
-
-        compiled = self.compile(obj)
+    def of_default(
+        self,
+        default: BodyDescriptionCompiled,
+    ) -> BodyDescriptionCompiler:
         return BodyDescriptionCompiler(
-            default=compiled,
+            default=default,
             analysis_compiler=self._analysis_compiler,
             description_compiler=self._description_compiler,
         )
