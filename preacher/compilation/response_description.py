@@ -26,20 +26,14 @@ class Compiled:
     headers: Optional[List[Description]] = None
     body: Optional[BodyDescriptionCompiled] = None
 
-    def updated(self, updater: Compiled) -> Compiled:
-        body = updater.body
-        if self.body:
-            body = self.body
-            if updater.body:
-                body = self.body.replace(updater.body)
-
+    def replace(self, replacer: Compiled) -> Compiled:
         return Compiled(
-            status_code=or_default(updater.status_code, self.status_code),
-            headers=or_default(updater.headers, self.headers),
-            body=body,
+            status_code=or_default(replacer.status_code, self.status_code),
+            headers=or_default(replacer.headers, self.headers),
+            body=or_default(replacer.body, self.body),
         )
 
-    def to_response_description(self) -> ResponseDescription:
+    def convert(self) -> ResponseDescription:
         return ResponseDescription(
             status_code_predicates=or_default(self.status_code, []),
             headers_descriptions=or_default(self.headers, []),
@@ -71,7 +65,7 @@ class ResponseDescriptionCompiler:
 
     def compile(self, obj: Any) -> ResponseDescription:
         compiled = self._compile(obj)
-        return self._default.updated(compiled).to_response_description()
+        return self._default.replace(compiled).convert()
 
     def _compile(self, obj: Any):
         """`obj` should be a mapping."""
