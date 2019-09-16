@@ -34,7 +34,6 @@ class BodyDescriptionCompiler:
 
         if isinstance(obj, list):
             return self.compile({_KEY_DESCRIPTIONS: obj})
-
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping or a list')
 
@@ -48,7 +47,10 @@ class BodyDescriptionCompiler:
         if desc_objs is None:
             # Compile as a description to be compatible.
             description = self._description_compiler.compile(obj)
-            return BodyDescription(descriptions=[description])
+            return BodyDescription(
+                descriptions=[description],
+                analyze=analyze,
+            )
 
         if not isinstance(desc_objs, list):
             desc_objs = [desc_objs]
