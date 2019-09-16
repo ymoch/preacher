@@ -27,10 +27,16 @@ class Compiled:
     body: Optional[BodyDescriptionCompiled] = None
 
     def updated(self, updater: Compiled) -> Compiled:
+        body = updater.body
+        if self.body:
+            body = self.body
+            if updater.body:
+                body = self.body.replace(updater.body)
+
         return Compiled(
             status_code=or_default(updater.status_code, self.status_code),
             headers=or_default(updater.headers, self.headers),
-            body=or_default(updater.body, self.body),
+            body=body,
         )
 
     def to_response_description(self) -> ResponseDescription:

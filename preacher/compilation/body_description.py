@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections.abc import Mapping
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from typing import Any, List, Optional
 
 from preacher.core.analysis import Analysis, analyze_json_str
@@ -19,6 +21,13 @@ _KEY_DESCRIPTIONS = 'descriptions'
 class BodyDescriptionCompiled:
     analyze: Optional[Analysis] = None
     descriptions: Optional[List[Description]] = None
+
+    def replace(
+        self,
+        replacer: BodyDescriptionCompiled
+    ) -> BodyDescriptionCompiled:
+        replacements = {k: v for (k, v) in asdict(replacer) if v is not None}
+        return replace(self, **replacements)
 
     def convert(self) -> BodyDescription:
         return BodyDescription(
