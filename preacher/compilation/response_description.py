@@ -91,7 +91,7 @@ class ResponseDescriptionCompiler:
                 _KEY_BODY,
                 self._body_description_compiler.compile,
                 body_obj,
-            )
+            ).convert()
 
         return Compiled(status_code=status_code, headers=headers, body=body)
 

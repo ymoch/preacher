@@ -2,7 +2,10 @@ from unittest.mock import MagicMock, call, sentinel
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.body_description import BodyDescriptionCompiler
+from preacher.compilation.body_description import (
+    BodyDescriptionCompiled,
+    BodyDescriptionCompiler,
+)
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
 from preacher.compilation.predicate import PredicateCompiler
@@ -29,10 +32,13 @@ def desc_compiler() -> DescriptionCompiler:
 
 @fixture
 def body_desc_compiler() -> BodyDescriptionCompiler:
-    return MagicMock(
-        spec=BodyDescriptionCompiler,
-        compile=MagicMock(return_value=sentinel.body_desc),
-    )
+    compiled = MagicMock(spec=BodyDescriptionCompiled)
+    compiled.convert.return_value = sentinel.body_desc
+
+    compiler = MagicMock(spec=BodyDescriptionCompiler)
+    compiler.compile.return_value = compiled
+
+    return compiler
 
 
 def test_given_an_empty_mapping(

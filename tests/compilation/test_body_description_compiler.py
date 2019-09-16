@@ -36,7 +36,7 @@ def test_given_empty_values(value, analysis_compiler, desc_compiler):
         analysis_compiler=analysis_compiler,
         description_compiler=desc_compiler,
     )
-    desc = compiler.compile(value)
+    desc = compiler.compile(value).convert()
     assert desc.descriptions == []
 
     analysis_compiler.compile.assert_not_called()
@@ -48,7 +48,7 @@ def test_given_a_list(analysis_compiler, desc_compiler):
         analysis_compiler=analysis_compiler,
         description_compiler=desc_compiler,
     )
-    desc = compiler.compile(['d1', 'd2'])
+    desc = compiler.compile(['d1', 'd2']).convert()
     assert desc.descriptions == [sentinel.desc, sentinel.desc]
 
     analysis_compiler.compile.assert_not_called()
@@ -60,7 +60,7 @@ def test_given_a_mapping_as_description(analysis_compiler, desc_compiler):
         analysis_compiler=analysis_compiler,
         description_compiler=desc_compiler,
     )
-    desc = compiler.compile({'analyze_as': 'xml', 'describe': '.'})
+    desc = compiler.compile({'analyze_as': 'xml', 'describe': '.'}).convert()
     assert desc.descriptions == [sentinel.desc]
 
     analysis_compiler.compile.assert_called_once_with('xml')
@@ -74,7 +74,9 @@ def test_given_a_mapping_of_single_value(analysis_compiler, desc_compiler):
         analysis_compiler=analysis_compiler,
         description_compiler=desc_compiler,
     )
-    desc = compiler.compile({'analyze_as': 'html', 'descriptions': 'd1'})
+    desc = compiler.compile(
+        {'analyze_as': 'html', 'descriptions': 'd1'}
+    ).convert()
     assert desc.descriptions == [sentinel.desc]
 
     analysis_compiler.compile.assert_called_once_with('html')
@@ -88,7 +90,7 @@ def test_given_a_mapping(analysis_compiler, desc_compiler):
     )
     desc = compiler.compile(
         {'analyze_as': 'text', 'descriptions': ['d1', 'd2']}
-    )
+    ).convert()
     assert desc.descriptions == [sentinel.desc, sentinel.desc]
 
     analysis_compiler.compile.assert_called_once_with('text')

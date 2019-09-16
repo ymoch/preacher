@@ -41,7 +41,7 @@ class BodyDescriptionCompiler:
             description_compiler or DescriptionCompiler()
         )
 
-    def compile(self, obj: Any) -> BodyDescription:
+    def compile(self, obj: Any) -> BodyDescriptionCompiled:
         """
         `obj` should be a mapping or a list.
         An empty list results in an empty description.
@@ -66,7 +66,7 @@ class BodyDescriptionCompiler:
             self._compile_descriptions(obj)
         )
 
-        return replace(self._default, **replacements).convert()
+        return replace(self._default, **replacements)
 
     def _compile_descriptions(self, obj: Any) -> List[Description]:
         desc_objs = obj.get(_KEY_DESCRIPTIONS)

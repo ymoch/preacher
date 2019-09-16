@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional
+from typing import Any, List
 
 from .analysis import Analysis, analyze_json_str
 from .description import Description
