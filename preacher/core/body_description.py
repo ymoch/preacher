@@ -31,19 +31,6 @@ class BodyDescription:
         status = merge_statuses(v.status for v in verifications)
         return Verification(status=status, children=verifications)
 
-    def replace(
-        self,
-        analyze: Optional[Analysis] = None,
-        descriptions: Optional[List[Description]] = None,
-    ) -> BodyDescription:
-        return BodyDescription(
-            descriptions=(
-                descriptions if descriptions is not None
-                else self._descriptions
-            ),
-            analyze=analyze if analyze is not None else self._analyze,
-        )
-
     @property
     def descriptions(self) -> List[Description]:
         return self._descriptions

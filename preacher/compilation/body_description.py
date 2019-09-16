@@ -1,27 +1,41 @@
 from collections.abc import Mapping
+from dataclasses import dataclass, replace
 from typing import Any, List, Optional
 
+from preacher.core.analysis import Analysis, analyze_json_str
 from preacher.core.body_description import BodyDescription
 from preacher.core.description import Description
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError
-from .util import map_on_key, run_on_key
+from .util import map_on_key, or_default, run_on_key
 
 
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
 
 
+@dataclass(frozen=True)
+class BodyDescriptionCompiled:
+    analyze: Optional[Analysis] = None
+    descriptions: Optional[List[Description]] = None
+
+    def convert(self) -> BodyDescription:
+        return BodyDescription(
+            analyze=or_default(self.analyze, analyze_json_str),
+            descriptions=or_default(self.descriptions, []),
+        )
+
+
 class BodyDescriptionCompiler:
 
     def __init__(
         self,
-        default: BodyDescription = None,
+        default: BodyDescriptionCompiled = None,
         analysis_compiler: Optional[AnalysisCompiler] = None,
         description_compiler: Optional[DescriptionCompiler] = None,
     ):
-        self._default = default or BodyDescription()
+        self._default = default or BodyDescriptionCompiled()
         self._analysis_compiler = analysis_compiler or AnalysisCompiler()
         self._description_compiler = (
             description_compiler or DescriptionCompiler()
@@ -38,21 +52,21 @@ class BodyDescriptionCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping or a list')
 
-        analyze = None
+        replacements = {}
+
         analyze_obj = obj.get(_KEY_ANALYSIS)
         if analyze_obj is not None:
-            analyze = run_on_key(
+            replacements['analyze'] = run_on_key(
                 _KEY_ANALYSIS,
                 self._analysis_compiler.compile,
                 analyze_obj,
             )
 
-        descriptions = self._compile_descriptions(obj)
-
-        return self._default.replace(
-            analyze=analyze,
-            descriptions=descriptions,
+        replacements['descriptions'] = (  # type: ignore
+            self._compile_descriptions(obj)
         )
+
+        return replace(self._default, **replacements).convert()
 
     def _compile_descriptions(self, obj: Any) -> List[Description]:
         desc_objs = obj.get(_KEY_DESCRIPTIONS)
