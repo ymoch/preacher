@@ -55,20 +55,6 @@ def test_given_a_list(analysis_compiler, desc_compiler):
     desc_compiler.compile.assert_has_calls([call('d1'), call('d2')])
 
 
-def test_given_a_mapping_as_description(analysis_compiler, desc_compiler):
-    compiler = BodyDescriptionCompiler(
-        analysis_compiler=analysis_compiler,
-        description_compiler=desc_compiler,
-    )
-    desc = compiler.compile({'analyze_as': 'xml', 'describe': '.'}).convert()
-    assert desc.descriptions == [sentinel.desc]
-
-    analysis_compiler.compile.assert_called_once_with('xml')
-    desc_compiler.compile.assert_called_once_with(
-        {'analyze_as': 'xml', 'describe': '.'},
-    )
-
-
 def test_given_a_mapping_of_single_value(analysis_compiler, desc_compiler):
     compiler = BodyDescriptionCompiler(
         analysis_compiler=analysis_compiler,

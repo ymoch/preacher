@@ -83,24 +83,20 @@ class BodyDescriptionCompiler:
                 analyze_obj,
             )
 
-        replacements['descriptions'] = (  # type: ignore
-            self._compile_descriptions(obj)
-        )
+        descs_obj = obj.get(_KEY_DESCRIPTIONS)
+        if descs_obj is not None:
+            replacements['descriptions'] = (  # type: ignore
+                self._compile_descriptions(descs_obj)
+            )
 
         return replace(self._default, **replacements)
 
     def _compile_descriptions(self, obj: Any) -> List[Description]:
-        desc_objs = obj.get(_KEY_DESCRIPTIONS)
-        if desc_objs is None:
-            # Compile as a description to be compatible.
-            # TODO: default values cannot have descriptions.
-            return [self._description_compiler.compile(obj)]
-
-        if not isinstance(desc_objs, list):
-            desc_objs = [desc_objs]
+        if not isinstance(obj, list):
+            obj = [obj]
 
         return list(map_on_key(
             _KEY_DESCRIPTIONS,
             self._description_compiler.compile,
-            desc_objs,
+            obj,
         ))
