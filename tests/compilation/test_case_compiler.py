@@ -20,10 +20,13 @@ def request_compiler() -> RequestCompiler:
 
 @fixture
 def response_compiler() -> ResponseDescriptionCompiler:
-    return MagicMock(
-        spec=ResponseDescriptionCompiler,
-        compile=MagicMock(return_value=sentinel.response_description),
-    )
+    compiled = MagicMock()
+    compiled.convert.return_value = sentinel.response_description
+
+    compiler = MagicMock(spec=ResponseDescriptionCompiler)
+    compiler.compile.return_value = compiled
+
+    return compiler
 
 
 @mark.parametrize('value, expected_suffix', (

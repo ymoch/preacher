@@ -63,20 +63,19 @@ class ResponseDescriptionCompiler:
             )
         )
 
-    def of_default(self, obj: Any) -> ResponseDescriptionCompiler:
-        compiled = self._compile(obj)
+    def of_default(self, default: Compiled) -> ResponseDescriptionCompiler:
         return ResponseDescriptionCompiler(
-            default=compiled,
+            default=default,
             predicate_compiler=self._predicate_compiler,
             description_compiler=self._description_compiler,
             body_description_compiler=(
-                self._body_description_compiler.of_default(compiled.body)
+                self._body_description_compiler.of_default(default.body)
             ),
         )
 
-    def compile(self, obj: Any) -> ResponseDescription:
+    def compile(self, obj: Any) -> Compiled:
         compiled = self._compile(obj)
-        return self._default.replace(compiled).convert()
+        return self._default.replace(compiled)
 
     def _compile(self, obj: Any):
         """`obj` should be a mapping."""

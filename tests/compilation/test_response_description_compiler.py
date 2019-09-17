@@ -51,7 +51,7 @@ def test_given_an_empty_mapping(
         description_compiler=desc_compiler,
         body_description_compiler=body_desc_compiler,
     )
-    response_description = compiler.compile({})
+    response_description = compiler.compile({}).convert()
     assert response_description.status_code_predicates == []
     assert response_description.headers_descriptions == []
     assert response_description.body_description is None
@@ -88,7 +88,7 @@ def test_given_simple_values(
         'status_code': 402,
         'headers': {'k1': 'v1'},
         'body': sentinel.body,
-    })
+    }).convert()
     assert response_description.status_code_predicates == [sentinel.predicate]
     assert response_description.body_description == sentinel.body_desc
     pred_compiler.compile.assert_called_once_with(402)
@@ -109,7 +109,7 @@ def test_given_fill_values(
     response_description = compiler.compile({
         'status_code': [{'be_greater_than': 0}, {'be_less_than': 400}],
         'body': sentinel.body,
-    })
+    }).convert()
     assert response_description.status_code_predicates == [
         sentinel.predicate,
         sentinel.predicate,

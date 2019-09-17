@@ -42,7 +42,7 @@ class BodyDescriptionCompiler:
 
     def __init__(
         self,
-        default: BodyDescriptionCompiled = None,
+        default: Optional[BodyDescriptionCompiled] = None,
         analysis_compiler: Optional[AnalysisCompiler] = None,
         description_compiler: Optional[DescriptionCompiler] = None,
     ):
@@ -54,7 +54,7 @@ class BodyDescriptionCompiler:
 
     def of_default(
         self,
-        default: BodyDescriptionCompiled,
+        default: Optional[BodyDescriptionCompiled],
     ) -> BodyDescriptionCompiler:
         return BodyDescriptionCompiler(
             default=default,
