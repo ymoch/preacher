@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, call, sentinel
 from pytest import fixture, mark, raises
 
 from preacher.compilation.body_description import (
-    BodyDescriptionCompiled,
     BodyDescriptionCompiler,
+    Compiled as BodyCompiled,
 )
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
@@ -33,7 +33,7 @@ def desc_compiler() -> DescriptionCompiler:
 
 @fixture
 def body_desc_compiler() -> BodyDescriptionCompiler:
-    compiled = MagicMock(spec=BodyDescriptionCompiled)
+    compiled = MagicMock(spec=BodyCompiled)
     compiled.convert.return_value = sentinel.body_desc
 
     compiler = MagicMock(spec=BodyDescriptionCompiler)

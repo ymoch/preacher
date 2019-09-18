@@ -8,7 +8,7 @@ from typing import Any, Optional, List
 
 from preacher.core.description import Description, Predicate
 from preacher.core.response_description import ResponseDescription
-from .body_description import BodyDescriptionCompiler, BodyDescriptionCompiled
+from .body_description import BodyDescriptionCompiler, Compiled as BodyCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .predicate import PredicateCompiler
@@ -24,7 +24,7 @@ _KEY_BODY = 'body'
 class Compiled:
     status_code: Optional[List[Predicate]] = None
     headers: Optional[List[Description]] = None
-    body: Optional[BodyDescriptionCompiled] = None
+    body: Optional[BodyCompiled] = None
 
     def replace(self, replacer: Compiled) -> Compiled:
         return Compiled(
