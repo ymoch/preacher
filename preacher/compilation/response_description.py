@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Optional, List
 
 from preacher.core.description import Description, Predicate
@@ -25,13 +25,6 @@ class Compiled:
     status_code: Optional[List[Predicate]] = None
     headers: Optional[List[Description]] = None
     body: Optional[BodyCompiled] = None
-
-    def replace(self, replacer: Compiled) -> Compiled:
-        return Compiled(
-            status_code=or_default(replacer.status_code, self.status_code),
-            headers=or_default(replacer.headers, self.headers),
-            body=or_default(replacer.body, self.body),
-        )
 
     def convert(self) -> ResponseDescription:
         return ResponseDescription(
@@ -74,35 +67,34 @@ class ResponseDescriptionCompiler:
         )
 
     def compile(self, obj: Any) -> Compiled:
-        compiled = self._compile(obj)
-        return self._default.replace(compiled)
-
-    def _compile(self, obj: Any):
         """`obj` should be a mapping."""
 
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        status_code = None
+        replacements = {}
+
         status_code_obj = obj.get(_KEY_STATUS_CODE)
         if status_code_obj is not None:
-            status_code = self._compile_status_code(status_code_obj)
+            replacements['status_code'] = (
+                self._compile_status_code(status_code_obj)
+            )
 
-        headers = None
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
-            headers = self._compile_headers(headers_obj)
+            replacements['headers'] = (  # type: ignore
+                self._compile_headers(headers_obj)
+            )
 
-        body = None
         body_obj = obj.get(_KEY_BODY)
         if body_obj is not None:
-            body = run_on_key(
+            replacements['body'] = run_on_key(  # type: ignore
                 _KEY_BODY,
                 self._body_description_compiler.compile,
                 body_obj,
             )
 
-        return Compiled(status_code=status_code, headers=headers, body=body)
+        return replace(self._default, **replacements)
 
     def _compile_status_code(self, obj: Any) -> List[Predicate]:
         if not isinstance(obj, list):
