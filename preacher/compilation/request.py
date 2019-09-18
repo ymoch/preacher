@@ -75,4 +75,4 @@ class RequestCompiler:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)
-        return RequestCompiler(default=self._default.updated(compiled))
+        return RequestCompiler(default=compiled)
