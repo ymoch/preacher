@@ -5,14 +5,14 @@ from pytest import fixture, mark
 from preacher.compilation.analysis import AnalysisCompiler
 from preacher.compilation.body_description import (
     BodyDescriptionCompiler,
-    Compiled as BodyCompiled,
+    Compiled,
 )
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
 
 
 @fixture
-def analysis_compiler():
+def analysis_compiler() -> AnalysisCompiler:
     return MagicMock(
         spec=AnalysisCompiler,
         compile=MagicMock(return_value=sentinel.analyze),
@@ -20,7 +20,7 @@ def analysis_compiler():
 
 
 @fixture
-def desc_compiler():
+def desc_compiler() -> DescriptionCompiler:
     return MagicMock(
         spec=DescriptionCompiler,
         compile=MagicMock(return_value=sentinel.desc),
@@ -28,9 +28,8 @@ def desc_compiler():
 
 
 @fixture
-def default():
-    return MagicMock(
-        spec=BodyCompiled,
+def default() -> Compiled:
+    return Compiled(
         analyze=sentinel.default_analyse,
         descriptions=[sentinel.default_description]
     )
@@ -93,3 +92,15 @@ def test_given_a_mapping(analysis_compiler, desc_compiler, default):
 
     analysis_compiler.compile.assert_called_once_with('text')
     desc_compiler.compile.assert_has_calls([call('d1'), call('d2')])
+
+
+def test_given_default(analysis_compiler, desc_compiler, default):
+    compiler = BodyDescriptionCompiler(
+        analysis_compiler=analysis_compiler,
+        description_compiler=desc_compiler,
+    ).of_default(default)
+    compiled = compiler.compile({})
+    assert compiled == default
+
+    analysis_compiler.compile.assert_not_called()
+    desc_compiler.compile.assert_not_called()
