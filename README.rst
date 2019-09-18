@@ -259,6 +259,8 @@ A ``Default`` is a mapping that consists of below:
 
 - request: ``Request`` (Optional)
     - A request to overwrite the default request values.
+- response: ``ResponseDescription`` (Optional)
+    - A response description to overwrite the default response description values.
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
