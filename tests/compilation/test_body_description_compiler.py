@@ -3,7 +3,10 @@ from unittest.mock import MagicMock, call, sentinel
 from pytest import fixture, mark
 
 from preacher.compilation.analysis import AnalysisCompiler
-from preacher.compilation.body_description import BodyDescriptionCompiler
+from preacher.compilation.body_description import (
+    BodyDescriptionCompiler,
+    Compiled as BodyCompiled,
+)
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
 
@@ -24,13 +27,22 @@ def desc_compiler():
     )
 
 
+@fixture
+def default():
+    return MagicMock(
+        spec=BodyCompiled,
+        analyze=sentinel.default_analyse,
+        descriptions=[sentinel.default_description]
+    )
+
+
 @mark.xfail(raises=CompilationError)
 @mark.parametrize('value', (None, 0, ''))
 def test_given_invalid_values(value):
     BodyDescriptionCompiler().compile(value)
 
 
-@mark.parametrize('value', ([],))
+@mark.parametrize('value', ([], {}))
 def test_given_empty_values(value, analysis_compiler, desc_compiler):
     compiler = BodyDescriptionCompiler(
         analysis_compiler=analysis_compiler,
@@ -69,11 +81,11 @@ def test_given_a_mapping_of_single_value(analysis_compiler, desc_compiler):
     desc_compiler.compile.assert_called_once_with('d1')
 
 
-def test_given_a_mapping(analysis_compiler, desc_compiler):
+def test_given_a_mapping(analysis_compiler, desc_compiler, default):
     compiler = BodyDescriptionCompiler(
         analysis_compiler=analysis_compiler,
         description_compiler=desc_compiler,
-    )
+    ).of_default(default)
     desc = compiler.compile(
         {'analyze_as': 'text', 'descriptions': ['d1', 'd2']}
     ).convert()

@@ -22,15 +22,6 @@ class Compiled:
     analyze: Optional[Analysis] = None
     descriptions: Optional[List[Description]] = None
 
-    def replace(
-        self,
-        replacer: Compiled
-    ) -> Compiled:
-        return Compiled(
-            analyze=or_default(replacer.analyze, self.analyze),
-            descriptions=or_default(replacer.descriptions, self.descriptions),
-        )
-
     def convert(self) -> BodyDescription:
         return BodyDescription(
             analyze=or_default(self.analyze, analyze_json_str),
