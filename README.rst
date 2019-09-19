@@ -38,10 +38,10 @@ Preacher prefers:
 
 Comparing to other similar tools:
 
-- [Postman](https://www.getpostman.com/) gives rich insights on Web APIs.
+- `Postman <https://www.getpostman.com/>`_ gives rich insights on Web APIs.
   On the other hand, testing with CLI tools and configuration files is
   more suitable for CI automation.
-- [Tavern](https://tavern.readthedocs.io/en/latest/) is more suitable for testing
+- `Tavern <https://tavern.readthedocs.io/en/latest/>`_ is more suitable for testing
   HTTP interactions. It seems to be more suitable for testing simple systems
   or testing without real backends than Preacher because of simple validators.
 
