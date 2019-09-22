@@ -35,5 +35,20 @@ def analyzer():
 ))
 def test_extract(query, expected, analyzer):
     extractor = XPathExtractor(query)
+    assert not extractor.multiple
+
+    actual = extractor.extract(analyzer)
+    assert actual == expected
+
+
+@mark.parametrize('query, expected', (
+    ('/root/xxx', None),
+    ('/root/foo', ['foo-text', '\n        ']),
+    ('./foo/bar', ['text']),
+))
+def test_extract_multiple(query, expected, analyzer):
+    extractor = XPathExtractor(query, multiple=True)
+    assert extractor.multiple
+
     actual = extractor.extract(analyzer)
     assert actual == expected
