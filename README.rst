@@ -20,6 +20,8 @@ Scenarios are written in `YAML`_, bodies are analyzed `jq`_ or `XPath`_ queries
 and validation rules are based on `Hamcrest (PyHamcrest)`_
 so that any developers can write without learning toughly.
 
+.. contents:: Contents
+
 
 Development Policy
 ==================
