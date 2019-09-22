@@ -45,6 +45,18 @@ cases:
             - not:
                 have_item: ''
             - have_item: 1
+        - describe:
+            jq: .items[].x
+            multiple: true
+          should:
+            - contain: [1, anything, 2]
+            - contain_in_any_order: [1, 2, null]
+            - have_items: [1, 2]
+            - all_of:
+                - have_item: 1
+                - have_item: 2
+            - any_of:
+                - have_item: be_null
 
   - label: Returns an XML result
     request: /xml

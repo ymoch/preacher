@@ -12,12 +12,13 @@ _EXTRACTION_MAP = {
     'xpath': XPathExtractor,
 }
 _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
+_KEY_MULTIPLE = 'multiple'
 
 
 class ExtractionCompiler:
     def compile(self, obj: Union[Mapping, str]) -> Extractor:
         if isinstance(obj, str):
-            return compile({'jq': obj})
+            return self.compile({'jq': obj})
 
         keys = _EXTRACTION_KEYS.intersection(obj.keys())
         if len(keys) != 1:
@@ -26,9 +27,11 @@ class ExtractionCompiler:
             )
         key = next(iter(keys))
 
-        return _EXTRACTION_MAP[key](obj[key])  # type: ignore
+        func = _EXTRACTION_MAP[key]
+        query = obj[key]
 
+        multiple = obj.get(_KEY_MULTIPLE, False)
+        if not isinstance(multiple, bool):
+            raise CompilationError('Must be a boolean', path=[_KEY_MULTIPLE])
 
-def compile(obj: Union[Mapping, str]) -> Extractor:
-    compiler = ExtractionCompiler()
-    return compiler.compile(obj)
+        return func(query, multiple=multiple)  # type: ignore
