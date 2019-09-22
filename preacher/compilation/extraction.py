@@ -12,6 +12,7 @@ _EXTRACTION_MAP = {
     'xpath': XPathExtractor,
 }
 _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
+_KEY_MULTIPLE = 'multiple'
 
 
 class ExtractionCompiler:
@@ -26,7 +27,14 @@ class ExtractionCompiler:
             )
         key = next(iter(keys))
 
-        return _EXTRACTION_MAP[key](obj[key])  # type: ignore
+        func = _EXTRACTION_MAP[key]
+        query = obj[key]
+
+        multiple = obj.get(_KEY_MULTIPLE, False)
+        if not isinstance(multiple, bool):
+            raise CompilationError('Must be a boolean', path=[_KEY_MULTIPLE])
+
+        return func(query, multiple=multiple)  # type: ignore
 
 
 def compile(obj: Union[Mapping, str]) -> Extractor:

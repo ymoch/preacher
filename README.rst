@@ -208,6 +208,10 @@ A mapping for Extraction has one of below:
     - A `jq`_ query.
 - xpath: String
     - A `XPath`_ query
+- multiple: Boolean (Optional)
+    - When given ``true``, it returns the list of all extracted values.
+    - When given ``false``, it returns the first of extracted values.
+    - The default value is ``false``.
 
 When given a string, that is equivalent to {"jq": it}.
 
