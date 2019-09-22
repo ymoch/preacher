@@ -17,7 +17,7 @@ Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
 Scenarios are written in `YAML`_, bodies are analyzed `jq`_ or `XPath`_ queries
-and validation rules are based on `Hamcrest (PyHamcrest)`_
+and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
 so that any developers can write without learning toughly.
 
 .. contents:: Contents
@@ -319,6 +319,7 @@ License
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
 .. _XPATH: https://www.w3.org/TR/xpath/all/
-.. _Hamcrest (PyHamcrest): https://pyhamcrest.readthedocs.io/
+.. _Hamcrest: http://hamcrest.org/
+.. _PyHamcrest: https://pyhamcrest.readthedocs.io/
 
 Copyright (c) 2019 Yu MOCHIZUKI
