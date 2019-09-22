@@ -1,6 +1,6 @@
-========
+########
 Preacher
-========
+########
 
 .. image:: https://img.shields.io/badge/python-3.7+-blue.svg
     :target: https://www.python.org/
@@ -22,10 +22,9 @@ so that any developers can write without learning toughly.
 
 .. contents:: Contents
 
-
+******************
 Development Policy
-==================
-
+******************
 Preacher aims to automate tests using real backends: neither mocks or sandboxes.
 Supporting both automation and real backends has been challenging.
 
@@ -48,12 +47,12 @@ Comparing to other similar tools:
   HTTP interactions. It seems to be more suitable for testing simple systems
   or testing without real backends than Preacher because of simple validators.
 
-
+*****
 Usage
-=====
+*****
 
 Requirements
-------------
+============
 Supports only Python 3.7+.
 
 .. code-block:: sh
@@ -64,12 +63,12 @@ Supports only Python 3.7+.
     # Help command is available.
     preacher-cli --help
 
-
+**************************
 Writing Your Own Scenarios
-==========================
+**************************
 
 Example
--------
+=======
 Here is a simple configuration example.
 
 .. code-block:: yaml
@@ -117,10 +116,10 @@ Here is a simple configuration example.
                   - end_with: y
 
 Grammer
--------
+=======
 
 Scenario
-********
+--------
 A ``Scenario`` is written in `YAML`_.
 A ``Scenario`` is a mapping that consists of below:
 
@@ -133,7 +132,7 @@ A ``Scenario`` is a mapping that consists of below:
     - Test cases.
 
 Case
-****
+----
 A ``Case`` is a mapping that consists of below:
 
 - label: ``String`` (Recommended)
@@ -145,7 +144,7 @@ A ``Case`` is a mapping that consists of below:
     - A response description.
 
 Request
-*******
+-------
 A ``Request`` is a mapping or a string.
 
 A mapping for ``Request`` has items below:
@@ -160,7 +159,7 @@ A mapping for ``Request`` has items below:
 When given a string, that is equivalent to ``{"path": it}``.
 
 Response Decription
-*******************
+-------------------
 A ``ResponseDescription`` is a mapping that consists of below:
 
 - status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)
@@ -175,7 +174,7 @@ A ``ResponseDescription`` is a mapping that consists of below:
     - A description that descript the response body.
 
 Body Description
-****************
+----------------
 A ``BodyDescription`` is a mapping or a list.
 
 A mapping for ``BodyDescription`` has items below.
@@ -190,7 +189,7 @@ A mapping for ``BodyDescription`` has items below.
 When given a list, that is equivalent to ``{"descritptions": it}``.
 
 Description
-***********
+-----------
 A ``Description`` is a mapping that consists of below:
 
 - describe: ``Extraction``
@@ -199,8 +198,7 @@ A ``Description`` is a mapping that consists of below:
     - Predicates that match the descripted value.
 
 Extraction
-**********
-
+----------
 An Extraction is a mapping or a string.
 
 A mapping for Extraction has one of below:
@@ -223,11 +221,11 @@ Note that the extraction must be compatible for the body analysis.
 +----------------------------+----+-------+
 
 Predicate
-*********
+---------
 A ``Predicate`` is a ``Matcher`` (can be extended in the future).
 
 Matcher
-*******
+-------
 A ``Matcher`` is a string or a mapping.
 
 Allowed strings are:
@@ -241,7 +239,7 @@ A mapping for ``Matcher`` has an item. Allowed items are below.
 .. note:: A ``Value`` given as a ``Matcher`` is equivalent to ``{"equal": it}``.
 
 Object
-======
+^^^^^^
 - be: ``Matcher``
     - Matches matches the given matcher.
 - not: ``Matcher``
@@ -252,7 +250,7 @@ Object
     - Matches when it has a length and its length is equal to the given value.
 
 Comparable
-==========
+^^^^^^^^^^
 - be_greater_than: ``Comparable``
     - Matches when it is greater than the given value (it > argument).
 - be_greater_than_or_equal_to: ``Comparable``
@@ -263,7 +261,7 @@ Comparable
     - Matches when it is less than or equal to the given value (it < argument).
 
 String
-======
+^^^^^^
 - contain_string: ``String``
     - Matches when it is an string and contains the given value.
 - start_with: ``String``
@@ -274,7 +272,7 @@ String
     - Matches when it is an string and matches the given regular expression.
 
 Datetime
-========
+^^^^^^^^
 - be_before: ``String``
     - Matches when it is a datetime and before the given datetime.
     - When given ``now``, then compares to the datetime just when the request starts.
@@ -292,10 +290,9 @@ Datetime
           like ``2019-01-23T12:34:56Z``.
 
 Sequence
-========
-- have_item: ``Value`` or ``Matcher``
+^^^^^^^^
+- have_item: ``Matcher``
     - Matches when it is a collection and has the given item.
-    - When given ``Value``, that is equivalent to ``{"equal": it}``.
 - contain: ``List<Matcher>``
     - Exactly matches the entire sequence.
 - contain_in_any_order: ``List<Matcher>``
@@ -303,7 +300,7 @@ Sequence
 
 
 Default
-*******
+-------
 A ``Default`` is a mapping that consists of below:
 
 - request: ``Request`` (Optional)
@@ -311,15 +308,17 @@ A ``Default`` is a mapping that consists of below:
 - response: ``ResponseDescription`` (Optional)
     - A response description to overwrite the default response description values.
 
+*******
 License
-=======
+*******
 .. image:: https://img.shields.io/badge/License-MIT-brightgreen.svg
     :target: https://opensource.org/licenses/MIT
+
+Copyright (c) 2019 Yu MOCHIZUKI
+
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
 .. _XPATH: https://www.w3.org/TR/xpath/all/
 .. _Hamcrest: http://hamcrest.org/
 .. _PyHamcrest: https://pyhamcrest.readthedocs.io/
-
-Copyright (c) 2019 Yu MOCHIZUKI
