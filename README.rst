@@ -294,6 +294,8 @@ Sequence
 ^^^^^^^^
 - have_item: ``Matcher``
     - Matches when it is a collection and has the given item.
+- have_items: ``List<Matcher>``
+    - Matches if all given items appear in the list, in any order.
 - contain: ``List<Matcher>``
     - Exactly matches the entire sequence.
 - contain_in_any_order: ``List<Matcher>``

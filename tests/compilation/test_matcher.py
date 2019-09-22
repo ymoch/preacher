@@ -172,6 +172,7 @@ def test_contain():
     assert not matcher.matches([1])
     assert not matcher.matches([1, 2, 4])
     assert matcher.matches([1, 4, 2])
+    assert not matcher.matches([1, 4, 2, 3])
 
 
 def test_contain_in_any_order():
@@ -187,3 +188,20 @@ def test_contain_in_any_order():
     assert matcher.matches([1, 2, 4])
     assert matcher.matches([4, 1, 2])
     assert matcher.matches([1, 4, 2])
+    assert not matcher.matches([1, 4, 2, 3])
+
+
+def test_have_items():
+    matcher = compile({
+        'have_items': [
+            1,
+            {'be_greater_than': 2},
+            {'be_less_than': 3},
+        ],
+    })
+    assert not matcher.matches([])
+    assert not matcher.matches([1])
+    assert matcher.matches([1, 2, 4])
+    assert matcher.matches([4, 1, 2])
+    assert matcher.matches([1, 4, 2])
+    assert matcher.matches([1, 4, 2, 3])
