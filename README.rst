@@ -211,15 +211,15 @@ A mapping for Extraction has one of below:
 
 When given a string, that is equivalent to {"jq": it}.
 
-Note that the extraction must be compatible for the body analysis.
+.. note:: The extraction must be compatible for the body analysis.
 
-+----------------------------+----+-------+
-| Body Analysis / Extraction | jq | xpath |
-+============================+====+=======+
-| JSON                       |  o |     x |
-+----------------------------+----+-------+
-| XML                        |  x |     o |
-+----------------------------+----+-------+
+   +----------------------------+----+-------+
+   | Body Analysis / Extraction | jq | xpath |
+   +============================+====+=======+
+   | JSON                       |  o |     x |
+   +----------------------------+----+-------+
+   | XML                        |  x |     o |
+   +----------------------------+----+-------+
 
 Predicate
 ---------
