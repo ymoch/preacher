@@ -55,6 +55,7 @@ def test_be_empty():
 def test_have_length():
     matcher = compile({'have_length': 1})
     assert not matcher.matches(None)
+    assert not matcher.matches(1)
     assert not matcher.matches('')
     assert not matcher.matches([])
     assert matcher.matches('A')
@@ -151,3 +152,56 @@ def test_have_item():
     assert not matcher.matches([])
     assert not matcher.matches([0, 'A'])
     assert matcher.matches([0, 1, 2])
+
+
+def test_given_not_a_list_for_multiple_matchers():
+    with raises(CompilationError) as error_info:
+        compile({'contain': 1})
+    assert str(error_info.value).endswith(': contain')
+
+
+def test_contain():
+    matcher = compile({
+        'contain': [
+            1,
+            {'be_greater_than': 2},
+            {'be_less_than': 3},
+        ],
+    })
+    assert not matcher.matches([])
+    assert not matcher.matches([1])
+    assert not matcher.matches([1, 2, 4])
+    assert matcher.matches([1, 4, 2])
+    assert not matcher.matches([1, 4, 2, 3])
+
+
+def test_contain_in_any_order():
+    matcher = compile({
+        'contain_in_any_order': [
+            1,
+            {'be_greater_than': 2},
+            {'be_less_than': 3},
+        ],
+    })
+    assert not matcher.matches([])
+    assert not matcher.matches([1])
+    assert matcher.matches([1, 2, 4])
+    assert matcher.matches([4, 1, 2])
+    assert matcher.matches([1, 4, 2])
+    assert not matcher.matches([1, 4, 2, 3])
+
+
+def test_have_items():
+    matcher = compile({
+        'have_items': [
+            1,
+            {'be_greater_than': 2},
+            {'be_less_than': 3},
+        ],
+    })
+    assert not matcher.matches([])
+    assert not matcher.matches([1])
+    assert matcher.matches([1, 2, 4])
+    assert matcher.matches([4, 1, 2])
+    assert matcher.matches([1, 4, 2])
+    assert matcher.matches([1, 4, 2, 3])

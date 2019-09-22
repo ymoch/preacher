@@ -7,7 +7,7 @@ import hamcrest
 from hamcrest.core.matcher import Matcher
 
 from .error import CompilationError
-from .util import run_on_key
+from .util import map_on_key, run_on_key
 
 
 _STATIC_MATCHER_MAP = {
@@ -51,6 +51,12 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
     'have_item': hamcrest.has_item,
 }
 
+_MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS = {
+    'contain': hamcrest.contains,
+    'contain_in_any_order': hamcrest.contains_inanyorder,
+    'have_items': hamcrest.has_items,
+}
+
 
 def _compile_taking_single_matcher(key: str, value: Any):
     func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER[key]
@@ -61,6 +67,16 @@ def _compile_taking_single_matcher(key: str, value: Any):
         inner = hamcrest.equal_to(value)
 
     return func(inner)
+
+
+def _compile_taking_multi_matchers(key: str, value: Any):
+    func = _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS[key]
+
+    if not isinstance(value, list):
+        raise CompilationError('Must be a string', path=[key])
+
+    inner_matchers = map_on_key(key, compile, value)
+    return func(*inner_matchers)
 
 
 def compile(obj: Any) -> Matcher:
@@ -81,5 +97,8 @@ def compile(obj: Any) -> Matcher:
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
             return _compile_taking_single_matcher(key, value)
+
+        if key in _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS:
+            return _compile_taking_multi_matchers(key, value)
 
     return hamcrest.equal_to(obj)
