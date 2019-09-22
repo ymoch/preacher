@@ -21,6 +21,7 @@ and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
 so that any developers can write without learning toughly.
 
 .. contents:: Contents
+   :depth: 1 
 
 ******************
 Development Policy
