@@ -205,3 +205,36 @@ def test_have_items():
     assert matcher.matches([4, 1, 2])
     assert matcher.matches([1, 4, 2])
     assert matcher.matches([1, 4, 2, 3])
+
+
+def test_all_of():
+    matcher = compile({
+        'all_of': [
+            {'be_greater_than': 1},
+            {'be_less_than': 3},
+        ]
+    })
+    assert not matcher.matches(1)
+    assert matcher.matches(2)
+    assert not matcher.matches(3)
+
+
+def test_any_of():
+    matcher = compile({
+        'any_of': [
+            {'be_less_than': 2},
+            {'be_greater_than': 3},
+        ]
+    })
+    assert matcher.matches(1)
+    assert not matcher.matches(2)
+    assert not matcher.matches(3)
+    assert matcher.matches(4)
+
+
+def test_anything():
+    matcher = compile('anything')
+    assert matcher.matches(None)
+    assert matcher.matches(1)
+    assert matcher.matches([1])
+    assert matcher.matches({'key': 'value'})

@@ -17,6 +17,9 @@ _STATIC_MATCHER_MAP = {
 
     # For collections.
     'be_empty': hamcrest.is_(hamcrest.empty()),
+
+    # Logical.
+    'anything': hamcrest.is_(hamcrest.anything()),
 }
 
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
@@ -55,6 +58,8 @@ _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS = {
     'contain': hamcrest.contains,
     'contain_in_any_order': hamcrest.contains_inanyorder,
     'have_items': hamcrest.has_items,
+    'all_of': hamcrest.all_of,
+    'any_of': hamcrest.any_of,
 }
 
 
