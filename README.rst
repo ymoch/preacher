@@ -16,7 +16,8 @@ Preacher
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Scenarios are written in `YAML`_ and bodies are analyzed `jq`_ or `XPath`_ queries
+Scenarios are written in `YAML`_, bodies are analyzed `jq`_ or `XPath`_ queries
+and validation rules are based on `Hamcrest (PyHamcrest)`_
 so that any developers can write without learning toughly.
 
 
@@ -229,22 +230,27 @@ A ``Matcher`` is a string or a mapping.
 
 Allowed strings are:
 
-- be_null
-- not_be_null
-- be_empty
+- be_null: for an object
+- not_be_null: for an object
+- be_empty: for a sequence
 
-A mapping for ``Matcher`` has an item. Allowed items are:
+A mapping for ``Matcher`` has an item. Allowed items are below.
 
-- be: ``Value`` or ``Matcher``
-    - Matches when it matches the given value or the given matcher.
-    - When given ``Value``, that is equivalent to ``{"equal": it}``.
-- not: ``Value`` or ``Matcher``
-    - Matches when it doesn't match the given value or the given matcher.
-    - When given ``Value``, that is equivalent to ``{"not": {"equal": it}}``
+.. note:: A ``Value`` given as a ``Matcher`` is equivalent to ``{"equal": it}``.
+
+Object
+======
+- be: ``Matcher``
+    - Matches matches the given matcher.
+- not: ``Matcher``
+    - Matches when it doesn't match the given matcher.
 - equal: ``Value``
     - Matches when it equals the given value.
 - have_length: ``Integer``
     - Matches when it has a length and its length is equal to the given value.
+
+Comparable
+==========
 - be_greater_than: ``Comparable``
     - Matches when it is greater than the given value (it > argument).
 - be_greater_than_or_equal_to: ``Comparable``
@@ -253,6 +259,9 @@ A mapping for ``Matcher`` has an item. Allowed items are:
     - Matches when it is less than the given value (it < argument).
 - be_less_than_or_equal_to: ``Comparable``
     - Matches when it is less than or equal to the given value (it < argument).
+
+String
+======
 - contain_string: ``String``
     - Matches when it is an string and contains the given value.
 - start_with: ``String``
@@ -261,13 +270,11 @@ A mapping for ``Matcher`` has an item. Allowed items are:
     - Matches when it is an string and ends with the given value.
 - match_regexp: ``String``
     - Matches when it is an string and matches the given regular expression.
-- have_item: ``Value`` or ``Matcher``
-    - Matches when it is a collection and has the given item.
-    - When given ``Value``, that is equivalent to ``{"equal": it}``.
-- be_before:
+
+Datetime
+========
+- be_before: ``String``
     - Matches when it is a datetime and before the given datetime.
-    - Predicated values must be in ISO 8601 format
-      like ``2019-01-23T12:34:56Z``.
     - When given ``now``, then compares to the datetime just when the request starts.
     - When given an offset, then compares to the datetime when the request starts.
         - Days, hours, minutes and seconds offsets are available.
@@ -275,9 +282,23 @@ A mapping for ``Matcher`` has an item. Allowed items are:
           then compares to the future datetime.
         - When given a negative offset like ``-1 minute`` or ``-2 seconds``,
           then compares to the past datetime.
-- be_after:
+- be_after: ``String``
     - Matches when it is a datetime and after the given datetime.
     - Usage is the same as ``be_before``.
+
+.. note:: Validated datetime values must be in ISO 8601 format
+          like ``2019-01-23T12:34:56Z``.
+
+Sequence
+========
+- have_item: ``Value`` or ``Matcher``
+    - Matches when it is a collection and has the given item.
+    - When given ``Value``, that is equivalent to ``{"equal": it}``.
+- contain: ``List<Matcher>``
+    - Exactly matches the entire sequence.
+- contain_in_any_order: ``List<Matcher>``
+    - Match the entire sequence, but in any order.
+
 
 Default
 *******
@@ -288,14 +309,14 @@ A ``Default`` is a mapping that consists of below:
 - response: ``ResponseDescription`` (Optional)
     - A response description to overwrite the default response description values.
 
-.. _YAML: https://yaml.org/
-.. _jq: https://stedolan.github.io/jq/
-.. _XPATH: https://www.w3.org/TR/xpath/all/
-.. _pipenv: https://pipenv.readthedocs.io/
-
 License
 =======
 .. image:: https://img.shields.io/badge/License-MIT-brightgreen.svg
     :target: https://opensource.org/licenses/MIT
+
+.. _YAML: https://yaml.org/
+.. _jq: https://stedolan.github.io/jq/
+.. _XPATH: https://www.w3.org/TR/xpath/all/
+.. _Hamcrest (PyHamcrest): https://pyhamcrest.readthedocs.io/
 
 Copyright (c) 2019 Yu MOCHIZUKI

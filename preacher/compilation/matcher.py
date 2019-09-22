@@ -53,6 +53,7 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
 
 _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS = {
     'contain': hamcrest.contains,
+    'contain_in_any_order': hamcrest.contains_inanyorder,
 }
 
 
