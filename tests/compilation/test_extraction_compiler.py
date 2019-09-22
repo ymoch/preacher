@@ -1,7 +1,7 @@
 from pytest import mark, raises
 
 from preacher.core.extraction import JqExtractor, XPathExtractor
-from preacher.compilation.extraction import compile
+from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.error import CompilationError
 
 
@@ -11,7 +11,7 @@ from preacher.compilation.error import CompilationError
 ))
 def test_when_given_not_a_string(value, expected_suffix):
     with raises(CompilationError) as error_info:
-        compile(value)
+        ExtractionCompiler().compile(value)
     assert str(error_info.value).endswith(expected_suffix)
 
 
@@ -22,7 +22,7 @@ def test_when_given_not_a_string(value, expected_suffix):
     ({'jq': '.bar', 'multiple': True}, '.bar', True),
 ))
 def test_when_given_a_jq(value, expected_query, expected_multiple):
-    extractor = compile(value)
+    extractor = ExtractionCompiler().compile(value)
     assert isinstance(extractor, JqExtractor)
     assert extractor.query == expected_query
     assert extractor.multiple == expected_multiple
@@ -34,7 +34,7 @@ def test_when_given_a_jq(value, expected_query, expected_multiple):
     ({'xpath': './foo', 'multiple': True}, './foo', True),
 ))
 def test_when_given_an_xpath(value, expected_query, expected_multiple):
-    compiler = compile(value)
-    assert isinstance(compiler, XPathExtractor)
-    assert compiler.query == expected_query
-    assert compiler.multiple == expected_multiple
+    extractor = ExtractionCompiler().compile(value)
+    assert isinstance(extractor, XPathExtractor)
+    assert extractor.query == expected_query
+    assert extractor.multiple == expected_multiple
