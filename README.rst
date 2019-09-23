@@ -204,14 +204,18 @@ An Extraction is a mapping or a string.
 
 A mapping for Extraction has one of below:
 
-- jq: String
+- jq: ``String``
     - A `jq`_ query.
-- xpath: String
+- xpath: ``String``
     - A `XPath`_ query
-- multiple: Boolean (Optional)
+- multiple: ``Boolean`` (Optional)
     - When given ``true``, it returns the list of all extracted values.
     - When given ``false``, it returns the first of extracted values.
     - The default value is ``false``.
+- cast_to: ``String`` (Optional)
+    - When given, it returns the casted value.
+    - Allowed values are ``int``, ``float``, ``string``.
+    - Casting does not affect ``null``.
 
 When given a string, that is equivalent to {"jq": it}.
 
