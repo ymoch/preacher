@@ -1,6 +1,6 @@
 """Extraction."""
 
-from typing import Any, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union, TypeVar
 
 import pyjq as jq
 from lxml.etree import _Element as Element
@@ -8,17 +8,28 @@ from lxml.etree import _Element as Element
 from .analysis import Analyzer
 
 
+T = TypeVar('T')
+Cast = Callable[[Optional[Any]], Optional[Any]]
+
+
+def _default_cast(value: T) -> T:
+    return value
+
+
 class JqExtractor:
 
-    def __init__(self, query: str, multiple: bool = False):
+    def __init__(
+        self,
+        query: str,
+        multiple: bool = False,
+        cast: Optional[Cast] = None,
+    ):
         self._query = query
         self._multiple = multiple
+        self._cast = cast or _default_cast
 
         compiled = jq.compile(self._query)
-        if multiple:
-            self._jq = compiled.all
-        else:
-            self._jq = compiled.first
+        self._jq = compiled.all
 
     @property
     def query(self) -> str:
@@ -29,14 +40,27 @@ class JqExtractor:
         return self._multiple
 
     def extract(self, analyzer: Analyzer) -> Optional[Any]:
-        return analyzer.jq(self._jq)
+        values = (
+            self._cast(value) if value is not None else value
+            for value in analyzer.jq(self._jq)
+        )
+        if self.multiple:
+            return list(values)
+        else:
+            return next(values, None)
 
 
 class XPathExtractor:
 
-    def __init__(self, query: str, multiple: bool = False):
+    def __init__(
+        self,
+        query: str,
+        multiple: bool = False,
+        cast: Optional[Cast] = None,
+    ):
         self._query = query
         self._multiple = multiple
+        self._cast = cast or _default_cast
 
     @property
     def query(self) -> str:
@@ -51,7 +75,7 @@ class XPathExtractor:
         if not elems:
             return None
 
-        values = (self._convert(elem) for elem in elems)
+        values = (self._cast(self._convert(elem)) for elem in elems)
         if self._multiple:
             return list(values)
         else:
