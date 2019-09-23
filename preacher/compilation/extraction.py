@@ -1,18 +1,30 @@
 """Extraction compilation."""
 
 from collections.abc import Mapping
-from typing import Union
+from typing import Any, Union
 
-from preacher.core.extraction import Extractor, JqExtractor, XPathExtractor
+from preacher.core.extraction import (
+    Cast,
+    Extractor,
+    JqExtractor,
+    XPathExtractor,
+)
 from .error import CompilationError
+from .util import run_on_key
 
 
 _EXTRACTION_MAP = {
     'jq': JqExtractor,
     'xpath': XPathExtractor,
 }
+_CAST_FUNC_MAP = {
+    'int': int,
+    'float': float,
+    'string': str,
+}
 _EXTRACTION_KEYS = frozenset(_EXTRACTION_MAP.keys())
 _KEY_MULTIPLE = 'multiple'
+_KEY_CAST_TO = 'cast_to'
 
 
 class ExtractionCompiler:
@@ -34,4 +46,19 @@ class ExtractionCompiler:
         if not isinstance(multiple, bool):
             raise CompilationError('Must be a boolean', path=[_KEY_MULTIPLE])
 
-        return func(query, multiple=multiple)  # type: ignore
+        cast = None
+        cast_obj = obj.get(_KEY_CAST_TO)
+        if cast_obj is not None:
+            cast = run_on_key(_KEY_CAST_TO, self._compile_cast, cast_obj)
+
+        return func(query, multiple=multiple, cast=cast)  # type: ignore
+
+    def _compile_cast(self, obj: Any) -> Cast:
+        if not isinstance(obj, str):
+            raise CompilationError('Must be a string')
+
+        cast = _CAST_FUNC_MAP(obj)  # type: ignore
+        if not cast:
+            raise CompilationError(f'Invalid value: {obj}')
+
+        return cast
