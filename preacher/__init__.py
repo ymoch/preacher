@@ -1,6 +1,6 @@
 """Preacher: A Web API Verification Tool."""
 
-__version__ = '0.9.11'
+__version__ = '0.10.0'
 __author__ = 'Yu Mochizuki'
 __author_email__ = 'ymoch.dev@gmail.com'
 
