@@ -1,4 +1,4 @@
-"""JSON Presentation."""
+"""Serializing Presentation."""
 
 from __future__ import annotations
 
@@ -10,14 +10,14 @@ from preacher.core.scenario_running import ScenarioResult
 from preacher.core.status import Status
 
 
-class Encoder(json.JSONEncoder):
+class JsonEncoder(json.JSONEncoder):
     def default(self, value):
         if isinstance(value, Status):
             return str(value)
         return json.JSONEncoder.default(value)
 
 
-class JsonPresentation:
+class SerializingPresentation:
 
     def __init__(self):
         self._results = []
@@ -25,6 +25,8 @@ class JsonPresentation:
     def accept(self, result: ScenarioResult) -> None:
         self._results.append(result)
 
-    def dump(self, out: TextIO) -> None:
-        value = [asdict(result) for result in self._results]
-        json.dump(value, out, cls=Encoder)
+    def dump_json(self, out: TextIO) -> None:
+        value = {
+            'scenarios': [asdict(result) for result in self._results],
+        }
+        json.dump(value, out, cls=JsonEncoder)

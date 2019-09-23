@@ -7,8 +7,8 @@ import logging
 import sys
 
 from preacher import __version__ as VERSION
-from preacher.presentation.json import JsonPresentation
 from preacher.presentation.logging import LoggingPresentation
+from preacher.presentation.serialization import SerializingPresentation
 from .application import Application
 
 
@@ -93,10 +93,10 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    json_pres = JsonPresentation()
+    serializing_presentation = SerializingPresentation()
     presentations = [
         LoggingPresentation(LOGGER),
-        json_pres,
+        serializing_presentation,
     ]
 
     base_url = args.url
@@ -112,7 +112,7 @@ def main() -> None:
     app.run_concurrently(scenario_paths, concurrency=scenario_concurrency)
 
     if args.json_dump:
-        json_pres.dump(args.json_dump)
+        serializing_presentation.dump_json(args.json_dump)
 
     if not app.is_succeeded:
         sys.exit(1)
