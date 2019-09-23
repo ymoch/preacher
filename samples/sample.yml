@@ -49,6 +49,15 @@ cases:
             jq: .items[].x
             multiple: true
           should:
+            equal:
+              - '1'
+              - null
+              - '2'
+        - describe:
+            jq: .items[].x
+            multiple: true
+            cast_to: int
+          should:
             - contain: [1, anything, 2]
             - contain_in_any_order: [1, 2, null]
             - have_items: [1, 2]
@@ -68,7 +77,20 @@ cases:
           - describe:
               xpath: /root/foo
             should:
-              equal: foo1-text
+              equal: '1'
+          - describe:
+              xpath: /root/foo
+              cast_to: int
+            should:
+              equal: 1
+          - describe:
+              xpath: /root/foo
+              multiple: true
+              cast_to: float
+            should:
+              equal:
+                - 1.0
+                - 2.0
           - describe:
               xpath: ./foo[1]/@id
             should:

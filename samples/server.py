@@ -18,9 +18,9 @@ def json(req, res) -> None:
         'empty_list': [],
         'list': [1, 2, 'A'],
         'items': [
-            {'x': 1},
+            {'x': '1'},
             {},
-            {'x': 2},
+            {'x': '2'},
         ],
     }
 

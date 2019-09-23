@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
-    <foo id="foo1">foo1-text</foo>
-    <foo id="foo2">foo2-text</foo>
+    <foo id="foo1">1</foo>
+    <foo id="foo2">2</foo>
     <bar id="bar1">
         <baz id="baz1"/>
     </bar>
