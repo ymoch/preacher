@@ -46,10 +46,7 @@ def analyzer():
 ))
 def test_extract_default(query, expected, analyzer):
     extractor = XPathExtractor(query)
-    assert not extractor.multiple
-
-    actual = extractor.extract(analyzer)
-    assert actual == expected
+    assert extractor.extract(analyzer) == expected
 
 
 @mark.parametrize('query, multiple, cast, expected', (
@@ -70,7 +67,4 @@ def test_extract_default(query, expected, analyzer):
 ))
 def test_extract(query, multiple, cast, expected, analyzer):
     extractor = XPathExtractor(query, multiple=multiple, cast=cast)
-    assert extractor.multiple == multiple
-
-    actual = extractor.extract(analyzer)
-    assert actual == expected
+    assert extractor.extract(analyzer) == expected

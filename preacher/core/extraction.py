@@ -62,14 +62,6 @@ class XPathExtractor:
         self._multiple = multiple
         self._cast = cast or _default_cast
 
-    @property
-    def query(self) -> str:
-        return self._query
-
-    @property
-    def multiple(self) -> bool:
-        return self._multiple
-
     def extract(self, analyzer: Analyzer) -> Optional[Any]:
         elems = analyzer.xpath(self._extract)
         if not elems:

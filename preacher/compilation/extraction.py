@@ -57,7 +57,7 @@ class ExtractionCompiler:
         if not isinstance(obj, str):
             raise CompilationError('Must be a string')
 
-        cast = _CAST_FUNC_MAP(obj)  # type: ignore
+        cast = _CAST_FUNC_MAP.get(obj)  # type: ignore
         if not cast:
             raise CompilationError(f'Invalid value: {obj}')
 
