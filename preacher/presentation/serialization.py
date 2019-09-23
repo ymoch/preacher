@@ -14,7 +14,7 @@ class JsonEncoder(json.JSONEncoder):
     def default(self, value):
         if isinstance(value, Status):
             return str(value)
-        return json.JSONEncoder.default(value)
+        return json.JSONEncoder.default(self, value)
 
 
 class SerializingPresentation:
