@@ -42,11 +42,7 @@ def analyzer():
 ))
 def test_extract_default(query, expected, analyzer):
     extractor = JqExtractor(query)
-    assert extractor.query == query
-    assert not extractor.multiple
-
-    actual = extractor.extract(analyzer)
-    assert actual == expected
+    assert extractor.extract(analyzer) == expected
 
 
 @mark.parametrize('query, multiple, cast, expected', (
@@ -62,8 +58,4 @@ def test_extract_default(query, expected, analyzer):
 ))
 def test_extract_multiple(query, multiple, cast, expected, analyzer):
     extractor = JqExtractor(query, multiple=multiple, cast=cast)
-    assert extractor.query == query
-    assert extractor.multiple == multiple
-
-    actual = extractor.extract(analyzer)
-    assert actual == expected
+    assert extractor.extract(analyzer) == expected

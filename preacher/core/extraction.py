@@ -32,10 +32,6 @@ class JqExtractor:
         self._jq = compiled.all
 
     @property
-    def query(self) -> str:
-        return self._query
-
-    @property
     def multiple(self) -> bool:
         return self._multiple
 
