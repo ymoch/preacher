@@ -31,16 +31,12 @@ class JqExtractor:
         compiled = jq.compile(self._query)
         self._jq = compiled.all
 
-    @property
-    def multiple(self) -> bool:
-        return self._multiple
-
     def extract(self, analyzer: Analyzer) -> Optional[Any]:
         values = (
             self._cast(value) if value is not None else value
             for value in analyzer.jq(self._jq)
         )
-        if self.multiple:
+        if self._multiple:
             return list(values)
         else:
             return next(values, None)
