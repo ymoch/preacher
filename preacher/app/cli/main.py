@@ -8,6 +8,7 @@ import sys
 
 from preacher import __version__ as VERSION
 from preacher.presentation.logging import LoggingPresentation
+from preacher.presentation.serialization import SerializingPresentation
 from .application import Application
 
 
@@ -74,6 +75,12 @@ def parse_args() -> argparse.Namespace:
         help='concurrency for scenarios',
         default=1,
     )
+    parser.add_argument(
+        '-j', '--json-dump',
+        type=argparse.FileType('w'),
+        metavar='file',
+        help='result dump file (JSON).',
+    )
 
     return parser.parse_args()
 
@@ -86,14 +93,26 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    view = LoggingPresentation(LOGGER)
+    serializing_presentation = SerializingPresentation()
+    presentations = [
+        LoggingPresentation(LOGGER),
+        serializing_presentation,
+    ]
+
     base_url = args.url
     retry = args.retry
-    app = Application(view=view, base_url=base_url, retry=retry)
+    app = Application(
+        presentations=presentations,
+        base_url=base_url,
+        retry=retry,
+    )
 
     scenario_paths = args.scenario
     scenario_concurrency = args.scenario_concurrency
     app.run_concurrently(scenario_paths, concurrency=scenario_concurrency)
+
+    if args.json_dump:
+        serializing_presentation.dump_json(args.json_dump)
 
     if not app.is_succeeded:
         sys.exit(1)

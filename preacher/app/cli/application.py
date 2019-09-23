@@ -7,7 +7,6 @@ from preacher.core.scenario_running import ScenarioResult, run_scenario
 from preacher.core.status import Status
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
-from preacher.presentation.logging import LoggingPresentation
 
 
 MapFunction = Callable[
@@ -22,11 +21,11 @@ MapFunction = Callable[
 class Application:
     def __init__(
         self,
-        view: LoggingPresentation,
+        presentations: list,
         base_url: str,
         retry: int = 0,
     ):
-        self._view = view
+        self._presentations = presentations
         self._base_url = base_url
         self._retry = retry
 
@@ -45,7 +44,8 @@ class Application:
         results = map_func(self._run_each, config_paths)
         for result in results:
             self._is_succeeded &= result.status.is_succeeded
-            self._view.show_scenario_result(result)
+            for presentation in self._presentations:
+                presentation.accept(result)
 
     def run_concurrently(
         self,
