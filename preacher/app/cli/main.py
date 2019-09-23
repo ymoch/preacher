@@ -86,10 +86,14 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    view = LoggingPresentation(LOGGER)
+    presentations = [LoggingPresentation(LOGGER)]
     base_url = args.url
     retry = args.retry
-    app = Application(view=view, base_url=base_url, retry=retry)
+    app = Application(
+        presentations=presentations,
+        base_url=base_url,
+        retry=retry,
+    )
 
     scenario_paths = args.scenario
     scenario_concurrency = args.scenario_concurrency

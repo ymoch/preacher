@@ -21,9 +21,13 @@ _LEVEL_MAP = {
 
 
 class LoggingPresentation:
+
     def __init__(self, logger: logging.Logger):
         self._logger = logger
         self._indent = ''
+
+    def accept(self, result: ScenarioResult) -> None:
+        self.show_scenario_result(result)
 
     def show_scenario_result(self, scenario_result: ScenarioResult) -> None:
         status = scenario_result.status
