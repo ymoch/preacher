@@ -4,6 +4,8 @@ from typing import Callable, Iterable, Iterator
 import ruamel.yaml as yaml
 
 from preacher.core.scenario_running import ScenarioResult, run_scenario
+from preacher.core.status import Status
+from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.presentation.logging import LoggingPresentation
 
@@ -56,7 +58,15 @@ class Application:
     def _run_each(self, config_path: str) -> ScenarioResult:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
-        scenario = self._scenario_compiler.compile(config)
+        try:
+            scenario = self._scenario_compiler.compile(config)
+        except CompilationError as error:
+            return ScenarioResult(
+                label=f'Compilation Error ({config_path})',
+                status=Status.FAILURE,
+                message=str(error),
+            )
+
         return run_scenario(
             scenario,
             base_url=self._base_url,

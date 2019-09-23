@@ -31,6 +31,12 @@ class LoggingPresentation:
 
         label = scenario_result.label or 'Not labeled scenario'
         self._log(level, '%s: %s', label, status)
+
+        message = scenario_result.message
+        if message:
+            with self._nested():
+                self._multi_line_message(level, message)
+
         with self._nested():
             for case_result in scenario_result.case_results:
                 self.show_case_result(case_result)

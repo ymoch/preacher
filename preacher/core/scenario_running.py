@@ -1,6 +1,6 @@
 """Scenario running helpers."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 from .case import CaseResult
@@ -12,7 +12,8 @@ from .status import Status, merge_statuses
 class ScenarioResult:
     label: Optional[str]
     status: Status
-    case_results: List[CaseResult]
+    message: Optional[str] = None
+    case_results: List[CaseResult] = field(default_factory=list)
 
 
 def run_scenario(
