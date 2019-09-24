@@ -1,7 +1,7 @@
 {% from "./macros/case.html" import show_case %}
 
 {% macro show_scenario(item) %}
-  <li class="accordion-item" data-accordion-item>
+  <li class="accordion-item status-{{ item.status }}" data-accordion-item>
     <a href="#" class="accordion-title">{{ item.label }}: {{ item.status }}</a>
     <div class="accordion-content" data-tab-content>
       {% if item.message %}

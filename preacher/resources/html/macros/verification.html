@@ -1,6 +1,6 @@
 {% macro show_verification(label, item, child_label) %}
   {% set child_label = child_label | default('Predicate') %}
-  <li class="accordion-item" data-accordion-item>
+  <li class="accordion-item status-{{ item.status }}" data-accordion-item>
     <a href="#" class="accordion-title">{{ label }}: {{ item.status }}</a>
 
     <div class="accordion-content" data-tab-content>

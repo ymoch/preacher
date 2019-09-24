@@ -1,7 +1,7 @@
 {% from "./macros/verification.html" import show_verification, show_description %}
 
 {% macro show_response(item) %}
-  <li class="accordion-item" data-accordion-item>
+  <li class="accordion-item status-{{ item.status }}" data-accordion-item>
     <a href="#" class="accordion-title">Response: {{ item.status }}</a>
 
     <div class="accordion-content" data-tab-content>

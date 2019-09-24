@@ -2,7 +2,7 @@
 {% from "./macros/verification.html" import show_verification %}
 
 {% macro show_case(item) %}
-  <li class="accordion-item" data-accordion-item>
+  <li class="accordion-item status-{{ item.status }}" data-accordion-item>
     <a href="#" class="accordion-title">{{ item.label }}: {{ item.status }}</a>
     <div class="accordion-content" data-tab-content>
 
