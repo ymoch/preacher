@@ -127,8 +127,9 @@ def main() -> None:
             loader=jinja2.PackageLoader('preacher', 'resources/html'),
             autoescape=jinja2.select_autoescape(['html', 'xml'])
         )
-        template = env.get_template('index.html')
-        template.stream(**serializing_presentation.serialize()).dump(args.report_html)
+        env.get_template('index.html').stream(
+            **serializing_presentation.serialize()
+        ).dump(args.report_html)
 
     if not app.is_succeeded:
         sys.exit(1)

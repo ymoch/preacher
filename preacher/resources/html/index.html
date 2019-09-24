@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+{% from "./macros/scenario.html" import show_scenario %}
+
 <html>
 
 <head>
@@ -6,31 +9,22 @@
   <title>Preacher Test Report</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
+  <style>
+    .accordion-content {
+      padding-top: 0rem;
+      padding-right: 0rem;
+      padding-bottom: 0rem;
+    }
+  </style>
 </head>
 
 <body>
+
   <h1>Preacher Test Report</h1>
 
   <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
     {% for scenario in scenarios %}
-    <li class="accordion-item" data-accordion-item>
-      <a href="#" class="accordion-title">{{ scenario.label }}: {{ scenario.status }}</a>
-      <div class="accordion-content" data-tab-content>
-        {% if scenario.message %}
-          <pre>{{ scenario.message }}</pre>
-        {% endif %}
-
-        <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-          {% for case in scenario.case_results %}
-          <li class="accordion-item" data-accordion-item>
-            <a href="#" class="accordion-title">{{ case.label }}: {{ case.status }}</a>
-            <div class="accordion-content" data-tab-content>
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </li>
+      {{ show_scenario(scenario) }}
     {% endfor %}
   </ul>
 

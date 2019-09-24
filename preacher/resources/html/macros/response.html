@@ -1,0 +1,18 @@
+{% from "./macros/verification.html" import show_verification, show_description %}
+
+{% macro show_response(item) %}
+  <li class="accordion-item" data-accordion-item>
+    <a href="#" class="accordion-title">Response: {{ item.status }}</a>
+
+    <div class="accordion-content" data-tab-content>
+      {% if item.message %}
+      <pre>{{ item.message }}</pre>
+      {% endif %}
+
+      <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+        {{ show_verification("Status Code", item.status_code) }}
+        {{ show_description("Body", item.body) }}
+      </ul>
+    </div>
+  </li>
+{% endmacro %}

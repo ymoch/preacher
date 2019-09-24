@@ -29,6 +29,6 @@ class SerializingPresentation:
         json.dump(self.serialize(), out, cls=JsonEncoder)
 
     def serialize(self) -> dict:
-        return  {
+        return {
             'scenarios': [asdict(result) for result in self._results],
         }
