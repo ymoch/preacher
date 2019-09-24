@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Preacher Result View</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="viewer">
+    <h1>Preacher Result View</h1>
+  
+    <h2>Input</h2>
+    <textarea v-model="result" @change="persist"></textarea>
+
+    <h2>Result View</h2>
+
+    <v-row>
+    <v-expansion-panels>
+      <v-expansion-panel v-for="scenario in data.scenarios" v-bind:key="scenario.label">
+        <v-expansion-panel-header>{{ scenario.label }}: {{ scenario.status }}</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <p v-if="scenario.message">{{ message }}</p>
+
+          <v-expansion-panels>
+            <v-expansion-panel v-for="cs in scenario.case_results" v-bind:key="cs.label">
+              <v-expansion-panel-header>{{ cs.label }}: {{ cs.status }}</v-expansion-panel-header>
+
+              <v-expansion-panel-content>
+                <v-expansion-panels>
+                  <v-expansion-panel>
+                    <v-expansion-panel-header>Request: {{ cs.request.status }}</v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <p v-if="cs.request.message">{{ message }}</p>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                  <v-expansion-panel>
+                    <v-expansion-panel-header>Response: {{ cs.response.status }}</v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <p v-if="cs.response.message">{{ message }}</p>
+
+                      <ul>
+                        <li>
+                          Status Code: {{ cs.response.status_code.status }}
+                        </li>
+                      </ul>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    </v-row>
+  </div>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script>
+const viewer = new Vue({
+  el: '#viewer',
+  data: {
+    'result': '{}'
+  },
+  computed: {
+    data: function() {
+      return JSON.parse(this.result)
+    }
+  },
+  methods: {
+    persist() {
+      localStorage.preacherResult = this.result
+    }
+  },
+  mounted() {
+    const storedResult = localStorage.preacherResult
+    if (storedResult) {
+      this.result = storedResult
+    }
+  },
+})
+
+new Vuetify({
+  icons: {
+    iconfont: 'md',
+  },
+})
+</script>
+
+</html>

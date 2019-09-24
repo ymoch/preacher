@@ -26,7 +26,9 @@ class SerializingPresentation:
         self._results.append(result)
 
     def dump_json(self, out: TextIO) -> None:
-        value = {
+        json.dump(self.serialize(), out, cls=JsonEncoder)
+
+    def serialize(self) -> dict:
+        return  {
             'scenarios': [asdict(result) for result in self._results],
         }
-        json.dump(value, out, cls=JsonEncoder)

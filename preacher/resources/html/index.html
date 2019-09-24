@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Preacher Test Report</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
+</head>
+
+<body>
+  <h1>Preacher Test Report</h1>
+
+  <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    {% for scenario in scenarios %}
+    <li class="accordion-item" data-accordion-item>
+      <a href="#" class="accordion-title">{{ scenario.label }}: {{ scenario.status }}</a>
+      <div class="accordion-content" data-tab-content>
+        {% if scenario.message %}
+          <pre>{{ scenario.message }}</pre>
+        {% endif %}
+
+        <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+          {% for case in scenario.case_results %}
+          <li class="accordion-item" data-accordion-item>
+            <a href="#" class="accordion-title">{{ case.label }}: {{ case.status }}</a>
+            <div class="accordion-content" data-tab-content>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
+<script>
+$(document).foundation()
+</script>
+</html>
