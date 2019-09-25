@@ -1,11 +1,12 @@
 from unittest.mock import MagicMock, sentinel
 
+from preacher.core.scenario import Scenario
 from preacher.core.scenario_running import run_scenario
 from preacher.core.status import Status
 
 
 def test_when_given_an_empty_scenario():
-    scenario = MagicMock(label=None, cases=MagicMock(return_value=iter([])))
+    scenario = Scenario(label=None, cases=[])
     result = run_scenario(scenario, base_url='base_url')
     assert result.label is None
     assert result.status == Status.SKIPPED
@@ -17,10 +18,7 @@ def test_when_given_a_filled_scenario():
     case1 = MagicMock(return_value=sentinel.result1)
     sentinel.result2.status = Status.SUCCESS
     case2 = MagicMock(return_value=sentinel.result2)
-    scenario = MagicMock(
-        label='label',
-        cases=MagicMock(return_value=iter([case1, case2]))
-    )
+    scenario = Scenario(label='label', cases=[case1, case2])
     result = run_scenario(scenario, base_url='base_url', retry=3)
     assert result.label == 'label'
     assert result.status == Status.UNSTABLE
