@@ -6,7 +6,7 @@ import json
 from dataclasses import asdict
 from typing import TextIO
 
-from preacher.core.scenario_running import ScenarioResult
+from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 
 
