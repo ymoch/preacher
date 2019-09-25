@@ -6,6 +6,8 @@ import argparse
 import logging
 import sys
 
+import jinja2
+
 from preacher import __version__ as VERSION
 from preacher.presentation.logging import LoggingPresentation
 from preacher.presentation.serialization import SerializingPresentation
@@ -79,7 +81,13 @@ def parse_args() -> argparse.Namespace:
         '-j', '--json-dump',
         type=argparse.FileType('w'),
         metavar='file',
-        help='result dump file (JSON).',
+        help='result dump file (JSON)',
+    )
+    parser.add_argument(
+        '-H', '--report-html',
+        type=argparse.FileType('w'),
+        metavar='file',
+        help='report HTML file',
     )
 
     return parser.parse_args()
@@ -113,6 +121,15 @@ def main() -> None:
 
     if args.json_dump:
         serializing_presentation.dump_json(args.json_dump)
+
+    if args.report_html:
+        env = jinja2.Environment(
+            loader=jinja2.PackageLoader('preacher', 'resources/html'),
+            autoescape=jinja2.select_autoescape(['html', 'xml'])
+        )
+        env.get_template('index.html').stream(
+            **serializing_presentation.serialize()
+        ).dump(args.report_html)
 
     if not app.is_succeeded:
         sys.exit(1)

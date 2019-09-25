@@ -29,12 +29,13 @@ def test_when_given_an_invalid_retry_count():
 
 def test_when_the_request_fails():
     case = Case(
+        label='Request fails',
         request=MagicMock(side_effect=RuntimeError('message')),
         response_description=MagicMock(),
     )
 
     verification = case('base-url')
-    assert verification.label is None
+    assert verification.label == 'Request fails'
     assert verification.status == Status.FAILURE
     assert verification.request.status == Status.FAILURE
     assert verification.request.message == 'RuntimeError: message'

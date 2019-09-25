@@ -51,6 +51,7 @@ class Case:
             return CaseResult(
                 status=Status.FAILURE,
                 request=Verification.of_error(error),
+                label=self._label,
             )
         request_verification = Verification.succeed()
 

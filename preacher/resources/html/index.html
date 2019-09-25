@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+{% from "./macros/scenario.html" import show_scenario %}
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Preacher Test Report</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
+  <style>
+    body {
+      padding: 0em 1em;
+    }
+
+    .accordion-title {
+      color: #0a0a0a;
+    }
+    .accordion-content {
+      padding-top: 0rem;
+      padding-right: 0rem;
+      padding-bottom: 0rem;
+      background-color: inherit;
+    }
+
+    .accordion-item.status-SUCCESS {
+      background-color: #e1faea;
+    }
+    .accordion-item.status-SUCCESS>.accordion-title {
+      background-color: #3adb76;
+    }
+
+    .accordion-item.status-UNSTABLE {
+      background-color: #fff3d9;
+    }
+    .accordion-item.status-UNSTABLE>.accordion-title {
+      background-color: #ffae00;
+    }
+
+    .accordion-item.status-FAILURE {
+      background-color: #f7e4e1;
+    }
+    .accordion-item.status-FAILURE>.accordion-title {
+      background-color: #cc4b37;
+      color: #fefefe;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Preacher Test Report</h1>
+
+  <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    {% for scenario in scenarios %}
+      {{ show_scenario(scenario) }}
+    {% endfor %}
+  </ul>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
+<script>
+$(document).foundation()
+</script>
+</html>
