@@ -3,7 +3,7 @@ from typing import Callable, Iterable, Iterator
 
 import ruamel.yaml as yaml
 
-from preacher.core.scenario_running import ScenarioResult, run_scenario
+from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
@@ -67,8 +67,4 @@ class Application:
                 message=str(error),
             )
 
-        return run_scenario(
-            scenario,
-            base_url=self._base_url,
-            retry=self._retry,
-        )
+        return scenario.run(base_url=self._base_url, retry=self._retry)

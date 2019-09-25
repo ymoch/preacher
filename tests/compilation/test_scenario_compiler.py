@@ -1,10 +1,13 @@
-from unittest.mock import MagicMock, call, sentinel
+from unittest.mock import MagicMock, call, patch, sentinel
 
 from pytest import mark, raises
 
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
+
+
+CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
 
 
 @mark.parametrize('value, expected_suffix', (
@@ -20,17 +23,20 @@ def test_when_given_invalid_values(value, expected_suffix):
     assert str(error_info.value).endswith(expected_suffix)
 
 
-def test_when_given_an_empty_object():
+@patch(CONSTRUCTOR, return_value=sentinel.scenario)
+def test_given_an_empty_object(ctor):
     case_compiler = MagicMock(CaseCompiler)
     compiler = ScenarioCompiler(case_compiler=case_compiler)
     scenario = compiler.compile({})
-    assert scenario.label is None
-    assert list(scenario.cases()) == []
+
+    assert scenario is sentinel.scenario
+    ctor.assert_called_once_with(label=None, cases=[])
 
     case_compiler.of_default.assert_called_once_with({})
 
 
-def test_generates_an_iterator_of_cases():
+@patch(CONSTRUCTOR, return_value=sentinel.scenario)
+def test_given_a_filled_object(ctor):
     default_case_compiler = MagicMock(
         CaseCompiler,
         compile=MagicMock(return_value=sentinel.case),
@@ -45,8 +51,11 @@ def test_generates_an_iterator_of_cases():
         'default': {'a': 'b'},
         'cases': [{}, {'k': 'v'}],
     })
-    assert scenario.label == 'label'
-    assert list(scenario.cases()) == [sentinel.case, sentinel.case]
+    assert scenario is sentinel.scenario
+    ctor.assert_called_once_with(
+        label='label',
+        cases=[sentinel.case, sentinel.case],
+    )
 
     case_compiler.of_default.assert_called_once_with({'a': 'b'})
     default_case_compiler.compile.assert_has_calls([
