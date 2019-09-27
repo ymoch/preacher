@@ -1,6 +1,6 @@
-from unittest.mock import MagicMock, sentinel
+from unittest.mock import ANY, MagicMock, patch, sentinel
 
-from pytest import fixture, raises
+from pytest import fixture
 
 from preacher.core.case import Case
 from preacher.core.request import Response
@@ -19,32 +19,36 @@ def response():
     )
 
 
-def test_when_given_an_invalid_retry_count():
-    case = Case(request=MagicMock(), response_description=MagicMock())
-    assert case.label is None
+@fixture
+def retry_patch():
+    return patch(
+        'preacher.core.case.retry_while_false',
+        side_effect=lambda func, *args, **kwargs: func(),
+    )
 
-    with raises(ValueError):
-        case('base-url', retry=-1)
 
-
-def test_when_the_request_fails():
+def test_when_the_request_fails(retry_patch):
     case = Case(
         label='Request fails',
         request=MagicMock(side_effect=RuntimeError('message')),
         response_description=MagicMock(),
     )
 
-    verification = case('base-url')
-    assert verification.label == 'Request fails'
-    assert verification.status == Status.FAILURE
-    assert verification.request.status == Status.FAILURE
-    assert verification.request.message == 'RuntimeError: message'
+    with retry_patch as retry:
+        result = case('base-url')
+
+    assert not result
+    assert result.label == 'Request fails'
+    assert result.status == Status.FAILURE
+    assert result.request.status == Status.FAILURE
+    assert result.request.message == 'RuntimeError: message'
 
     case.request.assert_called_with('base-url')
     case.response_description.assert_not_called()
+    retry.assert_called_once_with(ANY, attempts=1)
 
 
-def test_when_given_an_response(response):
+def test_when_given_an_invalid_response(response, retry_patch):
     case = Case(
         label='Response should be unstable',
         request=MagicMock(return_value=response),
@@ -57,12 +61,16 @@ def test_when_given_an_response(response):
             ),
         )),
     )
-    verification = case(base_url='base-url', retry=1)
-    assert verification.label == 'Response should be unstable'
-    assert verification.status == Status.UNSTABLE
-    assert verification.request.status == Status.SUCCESS
-    assert verification.response.status == Status.UNSTABLE
-    assert verification.response.body.status == Status.UNSTABLE
+
+    with retry_patch as retry:
+        result = case(base_url='base-url', retry=3)
+
+    assert not result
+    assert result.label == 'Response should be unstable'
+    assert result.status == Status.UNSTABLE
+    assert result.request.status == Status.SUCCESS
+    assert result.response.status == Status.UNSTABLE
+    assert result.response.body.status == Status.UNSTABLE
 
     case.response_description.verify.assert_called_with(
         status_code=402,
@@ -70,31 +78,25 @@ def test_when_given_an_response(response):
         body='body',
         request_datetime=sentinel.request_datetime,
     )
+    retry.assert_called_once_with(ANY, attempts=4)
 
 
-def test_when_retrying(response):
+def test_when_given_an_valid_response(response, retry_patch):
     case = Case(
-        label='Succeeds',
-        request=MagicMock(side_effect=[RuntimeError(), response, response]),
+        label='Response should be success',
+        request=MagicMock(return_value=response),
         response_description=MagicMock(verify=MagicMock(
-            side_effect=[
-                ResponseVerification(
-                    status=Status.UNSTABLE,
-                    status_code=Verification.succeed(),
-                    headers=Verification.succeed(),
-                    body=Verification(status=Status.UNSTABLE),
-                ),
-                ResponseVerification(
-                    status=Status.SUCCESS,
-                    status_code=Verification.succeed(),
-                    headers=Verification.succeed(),
-                    body=Verification.succeed(),
-                ),
-            ]
+            return_value=ResponseVerification(
+                status=Status.SUCCESS,
+                status_code=Verification.succeed(),
+                headers=Verification.succeed(),
+                body=Verification.succeed(),
+            )
         )),
     )
-    verification = case(base_url='base-url', retry=2)
-    assert verification.status == Status.SUCCESS
 
-    assert case.request.call_count == 3
-    assert case.response_description.verify.call_count == 2
+    with retry_patch:
+        result = case(base_url='base-url')
+
+    assert result
+    assert result.status == Status.SUCCESS
