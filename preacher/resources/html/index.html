@@ -54,7 +54,7 @@
 
   <h1>Preacher Test Report</h1>
 
-  <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+  <ul class="scenarios accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
     {% for scenario in scenarios %}
       {{ show_scenario(scenario) }}
     {% endfor %}
@@ -66,5 +66,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
 <script>
 $(document).foundation()
+$('.scenarios').foundation('down', $('.status-UNSTABLE,.status-FAILURE').children('.accordion-content'))
 </script>
 </html>
