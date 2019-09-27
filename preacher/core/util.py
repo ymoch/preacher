@@ -1,13 +1,16 @@
-from typing import Callable
+from typing import Callable, TypeVar
 
 
-def retry_case(func: Callable, attempts: int = 1):
+T = TypeVar('T')
+
+
+def retry_while_false(func: Callable, attempts: int = 1):
     if attempts < 1:
         raise ValueError(f'`attempts` must be positive, given {attempts}')
 
     for _ in range(attempts):
         result = func()
-        if result.status.is_succeeded:
+        if result:
             return result
 
     return result

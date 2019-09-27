@@ -10,7 +10,7 @@ from .response_description import (
     ResponseVerification,
 )
 from .status import Status, merge_statuses
-from .util import retry_case
+from .util import retry_while_false
 from .verification import Verification
 
 
@@ -20,6 +20,9 @@ class CaseResult:
     request: Verification
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
+
+    def __bool__(self) -> bool:
+        return bool(self.status)
 
 
 class Case:
@@ -36,7 +39,7 @@ class Case:
 
     def __call__(self, base_url: str, retry: int = 0) -> CaseResult:
         func = partial(self._run, base_url)
-        return retry_case(func, attempts=retry + 1)
+        return retry_while_false(func, attempts=retry + 1)
 
     def _run(self, base_url: str) -> CaseResult:
         try:

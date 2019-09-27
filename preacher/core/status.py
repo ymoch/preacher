@@ -11,6 +11,8 @@ class Status(Enum):
     """
     >>> Status.SKIPPED.is_succeeded
     True
+    >>> bool(Status.SKIPPED)
+    True
     >>> Status.SKIPPED.merge(Status.SUCCESS)
     SUCCESS
     >>> Status.SKIPPED.merge(Status.UNSTABLE)
@@ -19,6 +21,8 @@ class Status(Enum):
     FAILURE
 
     >>> Status.SUCCESS.is_succeeded
+    True
+    >>> bool(Status.SUCCESS)
     True
     >>> Status.SUCCESS.merge(Status.SKIPPED)
     SUCCESS
@@ -31,6 +35,8 @@ class Status(Enum):
 
     >>> Status.UNSTABLE.is_succeeded
     False
+    >>> bool(Status.UNSTABLE)
+    False
     >>> Status.UNSTABLE.merge(Status.SKIPPED)
     UNSTABLE
     >>> Status.UNSTABLE.merge(Status.SUCCESS)
@@ -41,6 +47,8 @@ class Status(Enum):
     FAILURE
 
     >>> Status.FAILURE.is_succeeded
+    False
+    >>> bool(Status.FAILURE)
     False
     >>> Status.FAILURE.merge(Status.SKIPPED)
     FAILURE
@@ -69,6 +77,9 @@ class Status(Enum):
 
     def __repr__(self) -> str:
         return str(self)
+
+    def __bool__(self) -> bool:
+        return self.is_succeeded
 
 
 @singledispatch
