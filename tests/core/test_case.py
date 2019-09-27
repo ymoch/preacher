@@ -48,7 +48,7 @@ def test_when_the_request_fails(retry_patch):
     retry.assert_called_once_with(ANY, attempts=1)
 
 
-def test_when_given_an_response(response, retry_patch):
+def test_when_given_an_invalid_response(response, retry_patch):
     case = Case(
         label='Response should be unstable',
         request=MagicMock(return_value=response),
@@ -79,3 +79,24 @@ def test_when_given_an_response(response, retry_patch):
         request_datetime=sentinel.request_datetime,
     )
     retry.assert_called_once_with(ANY, attempts=4)
+
+
+def test_when_given_an_valid_response(response, retry_patch):
+    case = Case(
+        label='Response should be success',
+        request=MagicMock(return_value=response),
+        response_description=MagicMock(verify=MagicMock(
+            return_value=ResponseVerification(
+                status=Status.SUCCESS,
+                status_code=Verification.succeed(),
+                headers=Verification.succeed(),
+                body=Verification.succeed(),
+            )
+        )),
+    )
+
+    with retry_patch:
+        result = case(base_url='base-url')
+
+    assert result
+    assert result.status == Status.SUCCESS
