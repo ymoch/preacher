@@ -78,16 +78,10 @@ def parse_args() -> argparse.Namespace:
         default=1,
     )
     parser.add_argument(
-        '-j', '--json-dump',
-        type=argparse.FileType('w'),
-        metavar='file',
-        help='result dump file (JSON)',
-    )
-    parser.add_argument(
         '-H', '--report-html',
         type=argparse.FileType('w'),
         metavar='file',
-        help='report HTML file',
+        help='report HTML file (experimental)',
     )
 
     return parser.parse_args()
@@ -118,9 +112,6 @@ def main() -> None:
     scenario_paths = args.scenario
     scenario_concurrency = args.scenario_concurrency
     app.run_concurrently(scenario_paths, concurrency=scenario_concurrency)
-
-    if args.json_dump:
-        serializing_presentation.dump_json(args.json_dump)
 
     if args.report_html:
         env = jinja2.Environment(

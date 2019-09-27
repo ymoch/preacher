@@ -11,6 +11,7 @@
 
       <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
         {{ show_verification("Status Code", item.status_code) }}
+        {{ show_description("Headers", item.headers) }}
         {{ show_description("Body", item.body) }}
       </ul>
     </div>

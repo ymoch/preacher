@@ -17,6 +17,11 @@ cases:
         - describe: ."content-type"
           should:
             equal: application/json
+        - describe:
+            jq: ."content-length"
+            cast_to: int
+          should:
+            be_greater_than: 100
       body:
         - describe: .not_existing_key
           should: be_null
