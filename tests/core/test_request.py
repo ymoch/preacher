@@ -32,6 +32,7 @@ def test_request(requests_get, now):
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['headers']['k1'].startswith('v1')
     assert kwargs['params']['k2'].startswith('v2')
+    assert kwargs['timeout'] is None
 
 
 @patch('requests.get', return_value=MagicMock(
