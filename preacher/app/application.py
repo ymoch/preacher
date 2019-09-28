@@ -1,5 +1,5 @@
 from multiprocessing import Pool
-from typing import Callable, Iterable, Iterator
+from typing import Callable, Iterable, Iterator, List
 
 import ruamel.yaml as yaml
 
@@ -7,6 +7,7 @@ from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
+from .listener.listener import Listener
 
 
 MapFunction = Callable[
@@ -21,7 +22,7 @@ MapFunction = Callable[
 class Application:
     def __init__(
         self,
-        presentations: list,
+        presentations: List[Listener],
         base_url: str,
         retry: int = 0,
         delay: float = 0.1
