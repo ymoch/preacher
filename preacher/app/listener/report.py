@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import os
-from typing import List, Optional
+from typing import List
 
 import jinja2
 
 from preacher.core.scenario import ScenarioResult
-from .listener import Listener, EmptyListener
+from .listener import Listener
 
 
 class ReportingListener(Listener):
@@ -33,9 +33,3 @@ class ReportingListener(Listener):
 
     def accept(self, result: ScenarioResult) -> None:
         self._results.append(result)
-
-
-def listener_to_report(path: Optional[str]) -> Listener:
-    if not path:
-        return EmptyListener()
-    return ReportingListener(path)

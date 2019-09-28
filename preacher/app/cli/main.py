@@ -5,11 +5,14 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from typing import Optional
 
 from preacher import __version__ as VERSION
 from preacher.app.application import Application
+from preacher.app.listener.empty import EmptyListener
+from preacher.app.listener.listener import Listener
 from preacher.app.listener.logging import LoggingListener
-from preacher.app.listener.report import listener_to_report
+from preacher.app.listener.report import ReportingListener
 
 
 DEFAULT_URL = 'http://localhost:5042'
@@ -26,6 +29,12 @@ LOGGING_LEVEL_MAP = {
     'unstable': logging.WARN,
     'failure': logging.ERROR,
 }
+
+
+def report_to(path: Optional[str] = None) -> Listener:
+    if not path:
+        return EmptyListener()
+    return ReportingListener(path)
 
 
 def zero_or_positive_int(value: str) -> int:
@@ -100,7 +109,7 @@ def main() -> None:
     LOGGER.setLevel(level)
 
     with LoggingListener(LOGGER) as logging_listener, \
-            listener_to_report(args.report) as reporting_listener:
+            report_to(args.report) as reporting_listener:
         app = Application(
             presentations=[logging_listener, reporting_listener],
             base_url=args.url,
