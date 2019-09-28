@@ -37,9 +37,14 @@ class Case:
         self._request = request
         self._response_description = response_description
 
-    def __call__(self, base_url: str, retry: int = 0) -> CaseResult:
-        func = partial(self._run, base_url)
-        return retry_while_false(func, attempts=retry + 1)
+    def __call__(
+        self,
+        base_url: str,
+        retry: int = 0,
+        delay: float = 1.0,
+    ) -> CaseResult:
+        func = partial(self._run, base_url=base_url)
+        return retry_while_false(func, attempts=retry + 1, delay=delay)
 
     def _run(self, base_url: str) -> CaseResult:
         try:

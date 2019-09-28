@@ -45,7 +45,7 @@ def test_when_the_request_fails(retry_patch):
 
     case.request.assert_called_with('base-url')
     case.response_description.assert_not_called()
-    retry.assert_called_once_with(ANY, attempts=1)
+    retry.assert_called_once_with(ANY, attempts=1, delay=1.0)
 
 
 def test_when_given_an_invalid_response(response, retry_patch):
@@ -63,7 +63,7 @@ def test_when_given_an_invalid_response(response, retry_patch):
     )
 
     with retry_patch as retry:
-        result = case(base_url='base-url', retry=3)
+        result = case(base_url='base-url', retry=3, delay=2.0)
 
     assert not result
     assert result.label == 'Response should be unstable'
@@ -78,7 +78,7 @@ def test_when_given_an_invalid_response(response, retry_patch):
         body='body',
         request_datetime=sentinel.request_datetime,
     )
-    retry.assert_called_once_with(ANY, attempts=4)
+    retry.assert_called_once_with(ANY, attempts=4, delay=2.0)
 
 
 def test_when_given_an_valid_response(response, retry_patch):

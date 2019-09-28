@@ -71,6 +71,12 @@ def parse_args() -> argparse.Namespace:
         default=0,
     )
     parser.add_argument(
+        '-d', '--delay',
+        type=float,
+        metavar='sec',
+        help='delay in seconds between attempts'
+    )
+    parser.add_argument(
         '-c', '--scenario-concurrency',
         type=int,
         metavar='num',
