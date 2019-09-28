@@ -5,13 +5,14 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-
-import jinja2
+from typing import Optional
 
 from preacher import __version__ as VERSION
-from preacher.presentation.logging import LoggingPresentation
-from preacher.presentation.serialization import SerializingPresentation
-from .application import Application
+from preacher.app.application import Application
+from preacher.app.listener import Listener
+from preacher.app.listener.empty import EmptyListener
+from preacher.app.listener.logging import LoggingListener
+from preacher.app.listener.report import ReportingListener
 
 
 DEFAULT_URL = 'http://localhost:5042'
@@ -28,6 +29,12 @@ LOGGING_LEVEL_MAP = {
     'unstable': logging.WARN,
     'failure': logging.ERROR,
 }
+
+
+def report_to(path: Optional[str] = None) -> Listener:
+    if not path:
+        return EmptyListener()
+    return ReportingListener(path)
 
 
 def zero_or_positive_int(value: str) -> int:
@@ -85,10 +92,9 @@ def parse_args() -> argparse.Namespace:
         default=1,
     )
     parser.add_argument(
-        '-H', '--report-html',
-        type=argparse.FileType('w'),
-        metavar='file',
-        help='report HTML file (experimental)',
+        '-R', '--report',
+        metavar='dir',
+        help='report directory (experimental)',
     )
 
     return parser.parse_args()
@@ -102,31 +108,18 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    serializing_presentation = SerializingPresentation()
-    presentations = [
-        LoggingPresentation(LOGGER),
-        serializing_presentation,
-    ]
-
-    app = Application(
-        presentations=presentations,
-        base_url=args.url,
-        retry=args.retry,
-        delay=args.delay
-    )
-
-    scenario_paths = args.scenario
-    scenario_concurrency = args.scenario_concurrency
-    app.run_concurrently(scenario_paths, concurrency=scenario_concurrency)
-
-    if args.report_html:
-        env = jinja2.Environment(
-            loader=jinja2.PackageLoader('preacher', 'resources/html'),
-            autoescape=jinja2.select_autoescape(['html', 'xml'])
+    with LoggingListener(LOGGER) as logging_listener, \
+            report_to(args.report) as reporting_listener:
+        app = Application(
+            presentations=[logging_listener, reporting_listener],
+            base_url=args.url,
+            retry=args.retry,
+            delay=args.delay,
         )
-        env.get_template('index.html').stream(
-            **serializing_presentation.serialize()
-        ).dump(args.report_html)
+        app.run_concurrently(
+            args.scenario,
+            concurrency=args.scenario_concurrency,
+        )
 
     if not app.is_succeeded:
         sys.exit(1)

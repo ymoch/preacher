@@ -1,19 +1,26 @@
 {% macro show_verification(label, item, child_label) %}
   {% set child_label = child_label | default('Predicate') %}
   <li class="accordion-item status-{{ item.status }}" data-accordion-item>
-    <a href="#" class="accordion-title">{{ label }}: {{ item.status }}</a>
+    <a href="#" class="accordion-title">
+      <span class="badge status-{{ item.status }}">{{ item.status }}</span>
+      {{ label }}
+    </a>
 
     <div class="accordion-content" data-tab-content>
-      {% if item.message %}
-      <pre>{{ item.message }}</pre>
-      {% endif %}
+      {% if not item.message and not item.children %}
+        No message.
+      {% else %}
+        {% if item.message %}
+        <pre>{{ item.message }}</pre>
+        {% endif %}
 
-      {% if item.children %}
-      <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-        {% for child in item.children %}
-          {{ show_verification(child_label + loop.index | string, child) }}
-        {% endfor %}
-      </ul>
+        {% if item.children %}
+        <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+          {% for child in item.children %}
+            {{ show_verification(child_label + loop.index | string, child) }}
+          {% endfor %}
+        </ul>
+        {% endif %}
       {% endif %}
     </div>
   </li>

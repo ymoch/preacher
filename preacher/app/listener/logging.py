@@ -1,5 +1,7 @@
 """Logging presentation."""
 
+from __future__ import annotations
+
 import contextlib
 import logging
 import io
@@ -10,6 +12,7 @@ from preacher.core.response_description import ResponseVerification
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.core.verification import Verification
+from . import Listener
 
 
 _LEVEL_MAP = {
@@ -20,14 +23,23 @@ _LEVEL_MAP = {
 }
 
 
-class LoggingPresentation:
+class LoggingListener(Listener):
 
     def __init__(self, logger: logging.Logger):
         self._logger = logger
         self._indent = ''
 
+    def __enter__(self) -> LoggingListener:
+        return self
+
+    def __exit__(self, ex_type, ex_value, trace) -> None:
+        pass
+
     def accept(self, result: ScenarioResult) -> None:
         self.show_scenario_result(result)
+
+    def end(self) -> None:
+        pass
 
     def show_scenario_result(self, scenario_result: ScenarioResult) -> None:
         status = scenario_result.status
