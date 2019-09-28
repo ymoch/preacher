@@ -40,15 +40,16 @@ class Case:
     def __call__(
         self,
         base_url: str,
+        timeout: Optional[float] = None,
         retry: int = 0,
         delay: float = 0.1,
     ) -> CaseResult:
-        func = partial(self._run, base_url=base_url)
+        func = partial(self._run, base_url=base_url, timeout=timeout)
         return retry_while_false(func, attempts=retry + 1, delay=delay)
 
-    def _run(self, base_url: str) -> CaseResult:
+    def _run(self, base_url: str, timeout: Optional[float]) -> CaseResult:
         try:
-            response = self._request(base_url)
+            response = self._request(base_url, timeout=timeout)
         except Exception as error:
             return CaseResult(
                 status=Status.FAILURE,
