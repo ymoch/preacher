@@ -29,6 +29,9 @@ class LoggingPresentation:
     def accept(self, result: ScenarioResult) -> None:
         self.show_scenario_result(result)
 
+    def end(self) -> None:
+        pass
+
     def show_scenario_result(self, scenario_result: ScenarioResult) -> None:
         status = scenario_result.status
         level = _LEVEL_MAP[status]
