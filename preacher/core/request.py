@@ -43,6 +43,7 @@ class Request:
             base_url + self._path,
             headers=headers,
             params=self._params,
+            timeout=None,
         )
 
         return Response(
