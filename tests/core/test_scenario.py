@@ -18,10 +18,10 @@ def test_when_given_a_filled_scenario():
     sentinel.result2.status = Status.SUCCESS
     case2 = MagicMock(return_value=sentinel.result2)
     scenario = Scenario(label='label', cases=[case1, case2])
-    result = scenario.run(base_url='base_url', retry=3)
+    result = scenario.run(base_url='base_url', retry=3, delay=2.0)
     assert result.label == 'label'
     assert result.status == Status.UNSTABLE
     assert result.case_results == [sentinel.result1, sentinel.result2]
 
-    case1.assert_called_once_with(base_url='base_url', retry=3)
-    case2.assert_called_once_with(base_url='base_url', retry=3)
+    case1.assert_called_once_with(base_url='base_url', retry=3, delay=2.0)
+    case2.assert_called_once_with(base_url='base_url', retry=3, delay=2.0)

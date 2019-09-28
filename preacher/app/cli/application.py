@@ -24,10 +24,12 @@ class Application:
         presentations: list,
         base_url: str,
         retry: int = 0,
+        delay: float = 0.1
     ):
         self._presentations = presentations
         self._base_url = base_url
         self._retry = retry
+        self._delay = delay
 
         self._scenario_compiler = ScenarioCompiler()
         self._is_succeeded = True
@@ -67,4 +69,8 @@ class Application:
                 message=str(error),
             )
 
-        return scenario.run(base_url=self._base_url, retry=self._retry)
+        return scenario.run(
+            base_url=self._base_url,
+            retry=self._retry,
+            delay=self._delay,
+        )
