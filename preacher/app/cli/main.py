@@ -46,6 +46,24 @@ def zero_or_positive_int(value: str) -> int:
     return int_value
 
 
+def positive_float(value: str) -> float:
+    float_value = float(value)
+    if float_value <= 0.0:
+        raise argparse.ArgumentTypeError(
+            f"must be positive, given {float_value}"
+        )
+    return float_value
+
+
+def zero_or_positive_float(value: str) -> float:
+    float_value = float(value)
+    if float_value < 0.0:
+        raise argparse.ArgumentTypeError(
+            f"must be positive or 0, given {float_value}"
+        )
+    return float_value
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -79,10 +97,16 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         '-d', '--delay',
-        type=float,
+        type=zero_or_positive_float,
         metavar='sec',
         help='delay in seconds between attempts',
         default=0.1,
+    )
+    parser.add_argument(
+        '-t', '--timeout',
+        type=positive_float,
+        metavar='sec',
+        help='request timeout in seconds',
     )
     parser.add_argument(
         '-c', '--scenario-concurrency',
@@ -115,6 +139,7 @@ def main() -> None:
             base_url=args.url,
             retry=args.retry,
             delay=args.delay,
+            timeout=args.timeout,
         )
         app.run_concurrently(
             args.scenario,
