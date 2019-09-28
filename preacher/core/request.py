@@ -3,7 +3,7 @@
 from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Mapping
+from typing import Any, Mapping, Optional
 
 import requests
 
@@ -34,7 +34,11 @@ class Request:
         self._headers = headers
         self._params = params
 
-    def __call__(self, base_url: str) -> Response:
+    def __call__(
+        self,
+        base_url: str,
+        timeout: Optional[float] = None,
+    ) -> Response:
         headers = copy(_DEFAULT_HEADERS)
         headers.update(self._headers)
         request_datetime = now()
@@ -43,6 +47,7 @@ class Request:
             base_url + self._path,
             headers=headers,
             params=self._params,
+            timeout=timeout,
         )
 
         return Response(

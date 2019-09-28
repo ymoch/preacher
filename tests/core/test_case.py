@@ -43,7 +43,7 @@ def test_when_the_request_fails(retry_patch):
     assert result.request.status == Status.FAILURE
     assert result.request.message == 'RuntimeError: message'
 
-    case.request.assert_called_with('base-url')
+    case.request.assert_called_with('base-url', timeout=None)
     case.response_description.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
 
@@ -63,7 +63,7 @@ def test_when_given_an_invalid_response(response, retry_patch):
     )
 
     with retry_patch as retry:
-        result = case(base_url='base-url', retry=3, delay=1.0)
+        result = case(base_url='base-url', retry=3, delay=1.0, timeout=5.0)
 
     assert not result
     assert result.label == 'Response should be unstable'
@@ -72,6 +72,7 @@ def test_when_given_an_invalid_response(response, retry_patch):
     assert result.response.status == Status.UNSTABLE
     assert result.response.body.status == Status.UNSTABLE
 
+    case.request.assert_called_with('base-url', timeout=5.0)
     case.response_description.verify.assert_called_with(
         status_code=402,
         headers={},

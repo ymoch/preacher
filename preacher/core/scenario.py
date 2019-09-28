@@ -32,9 +32,10 @@ class Scenario:
         base_url: str,
         retry: int = 0,
         delay: float = 0.1,
+        timeout: Optional[float] = None,
     ) -> ScenarioResult:
         case_results = [
-            case(base_url=base_url, retry=retry, delay=delay)
+            case(base_url, timeout=timeout, retry=retry, delay=delay)
             for case in self._cases
         ]
         status = merge_statuses(result.status for result in case_results)

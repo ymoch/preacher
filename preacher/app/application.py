@@ -1,5 +1,5 @@
 from multiprocessing import Pool
-from typing import Callable, Iterable, Iterator, List
+from typing import Callable, Iterable, Iterator, List, Optional
 
 import ruamel.yaml as yaml
 
@@ -25,12 +25,14 @@ class Application:
         presentations: List[Listener],
         base_url: str,
         retry: int = 0,
-        delay: float = 0.1
+        delay: float = 0.1,
+        timeout: Optional[float] = None,
     ):
         self._presentations = presentations
         self._base_url = base_url
         self._retry = retry
         self._delay = delay
+        self._timeout = timeout
 
         self._scenario_compiler = ScenarioCompiler()
         self._is_succeeded = True
@@ -71,7 +73,8 @@ class Application:
             )
 
         return scenario.run(
-            base_url=self._base_url,
+            self._base_url,
             retry=self._retry,
             delay=self._delay,
+            timeout=self._timeout,
         )

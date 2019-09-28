@@ -21,7 +21,7 @@ def test_request(requests_get, now):
     assert request.headers == {'k1': 'v1'}
     assert request.params == {'k2': 'v2'}
 
-    response = request('base-url')
+    response = request('base-url', timeout=5.0)
     assert response.status_code == 402
     assert response.headers == {'header-name': 'Header-Value'}
     assert response.body == 'text'
@@ -32,6 +32,7 @@ def test_request(requests_get, now):
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['headers']['k1'].startswith('v1')
     assert kwargs['params']['k2'].startswith('v2')
+    assert kwargs['timeout'] == 5.0
 
 
 @patch('requests.get', return_value=MagicMock(
@@ -49,3 +50,4 @@ def test_request_overwrites_default_headers(requests_get):
     Request()('base-url')
     kwargs = requests_get.call_args[1]
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
+    assert kwargs['timeout'] is None
