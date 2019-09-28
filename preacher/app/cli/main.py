@@ -9,7 +9,6 @@ import sys
 from preacher import __version__ as VERSION
 from preacher.presentation.logging import LoggingPresentation
 from preacher.presentation.report import ReportingListener
-from preacher.presentation.serialization import SerializingPresentation
 from .application import Application
 
 
@@ -102,7 +101,7 @@ def main() -> None:
 
     presentations = [LoggingPresentation(LOGGER)]
     if args.report:
-        presentations.append(ReportingListener(args.report))
+        presentations.append(ReportingListener(args.report))  # type: ignore
 
     app = Application(
         presentations=presentations,
