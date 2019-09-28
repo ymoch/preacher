@@ -7,9 +7,9 @@ import logging
 import sys
 
 from preacher import __version__ as VERSION
+from preacher.app.application import Application
 from preacher.app.listener.logging import LoggingListener
 from preacher.app.listener.report import listener_to_report
-from .application import Application
 
 
 DEFAULT_URL = 'http://localhost:5042'
