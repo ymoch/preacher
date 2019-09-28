@@ -40,9 +40,9 @@ class Case:
     def __call__(
         self,
         base_url: str,
-        timeout: Optional[float] = None,
         retry: int = 0,
         delay: float = 0.1,
+        timeout: Optional[float] = None,
     ) -> CaseResult:
         func = partial(self._run, base_url=base_url, timeout=timeout)
         return retry_while_false(func, attempts=retry + 1, delay=delay)

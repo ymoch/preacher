@@ -63,7 +63,7 @@ def test_when_given_an_invalid_response(response, retry_patch):
     )
 
     with retry_patch as retry:
-        result = case(base_url='base-url', timeout=5.0, retry=3, delay=1.0)
+        result = case(base_url='base-url', retry=3, delay=1.0, timeout=5.0)
 
     assert not result
     assert result.label == 'Response should be unstable'

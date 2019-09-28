@@ -30,9 +30,9 @@ class Scenario:
     def run(
         self,
         base_url: str,
-        timeout: Optional[float] = None,
         retry: int = 0,
         delay: float = 0.1,
+        timeout: Optional[float] = None,
     ) -> ScenarioResult:
         case_results = [
             case(base_url, timeout=timeout, retry=retry, delay=delay)
