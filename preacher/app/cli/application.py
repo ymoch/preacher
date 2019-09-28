@@ -24,7 +24,7 @@ class Application:
         presentations: list,
         base_url: str,
         retry: int = 0,
-        delay: float = 1.0
+        delay: float = 0.1
     ):
         self._presentations = presentations
         self._base_url = base_url

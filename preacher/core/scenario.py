@@ -31,7 +31,7 @@ class Scenario:
         self,
         base_url: str,
         retry: int = 0,
-        delay: float = 1.0,
+        delay: float = 0.1,
     ) -> ScenarioResult:
         case_results = [
             case(base_url=base_url, retry=retry, delay=delay)

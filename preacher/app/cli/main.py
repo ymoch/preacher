@@ -74,7 +74,8 @@ def parse_args() -> argparse.Namespace:
         '-d', '--delay',
         type=float,
         metavar='sec',
-        help='delay in seconds between attempts'
+        help='delay in seconds between attempts',
+        default=0.1,
     )
     parser.add_argument(
         '-c', '--scenario-concurrency',
@@ -107,12 +108,11 @@ def main() -> None:
         serializing_presentation,
     ]
 
-    base_url = args.url
-    retry = args.retry
     app = Application(
         presentations=presentations,
-        base_url=base_url,
-        retry=retry,
+        base_url=args.url,
+        retry=args.retry,
+        delay=args.delay
     )
 
     scenario_paths = args.scenario

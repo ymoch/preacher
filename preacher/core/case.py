@@ -41,7 +41,7 @@ class Case:
         self,
         base_url: str,
         retry: int = 0,
-        delay: float = 1.0,
+        delay: float = 0.1,
     ) -> CaseResult:
         func = partial(self._run, base_url=base_url)
         return retry_while_false(func, attempts=retry + 1, delay=delay)

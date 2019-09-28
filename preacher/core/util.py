@@ -6,7 +6,7 @@ from typing import Callable, TypeVar
 T = TypeVar('T')
 
 
-def retry_while_false(func: Callable, attempts: int = 1, delay: float = 1.0):
+def retry_while_false(func: Callable, attempts: int = 1, delay: float = 0.1):
     if attempts < 1:
         raise ValueError(f'`attempts` must be positive, given {attempts}')
 
