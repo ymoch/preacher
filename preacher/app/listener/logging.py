@@ -33,7 +33,7 @@ class LoggingListener(Listener):
         return self
 
     def __exit__(self, ex_type, ex_value, trace) -> None:
-        return super().__exit__(ex_type, ex_value, trace)
+        pass
 
     def accept(self, result: ScenarioResult) -> None:
         self.show_scenario_result(result)
