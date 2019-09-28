@@ -7,8 +7,8 @@ import logging
 import sys
 
 from preacher import __version__ as VERSION
-from preacher.presentation.logging import LoggingPresentation
-from preacher.presentation.report import ReportingListener
+from preacher.app.listener.logging import LoggingListener
+from preacher.app.listener.report import listener_to_report
 from .application import Application
 
 
@@ -99,23 +99,18 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    presentations = [LoggingPresentation(LOGGER)]
-    if args.report:
-        presentations.append(ReportingListener(args.report))  # type: ignore
-
-    app = Application(
-        presentations=presentations,
-        base_url=args.url,
-        retry=args.retry,
-        delay=args.delay
-    )
-
-    scenario_paths = args.scenario
-    scenario_concurrency = args.scenario_concurrency
-    app.run_concurrently(scenario_paths, concurrency=scenario_concurrency)
-
-    for pres in presentations:
-        pres.end()
+    with LoggingListener(LOGGER) as logging_listener, \
+            listener_to_report(args.report) as reporting_listener:
+        app = Application(
+            presentations=[logging_listener, reporting_listener],
+            base_url=args.url,
+            retry=args.retry,
+            delay=args.delay,
+        )
+        app.run_concurrently(
+            args.scenario,
+            concurrency=args.scenario_concurrency,
+        )
 
     if not app.is_succeeded:
         sys.exit(1)

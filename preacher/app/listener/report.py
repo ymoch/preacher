@@ -1,22 +1,25 @@
+from __future__ import annotations
+
 import os
+from typing import List, Optional
 
 import jinja2
 
 from preacher.core.scenario import ScenarioResult
+from .listener import Listener, EmptyListener
 
 
-class ReportingListener:
+class ReportingListener(Listener):
 
     def __init__(self, path):
         self._path = path
-        self._results = []
 
+    def __enter__(self) -> ReportingListener:
+        self._results: List[ScenarioResult] = []
         os.makedirs(self._path, exist_ok=True)
+        return self
 
-    def accept(self, result: ScenarioResult) -> None:
-        self._results.append(result)
-
-    def end(self) -> None:
+    def __exit__(self, ex_type, ex_value, trace) -> None:
         env = jinja2.Environment(
             loader=jinja2.PackageLoader('preacher', 'resources/html'),
             autoescape=jinja2.select_autoescape(['html', 'xml'])
@@ -27,3 +30,12 @@ class ReportingListener:
             env.get_template('index.html').stream(
                 scenarios=self._results,
             ).dump(f)
+
+    def accept(self, result: ScenarioResult) -> None:
+        self._results.append(result)
+
+
+def listener_to_report(path: Optional[str]) -> Listener:
+    if not path:
+        return EmptyListener()
+    return ReportingListener(path)
