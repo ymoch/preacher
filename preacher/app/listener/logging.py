@@ -12,7 +12,7 @@ from preacher.core.response_description import ResponseVerification
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.core.verification import Verification
-from .listener import Listener
+from . import Listener
 
 
 _LEVEL_MAP = {

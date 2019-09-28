@@ -7,7 +7,7 @@ from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
-from .listener.listener import Listener
+from .listener import Listener
 
 
 MapFunction = Callable[

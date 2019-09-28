@@ -9,8 +9,8 @@ from typing import Optional
 
 from preacher import __version__ as VERSION
 from preacher.app.application import Application
+from preacher.app.listener import Listener
 from preacher.app.listener.empty import EmptyListener
-from preacher.app.listener.listener import Listener
 from preacher.app.listener.logging import LoggingListener
 from preacher.app.listener.report import ReportingListener
 

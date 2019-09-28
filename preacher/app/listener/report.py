@@ -6,7 +6,7 @@ from typing import List
 import jinja2
 
 from preacher.core.scenario import ScenarioResult
-from .listener import Listener
+from . import Listener
 
 
 class ReportingListener(Listener):

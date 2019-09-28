@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from preacher.core.scenario import ScenarioResult
-from .listener import Listener
+from . import Listener
 
 
 class EmptyListener(Listener):
