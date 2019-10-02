@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 from preacher import __version__ as VERSION
@@ -132,7 +133,8 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    with LoggingListener(LOGGER) as logging_listener, \
+    with ThreadPoolExecutor(args.scenario_concurrency) as executor, \
+            LoggingListener(LOGGER) as logging_listener, \
             report_to(args.report) as reporting_listener:
         app = Application(
             presentations=[logging_listener, reporting_listener],
@@ -141,10 +143,7 @@ def main() -> None:
             delay=args.delay,
             timeout=args.timeout,
         )
-        app.run_concurrently(
-            args.scenario,
-            concurrency=args.scenario_concurrency,
-        )
+        app.run(executor, args.scenario)
 
     if not app.is_succeeded:
         sys.exit(1)
