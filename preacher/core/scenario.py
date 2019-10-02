@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from concurrent.futures import Executor, Future
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import List, Optional
 
@@ -51,22 +51,18 @@ class Scenario:
         delay: float = 0.1,
         timeout: Optional[float] = None,
     ) -> ScenarioResult:
-        case_results = self._run_cases(
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-        )
-        status = merge_statuses(result.status for result in case_results)
-        return ScenarioResult(
-            label=self._label,
-            status=status,
-            case_results=case_results,
-        )
+        with ThreadPoolExecutor(1) as executor:
+            return self.submit(
+                executor,
+                base_url=base_url,
+                retry=retry,
+                delay=delay,
+                timeout=timeout,
+            ).result()
 
     def submit(
         self,
-        executor: Executor,
+        executor: ThreadPoolExecutor,
         base_url: str,
         retry: int = 0,
         delay: float = 0.1,
