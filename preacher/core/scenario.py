@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import Executor, Future
 from dataclasses import dataclass, field
 from typing import List, Optional
 
@@ -15,6 +16,22 @@ class ScenarioResult:
     status: Status
     message: Optional[str] = None
     case_results: List[CaseResult] = field(default_factory=list)
+
+
+class ScenarioTask:
+
+    def __init__(self, label: Optional[str], cases_future: Future):
+        self._label = label
+        self._cases_future = cases_future
+
+    def result(self) -> ScenarioResult:
+        case_results = self._cases_future.result()
+        status = merge_statuses(result.status for result in case_results)
+        return ScenarioResult(
+            label=self._label,
+            status=status,
+            case_results=case_results,
+        )
 
 
 class Scenario:
@@ -34,13 +51,44 @@ class Scenario:
         delay: float = 0.1,
         timeout: Optional[float] = None,
     ) -> ScenarioResult:
-        case_results = [
-            case(base_url, timeout=timeout, retry=retry, delay=delay)
-            for case in self._cases
-        ]
+        case_results = self._run_cases(
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
+            timeout=timeout,
+        )
         status = merge_statuses(result.status for result in case_results)
         return ScenarioResult(
             label=self._label,
             status=status,
             case_results=case_results,
         )
+
+    def submit(
+        self,
+        executor: Executor,
+        base_url: str,
+        retry: int = 0,
+        delay: float = 0.1,
+        timeout: Optional[float] = None,
+    ) -> ScenarioTask:
+        cases_future = executor.submit(
+            self._run_cases,
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
+            timeout=timeout,
+        )
+        return ScenarioTask(label=self._label, cases_future=cases_future)
+
+    def _run_cases(
+        self,
+        base_url: str,
+        retry: int = 0,
+        delay: float = 0.1,
+        timeout: Optional[float] = None,
+    ) -> List[CaseResult]:
+        return [
+            case(base_url, timeout=timeout, retry=retry, delay=delay)
+            for case in self._cases
+        ]
