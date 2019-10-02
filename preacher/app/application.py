@@ -1,4 +1,4 @@
-from concurrent.futures import Executor
+from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Iterable, List, Optional
 
 import ruamel.yaml as yaml
@@ -32,7 +32,11 @@ class Application:
     def is_succeeded(self) -> bool:
         return self._is_succeeded
 
-    def run(self, executor: Executor, config_paths: Iterable[str]) -> None:
+    def run(
+        self,
+        executor: ThreadPoolExecutor,
+        config_paths: Iterable[str],
+    ) -> None:
         tasks = [self._submit_each(executor, path) for path in config_paths]
         results = (task() for task in tasks)
         for result in results:
@@ -42,7 +46,7 @@ class Application:
 
     def _submit_each(
         self,
-        executor: Executor,
+        executor: ThreadPoolExecutor,
         config_path: str,
     ) -> Callable[[], ScenarioResult]:
         with open(config_path) as config_file:

@@ -21,7 +21,6 @@ def test_when_given_a_filled_scenario():
     case2 = MagicMock(return_value=sentinel.result2)
     scenario = Scenario(label='label', cases=[case1, case2])
     result = scenario.run(
-        executor,
         base_url='base_url',
         retry=3,
         delay=2.0,
