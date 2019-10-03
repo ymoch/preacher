@@ -1,4 +1,4 @@
-label: 'Scenario label'
+label: Scenario succeeds
 default:
   request:
     path: /json
@@ -193,7 +193,7 @@ cases:
       body:
         describe: .foo
 
-  - label: No validations for text doesn't fail
+  - label: No validations for plain texts doesn't fail
     request:
       path: /text
     response:
@@ -202,7 +202,7 @@ cases:
         should:
           equal: text/plain
 
-  - label: No analysis for binary doesn't fail
+  - label: No analysis for binary data doesn't fail
     request: /binary
     response:
       headers:

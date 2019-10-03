@@ -1,0 +1,13 @@
+label: Scenario fails
+
+cases:
+  - label: Plain text analysis fails
+    request: /text
+    response:
+      body: {}
+
+  - label: Binary data analysis fails
+    request: /binary
+    response:
+      body: {}
+
