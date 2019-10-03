@@ -7,15 +7,19 @@
       {{ item.label }}
     </a>
     <div class="accordion-content" data-tab-content>
-      {% if item.message %}
-        <pre>{{ item.message }}</pre>
-      {% endif %}
+      {% if not item.message and not item.children %}
+        No message.
+      {% else %}
+        {% if item.message %}
+          <pre>{{ item.message }}</pre>
+        {% endif %}
 
-      <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-        {% for case in item.case_results %}
-          {{ show_case(case) }}
-        {% endfor %}
-      </ul>
+        <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+          {% for case in item.case_results %}
+            {{ show_case(case) }}
+          {% endfor %}
+        </ul>
+      {% endif %}
     </div>
   </li>
 {% endmacro %}

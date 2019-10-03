@@ -2,17 +2,22 @@ label: 'Scenario label'
 default:
   request:
     path: /json
+  response:
+    status_code: 200
+    headers:
+      - describe: ."content-type"
+        should:
+          equal: application/json
 
 cases:
-  - label: Returns a JSON result
+  - label: Send headers and validate headers.
     request:
-      params:
-        key: value
-        multi-key:
-          - value1
-          - value2
+      path: /header
+      headers:
+        header-string: xxx
+        Header-String: yyy
+        user-agent: custom
     response:
-      status_code: 200
       headers:
         - describe: ."content-type"
           should:
@@ -22,6 +27,23 @@ cases:
             cast_to: int
           should:
             be_greater_than: 100
+      body:
+        - describe: ."header-string"
+          should:
+            equal: yyy
+        - describe: ."user-agent"
+          should:
+            equal: custom
+
+  - label: Test JSON responses.
+    request:
+      params:
+        key: value
+        multi-key:
+          - value1
+          - value2
+    response:
+      status_code: 200
       body:
         - describe: .not_existing_key
           should: be_null
@@ -76,6 +98,10 @@ cases:
     request: /xml
     response:
       status_code: 200
+      headers:
+        - describe: ."content-type"
+          should:
+            equal: "application/xml"
       body:
         analyze_as: xml
         descriptions:
@@ -127,23 +153,6 @@ cases:
         - be_less_than_or_equal_to: 499
         - be_less_than: 500
 
-  - label: Send headers
-    request:
-      path: /header
-      headers:
-        header-string: xxx
-        Header-String: yyy
-        user-agent: custom
-    response:
-      status_code: 200
-      body:
-        - describe: ."header-string"
-          should:
-            equal: yyy
-        - describe: ."user-agent"
-          should:
-            equal: custom
-
   - label: No description doesn't cause error
     response:
       body:
@@ -157,3 +166,13 @@ cases:
         describe: ."content-type"
         should:
           equal: text/plain
+
+  - label: No analysis for binary doesn't fail
+    request: /binary
+    response:
+      headers:
+        describe:
+          jq: ."content-length"
+          cast_to: int
+        should:
+          be_greater_than: 0
