@@ -1,4 +1,5 @@
 import os
+import zlib
 from datetime import datetime, timedelta, timezone
 
 import responder
@@ -8,6 +9,11 @@ api = responder.API(
     static_dir=None,
     templates_dir=os.path.join(os.path.dirname(__file__), 'templates'),
 )
+
+
+@api.route('/header')
+def header(req, res) -> None:
+    res.media = {key: value for (key, value) in req.headers.items()}
 
 
 @api.route('/json')
@@ -42,15 +48,16 @@ def text(req, res) -> None:
     res.text = 'text'
 
 
+@api.route('/binary')
+def binary(req, res) -> None:
+    res.headers['content-type'] = 'application/octet-stream'
+    res.content = zlib.compress(b'text')
+
+
 @api.route('/error/404')
 def not_found(req, res) -> None:
     res.status_code = api.status_codes.HTTP_404
     res.media = {'message': 'not found'}
-
-
-@api.route('/header')
-def header(req, res) -> None:
-    res.media = {key: value for (key, value) in req.headers.items()}
 
 
 def main() -> None:
