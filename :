@@ -2,9 +2,15 @@ label: 'Scenario label'
 default:
   request:
     path: /json
+  response:
+    status_code: 200
+    headers:
+      - describe: ."content-type"
+        should:
+          equal: application/json
 
 cases:
-  - label: Send headers
+  - label: Send headers and validate headers.
     request:
       path: /header
       headers:
@@ -12,24 +18,6 @@ cases:
         Header-String: yyy
         user-agent: custom
     response:
-      status_code: 200
-      body:
-        - describe: ."header-string"
-          should:
-            equal: yyy
-        - describe: ."user-agent"
-          should:
-            equal: custom
-
-  - label: Returns a JSON result
-    request:
-      params:
-        key: value
-        multi-key:
-          - value1
-          - value2
-    response:
-      status_code: 200
       headers:
         - describe: ."content-type"
           should:
@@ -39,6 +27,23 @@ cases:
             cast_to: int
           should:
             be_greater_than: 100
+      body:
+        - describe: ."header-string"
+          should:
+            equal: yyy
+        - describe: ."user-agent"
+          should:
+            equal: custom
+
+  - label: Test JSON responses.
+    request:
+      params:
+        key: value
+        multi-key:
+          - value1
+          - value2
+    response:
+      status_code: 200
       body:
         - describe: .not_existing_key
           should: be_null
@@ -93,6 +98,10 @@ cases:
     request: /xml
     response:
       status_code: 200
+      headers:
+        - describe: ."content-type"
+          should:
+            equal: "application/xml"
       body:
         analyze_as: xml
         descriptions:
