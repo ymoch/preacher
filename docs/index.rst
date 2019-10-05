@@ -28,7 +28,9 @@ The User Guide
    user/intro
    user/install
    user/quickstart
-   user/grammer
+   user/scenario-structure
+   user/extraction
+   user/matcher
 
 
 .. _YAML: https://yaml.org/
