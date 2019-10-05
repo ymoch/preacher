@@ -26,6 +26,7 @@ so that any developers can write without learning toughly.
    user/intro
    user/install
    user/quickstart
+   user/grammer
 
 
 Indices and tables
