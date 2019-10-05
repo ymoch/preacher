@@ -23,12 +23,13 @@ The User Guide
 --------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    user/intro
    user/install
    user/quickstart
-   user/grammer
+   user/scenario-structure
+   user/matcher
 
 
 .. _YAML: https://yaml.org/
