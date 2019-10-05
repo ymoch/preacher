@@ -1,5 +1,5 @@
-Matchers
-========
+Matcher
+=======
 A ``Matcher`` is a string or a mapping that has an item.
 Allowed matchers are below.
 

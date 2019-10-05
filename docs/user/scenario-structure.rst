@@ -1,7 +1,6 @@
 Scenario Structure
 ==================
-
-To learn about matchers, refer :doc:`matcher`.
+In Preacher, a "scenario" is the basic unit of verification.
 
 Example
 -------
@@ -55,7 +54,6 @@ Here is a configuration example.
 Components
 ----------
 
-
 Scenario
 ^^^^^^^^
 A ``Scenario`` is written in `YAML`_.
@@ -105,8 +103,9 @@ A ``ResponseDescription`` is a mapping that consists of below:
     - When given a number, that is equivalent to ``{"equal": it}``.
 - headers:
     - Descriptions that descript the response headers.
-    - Response headers are validated as a mapping of names to values
-      and can be descripted by `jq_` query (e.g. ``."content-type"``).
+    - Response headers are converted to be a JSON
+      that is a mapping of names to values
+      and can be descripted as a JSON (e.g. ``."content-type"``).
       *Note that Names are lower-cased* to normalize.
 - body: ``BodyDescription`` (Optional)
     - A description that descript the response body.
@@ -130,45 +129,14 @@ Description
 ^^^^^^^^^^^
 A ``Description`` is a mapping that consists of below:
 
-- describe: ``Extraction``
+- describe: :doc:`Extraction<extraction>`
     - An extraction process.
 - should: ``Predicate``, or ``List<Predicate>>`` (Optional)
     - Predicates that match the descripted value.
 
-Extraction
-^^^^^^^^^^
-An Extraction is a mapping or a string.
-
-A mapping for Extraction has one of below:
-
-- jq: ``String``
-    - A `jq`_ query.
-- xpath: ``String``
-    - A `XPath`_ query
-- multiple: ``Boolean`` (Optional)
-    - When given ``true``, it returns the list of all extracted values.
-    - When given ``false``, it returns the first of extracted values.
-    - The default value is ``false``.
-- cast_to: ``String`` (Optional)
-    - When given, it returns the casted value.
-    - Allowed values are ``int``, ``float``, ``string``.
-    - Casting does not affect ``null``.
-
-When given a string, that is equivalent to {"jq": it}.
-
-.. note:: The extraction must be compatible for the body analysis.
-
-   +----------------------------+----+-------+
-   | Body Analysis / Extraction | jq | xpath |
-   +============================+====+=======+
-   | JSON                       |  o |     x |
-   +----------------------------+----+-------+
-   | XML                        |  x |     o |
-   +----------------------------+----+-------+
-
 Predicate
 ^^^^^^^^^
-A ``Predicate`` is a ``Matcher`` (can be extended in the future).
+A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the future).
 
 Default
 ^^^^^^^
@@ -181,4 +149,3 @@ A ``Default`` is a mapping that consists of below:
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
-.. _XPATH: https://www.w3.org/TR/xpath/all/

@@ -23,12 +23,13 @@ The User Guide
 --------------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    user/intro
    user/install
    user/quickstart
    user/scenario-structure
+   user/extraction
    user/matcher
 
 
