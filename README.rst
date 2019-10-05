@@ -22,6 +22,8 @@ Scenarios are written in `YAML`_, bodies are analyzed `jq`_ or `XPath`_ queries
 and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
 so that any developers can write without learning toughly.
 
+Full documentation is available: https://preacher.readthedocs.io/
+
 *******
 Targets
 *******
@@ -62,7 +64,7 @@ Then, run ``preacher-cli`` command.
     pip install preacher
     preacher-cli -u http://your.domain.com/base scenario.yml
 
-For more information, see the documentation: https://preacher.readthedocs.io/
+For more information, see the full documentation: https://preacher.readthedocs.io/
 
 
 *******
@@ -74,6 +76,7 @@ License
 Copyright (c) 2019 Yu MOCHIZUKI
 
 
+.. _Full Documentation: https://preacher.readthedocs.io/
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
 .. _XPATH: https://www.w3.org/TR/xpath/all/
