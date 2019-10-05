@@ -1,6 +1,55 @@
 Grammer
 =======
 
+Example
+-------
+Here is a simple configuration example.
+
+.. code-block:: yaml
+
+    label: Scenario example
+    default:
+      request:
+        path: /path
+      response:
+        body:
+          analyzed_as: json
+    cases:
+      - label: Simple
+        request: /path/to/foo
+        response:
+          status_code: 200
+          body:
+            - describe: .foo
+              should:
+                equal: bar
+      - label: A Little Complecated
+        request:
+          path: /path/to/foo
+          headers:
+            user-agent: custom-value
+          params:
+            key1: value
+            key2:
+              - value1
+              - value2
+        response:
+          status_code:
+            - be_greater_than_or_equal_to: 200
+            - be_less_than: 400
+          headers:
+            - describe: ."content-type"
+              should:
+                equal_to: application/xml
+          body:
+            analyzed_as: xml
+            descriptions:
+              - describe: /html/body/h1
+                should:
+                  - start_with: x
+                  - end_with: y
+
+
 Scenario
 --------
 A ``Scenario`` is written in `YAML`_.

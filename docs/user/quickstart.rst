@@ -3,6 +3,7 @@ Quickstart
 
 Writing Your Own Scenarios
 --------------------------
+Here is a very simple example.
 
 .. code-block:: yaml
 
