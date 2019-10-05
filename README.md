@@ -12,7 +12,54 @@ Scenarios are written in [YAML][], bodies are analyzed [jq][] or [XPath][] queri
 and validation rules are based on [Hamcrest][] ([PyHamcrest][])
 so that any developers can write without learning toughly.
 
-Full documentation is available: [https://preacher.readthedocs.io/]
+The full documentation is available at
+[preacher.readthedocs.io](https://preacher.readthedocs.io/).
+
+## Targets
+
+- Flexible validation to test with real backends: neither mocks nor sandboxes.
+  - Matcher-based validation.
+- CI Friendly to automate easily.
+  - A CLI application and YAML-based scenarios.
+
+## Usage
+
+First, install from PyPI. Supports only Python 3.7+.
+
+```sh
+$ pip install preacher
+```
+
+Second, write your own scenario.
+
+```yaml
+# scenario.yml
+label: An example of a scenario
+cases:
+  - label: An example of a case
+    request: /path/to/foo
+    response:
+      status_code: 200
+      body:
+        - describe: .foo
+          should:
+            equal: bar
+```
+
+Then, run ``preacher-cli`` command.
+
+```sh
+$ preacher-cli -u http://your.domain.com/base scenario.yml
+```
+
+For more information such as grammer of scenarios,
+see [the full documentation](https://preacher.readthedocs.io/).
+
+## License
+
+[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+
+Copyright (c) 2019 Yu MOCHIZUKI
 
 [YAML]: https://yaml.org/
 [jq]: https://stedolan.github.io/jq/
