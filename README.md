@@ -6,7 +6,8 @@
 [![codecov](https://codecov.io/gh/ymoch/preacher/branch/master/graph/badge.svg)](https://codecov.io/gh/ymoch/preacher)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/ymoch/preacher.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ymoch/preacher/context:python)
 
-which requests to API servers and verify the response along to given scenarios.
+Preacher verifies API servers,
+which requests to the servers and verify the responses along to given scenarios.
 
 Scenarios are written in [YAML][], bodies are analyzed [jq][] or [XPath][] queries
 and validation rules are based on [Hamcrest][] ([PyHamcrest][])
