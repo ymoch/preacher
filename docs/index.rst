@@ -29,13 +29,6 @@ so that any developers can write without learning toughly.
    user/grammer
 
 
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
 .. _XPATH: https://www.w3.org/TR/xpath/all/
