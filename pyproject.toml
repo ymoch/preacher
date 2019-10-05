@@ -35,6 +35,8 @@ pytest-mypy = "^0.3.2"
 pytest-cov = "^2.6"
 pytest-xdist = "^1.29"
 responder = "^1.3"
+sphinx = "^2.2"
+sphinx-autobuild = "^0.7.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
