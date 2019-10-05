@@ -22,6 +22,10 @@ jobs:
             poetry run pytest
 
       - run:
+          name: Build documents
+          command: poetry run make html
+
+      - run:
           name: Send the test coverage report
           command: |
             sudo pip install codecov
