@@ -19,9 +19,11 @@ Scenarios are written in `YAML`_, bodies are analyzed `jq`_ or `XPath`_ queries
 and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
 so that any developers can write without learning toughly.
 
+The User Guide
+--------------
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    user/intro
    user/install

@@ -210,3 +210,5 @@ A ``Default`` is a mapping that consists of below:
     - A response description to overwrite the default response description values.
 
 .. _YAML: https://yaml.org/
+.. _jq: https://stedolan.github.io/jq/
+.. _XPATH: https://www.w3.org/TR/xpath/all/
