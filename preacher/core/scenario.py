@@ -17,7 +17,7 @@ class ScenarioResult:
     status: Status
     message: Optional[str] = None
     cases: List[CaseResult] = field(default_factory=list)
-    subscenarios: List[Scenario] = field(default_factory=list)
+    subscenarios: List[ScenarioResult] = field(default_factory=list)
 
 
 class ScenarioTask:
@@ -42,6 +42,7 @@ class ScenarioTask:
             label=self._label,
             status=status,
             cases=cases,
+            subscenarios=subscenarios,
         )
 
 
