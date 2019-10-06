@@ -15,7 +15,7 @@ class ScenarioResult:
     label: Optional[str]
     status: Status
     message: Optional[str] = None
-    case_results: List[CaseResult] = field(default_factory=list)
+    cases: List[CaseResult] = field(default_factory=list)
 
 
 class ScenarioTask:
@@ -25,12 +25,12 @@ class ScenarioTask:
         self._cases_future = cases_future
 
     def result(self) -> ScenarioResult:
-        case_results = self._cases_future.result()
-        status = merge_statuses(result.status for result in case_results)
+        cases = self._cases_future.result()
+        status = merge_statuses(result.status for result in cases)
         return ScenarioResult(
             label=self._label,
             status=status,
-            case_results=case_results,
+            cases=cases,
         )
 
 
