@@ -12,6 +12,7 @@ from .util import map_on_key, run_on_key
 _KEY_LABEL = 'label'
 _KEY_DEFAULT = 'default'
 _KEY_CASES = 'cases'
+_KEY_SUBSCENARIOS = 'subscenarios'
 
 
 class ScenarioCompiler:
@@ -47,6 +48,15 @@ class ScenarioCompiler:
         case_objs = obj.get(_KEY_CASES, [])
         if not isinstance(case_objs, list):
             raise CompilationError(message='Must be a list', path=[_KEY_CASES])
-        cases = map_on_key(_KEY_CASES, case_compiler.compile, case_objs)
+        cases = list(map_on_key(_KEY_CASES, case_compiler.compile, case_objs))
 
-        return Scenario(label=label, cases=list(cases))
+        subscenario_objs = obj.get(_KEY_SUBSCENARIOS, [])
+        if not isinstance(subscenario_objs, list):
+            raise CompilationError('Must be a list', path=[_KEY_SUBSCENARIOS])
+        subscenarios = list(map_on_key(
+            _KEY_SUBSCENARIOS,
+            self.compile,
+            subscenario_objs,
+        ))
+
+        return Scenario(label=label, cases=cases, subscenarios=subscenarios)

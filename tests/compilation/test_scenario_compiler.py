@@ -15,6 +15,7 @@ CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
     ({'label': []}, ': label'),
     ({'cases': ''}, ': cases'),
     ({'cases': ['']}, ': cases[0]'),
+    ({'subscenarios': ''}, ': subscenarios'),
     ({'default': ''}, ': default'),
 ))
 def test_when_given_invalid_values(value, expected_suffix):
@@ -30,7 +31,7 @@ def test_given_an_empty_object(ctor):
     scenario = compiler.compile({})
 
     assert scenario is sentinel.scenario
-    ctor.assert_called_once_with(label=None, cases=[])
+    ctor.assert_called_once_with(label=None, cases=[], subscenarios=[])
 
     case_compiler.of_default.assert_called_once_with({})
 
@@ -55,6 +56,7 @@ def test_given_a_filled_object(ctor):
     ctor.assert_called_once_with(
         label='label',
         cases=[sentinel.case, sentinel.case],
+        subscenarios=[],
     )
 
     case_compiler.of_default.assert_called_once_with({'a': 'b'})
