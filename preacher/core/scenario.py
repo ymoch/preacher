@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
+from itertools import chain
 from typing import List, Optional
 
 from .case import Case, CaseResult
@@ -15,22 +16,33 @@ class ScenarioResult:
     label: Optional[str]
     status: Status
     message: Optional[str] = None
-    case_results: List[CaseResult] = field(default_factory=list)
+    cases: List[CaseResult] = field(default_factory=list)
+    subscenarios: List[ScenarioResult] = field(default_factory=list)
 
 
 class ScenarioTask:
 
-    def __init__(self, label: Optional[str], cases_future: Future):
+    def __init__(
+        self, label: Optional[str],
+        cases: Future,
+        subscenarios: List[ScenarioTask],
+    ):
         self._label = label
-        self._cases_future = cases_future
+        self._cases = cases
+        self._subscenarios = subscenarios
 
     def result(self) -> ScenarioResult:
-        case_results = self._cases_future.result()
-        status = merge_statuses(result.status for result in case_results)
+        cases = self._cases.result()
+        subscenarios = [s.result() for s in self._subscenarios]
+        status = merge_statuses(chain(
+            (case.status for case in cases),
+            (subscenario.status for subscenario in subscenarios),
+        ))
         return ScenarioResult(
             label=self._label,
             status=status,
-            case_results=case_results,
+            cases=cases,
+            subscenarios=subscenarios,
         )
 
 
@@ -40,9 +52,11 @@ class Scenario:
         self,
         label: Optional[str] = None,
         cases: List[Case] = [],
+        subscenarios: List[Scenario] = [],
     ):
         self._label = label
         self._cases = cases
+        self._subscenarios = subscenarios
 
     def run(
         self,
@@ -68,14 +82,28 @@ class Scenario:
         delay: float = 0.1,
         timeout: Optional[float] = None,
     ) -> ScenarioTask:
-        cases_future = executor.submit(
+        cases = executor.submit(
             self._run_cases,
             base_url=base_url,
             retry=retry,
             delay=delay,
             timeout=timeout,
         )
-        return ScenarioTask(label=self._label, cases_future=cases_future)
+        subscenarios = [
+            subscenario.submit(
+                executor,
+                base_url=base_url,
+                retry=retry,
+                delay=delay,
+                timeout=timeout,
+            )
+            for subscenario in self._subscenarios
+        ]
+        return ScenarioTask(
+            label=self._label,
+            cases=cases,
+            subscenarios=subscenarios,
+        )
 
     def _run_cases(
         self,

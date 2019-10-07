@@ -15,6 +15,7 @@ CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
     ({'label': []}, ': label'),
     ({'cases': ''}, ': cases'),
     ({'cases': ['']}, ': cases[0]'),
+    ({'subscenarios': ''}, ': subscenarios'),
     ({'default': ''}, ': default'),
 ))
 def test_when_given_invalid_values(value, expected_suffix):
@@ -30,19 +31,24 @@ def test_given_an_empty_object(ctor):
     scenario = compiler.compile({})
 
     assert scenario is sentinel.scenario
-    ctor.assert_called_once_with(label=None, cases=[])
+    ctor.assert_called_once_with(label=None, cases=[], subscenarios=[])
 
     case_compiler.of_default.assert_called_once_with({})
 
 
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
 def test_given_a_filled_object(ctor):
+    sub_case_compiler = MagicMock(
+        spec=CaseCompiler,
+        compile=MagicMock(return_value=sentinel.sub_case),
+    )
     default_case_compiler = MagicMock(
-        CaseCompiler,
+        spec=CaseCompiler,
         compile=MagicMock(return_value=sentinel.case),
+        of_default=MagicMock(return_value=sub_case_compiler),
     )
     case_compiler = MagicMock(
-        CaseCompiler,
+        spec=CaseCompiler,
         of_default=MagicMock(return_value=default_case_compiler),
     )
     compiler = ScenarioCompiler(case_compiler=case_compiler)
@@ -50,15 +56,34 @@ def test_given_a_filled_object(ctor):
         'label': 'label',
         'default': {'a': 'b'},
         'cases': [{}, {'k': 'v'}],
+        'subscenarios': [
+            {
+                'label': 'sublabel',
+                'default': {'c': 'd'},
+                'cases': [{'sub_k': 'sub_v'}]
+            },
+        ],
     })
     assert scenario is sentinel.scenario
-    ctor.assert_called_once_with(
-        label='label',
-        cases=[sentinel.case, sentinel.case],
-    )
+    ctor.assert_has_calls([
+        call(
+            label='sublabel',
+            cases=[sentinel.sub_case],
+            subscenarios=[],
+        ),
+        call(
+            label='label',
+            cases=[sentinel.case, sentinel.case],
+            subscenarios=[sentinel.scenario],
+        ),
+    ])
 
     case_compiler.of_default.assert_called_once_with({'a': 'b'})
     default_case_compiler.compile.assert_has_calls([
         call({}),
         call({'k': 'v'})],
     )
+    default_case_compiler.of_default.assert_called_once_with({'c': 'd'})
+    sub_case_compiler.compile.assert_has_calls([
+        call({'sub_k': 'sub_v'}),
+    ])

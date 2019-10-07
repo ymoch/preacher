@@ -41,37 +41,40 @@ class LoggingListener(Listener):
     def end(self) -> None:
         pass
 
-    def show_scenario_result(self, scenario_result: ScenarioResult) -> None:
-        status = scenario_result.status
+    def show_scenario_result(self, scenario: ScenarioResult) -> None:
+        status = scenario.status
         level = _LEVEL_MAP[status]
 
-        label = scenario_result.label or 'Not labeled scenario'
+        label = scenario.label or 'Not labeled scenario'
         self._log(level, '%s: %s', label, status)
 
-        message = scenario_result.message
+        message = scenario.message
         if message:
             with self._nested():
                 self._multi_line_message(level, message)
 
         with self._nested():
-            for case_result in scenario_result.case_results:
-                self.show_case_result(case_result)
+            for case in scenario.cases:
+                self.show_case_result(case)
+
+            for subscenario in scenario.subscenarios:
+                self.show_scenario_result(subscenario)
 
         self._log(level, '')
 
-    def show_case_result(self, case_result: CaseResult) -> None:
-        status = case_result.status
+    def show_case_result(self, case: CaseResult) -> None:
+        status = case.status
         level = _LEVEL_MAP[status]
 
-        label = case_result.label or 'Not labeled case'
+        label = case.label or 'Not labeled case'
         self._log(level, '%s: %s', label, status)
         with self._nested():
             self.show_verification(
-                verification=case_result.request,
+                verification=case.request,
                 label='Request',
             )
 
-            response = case_result.response
+            response = case.response
             if response:
                 self.show_response_verification(response)
 
