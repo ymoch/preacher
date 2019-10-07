@@ -66,7 +66,7 @@ A ``Scenario`` is a mapping that consists of below:
     - Default of this scenario.
 - cases: ``List<Case>`` (Optional)
     - Test cases.
-- subscenarios: ``List<Scenarios>`` (Optional)
+- subscenarios: ``List<Scenario>`` (Optional)
     - Nested scenarios.
 
 Case
