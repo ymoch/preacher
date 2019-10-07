@@ -7,6 +7,7 @@ from preacher.core.scenario import Scenario
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .case import CaseCompiler
+from .response_description import ResponseDescriptionCompiler
 from .util import map_on_key, run_on_key
 
 
@@ -19,9 +20,19 @@ _KEY_SUBSCENARIOS = 'subscenarios'
 
 class ScenarioCompiler:
 
-    def __init__(self, case_compiler: Optional[CaseCompiler] = None):
-        self._description_compiler = DescriptionCompiler()
-        self._case_compiler = case_compiler or CaseCompiler()
+    def __init__(
+        self,
+        description_compiler: Optional[DescriptionCompiler] = None,
+        case_compiler: Optional[CaseCompiler] = None,
+    ):
+        self._description_compiler = (
+            description_compiler or DescriptionCompiler()
+        )
+        self._case_compiler = case_compiler or CaseCompiler(
+            response_compiler=ResponseDescriptionCompiler(
+                description_compiler=self._description_compiler,
+            ),
+        )
 
     def compile(self, obj: Any) -> Scenario:
         """`obj` should be a mapping."""

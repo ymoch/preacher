@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, call, patch, sentinel
 from pytest import mark, raises
 
 from preacher.compilation.case import CaseCompiler
+from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
 
@@ -43,6 +44,10 @@ def test_given_an_empty_object(ctor):
 
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
 def test_given_a_filled_object(ctor):
+    description_compiler = MagicMock(
+        spec=DescriptionCompiler,
+        compile=MagicMock(return_value=sentinel.desc),
+    )
     sub_case_compiler = MagicMock(
         spec=CaseCompiler,
         compile=MagicMock(return_value=sentinel.sub_case),
@@ -56,10 +61,14 @@ def test_given_a_filled_object(ctor):
         spec=CaseCompiler,
         of_default=MagicMock(return_value=default_case_compiler),
     )
-    compiler = ScenarioCompiler(case_compiler=case_compiler)
+    compiler = ScenarioCompiler(
+        description_compiler=description_compiler,
+        case_compiler=case_compiler,
+    )
     scenario = compiler.compile({
         'label': 'label',
         'default': {'a': 'b'},
+        'when': {'c': 'd'},
         'cases': [{}, {'k': 'v'}],
         'subscenarios': [
             {
@@ -79,7 +88,7 @@ def test_given_a_filled_object(ctor):
         ),
         call(
             label='label',
-            conditions=[],
+            conditions=[sentinel.desc],
             cases=[sentinel.case, sentinel.case],
             subscenarios=[sentinel.scenario],
         ),
