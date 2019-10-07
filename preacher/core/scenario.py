@@ -4,87 +4,37 @@ from __future__ import annotations
 
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import (
-    Any, Iterable, Iterator, List, Optional, Sequence, TypeVar, Union
-)
+from typing import List, Optional, Union
 
 from .case import Case, CaseResult
 from .context import Context
 from .description import Description
 from .status import (
-    Status, Statused, StatusedMixin, StatusedInterface, merge_statuses
+    Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
 )
 from .verification import Verification
-
-
-T = TypeVar('T')
-StatusedType = TypeVar('StatusedType', bound=Statused)
-
-
-class VerificationSequence(StatusedInterface, Sequence[T]):
-
-    def __init__(
-        self,
-        status: Status = Status.SKIPPED,
-        items: Sequence[T] = [],
-    ):
-        self._status = status
-        self._items = items
-
-    @property
-    def status(self) -> Status:
-        return self._status
-
-    def __contains__(self, item: Any) -> bool:
-        return item in self._items
-
-    def __bool__(self) -> bool:
-        return bool(self._items)
-
-    def __len__(self) -> int:
-        return len(self._items)
-
-    def __iter__(self) -> Iterator[T]:
-        return iter(self._items)
-
-    def __getitem__(self, key):
-        return self._items[key]
-
-    def __reversed__(self):
-        return VerificationSequence(
-            status=self.status,
-            items=list(reversed(self._items)),
-        )
 
 
 @dataclass(frozen=True)
 class ScenarioResult(StatusedMixin):
     label: Optional[str]
     message: Optional[str] = None
-    conditions: VerificationSequence[Verification] = field(
-        default_factory=VerificationSequence,
+    conditions: StatusedSequence[Verification] = field(
+        default_factory=StatusedSequence,
     )
-    cases: VerificationSequence[CaseResult] = field(
-        default_factory=VerificationSequence,
+    cases: StatusedSequence[CaseResult] = field(
+        default_factory=StatusedSequence,
     )
-    subscenarios: VerificationSequence[ScenarioResult] = field(
-        default_factory=VerificationSequence,
+    subscenarios: StatusedSequence[ScenarioResult] = field(
+        default_factory=StatusedSequence,
     )
-
-
-def collect(
-    items: Iterable[StatusedType]
-) -> VerificationSequence[StatusedType]:
-    items = list(items)
-    status = merge_statuses(item.status for item in items)
-    return VerificationSequence(status=status, items=items)
 
 
 class RunningScenarioTask:
 
     def __init__(
         self, label: Optional[str],
-        conditions: VerificationSequence[Verification],
+        conditions: StatusedSequence[Verification],
         cases: Future,
         subscenarios: List[ScenarioTask],
     ):
@@ -95,7 +45,7 @@ class RunningScenarioTask:
 
     def result(self) -> ScenarioResult:
         cases = self._cases.result()
-        subscenarios = collect(s.result() for s in self._subscenarios)
+        subscenarios = collect_statused(s.result() for s in self._subscenarios)
         status = merge_statuses(cases.status, subscenarios.status)
         return ScenarioResult(
             label=self._label,
@@ -158,9 +108,8 @@ class Scenario:
     ) -> ScenarioTask:
         context = Context(base_url=base_url)
         context_analyzer = context.analyze()
-        conditions = collect(
-            condition(context_analyzer)
-            for condition in self._conditions
+        conditions = collect_statused(
+            condition(context_analyzer) for condition in self._conditions
         )
         if conditions.status == Status.FAILURE:
             return StaticScenarioTask(ScenarioResult(
@@ -205,8 +154,8 @@ class Scenario:
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
-    ) -> VerificationSequence[CaseResult]:
-        return collect(
+    ) -> StatusedSequence[CaseResult]:
+        return collect_statused(
             case(base_url, timeout=timeout, retry=retry, delay=delay)
             for case in self._cases
         )

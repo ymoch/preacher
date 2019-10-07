@@ -7,7 +7,14 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce, singledispatch
-from typing import Union
+from typing import (
+    Any,
+    Iterable as IterableType,
+    Iterator,
+    Sequence,
+    TypeVar,
+    Union,
+)
 
 
 class Status(Enum):
@@ -131,3 +138,53 @@ class StatusedInterface(ABC):
 
 
 Statused = Union[StatusedMixin, StatusedInterface]
+
+
+T = TypeVar('T', bound=Statused)
+
+
+class StatusedSequence(StatusedInterface, Sequence[T]):
+
+    def __init__(
+        self,
+        status: Status = Status.SKIPPED,
+        items: Sequence[T] = [],
+    ):
+        self._status = status
+        self._items = items
+
+    @property
+    def status(self) -> Status:
+        return self._status
+
+    def __contains__(self, item: Any) -> bool:
+        return item in self._items
+
+    def __bool__(self) -> bool:
+        return bool(self._items)
+
+    def __len__(self) -> int:
+        return len(self._items)
+
+    def __iter__(self) -> Iterator[T]:
+        return iter(self._items)
+
+    def __getitem__(self, key):
+        return self._items[key]
+
+    def __reversed__(self):
+        return StatusedSequence(
+            status=self.status,
+            items=list(reversed(self._items)),
+        )
+
+
+StatusedType = TypeVar('StatusedType', bound=Statused)
+
+
+def collect_statused(
+    items: IterableType[StatusedType],
+) -> StatusedSequence[StatusedType]:
+    items = list(items)
+    status = merge_statuses(item.status for item in items)
+    return StatusedSequence(status=status, items=items)
