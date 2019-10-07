@@ -53,9 +53,10 @@ class ScenarioCompiler:
         subscenario_objs = obj.get(_KEY_SUBSCENARIOS, [])
         if not isinstance(subscenario_objs, list):
             raise CompilationError('Must be a list', path=[_KEY_SUBSCENARIOS])
+        subscenario_compiler = ScenarioCompiler(case_compiler=case_compiler)
         subscenarios = list(map_on_key(
             _KEY_SUBSCENARIOS,
-            self.compile,
+            subscenario_compiler.compile,
             subscenario_objs,
         ))
 
