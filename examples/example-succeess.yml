@@ -1,4 +1,10 @@
 label: Scenario succeeds
+
+when:
+  - describe: ".base_url"
+    should:
+      contain_string: "localhost"
+
 default:
   request:
     path: /json

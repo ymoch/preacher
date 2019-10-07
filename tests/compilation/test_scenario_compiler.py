@@ -31,7 +31,12 @@ def test_given_an_empty_object(ctor):
     scenario = compiler.compile({})
 
     assert scenario is sentinel.scenario
-    ctor.assert_called_once_with(label=None, cases=[], subscenarios=[])
+    ctor.assert_called_once_with(
+        label=None,
+        conditions=[],
+        cases=[],
+        subscenarios=[],
+    )
 
     case_compiler.of_default.assert_called_once_with({})
 
@@ -68,11 +73,13 @@ def test_given_a_filled_object(ctor):
     ctor.assert_has_calls([
         call(
             label='sublabel',
+            conditions=[],
             cases=[sentinel.sub_case],
             subscenarios=[],
         ),
         call(
             label='label',
+            conditions=[],
             cases=[sentinel.case, sentinel.case],
             subscenarios=[sentinel.scenario],
         ),

@@ -5,9 +5,11 @@ from __future__ import annotations
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from itertools import chain
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from .case import Case, CaseResult
+from .context import Context
+from .description import Description
 from .status import Status, merge_statuses
 
 
@@ -20,7 +22,7 @@ class ScenarioResult:
     subscenarios: List[ScenarioResult] = field(default_factory=list)
 
 
-class ScenarioTask:
+class RunningScenarioTask:
 
     def __init__(
         self, label: Optional[str],
@@ -46,15 +48,29 @@ class ScenarioTask:
         )
 
 
+class StaticScenarioTask:
+
+    def __init__(self, result: ScenarioResult):
+        self._result = result
+
+    def result(self) -> ScenarioResult:
+        return self._result
+
+
+ScenarioTask = Union[RunningScenarioTask, StaticScenarioTask]
+
+
 class Scenario:
 
     def __init__(
         self,
         label: Optional[str] = None,
+        conditions: List[Description] = [],
         cases: List[Case] = [],
         subscenarios: List[Scenario] = [],
     ):
         self._label = label
+        self._conditions = conditions
         self._cases = cases
         self._subscenarios = subscenarios
 
@@ -82,6 +98,23 @@ class Scenario:
         delay: float = 0.1,
         timeout: Optional[float] = None,
     ) -> ScenarioTask:
+        context = Context(base_url=base_url)
+        context_analyzer = context.analyze()
+        for cond in self._conditions:
+            validation = cond(context_analyzer)
+            if validation.status == Status.FAILURE:
+                return StaticScenarioTask(ScenarioResult(
+                    label=self._label,
+                    status=Status.FAILURE,
+                    message=validation.message,
+                ))
+            if validation.status == Status.UNSTABLE:
+                return StaticScenarioTask(ScenarioResult(
+                    label=self._label,
+                    status=Status.SKIPPED,
+                    message=validation.message,
+                ))
+
         cases = executor.submit(
             self._run_cases,
             base_url=base_url,
@@ -99,7 +132,7 @@ class Scenario:
             )
             for subscenario in self._subscenarios
         ]
-        return ScenarioTask(
+        return RunningScenarioTask(
             label=self._label,
             cases=cases,
             subscenarios=subscenarios,
