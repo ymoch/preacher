@@ -11,17 +11,21 @@ from typing import (
 from .case import Case, CaseResult
 from .context import Context
 from .description import Description
-from .status import Status, merge_statuses
+from .status import (
+    Status, Statused, StatusedMixin, StatusedInterface, merge_statuses
+)
 from .verification import Verification
 
 
 T = TypeVar('T')
+StatusedType = TypeVar('StatusedType', bound=Statused)
 
 
-class VerificationSequence(Sequence[T]):
+class VerificationSequence(StatusedInterface, Sequence[T]):
 
     def __init__(
-        self, status: Status = Status.SKIPPED,
+        self,
+        status: Status = Status.SKIPPED,
         items: Sequence[T] = [],
     ):
         self._status = status
@@ -48,15 +52,14 @@ class VerificationSequence(Sequence[T]):
 
     def __reversed__(self):
         return VerificationSequence(
-            status=self._status,
+            status=self.status,
             items=list(reversed(self._items)),
         )
 
 
 @dataclass(frozen=True)
-class ScenarioResult:
+class ScenarioResult(StatusedMixin):
     label: Optional[str]
-    status: Status
     message: Optional[str] = None
     conditions: VerificationSequence[Verification] = field(
         default_factory=VerificationSequence,
@@ -69,10 +72,9 @@ class ScenarioResult:
     )
 
 
-Statused = TypeVar('Statused', Verification, CaseResult, ScenarioResult)
-
-
-def collect(items: Iterable[Statused]) -> VerificationSequence[Statused]:
+def collect(
+    items: Iterable[StatusedType]
+) -> VerificationSequence[StatusedType]:
     items = list(items)
     status = merge_statuses(item.status for item in items)
     return VerificationSequence(status=status, items=items)

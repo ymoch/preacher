@@ -5,12 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Collection, Optional
 
-from .status import Status
+from .status import Status, StatusedMixin
 
 
 @dataclass(frozen=True)
-class Verification:
-    status: Status
+class Verification(StatusedMixin):
     message: Optional[str] = None
     children: Collection[Verification] = tuple()
 

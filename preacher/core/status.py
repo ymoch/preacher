@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections.abc import Iterable
+from dataclasses import dataclass
 from enum import Enum
 from functools import reduce, singledispatch
+from typing import Union
 
 
 class Status(Enum):
@@ -113,3 +116,18 @@ def _merge_statuses_for_varargs(*statuses: Status):
 @merge_statuses.register
 def _merge_statuses_for_iterable(statuses: Iterable):
     return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SKIPPED)
+
+
+@dataclass(frozen=True)
+class StatusedMixin:
+    status: Status
+
+
+class StatusedInterface(ABC):
+    @property
+    @abstractmethod
+    def status(self) -> Status:
+        return Status.SKIPPED
+
+
+Statused = Union[StatusedMixin, StatusedInterface]
