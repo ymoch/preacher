@@ -212,3 +212,16 @@ cases:
           cast_to: int
         should:
           be_greater_than: 0
+
+subscenarios:
+  - label: Subscenario succeeds
+    default:
+      path: /error/404
+    cases:
+      - label: Default value is inherited and can be overwritten
+        response:
+          #status_code: 404
+          headers:
+            describe: ."content-type"
+            should:
+              be: 'text/plain'
