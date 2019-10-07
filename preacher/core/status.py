@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import reduce, singledispatch
 from typing import (
-    Any,
     Iterable as IterableType,
     Iterator,
     Sequence,
@@ -134,6 +133,14 @@ class StatusedMixin:
 
 
 class StatusedInterface(ABC):
+    """
+    >>> class ConcreteStatused(StatusedInterface):
+    ...     @property
+    ...     def status(self) -> Status:
+    ...         return super().status
+    >>> ConcreteStatused().status
+    SKIPPED
+    """
     @property
     @abstractmethod
     def status(self) -> Status:
@@ -141,6 +148,14 @@ class StatusedInterface(ABC):
 
 
 class StatusedSequence(StatusedInterface, Sequence[T]):
+    """
+    >>> bool(StatusedSequence())
+    False
+    >>> bool(StatusedSequence(Status.SUCCESS, []))
+    False
+    >>> bool(StatusedSequence(Status.FAILURE, [1]))
+    True
+    """
 
     def __init__(
         self,
@@ -153,9 +168,6 @@ class StatusedSequence(StatusedInterface, Sequence[T]):
     @property
     def status(self) -> Status:
         return self._status
-
-    def __contains__(self, item: Any) -> bool:
-        return item in self._items
 
     def __bool__(self) -> bool:
         return bool(self._items)
