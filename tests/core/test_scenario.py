@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, sentinel
 
 from preacher.core.scenario import Scenario
 from preacher.core.status import Status
+from preacher.core.verification import Verification
 
 
 def test_given_an_empty_scenario():
@@ -36,6 +37,7 @@ def test_given_a_filled_scenario():
 
 
 def test_given_subscenarios():
+    condition1 = MagicMock(return_value=Verification.succeed())
     sentinel.result1.status = Status.SUCCESS
     case1 = MagicMock(return_value=sentinel.result1)
     sentinel.subresult1.status = Status.UNSTABLE
@@ -48,6 +50,7 @@ def test_given_subscenarios():
     subscenario1 = Scenario(cases=[subcase1])
     subscenario2 = Scenario(cases=[subcase2, subcase3])
     scenario = Scenario(
+        conditions=[condition1],
         cases=[case1],
         subscenarios=[subscenario1, subscenario2],
     )
