@@ -34,6 +34,9 @@ class VerificationSequence(Sequence[T]):
     def __contains__(self, item: Any) -> bool:
         return item in self._items
 
+    def __bool__(self) -> bool:
+        return bool(self._items)
+
     def __len__(self) -> int:
         return len(self._items)
 
@@ -55,6 +58,9 @@ class ScenarioResult:
     label: Optional[str]
     status: Status
     message: Optional[str] = None
+    conditions: VerificationSequence[Verification] = field(
+        default_factory=VerificationSequence,
+    )
     cases: VerificationSequence[CaseResult] = field(
         default_factory=VerificationSequence,
     )
@@ -76,10 +82,12 @@ class RunningScenarioTask:
 
     def __init__(
         self, label: Optional[str],
+        conditions: VerificationSequence[Verification],
         cases: Future,
         subscenarios: List[ScenarioTask],
     ):
         self._label = label
+        self._conditions = conditions
         self._cases = cases
         self._subscenarios = subscenarios
 
@@ -90,6 +98,7 @@ class RunningScenarioTask:
         return ScenarioResult(
             label=self._label,
             status=status,
+            conditions=self._conditions,
             cases=cases,
             subscenarios=subscenarios,
         )
@@ -155,11 +164,13 @@ class Scenario:
             return StaticScenarioTask(ScenarioResult(
                 label=self._label,
                 status=Status.FAILURE,
+                conditions=conditions,
             ))
         if conditions.status == Status.UNSTABLE:
             return StaticScenarioTask(ScenarioResult(
                 label=self._label,
                 status=Status.SKIPPED,
+                conditions=conditions,
             ))
 
         cases = executor.submit(
@@ -181,6 +192,7 @@ class Scenario:
         ]
         return RunningScenarioTask(
             label=self._label,
+            conditions=conditions,
             cases=cases,
             subscenarios=subscenarios,
         )
