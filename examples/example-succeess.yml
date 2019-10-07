@@ -220,7 +220,7 @@ subscenarios:
     cases:
       - label: Default value is inherited and can be overwritten
         response:
-          #status_code: 404
+          status_code: 404
           headers:
             describe: ."content-type"
             should:
