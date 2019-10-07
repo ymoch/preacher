@@ -11,7 +11,7 @@ def test_given_an_empty_scenario():
         result = scenario.submit(executor, base_url='base_url').result()
     assert result.label is None
     assert result.status == Status.SKIPPED
-    assert result.cases == []
+    assert list(result.cases) == []
 
 
 def test_given_a_filled_scenario():
@@ -29,7 +29,7 @@ def test_given_a_filled_scenario():
     )
     assert result.label == 'label'
     assert result.status == Status.UNSTABLE
-    assert result.cases == [sentinel.result1, sentinel.result2]
+    assert list(result.cases) == [sentinel.result1, sentinel.result2]
 
     case1.assert_called_once_with('base_url', retry=3, delay=2.0, timeout=5.0)
     case2.assert_called_once_with('base_url', retry=3, delay=2.0, timeout=5.0)
