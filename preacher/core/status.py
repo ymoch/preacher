@@ -17,6 +17,9 @@ from typing import (
 )
 
 
+T = TypeVar('T')
+
+
 class Status(Enum):
     """
     >>> Status.SKIPPED.is_succeeded
@@ -137,12 +140,6 @@ class StatusedInterface(ABC):
         return Status.SKIPPED
 
 
-Statused = Union[StatusedMixin, StatusedInterface]
-
-
-T = TypeVar('T', bound=Statused)
-
-
 class StatusedSequence(StatusedInterface, Sequence[T]):
 
     def __init__(
@@ -172,13 +169,8 @@ class StatusedSequence(StatusedInterface, Sequence[T]):
     def __getitem__(self, key):
         return self._items[key]
 
-    def __reversed__(self):
-        return StatusedSequence(
-            status=self.status,
-            items=list(reversed(self._items)),
-        )
 
-
+Statused = Union[StatusedMixin, StatusedInterface]
 StatusedType = TypeVar('StatusedType', bound=Statused)
 
 
