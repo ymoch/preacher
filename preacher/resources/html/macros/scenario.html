@@ -26,8 +26,8 @@
             <div class="accordion-content" data-tab-content>
               {% if item.conditions %}
                 <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-                  {% for item in item.conditions %}
-                    {{ show_verification("Condition" + loop.index | string, item) }}
+                  {% for child in item.conditions.children %}
+                    {{ show_verification("Condition" + loop.index | string, child) }}
                   {% endfor %}
                 </ul>
               {% else %}

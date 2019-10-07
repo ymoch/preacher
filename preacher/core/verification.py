@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Collection, Optional
+from typing import Collection, Iterable, Optional
 
-from .status import Status, StatusedMixin
+from .status import Status, StatusedMixin, merge_statuses
 
 
 @dataclass(frozen=True)
@@ -27,3 +27,9 @@ class Verification(StatusedMixin):
             status=Status.FAILURE,
             message=f'{error.__class__.__name__}: {error}',
         )
+
+
+def collect(children: Iterable[Verification]) -> Verification:
+    children = list(children)
+    status = merge_statuses(child.status for child in children)
+    return Verification(status=status, children=children)

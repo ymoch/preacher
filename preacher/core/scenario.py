@@ -12,16 +12,14 @@ from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
 )
-from .verification import Verification
+from .verification import Verification, collect
 
 
 @dataclass(frozen=True)
 class ScenarioResult(StatusedMixin):
-    label: Optional[str]
+    label: Optional[str] = None
     message: Optional[str] = None
-    conditions: StatusedSequence[Verification] = field(
-        default_factory=StatusedSequence,
-    )
+    conditions: Verification = field(default_factory=Verification)
     cases: StatusedSequence[CaseResult] = field(
         default_factory=StatusedSequence,
     )
@@ -34,7 +32,7 @@ class RunningScenarioTask:
 
     def __init__(
         self, label: Optional[str],
-        conditions: StatusedSequence[Verification],
+        conditions: Verification,
         cases: Future,
         subscenarios: List[ScenarioTask],
     ):
@@ -108,7 +106,7 @@ class Scenario:
     ) -> ScenarioTask:
         context = Context(base_url=base_url)
         context_analyzer = context.analyze()
-        conditions = collect_statused(
+        conditions = collect(
             condition(context_analyzer) for condition in self._conditions
         )
         if conditions.status == Status.FAILURE:

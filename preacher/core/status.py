@@ -130,7 +130,7 @@ def _merge_statuses_for_iterable(statuses: Iterable):
 
 @dataclass(frozen=True)
 class StatusedMixin:
-    status: Status
+    status: Status = Status.SKIPPED
 
 
 class StatusedInterface(ABC):
