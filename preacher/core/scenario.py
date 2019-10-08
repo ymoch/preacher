@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional, Union
+from typing import List, Optional, Union
 
 from .case import Case, CaseResult
 from .context import Context
