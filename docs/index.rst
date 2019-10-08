@@ -31,6 +31,7 @@ The User Guide
    user/scenario-structure
    user/extraction
    user/matcher
+   user/context
 
 
 .. _YAML: https://yaml.org/

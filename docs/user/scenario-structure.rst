@@ -70,8 +70,7 @@ A ``Scenario`` is a mapping that consists of below:
     - Default of this scenario.
 - when: ``Description`` or ``List<Description>`` (Optional)
     - Run this scenario only when the context satisfies these description.
-    - "Context" is a JSON-like value contains below.
-        - base_url (``String``): the base URL.
+    - See: :doc:`Application Running Context<context>`
 - cases: ``List<Case>`` (Optional)
     - Test cases.
 - subscenarios: ``List<Scenario>`` (Optional)
