@@ -1,6 +1,6 @@
 """Test case."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
@@ -9,15 +9,14 @@ from .response_description import (
     ResponseDescription,
     ResponseVerification,
 )
-from .status import Status, merge_statuses
+from .status import Status, StatusedMixin, merge_statuses
 from .util import retry_while_false
 from .verification import Verification
 
 
 @dataclass(frozen=True)
-class CaseResult:
-    status: Status
-    request: Verification
+class CaseResult(StatusedMixin):
+    request: Verification = field(default_factory=Verification)
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
 

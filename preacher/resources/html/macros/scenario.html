@@ -1,4 +1,5 @@
 {% from "./macros/case.html" import show_case %}
+{% from "./macros/verification.html" import show_verification %}
 
 {% macro show_scenario(item) %}
   <li class="accordion-item status-{{ item.status }}" data-accordion-item>
@@ -7,30 +8,73 @@
       {{ item.label }}
     </a>
     <div class="accordion-content" data-tab-content>
-      {% if not item.message and not item.cases and not item.subscenarios %}
+      {% if not item.message and not item.conditions.children and not item.cases and not item.subscenarios %}
         No message.
       {% else %}
         {% if item.message %}
           <pre>{{ item.message }}</pre>
         {% endif %}
 
-        {% if item.cases %}
-          <div class="h5">Cases:</div>
-          <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-            {% for case in item.cases %}
-              {{ show_case(case) }}
-            {% endfor %}
-          </ul>
-        {% endif %}
+        <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
 
-        {% if item.subscenarios %}
-          <div class="h5">Subscenarios:</div>
-          <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-            {% for subscenario in item.subscenarios %}
-              {{ show_scenario(subscenario) }}
-            {% endfor %}
-          </ul>
-        {% endif %}
+          <li class="accordion-item status-{{ item.conditions.status }}" data-accordion-item>
+            <a href="#" class="accordion-title">
+              <span class="badge status-{{ item.conditions.status }}">{{ item.conditions.status }}</span>
+              Conditions
+            </a>
+
+            <div class="accordion-content" data-tab-content>
+              {% if item.conditions %}
+                <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+                  {% for child in item.conditions.children %}
+                    {{ show_verification("Condition" + loop.index | string, child) }}
+                  {% endfor %}
+                </ul>
+              {% else %}
+                No message.
+              {% endif %}
+            </div>
+          </li>
+
+          <li class="accordion-item status-{{ item.cases.status }}" data-accordion-item>
+            <a href="#" class="accordion-title">
+              <span class="badge status-{{ item.cases.status }}">{{ item.cases.status }}</span>
+              Cases
+            </a>
+
+            <div class="accordion-content" data-tab-content>
+              {% if item.cases %}
+                <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+                  {% for case in item.cases %}
+                    {{ show_case(case) }}
+                  {% endfor %}
+                </ul>
+              {% else %}
+                No message.
+              {% endif %}
+            </div>
+          </li>
+
+          <li class="accordion-item status-{{ item.subscenarios.status }}" data-accordion-item>
+            <a href="#" class="accordion-title">
+              <span class="badge status-{{ item.subscenarios.status }}">{{ item.subscenarios.status }}</span>
+              Subscenarios
+            </a>
+
+            <div class="accordion-content" data-tab-content>
+              {% if item.subscenarios %}
+                <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+                  {% for subscenario in item.subscenarios %}
+                    {{ show_scenario(subscenario) }}
+                  {% endfor %}
+                </ul>
+              {% else %}
+                No message.
+              {% endif %}
+            </div>
+          </li>
+
+        </ul>
       {% endif %}
     </div>
   </li>
