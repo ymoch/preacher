@@ -22,7 +22,7 @@ copyright = '2019, Yu Mochizuki'
 author = 'Yu Mochizuki'
 
 # The full version, including alpha/beta/rc tags
-release = '0.10.1'
+release = '0.10.2'
 
 
 # -- General configuration ---------------------------------------------------
