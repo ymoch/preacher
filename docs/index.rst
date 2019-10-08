@@ -28,6 +28,7 @@ The User Guide
    user/intro
    user/install
    user/quickstart
+   user/cli
    user/scenario-structure
    user/extraction
    user/matcher
