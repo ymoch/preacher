@@ -74,13 +74,11 @@ class Scenario:
         conditions: List[Description] = [],
         cases: List[Case] = [],
         subscenarios: List[Scenario] = [],
-        context_factory: Callable = Context,
     ):
         self._label = label
         self._conditions = conditions
         self._cases = cases
         self._subscenarios = subscenarios
-        self._context_factory = context_factory
 
     def run(
         self,
@@ -106,7 +104,7 @@ class Scenario:
         delay: float = 0.1,
         timeout: Optional[float] = None,
     ) -> ScenarioTask:
-        context = self._context_factory(base_url=base_url)
+        context = Context(base_url=base_url)
         context_analyzer = context.analyze()
         conditions = collect(
             condition(context_analyzer) for condition in self._conditions
