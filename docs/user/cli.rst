@@ -3,6 +3,7 @@ CLI Application
 
 Arguments
 ---------
+Scenario YAML file paths (one or more).
 
 Options
 -------
