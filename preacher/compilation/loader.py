@@ -38,7 +38,7 @@ def _resolve(obj: Any, origin: os.PathLike, yaml: YAML) -> Optional[Any]:
 
 
 def load_yaml(path: os.PathLike) -> Optional[Any]:
-    yaml = YAML()
+    yaml = YAML(typ='safe')
     yaml.register_class(_Inclusion)
     with open(path) as f:
         return _resolve(yaml.load(f), path, yaml)
