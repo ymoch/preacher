@@ -1,11 +1,10 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Iterable, List, Optional
 
-import ruamel.yaml as yaml
-
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.compilation.error import CompilationError
+from preacher.compilation.loader import load_yaml
 from preacher.compilation.scenario import ScenarioCompiler
 from .listener import Listener
 
@@ -49,11 +48,10 @@ class Application:
         executor: ThreadPoolExecutor,
         config_path: str,
     ) -> Callable[[], ScenarioResult]:
-        with open(config_path) as config_file:
-            config = yaml.safe_load(config_file)
+        scenario_obj = load_yaml(config_path)
 
         try:
-            scenario = self._scenario_compiler.compile(config)
+            scenario = self._scenario_compiler.compile(scenario_obj)
         except CompilationError as error:
             result = ScenarioResult(
                 label=f'Compilation Error ({config_path})',

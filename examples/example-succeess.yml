@@ -220,6 +220,7 @@ cases:
           be_greater_than: 0
 
 subscenarios:
+  - !include ./example-skipped.yml
   - label: Subscenario succeeds
     default:
       path: /error/404
