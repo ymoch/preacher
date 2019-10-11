@@ -2,18 +2,20 @@ from __future__ import annotations
 
 import os
 from collections.abc import Mapping
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from ruamel.yaml import YAML
+
+PathLike = Union[str, os.PathLike]
 
 
 class _Inclusion:
     yaml_tag = '!include'
 
-    def __init__(self, path: os.PathLike):
+    def __init__(self, path: PathLike):
         self._path = path
 
-    def resolve(self, origin: os.PathLike, yaml: YAML) -> Optional[Any]:
+    def resolve(self, origin: PathLike, yaml: YAML) -> Optional[Any]:
         path = os.path.join(os.path.dirname(origin), self._path)
         with open(path) as f:
             return _resolve(yaml.load(f), origin, yaml)
@@ -24,7 +26,7 @@ class _Inclusion:
         return _Inclusion(path)
 
 
-def _resolve(obj: Any, origin: os.PathLike, yaml: YAML) -> Optional[Any]:
+def _resolve(obj: Any, origin: PathLike, yaml: YAML) -> Optional[Any]:
     if isinstance(obj, Mapping):
         return {k: _resolve(v, origin, yaml) for (k, v) in obj.items()}
 
@@ -37,8 +39,8 @@ def _resolve(obj: Any, origin: os.PathLike, yaml: YAML) -> Optional[Any]:
     return obj
 
 
-def load_yaml(path: os.PathLike) -> Optional[Any]:
-    yaml = YAML(typ='safe')
+def load_yaml(path: PathLike) -> Optional[Any]:
+    yaml = YAML(typ='safe', pure=True)
     yaml.register_class(_Inclusion)
     with open(path) as f:
         return _resolve(yaml.load(f), path, yaml)
