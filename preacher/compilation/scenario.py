@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 from preacher.core.scenario import Scenario
 from .description import DescriptionCompiler
-from .error import CompilationError
+from .error import CompilationError, NamedNode
 from .case import CaseCompiler
 from .response_description import ResponseDescriptionCompiler
 from .util import map_on_key, run_on_key
@@ -44,14 +44,14 @@ class ScenarioCompiler:
         if label is not None and not isinstance(label, str):
             raise CompilationError(
                 message='Must be a string',
-                path=[_KEY_LABEL],
+                path=[NamedNode(_KEY_LABEL)],
             )
 
         default = obj.get(_KEY_DEFAULT, {})
         if not isinstance(default, Mapping):
             raise CompilationError(
                 message='Must be a mapping',
-                path=[_KEY_DEFAULT],
+                path=[NamedNode(_KEY_DEFAULT)],
             )
         case_compiler = run_on_key(
             _KEY_DEFAULT,
@@ -70,12 +70,18 @@ class ScenarioCompiler:
 
         case_objs = obj.get(_KEY_CASES, [])
         if not isinstance(case_objs, list):
-            raise CompilationError(message='Must be a list', path=[_KEY_CASES])
+            raise CompilationError(
+                message='Must be a list',
+                path=[NamedNode(_KEY_CASES)],
+            )
         cases = list(map_on_key(_KEY_CASES, case_compiler.compile, case_objs))
 
         subscenario_objs = obj.get(_KEY_SUBSCENARIOS, [])
         if not isinstance(subscenario_objs, list):
-            raise CompilationError('Must be a list', path=[_KEY_SUBSCENARIOS])
+            raise CompilationError(
+                message='Must be a list',
+                path=[NamedNode(_KEY_SUBSCENARIOS)],
+            )
         subscenario_compiler = ScenarioCompiler(case_compiler=case_compiler)
         subscenarios = list(map_on_key(
             _KEY_SUBSCENARIOS,

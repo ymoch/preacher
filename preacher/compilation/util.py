@@ -2,7 +2,7 @@
 
 from typing import Callable, Iterable, Iterator, Optional, TypeVar
 
-from .error import CompilationError
+from .error import CompilationError, IndexedNode, NamedNode
 
 
 T = TypeVar('T')
@@ -21,16 +21,24 @@ def run_on_key(
     1
 
     >>> def failing_func(arg):
-    ...     raise CompilationError(message='message', path=['path'])
+    ...     raise CompilationError(message='message', path=[NamedNode('path')])
     >>> run_on_key('key', failing_func, 1)
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: message: key.path
+    preacher.compilation.error.CompilationError: message: .key.path
     """
     try:
         return func(arg)
     except CompilationError as error:
-        raise error.of_parent([key])
+        raise error.of_parent([NamedNode(key)])
+
+
+def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
+    for idx, item in enumerate(items):
+        try:
+            yield func(item)
+        except CompilationError as error:
+            raise error.of_parent([IndexedNode(idx)])
 
 
 def map_on_key(
@@ -51,7 +59,7 @@ def map_on_key(
 
     >>> def failing_func(arg):
     ...     if arg == 2:
-    ...         raise CompilationError(message='message', path=['path'])
+    ...         raise CompilationError('message', path=[NamedNode('path')])
     ...     return arg
     >>> results = map_on_key('key', failing_func, [1, 2, 3])
     >>> next(results)
@@ -59,17 +67,16 @@ def map_on_key(
     >>> next(results)
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: message: key[1].path
+    preacher.compilation.error.CompilationError: message: .key[1].path
     >>> next(results)
     Traceback (most recent call last):
         ...
     StopIteration
     """
-    for idx, item in enumerate(items):
-        try:
-            yield func(item)
-        except CompilationError as error:
-            raise error.of_parent([f'{key}[{idx}]'])
+    try:
+        yield from map(func, items)
+    except CompilationError as error:
+        raise error.of_parent([NamedNode(key)])
 
 
 def or_default(value: Optional[T], default_value: T) -> T:

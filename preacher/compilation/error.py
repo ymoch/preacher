@@ -2,7 +2,29 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
+from dataclasses import dataclass
+from functools import reduce
+from typing import List, Optional, Union
+
+
+@dataclass(frozen=True)
+class NamedNode:
+    name: str
+
+    def __str__(self) -> str:
+        return f'.{self.name}'
+
+
+@dataclass(frozen=True)
+class IndexedNode:
+    index: int
+
+    def __str__(self) -> str:
+        return f'[{self.index}]'
+
+
+Node = Union[NamedNode, IndexedNode]
+Path = List[Node]
 
 
 class CompilationError(Exception):
@@ -11,7 +33,7 @@ class CompilationError(Exception):
     def __init__(
         self,
         message: str,
-        path: List[str] = [],
+        path: Path = [],
         cause: Optional[Exception] = None,
     ):
         super().__init__(message)
@@ -20,13 +42,13 @@ class CompilationError(Exception):
         self._cause = cause
 
     @property
-    def path(self) -> List[str]:
+    def path(self) -> Path:
         return self._path
 
-    def of_parent(self, parent_path: List[str]) -> CompilationError:
+    def of_parent(self, parent_path: Path) -> CompilationError:
         return CompilationError(
             message=self._message,
-            path=parent_path + self._path,
+            path=parent_path + self.path,
             cause=self._cause,
         )
 
@@ -35,5 +57,5 @@ class CompilationError(Exception):
         if not self._path:
             return message
 
-        path = '.'.join(self._path)
+        path = reduce(lambda lhs, rhs: lhs + str(rhs), self._path, '')
         return f'{message}: {path}'

@@ -6,7 +6,7 @@ from typing import Any
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
-from .error import CompilationError
+from .error import CompilationError, NamedNode
 from .util import map_on_key, run_on_key
 
 
@@ -78,7 +78,7 @@ def _compile_taking_multi_matchers(key: str, value: Any):
     func = _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS[key]
 
     if not isinstance(value, list):
-        raise CompilationError('Must be a string', path=[key])
+        raise CompilationError('Must be a string', path=[NamedNode(key)])
 
     inner_matchers = map_on_key(key, compile, value)
     return func(*inner_matchers)

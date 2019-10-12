@@ -1,6 +1,6 @@
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.matcher import compile
 
 
@@ -157,7 +157,7 @@ def test_have_item():
 def test_given_not_a_list_for_multiple_matchers():
     with raises(CompilationError) as error_info:
         compile({'contain': 1})
-    assert str(error_info.value).endswith(': contain')
+    assert error_info.value.path == [NamedNode('contain')]
 
 
 def test_contain():

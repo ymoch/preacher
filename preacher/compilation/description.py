@@ -31,14 +31,6 @@ class DescriptionCompiler:
             raise CompilationError('Must be a mapping')
 
         extraction_obj = obj.get(_KEY_DESCRIBE)
-        if (
-            not isinstance(extraction_obj, Mapping)
-            and not isinstance(extraction_obj, str)
-        ):
-            raise CompilationError(
-                message='Description.describe must be a mapping or a string',
-                path=[_KEY_DESCRIBE],
-            )
         extractor = run_on_key(
             _KEY_DESCRIBE,
             self._extraction_compiler.compile,

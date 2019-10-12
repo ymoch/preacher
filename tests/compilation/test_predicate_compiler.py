@@ -3,7 +3,7 @@ from unittest.mock import patch, sentinel
 
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
 from preacher.core.status import Status
 
@@ -22,8 +22,8 @@ def test_invalid_mapping(obj):
 
 
 @mark.parametrize('obj, expected_path', (
-    ({'be_before': 0}, ['be_before']),
-    ({'be_after': 'invalid'}, ['be_after']),
+    ({'be_before': 0}, [NamedNode('be_before')]),
+    ({'be_after': 'invalid'}, [NamedNode('be_after')]),
 ))
 def test_invalid_datetime_predicate(obj, expected_path):
     compiler = PredicateCompiler()
