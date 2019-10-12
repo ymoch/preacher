@@ -9,7 +9,8 @@ from ruamel.yaml import YAML, Node
 from ruamel.yaml.constructor import ConstructorError
 
 from .error import CompilationError
-from .util import map_on_key, run_on_key
+from .util import run_on_key
+
 
 PathLike = Union[str, os.PathLike]
 
@@ -50,11 +51,11 @@ def _resolve(obj: Any, origin: PathLike, yaml: YAML) -> Optional[Any]:
 def _load(path: PathLike, yaml: YAML) -> Optional[Any]:
     with open(path) as f:
         try:
-            data = yaml.load(f)
+            obj = yaml.load(f)
         except ConstructorError as error:
             raise CompilationError(message=str(error), cause=error)
 
-        return _resolve(data, path, yaml)
+        return _resolve(obj, path, yaml)
 
 
 def load(path: PathLike) -> Optional[Any]:
