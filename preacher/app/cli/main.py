@@ -133,7 +133,7 @@ def main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    with ThreadPoolExecutor(args.scenario_concurrency) as executor, \
+    with ThreadPoolExecutor(args.concurrency) as executor, \
             LoggingListener(LOGGER) as logging_listener, \
             report_to(args.report) as reporting_listener:
         app = Application(
