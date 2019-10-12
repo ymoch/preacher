@@ -76,7 +76,6 @@ def test_given_an_empty_mapping(
     ('', ''),
     ({'headers': 'str'}, ': headers'),
     ({'body': 'str'}, ': body'),
-    ({'body': ['str']}, ': body.descriptions[0]'),
 ))
 def test_given_an_invalid_value(obj, error_suffix):
     compiler = ResponseDescriptionCompiler()

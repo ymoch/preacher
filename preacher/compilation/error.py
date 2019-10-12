@@ -7,17 +7,20 @@ from typing import List, Optional
 
 
 @dataclass(frozen=True)
-class Path:
-    node: Optional[str] = None
+class Node:
+    name: Optional[str] = None
     index: Optional[int] = None
 
     def __str__(self) -> str:
         result = ''
-        if self.node:
-            result += self.node
+        if self.name:
+            result += self.name
         if self.index:
             result += f'[{self.index}]'
         return result
+
+
+Path = List[Node]
 
 
 class CompilationError(Exception):
@@ -26,19 +29,19 @@ class CompilationError(Exception):
     def __init__(
         self,
         message: str,
-        path: List[str] = [],
+        path: Path = [],
         cause: Optional[Exception] = None,
     ):
         super().__init__(message)
         self._message = message
-        self._path = [Path(node=p) for p in path]
+        self._path = path
         self._cause = cause
 
     @property
-    def path(self) -> List[str]:
-        return [str(p) for p in self._path]
+    def path(self) -> Path:
+        return self._path
 
-    def of_parent(self, parent_path: List[str]) -> CompilationError:
+    def of_parent(self, parent_path: Path) -> CompilationError:
         return CompilationError(
             message=self._message,
             path=parent_path + self.path,
@@ -50,5 +53,5 @@ class CompilationError(Exception):
         if not self._path:
             return message
 
-        path = '.'.join(str(p) for p in self._path)
+        path = '.'.join(str(node) for node in self._path)
         return f'{message}: {path}'

@@ -15,7 +15,6 @@ CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
     ('', ''),
     ({'label': []}, ': label'),
     ({'cases': ''}, ': cases'),
-    ({'cases': ['']}, ': cases[0]'),
     ({'subscenarios': ''}, ': subscenarios'),
     ({'default': ''}, ': default'),
 ))

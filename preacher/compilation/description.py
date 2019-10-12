@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from typing import Any, Optional
 
 from preacher.core.description import Description
-from .error import CompilationError
+from .error import CompilationError, Node
 from .predicate import PredicateCompiler
 from .extraction import ExtractionCompiler
 from .util import run_on_key, map_on_key
@@ -35,9 +35,10 @@ class DescriptionCompiler:
             not isinstance(extraction_obj, Mapping)
             and not isinstance(extraction_obj, str)
         ):
+            # TODO: delegate to ExtractionCompiler.
             raise CompilationError(
                 message='Description.describe must be a mapping or a string',
-                path=[_KEY_DESCRIBE],
+                path=[Node(_KEY_DESCRIBE)],
             )
         extractor = run_on_key(
             _KEY_DESCRIBE,

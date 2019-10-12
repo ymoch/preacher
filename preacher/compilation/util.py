@@ -2,7 +2,7 @@
 
 from typing import Callable, Iterable, Iterator, Optional, TypeVar
 
-from .error import CompilationError
+from .error import CompilationError, Node
 
 
 T = TypeVar('T')
@@ -21,7 +21,7 @@ def run_on_key(
     1
 
     >>> def failing_func(arg):
-    ...     raise CompilationError(message='message', path=['path'])
+    ...     raise CompilationError(message='message', path=[Node('path')])
     >>> run_on_key('key', failing_func, 1)
     Traceback (most recent call last):
         ...
@@ -30,7 +30,7 @@ def run_on_key(
     try:
         return func(arg)
     except CompilationError as error:
-        raise error.of_parent([key])
+        raise error.of_parent([Node(key)])
 
 
 def map_on_key(
@@ -51,7 +51,7 @@ def map_on_key(
 
     >>> def failing_func(arg):
     ...     if arg == 2:
-    ...         raise CompilationError(message='message', path=['path'])
+    ...         raise CompilationError(message='message', path=[Node('path')])
     ...     return arg
     >>> results = map_on_key('key', failing_func, [1, 2, 3])
     >>> next(results)
@@ -69,7 +69,7 @@ def map_on_key(
         try:
             yield func(item)
         except CompilationError as error:
-            raise error.of_parent([f'{key}[{idx}]'])
+            raise error.of_parent([Node(name=key, index=idx)])
 
 
 def or_default(value: Optional[T], default_value: T) -> T:

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping as MappingType, Optional
 
 from preacher.core.request import Request
-from .error import CompilationError
+from .error import CompilationError, Node
 from .util import or_default
 
 
@@ -48,15 +48,15 @@ def _compile(obj: Any) -> _Compiled:
 
     path = obj.get(_KEY_PATH)
     if path is not None and not isinstance(path, str):
-        raise CompilationError('Must be a string', path=[_KEY_PATH])
+        raise CompilationError('Must be a string', path=[Node(_KEY_PATH)])
 
     headers = obj.get(_KEY_HEADERS)
     if headers is not None and not isinstance(headers, Mapping):
-        raise CompilationError('Must be a mapping', path=[_KEY_HEADERS])
+        raise CompilationError('Must be a mapping', path=[Node(_KEY_HEADERS)])
 
     params = obj.get(_KEY_PARAMS)
     if params is not None and not isinstance(params, Mapping):
-        raise CompilationError('Must be a mapping', path=[_KEY_PARAMS])
+        raise CompilationError('Must be a mapping', path=[Node(_KEY_PARAMS)])
 
     return _Compiled(path=path, headers=headers, params=params)
 

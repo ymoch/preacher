@@ -11,7 +11,7 @@ from preacher.core.description import Predicate
 from preacher.core.datetime import now, parse_datetime
 from preacher.core.predicate import MatcherPredicate, DynamicMatcherPredicate
 from .datetime import compile_timedelta
-from .error import CompilationError
+from .error import CompilationError, Node
 from .matcher import compile as compile_matcher
 from .util import run_on_key
 
@@ -47,7 +47,7 @@ def _compile_datetime_predicate(
     matcher_func: Callable[[datetime], Matcher],
 ) -> DynamicMatcherPredicate:
     if not isinstance(obj, str):
-        raise CompilationError(message=f'Must be a string', path=[key])
+        raise CompilationError(message=f'Must be a string', path=[Node(key)])
 
     delta = run_on_key(key, compile_timedelta, obj)
 

@@ -9,7 +9,7 @@ from preacher.core.extraction import (
     JqExtractor,
     XPathExtractor,
 )
-from .error import CompilationError
+from .error import CompilationError, Node
 from .util import run_on_key
 
 
@@ -28,6 +28,7 @@ _KEY_CAST_TO = 'cast_to'
 
 
 class ExtractionCompiler:
+
     def compile(self, obj: Union[Mapping, str]) -> Extractor:
         if isinstance(obj, str):
             return self.compile({'jq': obj})
@@ -44,7 +45,10 @@ class ExtractionCompiler:
 
         multiple = obj.get(_KEY_MULTIPLE, False)
         if not isinstance(multiple, bool):
-            raise CompilationError('Must be a boolean', path=[_KEY_MULTIPLE])
+            raise CompilationError(
+                message='Must be a boolean',
+                path=[Node(_KEY_MULTIPLE)],
+            )
 
         cast = None
         cast_obj = obj.get(_KEY_CAST_TO)

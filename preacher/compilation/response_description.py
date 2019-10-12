@@ -82,8 +82,10 @@ class ResponseDescriptionCompiler:
 
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
-            replacements['headers'] = (  # type: ignore
-                self._compile_headers(headers_obj)
+            replacements['headers'] = run_on_key(  # type: ignore
+                _KEY_HEADERS,
+                self._compile_headers,
+                headers_obj,
             )
 
         body_obj = obj.get(_KEY_BODY)
@@ -110,7 +112,7 @@ class ResponseDescriptionCompiler:
             obj = [obj]
         if not isinstance(obj, list):
             message = 'Must be a list or a mapping'
-            raise CompilationError(message=message, path=[_KEY_HEADERS])
+            raise CompilationError(message=message)
         return list(map_on_key(
             _KEY_HEADERS,
             self._description_compiler.compile,
