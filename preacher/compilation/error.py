@@ -3,23 +3,27 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional
+from functools import reduce
+from typing import List, Optional, Union
 
 
 @dataclass(frozen=True)
-class Node:
-    name: Optional[str] = None
-    index: Optional[int] = None
+class NamedNode:
+    name: str
 
     def __str__(self) -> str:
-        result = ''
-        if self.name:
-            result += self.name
-        if self.index:
-            result += f'[{self.index}]'
-        return result
+        return f'.{self.name}'
 
 
+@dataclass(frozen=True)
+class IndexedNode:
+    index: int
+
+    def __str__(self) -> str:
+        return f'[{self.index}]'
+
+
+Node = Union[NamedNode, IndexedNode]
 Path = List[Node]
 
 
@@ -53,5 +57,5 @@ class CompilationError(Exception):
         if not self._path:
             return message
 
-        path = '.'.join(str(node) for node in self._path)
+        path = reduce(lambda lhs, rhs: lhs + str(rhs), self._path, '')
         return f'{message}: {path}'

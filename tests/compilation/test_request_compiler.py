@@ -1,25 +1,25 @@
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
 
 
-@mark.parametrize('value, expected_suffix', (
-    ([], ''),
-    ({'path': {'key': 'value'}}, ': path'),
-    ({'headers': ''}, ': headers'),
-    ({'params': ''}, ': params'),
+@mark.parametrize('value, expected_path', (
+    ([], []),
+    ({'path': {'key': 'value'}}, [NamedNode('path')]),
+    ({'headers': ''}, [NamedNode('headers')]),
+    ({'params': ''}, [NamedNode('params')]),
 ))
-def test_given_invalid_values(value, expected_suffix):
+def test_given_invalid_values(value, expected_path):
     compiler = RequestCompiler()
 
     with raises(CompilationError) as error_info:
         compiler.compile(value)
-    assert str(error_info.value).endswith(expected_suffix)
+    assert error_info.value.path == expected_path
 
     with raises(CompilationError) as error_info:
         compiler.of_default(value)
-    assert str(error_info.value).endswith(expected_suffix)
+    assert error_info.value.path == expected_path
 
 
 def test_given_an_empty_mapping():

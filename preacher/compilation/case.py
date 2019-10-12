@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from typing import Any, Optional
 
 from preacher.core.case import Case
-from .error import CompilationError, Node
+from .error import CompilationError, NamedNode
 from .request import RequestCompiler
 from .response_description import ResponseDescriptionCompiler
 from .util import run_on_key
@@ -43,7 +43,7 @@ class CaseCompiler:
         if label is not None and not isinstance(label, str):
             raise CompilationError(
                 message=f'Case.{_KEY_LABEL} must be a string',
-                path=[Node(_KEY_LABEL)],
+                path=[NamedNode(_KEY_LABEL)],
             )
 
         request = run_on_key(

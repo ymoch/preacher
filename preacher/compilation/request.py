@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping as MappingType, Optional
 
 from preacher.core.request import Request
-from .error import CompilationError, Node
+from .error import CompilationError, NamedNode
 from .util import or_default
 
 
@@ -37,7 +37,7 @@ class _Compiled:
         )
 
 
-def _compile(obj: Any) -> _Compiled:
+def _compile(obj) -> _Compiled:
     """`obj` should be a mapping or a string."""
 
     if isinstance(obj, str):
@@ -48,15 +48,24 @@ def _compile(obj: Any) -> _Compiled:
 
     path = obj.get(_KEY_PATH)
     if path is not None and not isinstance(path, str):
-        raise CompilationError('Must be a string', path=[Node(_KEY_PATH)])
+        raise CompilationError(
+            message='Must be a string',
+            path=[NamedNode(_KEY_PATH)],
+        )
 
     headers = obj.get(_KEY_HEADERS)
     if headers is not None and not isinstance(headers, Mapping):
-        raise CompilationError('Must be a mapping', path=[Node(_KEY_HEADERS)])
+        raise CompilationError(
+            message='Must be a mapping',
+            path=[NamedNode(_KEY_HEADERS)],
+        )
 
     params = obj.get(_KEY_PARAMS)
     if params is not None and not isinstance(params, Mapping):
-        raise CompilationError('Must be a mapping', path=[Node(_KEY_PARAMS)])
+        raise CompilationError(
+            message='Must be a mapping',
+            path=[NamedNode(_KEY_PARAMS)],
+        )
 
     return _Compiled(path=path, headers=headers, params=params)
 
@@ -65,13 +74,13 @@ class RequestCompiler:
     def __init__(self, default: _Compiled = None):
         self._default = default or _Compiled()
 
-    def compile(self, obj: Any) -> Request:
+    def compile(self, obj) -> Request:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)
         return self._default.updated(compiled).to_request()
 
-    def of_default(self, obj: Any) -> RequestCompiler:
+    def of_default(self, obj) -> RequestCompiler:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)

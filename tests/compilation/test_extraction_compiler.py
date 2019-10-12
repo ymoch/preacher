@@ -3,24 +3,25 @@ from unittest.mock import MagicMock, call, patch
 from pytest import mark, raises
 
 from preacher.compilation.extraction import ExtractionCompiler
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, NamedNode
 
 
 MODULE = 'preacher.compilation.extraction'
 
 
-@mark.parametrize('value, expected_suffix', (
-    (1, ''),
-    ([], ''),
-    ({}, ' has 0'),
-    ({'jq': '.xxx', 'multiple': 1}, ': multiple'),
-    ({'jq': '.foo', 'cast_to': 1}, ' string: cast_to'),
-    ({'jq': '.foo', 'cast_to': 'xxx'}, ': xxx: cast_to'),
+@mark.parametrize('value, expected_message, expected_path', (
+    (1, '', []),
+    ([], '', []),
+    ({}, ' has 0', []),
+    ({'jq': '.xxx', 'multiple': 1}, '', [NamedNode('multiple')]),
+    ({'jq': '.foo', 'cast_to': 1}, ' string', [NamedNode('cast_to')]),
+    ({'jq': '.foo', 'cast_to': 'xxx'}, ': xxx', [NamedNode('cast_to')]),
 ))
-def test_when_given_not_a_string(value, expected_suffix):
+def test_when_given_not_a_string(value, expected_message, expected_path):
     with raises(CompilationError) as error_info:
         ExtractionCompiler().compile(value)
-    assert str(error_info.value).endswith(expected_suffix)
+    assert expected_message in str(error_info.value)
+    assert error_info.value.path == expected_path
 
 
 @mark.parametrize('value, expected_call', (

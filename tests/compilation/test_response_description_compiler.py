@@ -7,7 +7,7 @@ from preacher.compilation.body_description import (
     Compiled as BodyCompiled,
 )
 from preacher.compilation.description import DescriptionCompiler
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
 from preacher.compilation.response_description import (
     Compiled,
@@ -72,16 +72,16 @@ def test_given_an_empty_mapping(
     body_desc_compiler.compile.assert_not_called()
 
 
-@mark.parametrize('obj, error_suffix', (
-    ('', ''),
-    ({'headers': 'str'}, ': headers'),
-    ({'body': 'str'}, ': body'),
+@mark.parametrize('obj, expected_path', (
+    ('', []),
+    ({'headers': 'str'}, [NamedNode('headers')]),
+    ({'body': 'str'}, [NamedNode('body')]),
 ))
-def test_given_an_invalid_value(obj, error_suffix):
+def test_given_an_invalid_value(obj, expected_path):
     compiler = ResponseDescriptionCompiler()
     with raises(CompilationError) as error_info:
         compiler.compile(obj)
-    assert str(error_info.value).endswith(error_suffix)
+    assert error_info.value.path == expected_path
 
 
 def test_given_simple_values(pred_compiler, desc_compiler, body_desc_compiler):

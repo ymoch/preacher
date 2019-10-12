@@ -8,7 +8,7 @@ from preacher.core.extraction import (
     JqExtractor,
     XPathExtractor,
 )
-from .error import CompilationError, Node
+from .error import CompilationError, NamedNode
 from .util import run_on_key
 
 
@@ -51,7 +51,7 @@ class ExtractionCompiler:
         if not isinstance(multiple, bool):
             raise CompilationError(
                 message='Must be a boolean',
-                path=[Node(_KEY_MULTIPLE)],
+                path=[NamedNode(_KEY_MULTIPLE)],
             )
 
         cast = None

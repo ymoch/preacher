@@ -2,7 +2,7 @@
 
 from typing import Callable, Iterable, Iterator, Optional, TypeVar
 
-from .error import CompilationError, Node
+from .error import CompilationError, IndexedNode, NamedNode
 
 
 T = TypeVar('T')
@@ -21,16 +21,16 @@ def run_on_key(
     1
 
     >>> def failing_func(arg):
-    ...     raise CompilationError(message='message', path=[Node('path')])
+    ...     raise CompilationError(message='message', path=[NamedNode('path')])
     >>> run_on_key('key', failing_func, 1)
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: message: key.path
+    preacher.compilation.error.CompilationError: message: .key.path
     """
     try:
         return func(arg)
     except CompilationError as error:
-        raise error.of_parent([Node(key)])
+        raise error.of_parent([NamedNode(key)])
 
 
 def map_on_key(
@@ -51,7 +51,7 @@ def map_on_key(
 
     >>> def failing_func(arg):
     ...     if arg == 2:
-    ...         raise CompilationError(message='message', path=[Node('path')])
+    ...         raise CompilationError('message', path=[NamedNode('path')])
     ...     return arg
     >>> results = map_on_key('key', failing_func, [1, 2, 3])
     >>> next(results)
@@ -59,7 +59,7 @@ def map_on_key(
     >>> next(results)
     Traceback (most recent call last):
         ...
-    preacher.compilation.error.CompilationError: message: key[1].path
+    preacher.compilation.error.CompilationError: message: .key[1].path
     >>> next(results)
     Traceback (most recent call last):
         ...
@@ -69,7 +69,7 @@ def map_on_key(
         try:
             yield func(item)
         except CompilationError as error:
-            raise error.of_parent([Node(name=key, index=idx)])
+            raise error.of_parent([NamedNode(key), IndexedNode(idx)])
 
 
 def or_default(value: Optional[T], default_value: T) -> T:

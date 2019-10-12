@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, sentinel
 from pytest import fixture, mark, raises
 
 from preacher.compilation.case import CaseCompiler
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
 from preacher.compilation.response_description import (
     ResponseDescriptionCompiler,
@@ -29,46 +29,52 @@ def response_compiler() -> ResponseDescriptionCompiler:
     return compiler
 
 
-@mark.parametrize('value, expected_suffix', (
-    ('', ''),
-    ({'label': []}, ': label'),
+@mark.parametrize('value, expected_path', (
+    ('', []),
+    ({'label': []}, [NamedNode('label')]),
 ))
 def test_given_invalid_values(
     value,
-    expected_suffix,
+    expected_path,
     request_compiler,
     response_compiler,
 ):
     compiler = CaseCompiler(request_compiler, response_compiler)
     with raises(CompilationError) as error_info:
         compiler.compile(value)
-    assert str(error_info.value).endswith(expected_suffix)
+    assert error_info.value.path == expected_path
 
 
 def test_request_compilation_fails():
     request_compiler = MagicMock(
         spec=RequestCompiler,
         compile=MagicMock(
-            side_effect=CompilationError(message='message', path=['foo'])
+            side_effect=CompilationError(
+                message='message',
+                path=[NamedNode('foo')],
+            )
         ),
     )
     compiler = CaseCompiler(request_compiler)
     with raises(CompilationError) as error_info:
         compiler.compile({})
-    assert str(error_info.value).endswith(': request.foo')
+    assert error_info.value.path == [NamedNode('request'), NamedNode('foo')]
 
 
 def test_response_compilation_fails(request_compiler):
     response_compiler = MagicMock(
         spec=ResponseDescriptionCompiler,
         compile=MagicMock(
-            side_effect=CompilationError(message='message', path=['bar']),
+            side_effect=CompilationError(
+                message='message',
+                path=[NamedNode('bar')],
+            ),
         ),
     )
     compiler = CaseCompiler(request_compiler, response_compiler)
     with raises(CompilationError) as error_info:
         compiler.compile({'request': '/path'})
-    assert str(error_info.value).endswith(': response.bar')
+    assert error_info.value.path == [NamedNode('response'), NamedNode('bar')]
 
 
 def test_given_an_empty_object(request_compiler, response_compiler):

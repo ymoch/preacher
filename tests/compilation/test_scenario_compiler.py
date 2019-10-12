@@ -4,24 +4,24 @@ from pytest import mark, raises
 
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.scenario import ScenarioCompiler
 
 
 CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
 
 
-@mark.parametrize('value, expected_suffix', (
-    ('', ''),
-    ({'label': []}, ': label'),
-    ({'cases': ''}, ': cases'),
-    ({'subscenarios': ''}, ': subscenarios'),
-    ({'default': ''}, ': default'),
+@mark.parametrize('value, expected_path', (
+    ('', []),
+    ({'label': []}, [NamedNode('label')]),
+    ({'cases': ''}, [NamedNode('cases')]),
+    ({'subscenarios': ''}, [NamedNode('subscenarios')]),
+    ({'default': ''}, [NamedNode('default')]),
 ))
-def test_when_given_invalid_values(value, expected_suffix):
+def test_when_given_invalid_values(value, expected_path):
     with raises(CompilationError) as error_info:
         ScenarioCompiler().compile(value)
-    assert str(error_info.value).endswith(expected_suffix)
+    assert error_info.value.path == expected_path
 
 
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
