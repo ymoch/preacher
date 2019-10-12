@@ -33,6 +33,14 @@ def run_on_key(
         raise error.of_parent([NamedNode(key)])
 
 
+def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
+    for idx, item in enumerate(items):
+        try:
+            yield func(item)
+        except CompilationError as error:
+            raise error.of_parent([IndexedNode(idx)])
+
+
 def map_on_key(
     key: str,
     func: Callable[[T], U],
@@ -65,11 +73,10 @@ def map_on_key(
         ...
     StopIteration
     """
-    for idx, item in enumerate(items):
-        try:
-            yield func(item)
-        except CompilationError as error:
-            raise error.of_parent([NamedNode(key), IndexedNode(idx)])
+    try:
+        yield from map(func, items)
+    except CompilationError as error:
+        raise error.of_parent([NamedNode(key)])
 
 
 def or_default(value: Optional[T], default_value: T) -> T:
