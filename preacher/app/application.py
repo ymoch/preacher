@@ -4,7 +4,7 @@ from typing import Callable, Iterable, List, Optional
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.compilation.error import CompilationError
-from preacher.compilation.loader import load_yaml
+from preacher.compilation.yaml import load
 from preacher.compilation.scenario import ScenarioCompiler
 from .listener import Listener
 
@@ -48,9 +48,8 @@ class Application:
         executor: ThreadPoolExecutor,
         config_path: str,
     ) -> Callable[[], ScenarioResult]:
-        scenario_obj = load_yaml(config_path)
-
         try:
+            scenario_obj = load(config_path)
             scenario = self._scenario_compiler.compile(scenario_obj)
         except CompilationError as error:
             result = ScenarioResult(

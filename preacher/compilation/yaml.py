@@ -17,8 +17,7 @@ class _Inclusion:
 
     def resolve(self, origin: PathLike, yaml: YAML) -> Optional[Any]:
         path = os.path.join(os.path.dirname(origin), self._path)
-        with open(path) as f:
-            return _resolve(yaml.load(f), origin, yaml)
+        return _load(path, yaml)
 
     @classmethod
     def from_yaml(cls, constructor, node) -> _Inclusion:
@@ -39,8 +38,12 @@ def _resolve(obj: Any, origin: PathLike, yaml: YAML) -> Optional[Any]:
     return obj
 
 
-def load_yaml(path: PathLike) -> Optional[Any]:
-    yaml = YAML(typ='safe', pure=True)
-    yaml.register_class(_Inclusion)
+def _load(path: PathLike, yaml: YAML) -> Optional[Any]:
     with open(path) as f:
         return _resolve(yaml.load(f), path, yaml)
+
+
+def load(path: PathLike) -> Optional[Any]:
+    yaml = YAML(typ='safe', pure=True)
+    yaml.register_class(_Inclusion)
+    return _load(path, yaml)
