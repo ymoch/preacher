@@ -156,5 +156,27 @@ A ``Default`` is a mapping that consists of below:
 - response: ``ResponseDescription`` (Optional)
     - A response description to overwrite the default response description values.
 
+Inclusion
+---------
+Using ``!include`` tag, you can include other YAML files.
+This macro is available anywhere in your scenario.
+
+.. code-block:: yaml
+
+    !include path/to/other.yaml
+
+A good practice of this feature is locating subscenarios on subdirectories.
+
+.. code-block:: yaml
+
+    label: Subscenario inclusion example
+    subscenarios:
+      - !include subscenarios/subscenario1.yml
+      - !include subscenarios/subscenario2.yml
+
+.. note:: Anchors in a including YAML are not available in included YAMLs,
+          because the included YAMLs are parsed after the including YAML is parsed.
+
+
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
