@@ -70,7 +70,6 @@ class ScenarioCompiler:
 
         case_objs = obj.get(_KEY_CASES, [])
         if not isinstance(case_objs, list):
-            # TODO: delegate to CaseCompiler.
             raise CompilationError(
                 message='Must be a list',
                 path=[Node(_KEY_CASES)],

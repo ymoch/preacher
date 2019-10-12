@@ -10,6 +10,8 @@ MODULE = 'preacher.compilation.extraction'
 
 
 @mark.parametrize('value, expected_suffix', (
+    (1, ''),
+    ([], ''),
     ({}, ' has 0'),
     ({'jq': '.xxx', 'multiple': 1}, ': multiple'),
     ({'jq': '.foo', 'cast_to': 1}, ' string: cast_to'),

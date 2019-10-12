@@ -32,9 +32,8 @@ def test_given_not_a_mapping():
 
 def test_given_an_empty_mapping():
     compiler = DescriptionCompiler()
-    with raises(CompilationError) as error_info:
+    with raises(CompilationError):
         compiler.compile({})
-    assert str(error_info.value).startswith('Description.describe')
 
 
 def test_given_a_string_predicate(extraction_compiler, predicate_compiler):

@@ -1,7 +1,6 @@
 """Extraction compilation."""
 
 from collections.abc import Mapping
-from typing import Any, Union
 
 from preacher.core.extraction import (
     Cast,
@@ -29,9 +28,14 @@ _KEY_CAST_TO = 'cast_to'
 
 class ExtractionCompiler:
 
-    def compile(self, obj: Union[Mapping, str]) -> Extractor:
+    def compile(self, obj) -> Extractor:
+        """`obj` should be a mapping or a string."""
+
         if isinstance(obj, str):
             return self.compile({'jq': obj})
+
+        if not isinstance(obj, Mapping):
+            raise CompilationError('Must be a mapping or a string')
 
         keys = _EXTRACTION_KEYS.intersection(obj.keys())
         if len(keys) != 1:
@@ -57,7 +61,7 @@ class ExtractionCompiler:
 
         return func(query, multiple=multiple, cast=cast)  # type: ignore
 
-    def _compile_cast(self, obj: Any) -> Cast:
+    def _compile_cast(self, obj) -> Cast:
         if not isinstance(obj, str):
             raise CompilationError('Must be a string')
 
