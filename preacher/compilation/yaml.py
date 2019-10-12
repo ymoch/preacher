@@ -9,7 +9,7 @@ from ruamel.yaml import YAML, Node
 from ruamel.yaml.constructor import ConstructorError
 
 from .error import CompilationError
-from .util import run_on_key
+from .util import map, run_on_key
 
 
 PathLike = Union[str, os.PathLike]
@@ -40,7 +40,7 @@ def _resolve(obj: Any, origin: PathLike, yaml: YAML) -> Optional[Any]:
         return {k: run_on_key(k, resolve, v) for (k, v) in obj.items()}
 
     if isinstance(obj, list):
-        return [resolve(item) for item in obj]
+        return list(map(resolve, obj))
 
     if isinstance(obj, _Inclusion):
         return obj.resolve(origin, yaml)

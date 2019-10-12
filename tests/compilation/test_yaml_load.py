@@ -2,7 +2,7 @@ from io import StringIO
 from unittest.mock import patch
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.yaml import load
 
 
@@ -11,9 +11,9 @@ from preacher.compilation.yaml import load
     ('!invalid foo', '!invalid', []),
     ('!include []', 'string', []),
     ('!include {}', 'string', []),
-    # ('- !include {}', '', [IndexedNode(0)]),
+    ('- !include {}', '', [IndexedNode(0)]),
     ('{key: !include {}}', '', [NamedNode('key')]),
-    # ('{key: [!include {}]}', [NamedNode('key'), IndexedNode(0)]),
+    ('{key: [!include {}]}', '', [NamedNode('key'), IndexedNode(0)]),
 ))
 def test_given_invalid_content(
     open_mock,
