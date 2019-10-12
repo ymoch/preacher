@@ -93,27 +93,27 @@ def parse_args() -> argparse.Namespace:
         '-r', '--retry',
         type=zero_or_positive_int,
         metavar='num',
-        help='max retry count',
+        help='set the max retry count',
         default=0,
     )
     parser.add_argument(
         '-d', '--delay',
         type=zero_or_positive_float,
         metavar='sec',
-        help='delay in seconds between attempts',
+        help='set the delay between attempts in seconds',
         default=0.1,
     )
     parser.add_argument(
         '-t', '--timeout',
         type=positive_float,
         metavar='sec',
-        help='request timeout in seconds',
+        help='set the request timeout in seconds',
     )
     parser.add_argument(
-        '-c', '--scenario-concurrency',
+        '-c', '--concurrency',
         type=int,
         metavar='num',
-        help='concurrency for scenarios',
+        help='set the request concurrency',
         default=1,
     )
     parser.add_argument(
