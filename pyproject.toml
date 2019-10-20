@@ -39,6 +39,7 @@ responder = "^1.3"
 sphinx = "^2.2"
 sphinx-autobuild = "^0.7.1"
 toml = "^0.10.0"
+sphinx-intl = "^2.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

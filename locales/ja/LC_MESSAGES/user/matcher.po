@@ -1,0 +1,295 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019, Yu Mochizuki
+# This file is distributed under the same license as the Preacher package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Preacher \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ../../user/matcher.rst:2
+msgid "Matcher"
+msgstr ""
+
+#: ../../user/matcher.rst:3
+msgid ""
+"A ``Matcher`` is a string or a mapping that has an item. Allowed matchers"
+" are below."
+msgstr ""
+
+#: ../../user/matcher.rst:6
+msgid ""
+"A matchers taking ``none`` is given as a string like ``{\"should\": "
+"\"be_null\"}``."
+msgstr ""
+
+#: ../../user/matcher.rst:7
+msgid "A ``Value`` given as a ``Matcher`` is equivalent to ``{\"equal\": it}``."
+msgstr ""
+
+#: ../../user/matcher.rst:10
+msgid "Object"
+msgstr ""
+
+#: ../../user/matcher.rst:11
+msgid "be: ``Matcher``"
+msgstr ""
+
+#: ../../user/matcher.rst:12
+msgid "Matches the given matcher."
+msgstr ""
+
+#: ../../user/matcher.rst:13
+msgid "be_null: ``none``"
+msgstr ""
+
+#: ../../user/matcher.rst:14
+msgid "Matches if it is a null value."
+msgstr ""
+
+#: ../../user/matcher.rst:15
+msgid "not_be_null: ``none``"
+msgstr ""
+
+#: ../../user/matcher.rst:16
+msgid "Matches if it is not a null value."
+msgstr ""
+
+#: ../../user/matcher.rst:17
+msgid "equal: ``Value``"
+msgstr ""
+
+#: ../../user/matcher.rst:18
+msgid "Matches if it equals the given value."
+msgstr ""
+
+#: ../../user/matcher.rst:20
+msgid "have_length: ``Integer``"
+msgstr ""
+
+#: ../../user/matcher.rst:20
+msgid "Matches if it has a length and its length is equal to the given value."
+msgstr ""
+
+#: ../../user/matcher.rst:23
+msgid "Comparable"
+msgstr ""
+
+#: ../../user/matcher.rst:24
+msgid "be_greater_than: ``Comparable``"
+msgstr ""
+
+#: ../../user/matcher.rst:25
+msgid "Matches if it is greater than the given value (it > argument)."
+msgstr ""
+
+#: ../../user/matcher.rst:26
+msgid "be_greater_than_or_equal_to: ``Comparable``"
+msgstr ""
+
+#: ../../user/matcher.rst:27
+msgid ""
+"Matches if it is greater than or equal to the given value (it >= "
+"argument)."
+msgstr ""
+
+#: ../../user/matcher.rst:28
+msgid "be_less_than: ``Comparable``"
+msgstr ""
+
+#: ../../user/matcher.rst:29
+msgid "Matches if it is less than the given value (it < argument)."
+msgstr ""
+
+#: ../../user/matcher.rst:31
+msgid "be_less_than_or_equal_to: ``Comparable``"
+msgstr ""
+
+#: ../../user/matcher.rst:31
+msgid "Matches if it is less than or equal to the given value (it < argument)."
+msgstr ""
+
+#: ../../user/matcher.rst:34
+msgid "String"
+msgstr ""
+
+#: ../../user/matcher.rst:35
+msgid "contain_string: ``String``"
+msgstr ""
+
+#: ../../user/matcher.rst:36
+msgid "Matches if it is an string and contains the given value."
+msgstr ""
+
+#: ../../user/matcher.rst:37
+msgid "start_with: ``String``"
+msgstr ""
+
+#: ../../user/matcher.rst:38
+msgid "Matches if it is an string and starts with the given value."
+msgstr ""
+
+#: ../../user/matcher.rst:39
+msgid "end_with: ``String``"
+msgstr ""
+
+#: ../../user/matcher.rst:40
+msgid "Matches if it is an string and ends with the given value."
+msgstr ""
+
+#: ../../user/matcher.rst:42
+msgid "match_regexp: ``String``"
+msgstr ""
+
+#: ../../user/matcher.rst:42
+msgid "Matches if it is an string and matches the given regular expression."
+msgstr ""
+
+#: ../../user/matcher.rst:45
+msgid "Datetime"
+msgstr ""
+
+#: ../../user/matcher.rst:53
+msgid "be_before: ``String``"
+msgstr ""
+
+#: ../../user/matcher.rst:47
+msgid "Matches if it is a datetime and before the given datetime."
+msgstr ""
+
+#: ../../user/matcher.rst:48
+msgid ""
+"When given ``now``, then compares to the datetime just when the request "
+"starts."
+msgstr ""
+
+#: ../../user/matcher.rst:53
+msgid ""
+"When given an offset, then compares to the datetime when the request "
+"starts."
+msgstr ""
+
+#: ../../user/matcher.rst:50
+msgid "Days, hours, minutes and seconds offsets are available."
+msgstr ""
+
+#: ../../user/matcher.rst:51
+msgid ""
+"When given a positive offset like ``1 day`` or ``+2 hours``, then "
+"compares to the future datetime."
+msgstr ""
+
+#: ../../user/matcher.rst:53
+msgid ""
+"When given a negative offset like ``-1 minute`` or ``-2 seconds``, then "
+"compares to the past datetime."
+msgstr ""
+
+#: ../../user/matcher.rst:57
+msgid "be_after: ``String``"
+msgstr ""
+
+#: ../../user/matcher.rst:56
+msgid "Matches if it is a datetime and after the given datetime."
+msgstr ""
+
+#: ../../user/matcher.rst:57
+msgid "Usage is the same as ``be_before``."
+msgstr ""
+
+#: ../../user/matcher.rst:59
+msgid ""
+"Validated datetime values must be in ISO 8601 format like "
+"``2019-01-23T12:34:56Z``."
+msgstr ""
+
+#: ../../user/matcher.rst:63
+msgid "Sequence"
+msgstr ""
+
+#: ../../user/matcher.rst:64
+msgid "be_empty: ``none``"
+msgstr ""
+
+#: ../../user/matcher.rst:65
+msgid "Matches an empty sequence."
+msgstr ""
+
+#: ../../user/matcher.rst:66
+msgid "have_item: ``Matcher``"
+msgstr ""
+
+#: ../../user/matcher.rst:67
+msgid "Matches if it is a collection and has the given item."
+msgstr ""
+
+#: ../../user/matcher.rst:68
+msgid "have_items: ``List<Matcher>``"
+msgstr ""
+
+#: ../../user/matcher.rst:69
+msgid "Matches if all given items appear in the list, in any order."
+msgstr ""
+
+#: ../../user/matcher.rst:70
+msgid "contain: ``List<Matcher>``"
+msgstr ""
+
+#: ../../user/matcher.rst:71
+msgid "Exactly matches the entire sequence."
+msgstr ""
+
+#: ../../user/matcher.rst:73
+msgid "contain_in_any_order: ``List<Matcher>``"
+msgstr ""
+
+#: ../../user/matcher.rst:73
+msgid "Matches the entire sequence, but in any order."
+msgstr ""
+
+#: ../../user/matcher.rst:76
+msgid "Logical"
+msgstr ""
+
+#: ../../user/matcher.rst:77
+msgid "not: ``Matcher``"
+msgstr ""
+
+#: ../../user/matcher.rst:78
+msgid "Matches if it doesn't match the given matcher."
+msgstr ""
+
+#: ../../user/matcher.rst:79
+msgid "all_of: ``List<Matcher>``"
+msgstr ""
+
+#: ../../user/matcher.rst:80
+msgid "Matches if it matches all of the given matchers."
+msgstr ""
+
+#: ../../user/matcher.rst:81
+msgid "any_of: ``List<Matcher>``"
+msgstr ""
+
+#: ../../user/matcher.rst:82
+msgid "Matches if it matches any of the given matchers."
+msgstr ""
+
+#: ../../user/matcher.rst:83
+msgid "anything: ``none``"
+msgstr ""
+
+#: ../../user/matcher.rst:84
+msgid "Matches anything."
+msgstr ""
+
