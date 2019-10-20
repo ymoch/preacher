@@ -69,4 +69,5 @@ master_doc = 'index'
 
 # i18.
 locale_dirs = ['locales']
+gettext_uuid = True
 gettext_compact = False
