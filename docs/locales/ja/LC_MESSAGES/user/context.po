@@ -1,0 +1,84 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019, Yu Mochizuki
+# This file is distributed under the same license as the Preacher package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Preacher \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ../../user/context.rst:2
+msgid "Application Running Context"
+msgstr ""
+
+#: ../../user/context.rst:3
+msgid "You can toggle scenarios using application running context."
+msgstr ""
+
+#: ../../user/context.rst:6
+msgid "Conditional Scenario"
+msgstr ""
+
+#: ../../user/context.rst:7
+msgid ""
+"Using ``when`` properties, you can run scenarios conditionally. Scenarios"
+" are run only when the context satisfied the descriptions in ``when`` "
+"properties."
+msgstr ""
+
+#: ../../user/context.rst:24
+msgid "Definition"
+msgstr ""
+
+#: ../../user/context.rst:25
+msgid ""
+"A ``Context`` is a JSON-like value, which can be descripted by `jq`_ Here"
+" is the definition of ``Context`` Object."
+msgstr ""
+
+#: ../../user/context.rst:28
+msgid "The definition of ``Context`` Object"
+msgstr ""
+
+#: ../../user/context.rst:32
+msgid "Key"
+msgstr ""
+
+#: ../../user/context.rst:33
+msgid "Type"
+msgstr ""
+
+#: ../../user/context.rst:34
+msgid "Description"
+msgstr ""
+
+#: ../../user/context.rst:35
+msgid "Example"
+msgstr ""
+
+#: ../../user/context.rst:36
+msgid "base_url"
+msgstr ""
+
+#: ../../user/context.rst:37
+msgid "string"
+msgstr ""
+
+#: ../../user/context.rst:38
+msgid "Base URL"
+msgstr ""
+
+#: ../../user/context.rst:39
+msgid "http://localhost:5042/base"
+msgstr ""
+
