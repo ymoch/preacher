@@ -87,6 +87,9 @@ msgid ""
 "simple systems or testing without real backends than Preacher because of "
 "simple validators."
 msgstr ""
+"`Tavern`_ は HTTP 通信のやりとりのテストにより適しています."
+" バリデータがシンプルなため, Preacher と比較すると,"
+" シンプルなシステムのテストおよび本物のバックエンドを利用しないテストに向いているでしょう."
 
 #: ../../user/intro.rst:30
 msgid "License"
