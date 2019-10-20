@@ -3,9 +3,8 @@ import os
 import toml
 
 
-_PROJECT_ROOT_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..')
-)
+_DOC_ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
+_PROJECT_ROOT_PATH = os.path.abspath(os.path.join(_DOC_ROOT_PATH, '..'))
 
 
 # Configuration file for the Sphinx documentation builder.
@@ -68,5 +67,5 @@ html_static_path = ['_static']
 master_doc = 'index'
 
 # i18.
-locale_dirs = ['locale/']
+locale_dirs = ['locales']
 gettext_compact = False

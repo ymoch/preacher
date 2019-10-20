@@ -15,7 +15,7 @@ Preacher: Flexible Web API Verification
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Scenarios are written in `YAML`_, bodies are analyzed `jq`_ or `XPath`_ queries
+Test scenarios are written in `YAML`_, response bodies are analyzed `jq`_ or `XPath`_ queries
 and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
 so that any developers can write without learning toughly.
 
