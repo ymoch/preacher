@@ -25,6 +25,7 @@ _PROJECT_ROOT_PATH = os.path.abspath(os.path.join(_DOC_ROOT_PATH, '..'))
 # -- Project information -----------------------------------------------------
 
 project = 'Preacher'
+# noinspection PyShadowingBuiltins
 copyright = '2019, Yu Mochizuki'
 author = 'Yu Mochizuki'
 
@@ -68,4 +69,5 @@ master_doc = 'index'
 
 # i18.
 locale_dirs = ['locales']
+gettext_uuid = True
 gettext_compact = False
