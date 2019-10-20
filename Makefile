@@ -21,3 +21,6 @@ help:
 
 livehtml:
 	sphinx-autobuild -b html $(SPHINXOPTS) "$(SOURCEDIR)" $(BUILDDIR)/html
+
+intl:
+	make gettext && sphinx-intl update -l ja -p $(BUILDDIR)/gettext -d docs/locales

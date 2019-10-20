@@ -1,0 +1,215 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019, Yu Mochizuki
+# This file is distributed under the same license as the Preacher package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Preacher \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ../../user/extraction.rst:2
+msgid "Extraction"
+msgstr ""
+
+#: ../../user/extraction.rst:3
+msgid ""
+"In Preacher, an \"extraction\" is a process to extract values from a "
+"target such as a response body. Extractions are descripted in `jq`_ or "
+"`XPath`_."
+msgstr ""
+
+#: ../../user/extraction.rst:8
+msgid "Grammer"
+msgstr ""
+
+#: ../../user/extraction.rst:11
+msgid "Full Definition"
+msgstr ""
+
+#: ../../user/extraction.rst:12
+msgid "Here is the definition of ``Extraction`` as a mapping."
+msgstr ""
+
+#: ../../user/extraction.rst:14
+msgid "The definition of ``Extraction`` Object"
+msgstr ""
+
+#: ../../user/extraction.rst:18
+msgid "Key"
+msgstr ""
+
+#: ../../user/extraction.rst:19
+msgid "Type"
+msgstr ""
+
+#: ../../user/extraction.rst:20
+msgid "Required?"
+msgstr ""
+
+#: ../../user/extraction.rst:21
+msgid "Description"
+msgstr ""
+
+#: ../../user/extraction.rst:22
+msgid "Example"
+msgstr ""
+
+#: ../../user/extraction.rst:23 ../../user/extraction.rst:80
+msgid "jq"
+msgstr ""
+
+#: ../../user/extraction.rst:24 ../../user/extraction.rst:29
+#: ../../user/extraction.rst:39
+msgid "string"
+msgstr ""
+
+#: ../../user/extraction.rst:25 ../../user/extraction.rst:30
+msgid "?"
+msgstr ""
+
+#: ../../user/extraction.rst:26
+msgid "A `jq`_ query."
+msgstr ""
+
+#: ../../user/extraction.rst:27
+msgid "``\".foo.bar\"``"
+msgstr ""
+
+#: ../../user/extraction.rst:28 ../../user/extraction.rst:80
+msgid "xpath"
+msgstr ""
+
+#: ../../user/extraction.rst:31
+msgid "A `XPath`_ query."
+msgstr ""
+
+#: ../../user/extraction.rst:32
+msgid "``\"/foo/nar\"``"
+msgstr ""
+
+#: ../../user/extraction.rst:33
+msgid "multiple"
+msgstr ""
+
+#: ../../user/extraction.rst:34
+msgid "boolean"
+msgstr ""
+
+#: ../../user/extraction.rst:35 ../../user/extraction.rst:40
+msgid "no"
+msgstr ""
+
+#: ../../user/extraction.rst:36
+msgid "See: :ref:`multiple`"
+msgstr ""
+
+#: ../../user/extraction.rst:37
+msgid "``true``"
+msgstr ""
+
+#: ../../user/extraction.rst:38
+msgid "cast_to"
+msgstr ""
+
+#: ../../user/extraction.rst:41
+msgid "See: :ref:`casting`"
+msgstr ""
+
+#: ../../user/extraction.rst:42
+msgid "``\"float\"``"
+msgstr ""
+
+#: ../../user/extraction.rst:44
+msgid "Either of ``jq`` or ``xpath`` is required."
+msgstr ""
+
+#: ../../user/extraction.rst:49
+msgid "Multiple Values"
+msgstr ""
+
+#: ../../user/extraction.rst:50
+msgid ""
+"By default, an extraction provides the first of extracted values. When "
+"``multiple`` is  ``true``, it provides the list of all extracted values."
+msgstr ""
+
+#: ../../user/extraction.rst:56
+msgid "Casting"
+msgstr ""
+
+#: ../../user/extraction.rst:57
+msgid ""
+"Extracted values can be casted by ``cast_to`` settings. This feature is "
+"useful for XML analysis, which provides only strings even if they are "
+"numbers."
+msgstr ""
+
+#: ../../user/extraction.rst:61
+msgid "Allowed values are:"
+msgstr ""
+
+#: ../../user/extraction.rst:63
+msgid "int: Cast to an integer."
+msgstr ""
+
+#: ../../user/extraction.rst:64
+msgid "float: Cast to a floating point number."
+msgstr ""
+
+#: ../../user/extraction.rst:65
+msgid "string: Cast to a string."
+msgstr ""
+
+#: ../../user/extraction.rst:67
+msgid "Casting does not affect ``null``."
+msgstr ""
+
+#: ../../user/extraction.rst:70
+msgid "Abbreviation"
+msgstr ""
+
+#: ../../user/extraction.rst:71
+msgid ""
+"Ordinally, extractions should be very simple `jq`_ queries. In these "
+"cases, an extraction can be written in a string, which is equivalent to "
+"``{\"jq\": it}``."
+msgstr ""
+
+#: ../../user/extraction.rst:76
+msgid "Analysis Compatibility"
+msgstr ""
+
+#: ../../user/extraction.rst:77
+msgid "The extraction must be compatible for the body analysis."
+msgstr ""
+
+#: ../../user/extraction.rst:80
+msgid "Analysis"
+msgstr ""
+
+#: ../../user/extraction.rst:82
+msgid "JSON"
+msgstr ""
+
+#: ../../user/extraction.rst:82 ../../user/extraction.rst:84
+msgid "o"
+msgstr ""
+
+#: ../../user/extraction.rst:82 ../../user/extraction.rst:84
+msgid "x"
+msgstr ""
+
+#: ../../user/extraction.rst:84
+msgid "XML"
+msgstr ""
+
