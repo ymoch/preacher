@@ -1,6 +1,17 @@
 Quickstart
 ==========
 
+Install
+-------
+Preacher is available on `PyPI`_ and can be installed by `pip`_.
+
+.. code-block:: sh
+
+    $ pip install preacher
+
+.. note:: Preacher supports only Python 3.7+.
+
+
 Writing Your Own Scenarios
 --------------------------
 Here is a very simple example.
@@ -24,3 +35,7 @@ Verify the Servers
 .. code-block:: sh
 
     $ preacher-cli -u https://your-server.com/base scenario.yml
+
+
+.. _PyPI: https://pypi.org/project/preacher/
+.. _pip: https://pip.pypa.io/en/stable/

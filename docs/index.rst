@@ -26,7 +26,6 @@ The User Guide
    :maxdepth: 2
 
    user/intro
-   user/install
    user/quickstart
    user/cli
    user/scenario-structure

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"POT-Creation-Date: 2019-10-21 19:39+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,17 +19,31 @@ msgstr ""
 
 #: ../../user/quickstart.rst:2
 msgid "Quickstart"
+msgstr "クイックスタート"
+
+# bc6650d9b8a3496f9c9cd1f88d82ff2d
+#: ../../user/quickstart.rst:5
+msgid "Install"
+msgstr "インストール"
+
+# 547b00c797d346449bf281263290d479
+#: ../../user/quickstart.rst:6
+msgid "Preacher は `PyPI`_ で手に入れることができるので, `pip`_ でインストールできます."
 msgstr ""
 
-#: ../../user/quickstart.rst:5
+# 97cdd4e54f0d4fbbb49fe20e88f626bc
+#: ../../user/quickstart.rst:12
+msgid "Preacher supports only Python 3.7+."
+msgstr "Preacher は Python 3.7 以上のバージョンのみサポートしています."
+
+#: ../../user/quickstart.rst:16
 msgid "Writing Your Own Scenarios"
 msgstr ""
 
-#: ../../user/quickstart.rst:6
+#: ../../user/quickstart.rst:17
 msgid "Here is a very simple example."
 msgstr ""
 
-#: ../../user/quickstart.rst:22
+#: ../../user/quickstart.rst:33
 msgid "Verify the Servers"
 msgstr ""
-
