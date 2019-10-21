@@ -1,0 +1,17 @@
+# Not product codes.
+LICENSE
+.circleci
+.readthedocs.yml
+docs
+examples
+tests
+pytest.ini
+Makefile
+
+# Temporary files.
+.eggs
+.mypy_cache
+.pytest_cache
+build
+dist
+*.egg-info
