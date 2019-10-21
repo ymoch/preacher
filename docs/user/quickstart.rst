@@ -37,9 +37,10 @@ Running on Docker will solve these problems.
 - Your Python environment cannot accept `C extensions`_.
   Preacher depends on `lxml`_ and `pyjq`_, which contain C extensions.
 
-Writing Your Own Scenarios
---------------------------
-Here is a very simple example.
+Verify Your API
+---------------
+First, write your own test scenario.
+Here is a very simple example of test scenarios.
 
 .. code-block:: yaml
 
@@ -54,12 +55,25 @@ Here is a very simple example.
               should:
                 equal: bar
 
-Verify the Servers
-------------------
+Then, let's run Preacher to verify your API.
 
 .. code-block:: sh
 
     $ preacher-cli -u https://your-server.com/base scenario.yml
+
+Interpret Results
+-----------------
+
+Exit Statuses
+^^^^^^^^^^^^^
+When all tests succeeds,
+``preacher-cli`` command returns ``0`` as a exit status.
+When any of tests fails or command fails, it returns not ``0``.
+Exit statuses are important for CI automation.
+
+.. code-block:: sh
+
+    $ echo $?
 
 
 .. _PyPI: https://pypi.org/project/preacher/

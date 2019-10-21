@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-22 01:35+0900\n"
+"POT-Creation-Date: 2019-10-22 02:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,9 +69,7 @@ msgstr ""
 msgid ""
 "In several cases (such as below), Preacher will not work on your "
 "environment. Running on Docker will solve these problems."
-msgstr ""
-"以下のような場合, Preacher はあなたの環境では動作しません."
-" Docker で動作させることでこれらの問題を解決できます."
+msgstr "以下のような場合, Preacher はあなたの環境では動作しません. Docker で動作させることでこれらの問題を解決できます."
 
 # a8bc470c40c34f6680d16c6a2f1599a9
 #: ../../user/quickstart.rst:35
@@ -86,20 +84,46 @@ msgstr "Python のバージョンが古すぎる."
 # ef3bb676c79b438d8d8c5e060cad7138
 #: ../../user/quickstart.rst:37
 msgid ""
-"Your Python environment cannot accept `C extensions`_. Preacher depends on "
-"`lxml`_ and `pyjq`_, which contain C extensions."
+"Your Python environment cannot accept `C extensions`_. Preacher depends "
+"on `lxml`_ and `pyjq`_, which contain C extensions."
 msgstr ""
-"Python が `C 拡張`_ を利用できない."
-" Preacher が C 拡張を含む `lxml`_ や `pyjq`_ に依存していることによります."
+"Python が `C 拡張`_ を利用できない. Preacher が C 拡張を含む `lxml`_ や `pyjq`_ "
+"に依存していることによります."
 
+# 71f4b337ada34a6db351be47b264992a
 #: ../../user/quickstart.rst:41
-msgid "Writing Your Own Scenarios"
-msgstr ""
+msgid "Verify Your API"
+msgstr "API を検証する"
 
+# f9fbc12966494b2ab1aaef4d2d1b0d5d
 #: ../../user/quickstart.rst:42
-msgid "Here is a very simple example."
-msgstr ""
+msgid ""
+"First, write your own test scenario. Here is a very simple example of "
+"test scenarios."
+msgstr "まずはテストシナリオを書きます. 以下は非常に単純なテストシナリオの例です."
 
+# ea03b854b2724a4792fdcfafb3018690
 #: ../../user/quickstart.rst:58
-msgid "Verify the Servers"
+msgid "Then, let's run Preacher to verify your API."
+msgstr "テストシナリオが書けたら, Preacher を実行して API を検証してみましょう."
+
+# 0d0b25b4d9b44fccb2c66e278eaeedb9
+#: ../../user/quickstart.rst:65
+msgid "Interpret Results"
+msgstr "結果を解釈する"
+
+# febdbbd2a40f4b4b956ad1b782c143fe
+#: ../../user/quickstart.rst:68
+msgid "Exit Statuses"
+msgstr "終了ステータス"
+
+# ea03b854b2724a4792fdcfafb3018690
+#: ../../user/quickstart.rst:69
+msgid ""
+"When all tests succeeds, ``preacher-cli`` command returns ``0`` as a exit"
+" status. When any of tests fails or command fails, it returns not ``0``. "
+"Exit statuses are important for CI automation."
 msgstr ""
+"全てのテストが成功すると, ``preacher-cli`` コマンド終了ステータスとして ``0`` を返却します. "
+" いずれかのテストが失敗するか, コマンドが失敗すると, ``0`` 以外を返却します."
+" 終了ステータスは CI による自動化において重要です."
