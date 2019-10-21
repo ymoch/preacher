@@ -75,6 +75,24 @@ Exit statuses are important for CI automation.
 
     $ echo $?
 
+Verification Statuses
+^^^^^^^^^^^^^^^^^^^^^
+Each verification result has a ``Status``.
+
+- ``SKIPPED``: There were no need to test.
+- ``SUCCESS``: The test was satisfied.
+- ``UNSTABLE``: The test was unsatisfied.
+- ``FAILURE``: The test encountered an unexpected situation and failed.
+
+Control Outputs
+---------------
+Preacher test results are shown on your console.
+
+By default, all test results are shown.
+It is useful for debugging your test cases,
+but will be noisy when your test scenarios become huge.
+The output level control will help you find important errors.
+
 
 .. _PyPI: https://pypi.org/project/preacher/
 .. _Docker: https://www.docker.com/

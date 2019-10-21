@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-22 02:24+0900\n"
+"POT-Creation-Date: 2019-10-22 02:45+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,9 +60,7 @@ msgstr "Docker で実行する"
 msgid ""
 "We provide `Docker`_ images on `Docker Hub`_ to avoid problems caused by "
 "environments."
-msgstr ""
-"環境に依存する問題を避けるため,"
-" `Docker Hub`_ で `Docker`_ イメージを提供しています."
+msgstr "環境に依存する問題を避けるため, `Docker Hub`_ で `Docker`_ イメージを提供しています."
 
 # fdc63e0a8856432aa4f98f111dcdbe4d
 #: ../../user/quickstart.rst:32
@@ -124,6 +122,62 @@ msgid ""
 " status. When any of tests fails or command fails, it returns not ``0``. "
 "Exit statuses are important for CI automation."
 msgstr ""
-"全てのテストが成功すると, ``preacher-cli`` コマンド終了ステータスとして ``0`` を返却します. "
-" いずれかのテストが失敗するか, コマンドが失敗すると, ``0`` 以外を返却します."
-" 終了ステータスは CI による自動化において重要です."
+"全てのテストが成功すると, ``preacher-cli`` コマンド終了ステータスとして ``0`` を返却します.  "
+"いずれかのテストが失敗するか, コマンドが失敗すると, ``0`` 以外を返却します. 終了ステータスは CI による自動化において重要です."
+
+# f6393187873a40f6baf621adc7a88ded
+#: ../../user/quickstart.rst:79
+msgid "Verification Statuses"
+msgstr "検証ステータス"
+
+# 489ec0db28764a1b90d390abaa507a01
+#: ../../user/quickstart.rst:80
+msgid "Each verification result has a ``Status``."
+msgstr "それぞれの検証結果は ``Status`` を持ちます."
+
+# 9d48e00f26594a24a0cbf9d40e0fd16e
+#: ../../user/quickstart.rst:82
+msgid "``SKIPPED``: There were no need to test."
+msgstr "``SKIPPED``: テストを実行する必要がなかった."
+
+# 60646f907c9c4947ac9fd2024ba50329
+#: ../../user/quickstart.rst:83
+msgid "``SUCCESS``: The test was satisfied."
+msgstr "``SUCCESS``: 期待値を満たした."
+
+# 51ffcd744e964fd7bb702d249054b683
+#: ../../user/quickstart.rst:84
+msgid "``UNSTABLE``: The test was unsatisfied."
+msgstr "``UNSTABLE``: 期待値を満たさなかった."
+
+# 4bda78a5b09b426a87de20bf56d9682f
+#: ../../user/quickstart.rst:85
+msgid "``FAILURE``: The test encountered an unexpected situation and failed."
+msgstr "``FAILURE``: 想定外の状況に遭遇し, 失敗した"
+
+# d186a9e086424b41844c1bbeeee97268
+#: ../../user/quickstart.rst:88
+msgid "Control Outputs"
+msgstr ""
+
+# 889392784f8049f4afbbc3b199183760
+#: ../../user/quickstart.rst:89
+msgid "Preacher test results are shown on your console."
+msgstr ""
+
+# a1b41607f2f345b8ae377b9ae062b073
+#: ../../user/quickstart.rst:91
+msgid ""
+"By default, all test results are shown. It is useful for debugging your "
+"test cases, but will be noisy when your test scenarios become huge. The "
+"output level control will help you find important errors."
+msgstr ""
+
+# 60646f907c9c4947ac9fd2024ba50329
+#~ msgid "``SUCCESS``: The test is satisfied."
+#~ msgstr ""
+
+# 51ffcd744e964fd7bb702d249054b683
+#~ msgid "``UNSTABLE``: The test is unsatisfied."
+#~ msgstr ""
+
