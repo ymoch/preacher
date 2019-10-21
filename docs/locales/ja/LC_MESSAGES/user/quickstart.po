@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 19:39+0900\n"
+"POT-Creation-Date: 2019-10-22 00:47+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,24 +26,55 @@ msgstr "クイックスタート"
 msgid "Install"
 msgstr "インストール"
 
-# 547b00c797d346449bf281263290d479
-#: ../../user/quickstart.rst:6
-msgid "Preacher は `PyPI`_ で手に入れることができるので, `pip`_ でインストールできます."
+# 70dab82df5af40ed9d1b7347b9db19a3
+#: ../../user/quickstart.rst:8
+msgid "``pip install preacher``"
 msgstr ""
 
-# 97cdd4e54f0d4fbbb49fe20e88f626bc
+# c43490a71a4d444d86ccb268334e9975
+#: ../../user/quickstart.rst:9
+msgid ""
+"Preacher is published to `PyPI`_ and can be installed by `pip`_. This is "
+"the most basic way to install Preacher."
+msgstr ""
+"Preacher は `PyPI`_ で公開されており, `pip`_ でインストールできます."
+" これが最も基本的なインストール方法です."
+
+# c43490a71a4d444d86ccb268334e9975
 #: ../../user/quickstart.rst:12
+msgid ""
+"If you have Python runtime environment, let's install Preacher and see "
+"its version."
+msgstr ""
+"Python の実行環境をお持ちであれば,"
+" Preacher をインストールしてバージョンを表示してみましょう."
+
+# 97cdd4e54f0d4fbbb49fe20e88f626bc
+#: ../../user/quickstart.rst:20
 msgid "Preacher supports only Python 3.7+."
 msgstr "Preacher は Python 3.7 以上のバージョンのみサポートしています."
 
-#: ../../user/quickstart.rst:16
+# cc44056e02d245d0aed0788372a7fbd7
+#: ../../user/quickstart.rst:23
+msgid "Running on Docker"
+msgstr "Docker で実行する"
+
+# c9adef6dbe804aa8894232640375c497
+#: ../../user/quickstart.rst:24
+msgid ""
+"If you don't have Python or have minimal Python environment, Preacher "
+"possibly does not work. We have Docker images on `Docker Hub`_ to avoid "
+"problems caused by environments."
+msgstr ""
+
+#: ../../user/quickstart.rst:35
 msgid "Writing Your Own Scenarios"
 msgstr ""
 
-#: ../../user/quickstart.rst:17
+#: ../../user/quickstart.rst:36
 msgid "Here is a very simple example."
 msgstr ""
 
-#: ../../user/quickstart.rst:33
+#: ../../user/quickstart.rst:52
 msgid "Verify the Servers"
 msgstr ""
