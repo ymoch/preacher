@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 19:39+0900\n"
+"POT-Creation-Date: 2019-10-22 01:35+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,24 +26,80 @@ msgstr "クイックスタート"
 msgid "Install"
 msgstr "インストール"
 
-# 547b00c797d346449bf281263290d479
-#: ../../user/quickstart.rst:6
-msgid "Preacher は `PyPI`_ で手に入れることができるので, `pip`_ でインストールできます."
+# 70dab82df5af40ed9d1b7347b9db19a3
+#: ../../user/quickstart.rst:8
+msgid "``pip install preacher``"
 msgstr ""
 
-# 97cdd4e54f0d4fbbb49fe20e88f626bc
+# c43490a71a4d444d86ccb268334e9975
+#: ../../user/quickstart.rst:9
+msgid ""
+"Preacher is published to `PyPI`_ and can be installed by `pip`_. This is "
+"the most basic way to install Preacher."
+msgstr "Preacher は `PyPI`_ で公開されており, `pip`_ でインストールできます. これが最も基本的なインストール方法です."
+
+# c43490a71a4d444d86ccb268334e9975
 #: ../../user/quickstart.rst:12
+msgid ""
+"If you have Python runtime environment, let's install Preacher and see "
+"its version."
+msgstr "Python の実行環境をお持ちであれば, Preacher をインストールしてバージョンを表示してみましょう."
+
+# 97cdd4e54f0d4fbbb49fe20e88f626bc
+#: ../../user/quickstart.rst:20
 msgid "Preacher supports only Python 3.7+."
 msgstr "Preacher は Python 3.7 以上のバージョンのみサポートしています."
 
-#: ../../user/quickstart.rst:16
+# cc44056e02d245d0aed0788372a7fbd7
+#: ../../user/quickstart.rst:23
+msgid "Running on `Docker`_"
+msgstr "Docker で実行する"
+
+# c9adef6dbe804aa8894232640375c497
+#: ../../user/quickstart.rst:24
+msgid ""
+"We provide `Docker`_ images on `Docker Hub`_ to avoid problems caused by "
+"environments."
+msgstr ""
+"環境に依存する問題を避けるため,"
+" `Docker Hub`_ で `Docker`_ イメージを提供しています."
+
+# fdc63e0a8856432aa4f98f111dcdbe4d
+#: ../../user/quickstart.rst:32
+msgid ""
+"In several cases (such as below), Preacher will not work on your "
+"environment. Running on Docker will solve these problems."
+msgstr ""
+"以下のような場合, Preacher はあなたの環境では動作しません."
+" Docker で動作させることでこれらの問題を解決できます."
+
+# a8bc470c40c34f6680d16c6a2f1599a9
+#: ../../user/quickstart.rst:35
+msgid "You don't want to install Python."
+msgstr "Python をインストールしたくない."
+
+# 0f5fab14c4f84cc5b21e86cd976cfccc
+#: ../../user/quickstart.rst:36
+msgid "Your Python is too older to run Preacher."
+msgstr "Python のバージョンが古すぎる."
+
+# ef3bb676c79b438d8d8c5e060cad7138
+#: ../../user/quickstart.rst:37
+msgid ""
+"Your Python environment cannot accept `C extensions`_. Preacher depends on "
+"`lxml`_ and `pyjq`_, which contain C extensions."
+msgstr ""
+"Python が `C 拡張`_ を利用できない."
+" Preacher が C 拡張を含む `lxml`_ や `pyjq`_ に依存していることによります."
+
+#: ../../user/quickstart.rst:41
 msgid "Writing Your Own Scenarios"
 msgstr ""
 
-#: ../../user/quickstart.rst:17
+#: ../../user/quickstart.rst:42
 msgid "Here is a very simple example."
 msgstr ""
 
-#: ../../user/quickstart.rst:33
+#: ../../user/quickstart.rst:58
 msgid "Verify the Servers"
 msgstr ""
