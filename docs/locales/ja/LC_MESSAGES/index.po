@@ -20,7 +20,7 @@ msgstr ""
 # 173150739c4448419601cfd40749c533
 #: ../../index.rst:2
 msgid "Preacher: Web API Verification Valuing Automation and Reality"
-msgstr "Preacher: 自動化とリアルさを追求した Web API 検証ツール"
+msgstr "Preacher: 自動化とリアルさを重視する Web API 検証ツール"
 
 #: ../../index.rst:15
 msgid ""
