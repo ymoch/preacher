@@ -1,5 +1,5 @@
-Preacher: Flexible Web API Verification
-=======================================
+Preacher: Web API Verification Valuing Automation and Reality
+=============================================================
 
 .. image:: https://img.shields.io/badge/python-3.7+-blue.svg
     :target: https://www.python.org/
