@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-22 01:35+0900\n"
+"POT-Creation-Date: 2019-10-22 23:58+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,49 +57,175 @@ msgstr "Docker で実行する"
 
 # c9adef6dbe804aa8894232640375c497
 #: ../../user/quickstart.rst:24
+#, fuzzy
 msgid ""
 "We provide `Docker`_ images on `Docker Hub`_ to avoid problems caused by "
-"environments."
+"environments. By default, the container working directory is ``/work``, "
+"and the host directory may be mounted here as below."
 msgstr ""
-"環境に依存する問題を避けるため,"
-" `Docker Hub`_ で `Docker`_ イメージを提供しています."
+"環境に依存する問題を避けるため, `Docker Hub`_ で `Docker`_ イメージを提供しています. デフォルトでは, "
+"コンテナの作業ディレクトリは ``/work`` とされているので, 以下の例のようにホストの作業ディレクトリをここにマウントするとよいでしょう."
 
 # fdc63e0a8856432aa4f98f111dcdbe4d
-#: ../../user/quickstart.rst:32
+#: ../../user/quickstart.rst:34
 msgid ""
 "In several cases (such as below), Preacher will not work on your "
 "environment. Running on Docker will solve these problems."
-msgstr ""
-"以下のような場合, Preacher はあなたの環境では動作しません."
-" Docker で動作させることでこれらの問題を解決できます."
+msgstr "以下のような場合, Preacher はあなたの環境では動作しません. Docker で動作させることでこれらの問題を解決できます."
 
 # a8bc470c40c34f6680d16c6a2f1599a9
-#: ../../user/quickstart.rst:35
+#: ../../user/quickstart.rst:37
 msgid "You don't want to install Python."
 msgstr "Python をインストールしたくない."
 
 # 0f5fab14c4f84cc5b21e86cd976cfccc
-#: ../../user/quickstart.rst:36
+#: ../../user/quickstart.rst:38
 msgid "Your Python is too older to run Preacher."
 msgstr "Python のバージョンが古すぎる."
 
 # ef3bb676c79b438d8d8c5e060cad7138
-#: ../../user/quickstart.rst:37
+#: ../../user/quickstart.rst:39
 msgid ""
-"Your Python environment cannot accept `C extensions`_. Preacher depends on "
-"`lxml`_ and `pyjq`_, which contain C extensions."
+"Your Python environment cannot accept `C extensions`_. Preacher depends "
+"on `lxml`_ and `pyjq`_, which contain C extensions."
 msgstr ""
-"Python が `C 拡張`_ を利用できない."
-" Preacher が C 拡張を含む `lxml`_ や `pyjq`_ に依存していることによります."
+"Python が `C 拡張`_ を利用できない. Preacher が C 拡張を含む `lxml`_ や `pyjq`_ "
+"に依存していることによります."
 
-#: ../../user/quickstart.rst:41
-msgid "Writing Your Own Scenarios"
+# 71f4b337ada34a6db351be47b264992a
+#: ../../user/quickstart.rst:43
+msgid "Verify Your API"
+msgstr "API を検証する"
+
+# f9fbc12966494b2ab1aaef4d2d1b0d5d
+#: ../../user/quickstart.rst:44
+msgid ""
+"First, write your own test scenario. Here is a very simple example of "
+"test scenarios."
+msgstr "まずはテストシナリオを書きます. 以下は非常に単純なテストシナリオの例です."
+
+# ea03b854b2724a4792fdcfafb3018690
+#: ../../user/quickstart.rst:60
+msgid "Then, let's run Preacher to verify your API."
+msgstr "テストシナリオが書けたら, Preacher を実行して API を検証してみましょう."
+
+# 60037123074b4e4581acce7eee5509e3
+#: ../../user/quickstart.rst:66
+msgid "Now, you have Preacher test results shown on your console."
+msgstr "この結果, Preacher のテスト結果がコンソールに表示されるはずです."
+
+# 0d0b25b4d9b44fccb2c66e278eaeedb9
+#: ../../user/quickstart.rst:69
+msgid "Interpret Results"
+msgstr "結果を解釈する"
+
+# febdbbd2a40f4b4b956ad1b782c143fe
+#: ../../user/quickstart.rst:72
+msgid "Exit Statuses"
+msgstr "終了ステータス"
+
+# ea03b854b2724a4792fdcfafb3018690
+#: ../../user/quickstart.rst:73
+msgid ""
+"When all tests succeeds, ``preacher-cli`` command returns ``0`` as a exit"
+" status. When any of tests fails or command fails, it returns not ``0``. "
+"Exit statuses are important for CI automation."
+msgstr ""
+"全てのテストが成功すると, ``preacher-cli`` コマンド終了ステータスとして ``0`` を返却します.  "
+"いずれかのテストが失敗するか, コマンドが失敗すると, ``0`` 以外を返却します. 終了ステータスは CI による自動化において重要です."
+
+# f6393187873a40f6baf621adc7a88ded
+#: ../../user/quickstart.rst:83
+msgid "Verification Statuses"
+msgstr "検証ステータス"
+
+# 489ec0db28764a1b90d390abaa507a01
+#: ../../user/quickstart.rst:84
+msgid "Each verification result has a \"Verification Status.\""
+msgstr "それぞれの検証結果は「検証ステータス」を持ちます."
+
+# f6393187873a40f6baf621adc7a88ded
+#: ../../user/quickstart.rst:86
+msgid "The List of Verification Statuses"
+msgstr "検証ステータス一覧"
+
+# 9cd65f061b8a4824b21eb64815ccd8bf
+#: ../../user/quickstart.rst:90
+msgid "Value"
+msgstr "値"
+
+# a44b0b63e969402695b54781d4d1114c
+#: ../../user/quickstart.rst:91
+msgid "Will Succeed?"
+msgstr "成功とみなすか?"
+
+# 4beb44887a674994936bd6ba68574d22
+#: ../../user/quickstart.rst:92
+msgid "Description"
+msgstr "説明"
+
+# ece669f03b3e4da18a5430229a5ad3b1
+#: ../../user/quickstart.rst:93
+msgid "``SKIPPED``"
 msgstr ""
 
-#: ../../user/quickstart.rst:42
-msgid "Here is a very simple example."
+# 0377917f6ca941ad8d650ac25a388e09
+# 0ef89bfb2cde460a9282828bc3bf86d5
+#: ../../user/quickstart.rst:94 ../../user/quickstart.rst:97
+msgid "yes"
 msgstr ""
 
-#: ../../user/quickstart.rst:58
-msgid "Verify the Servers"
+# 6499f7d3d2cb425193379d4fb7cea7da
+#: ../../user/quickstart.rst:95
+msgid "It wasn't needed to run."
+msgstr "実行する必要がなかった."
+
+# b1df21b77209499682a47f78137267f0
+#: ../../user/quickstart.rst:96
+msgid "``SUCCESS``"
+msgstr ""
+
+# 3833a04759204f69bf5fa507577af949
+#: ../../user/quickstart.rst:98
+msgid "It was satisfied."
+msgstr "期待値が満たされた"
+
+# 0fbef6a9ad21402ba668cac539d72d78
+#: ../../user/quickstart.rst:99
+msgid "``UNSTABLE``"
+msgstr ""
+
+# 2b1c4ab3c8584374942e55bd51f16217
+# a25065754ee84d94b56fa7983efb172d
+#: ../../user/quickstart.rst:100 ../../user/quickstart.rst:103
+msgid "no"
+msgstr ""
+
+# 19747bb0df3e480db0b592c44afc6eee
+#: ../../user/quickstart.rst:101
+msgid "It wasn't satisfied."
+msgstr "期待値が満たされなかった"
+
+# 8a1ac58c3bf541c88624a176e98c4ba9
+#: ../../user/quickstart.rst:102
+msgid "``FAILURE``"
+msgstr ""
+
+# bb8488aa99ce460cb99e081b728441dd
+#: ../../user/quickstart.rst:104
+msgid "It encountered an unexpected situation and failed."
+msgstr "想定外の状況に遭遇し, 失敗した"
+
+# d186a9e086424b41844c1bbeeee97268
+#: ../../user/quickstart.rst:107
+msgid "Control Outputs"
+msgstr "出力制御"
+
+# de1468c7541e4b3ab55e27747e4d7ef8
+#: ../../user/quickstart.rst:108
+msgid ""
+"By default, not ``SKIPPED`` test results are shown. It is useful for "
+"debugging your test cases, but will be noisy when your test scenarios "
+"become huge. The output level control will help you find important "
+"errors."
 msgstr ""

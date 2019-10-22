@@ -36,8 +36,8 @@ $ preacher-cli --version
 Instead of `pip`, Docker images are also available on
 [Docker Hub](https://cloud.docker.com/u/ymoch/repository/docker/ymoch/preacher)
 as `ymoch/preacher`.
-Note that the working directory is `/work`
-and the host directory should be mounted.
+By default, the container working directory is `/work`,
+and the host directory may be mounted here.
 
 ```sh
 $ docker pull ymock/preacher

@@ -23,11 +23,13 @@ Running on `Docker`_
 ^^^^^^^^^^^^^^^^^^^^
 We provide `Docker`_ images on `Docker Hub`_
 to avoid problems caused by environments.
+By default, the container working directory is ``/work``,
+and the host directory may be mounted here as below.
 
 .. code-block:: sh
 
     $ docker pull ymoch/preacher
-    $ docker run -t ymoch/preacher preacher-cli --version
+    $ docker run -v $PWD:/work -t ymoch/preacher preacher-cli --version
 
 In several cases (such as below), Preacher will not work on your environment.
 Running on Docker will solve these problems.
@@ -37,9 +39,10 @@ Running on Docker will solve these problems.
 - Your Python environment cannot accept `C extensions`_.
   Preacher depends on `lxml`_ and `pyjq`_, which contain C extensions.
 
-Writing Your Own Scenarios
---------------------------
-Here is a very simple example.
+Verify Your API
+---------------
+First, write your own test scenario.
+Here is a very simple example of test scenarios.
 
 .. code-block:: yaml
 
@@ -54,12 +57,62 @@ Here is a very simple example.
               should:
                 equal: bar
 
-Verify the Servers
-------------------
+Then, let's run Preacher to verify your API.
 
 .. code-block:: sh
 
     $ preacher-cli -u https://your-server.com/base scenario.yml
+
+Now, you have Preacher test results shown on your console.
+
+Interpret Results
+-----------------
+
+Exit Statuses
+^^^^^^^^^^^^^
+When all tests succeeds,
+``preacher-cli`` command returns ``0`` as a exit status.
+When any of tests fails or command fails, it returns not ``0``.
+Exit statuses are important for CI automation.
+
+.. code-block:: sh
+
+    $ echo $?
+
+Verification Statuses
+^^^^^^^^^^^^^^^^^^^^^
+Each verification result has a "Verification Status."
+
+.. list-table:: The List of Verification Statuses
+   :header-rows: 1
+   :widths: 10 20 50
+
+   * - Value
+     - Will Succeed?
+     - Description
+   * - ``SKIPPED``
+     - yes
+     - It wasn't needed to run.
+   * - ``SUCCESS``
+     - yes
+     - It was satisfied.
+   * - ``UNSTABLE``
+     - no
+     - It wasn't satisfied.
+   * - ``FAILURE``
+     - no
+     - It encountered an unexpected situation and failed.
+
+Control Outputs
+---------------
+By default, not ``SKIPPED`` test results are shown.
+It is useful for debugging your test cases,
+but will be noisy when your test scenarios become huge.
+The output level control will help you find important errors.
+
+.. code-block:: sh
+
+    $ preacher-cli --level unstable scenario.yml
 
 
 .. _PyPI: https://pypi.org/project/preacher/
