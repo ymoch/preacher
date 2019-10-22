@@ -117,7 +117,7 @@ The output level control will help you find important errors.
 
 .. _PyPI: https://pypi.org/project/preacher/
 .. _Docker: https://www.docker.com/
-.. _Docker Hub: https://cloud.docker.com/u/ymoch/repository/docker/ymoch/preacher
+.. _Docker Hub: https://hub.docker.com/r/ymoch/preacher
 .. _pip: https://pip.pypa.io/en/stable/
 .. _lxml: https://lxml.de/
 .. _pyjq: https://github.com/doloopwhile/pyjq
