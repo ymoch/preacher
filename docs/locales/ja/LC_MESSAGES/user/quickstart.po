@@ -229,18 +229,3 @@ msgid ""
 "become huge. The output level control will help you find important "
 "errors."
 msgstr ""
-
-# 889392784f8049f4afbbc3b199183760
-#~ msgid "Preacher test results are shown on your console."
-#~ msgstr ""
-
-# a1b41607f2f345b8ae377b9ae062b073
-#~ msgid ""
-#~ "By default, all test results are "
-#~ "shown. It is useful for debugging "
-#~ "your test cases, but will be noisy"
-#~ " when your test scenarios become "
-#~ "huge. The output level control will "
-#~ "help you find important errors."
-#~ msgstr ""
-
