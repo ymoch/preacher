@@ -1,4 +1,4 @@
-# Preacher: Flexible Web API Verification
+# Preacher: Web API Verification Valuing Automation and Reality
 
 [![PyPI version](https://badge.fury.io/py/preacher.svg)](https://badge.fury.io/py/preacher)
 [![Documentation Status](https://readthedocs.org/projects/preacher/badge/?version=latest)](https://preacher.readthedocs.io/en/latest/?badge=latest)
@@ -13,8 +13,7 @@ Scenarios are written in [YAML][], bodies are analyzed [jq][] or [XPath][] queri
 and validation rules are based on [Hamcrest][] ([PyHamcrest][])
 so that any developers can write without learning toughly.
 
-The full documentation is available at
-[preacher.readthedocs.io](https://preacher.readthedocs.io/).
+The full documentation is available at [preacher.readthedocs.io][readthedocs].
 
 ## Targets
 
@@ -25,10 +24,24 @@ The full documentation is available at
 
 ## Usage
 
-First, install from PyPI. Supports only Python 3.7+.
+First, install Preacher.
+
+The most basic way to install Preacher is using `pip`. Supports only Python 3.7+.
 
 ```sh
 $ pip install preacher
+$ preacher-cli --version
+```
+
+Instead of `pip`, Docker images are also available on
+[Docker Hub](https://cloud.docker.com/u/ymoch/repository/docker/ymoch/preacher)
+as `ymoch/preacher`.
+Note that the working directory is `/work`
+and the host directory should be mounted.
+
+```sh
+$ docker pull ymock/preacher
+$ docker run -v $PWD:/work ymoch/preacher preacher-cli --version
 ```
 
 Second, write your own scenario.
@@ -54,16 +67,19 @@ $ preacher-cli -u http://your.domain.com/base scenario.yml
 ```
 
 For more information such as grammer of scenarios,
-see [the full documentation](https://preacher.readthedocs.io/).
+see [the full documentation][readthedocs].
 
 ## License
 
-[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)][MIT License]
 
 Copyright (c) 2019 Yu MOCHIZUKI
+
 
 [YAML]: https://yaml.org/
 [jq]: https://stedolan.github.io/jq/
 [XPath]: https://www.w3.org/TR/xpath/all/
 [Hamcrest]: http://hamcrest.org/
 [PyHamcrest]: https://pyhamcrest.readthedocs.io/
+[MIT License]: https://opensource.org/licenses/MIT
+[readthedocs]: https://preacher.readthedocs.io/

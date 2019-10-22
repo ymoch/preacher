@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 12:52+0900\n"
+"POT-Creation-Date: 2019-10-22 10:08+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,17 +17,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
+# 173150739c4448419601cfd40749c533
 #: ../../index.rst:2
-msgid "Preacher: Flexible Web API Verification"
-msgstr "Preacher: 柔軟な Web API 検証ツール"
+msgid "Preacher: Web API Verification Valuing Automation and Reality"
+msgstr "Preacher: 自動化とリアルさを追求した Web API 検証ツール"
 
 #: ../../index.rst:15
 msgid ""
 "Preacher verifies API servers, which requests to API servers and verify "
 "the response along to given scenarios."
 msgstr ""
-"Preacher は API サーバを検証するツールです."
-" シナリオに従って API サーバにリクエストし, レスポンスを検証します."
+"Preacher は API サーバを検証するツールです. シナリオに従って API サーバにリクエストし, レスポンスを検証します."
 
 #: ../../index.rst:18
 msgid ""
@@ -36,12 +36,9 @@ msgid ""
 "(`PyHamcrest`_) so that any developers can write without learning "
 "toughly."
 msgstr ""
-"テストシナリオは `YAML`_ で記述され,"
-" レスポンスボディは `jq`_ または `XPath`_ で解析され,"
-" 検証ルールの記述は `Hamcrest`_ (`PyHamcrest`_) に基づいています."
-" 開発者は大変な学習をせずに利用することができます."
+"テストシナリオは `YAML`_ で記述され, レスポンスボディは `jq`_ または `XPath`_ で解析され, 検証ルールの記述は "
+"`Hamcrest`_ (`PyHamcrest`_) に基づいています. 開発者は大変な学習をせずに利用することができます."
 
 #: ../../index.rst:23
 msgid "The User Guide"
 msgstr "ユーザーガイド"
-

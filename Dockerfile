@@ -6,6 +6,7 @@ WORKDIR /work
 
 COPY README.md pyproject.toml poetry.lock /usr/src/preacher/
 COPY preacher /usr/src/preacher/preacher
+
 RUN set -o pipefail && \
     \
     apk --no-cache add libxml2 libxslt && \
@@ -21,16 +22,19 @@ RUN set -o pipefail && \
         curl \
         && \
     \
-    curl -sSL \
-        https://raw.githubusercontent.com/sdispater/poetry/$POETRY_VERSION/get-poetry.py \
-        | python && \
-    source ~/.poetry/env && \
-    poetry config settings.virtualenvs.create false && \
-    \
     cd /usr/src/preacher && \
-    poetry install --no-dev && \
-    cd ~ && \
     \
-    poetry self:uninstall --yes && \
-    rm -rf /usr/src/preacher ~/.cache && \
+    curl -sSLO https://raw.githubusercontent.com/sdispater/poetry/$POETRY_VERSION/get-poetry.py && \
+    python get-poetry.py && \
+    source $HOME/.poetry/env && \
+    \
+    poetry config settings.virtualenvs.create false && \
+    poetry install --no-dev && \
+    \
+    python get-poetry.py --uninstall --yes && \
+    rm -rf $HOME/.cache && \
+    \
+    cd $HOME && \
+    rm -rf /usr/src/preacher && \
+    \
     apk --no-cache del .build-deps
