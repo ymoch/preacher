@@ -23,11 +23,13 @@ Running on `Docker`_
 ^^^^^^^^^^^^^^^^^^^^
 We provide `Docker`_ images on `Docker Hub`_
 to avoid problems caused by environments.
+By default, the container working directory is ``/work``,
+and the host directory may be mounted here as below.
 
 .. code-block:: sh
 
     $ docker pull ymoch/preacher
-    $ docker run -t ymoch/preacher preacher-cli --version
+    $ docker run -v $PWD:/work -t ymoch/preacher preacher-cli --version
 
 In several cases (such as below), Preacher will not work on your environment.
 Running on Docker will solve these problems.
@@ -61,6 +63,8 @@ Then, let's run Preacher to verify your API.
 
     $ preacher-cli -u https://your-server.com/base scenario.yml
 
+Now, you have Preacher test results shown on your console.
+
 Interpret Results
 -----------------
 
@@ -77,21 +81,38 @@ Exit statuses are important for CI automation.
 
 Verification Statuses
 ^^^^^^^^^^^^^^^^^^^^^
-Each verification result has a ``Status``.
+Each verification result has a "Verification Status."
 
-- ``SKIPPED``: There were no need to test.
-- ``SUCCESS``: The test was satisfied.
-- ``UNSTABLE``: The test was unsatisfied.
-- ``FAILURE``: The test encountered an unexpected situation and failed.
+.. list-table:: The List of Verification Statuses
+   :header-rows: 1
+   :widths: 10 20 50
+
+   * - Value
+     - Will Succeed?
+     - Description
+   * - ``SKIPPED``
+     - yes
+     - It wasn't needed to run.
+   * - ``SUCCESS``
+     - yes
+     - It was satisfied.
+   * - ``UNSTABLE``
+     - no
+     - It wasn't satisfied.
+   * - ``FAILURE``
+     - no
+     - It encountered an unexpected situation and failed.
 
 Control Outputs
 ---------------
-Preacher test results are shown on your console.
-
-By default, all test results are shown.
+By default, not ``SKIPPED`` test results are shown.
 It is useful for debugging your test cases,
 but will be noisy when your test scenarios become huge.
 The output level control will help you find important errors.
+
+.. code-block:: sh
+
+    $ preacher-cli --level unstable scenario.yml
 
 
 .. _PyPI: https://pypi.org/project/preacher/
