@@ -515,8 +515,8 @@ category = "dev"
 description = "run tests in isolated forked subprocesses"
 name = "pytest-forked"
 optional = false
-python-versions = "*"
-version = "1.0.2"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.1.3"
 
 [package.dependencies]
 pytest = ">=3.1.0"
@@ -1000,7 +1000,7 @@ pyparsing = ["6f98a7b9397e206d78cc01df10131398f1c8b8510a2f4d97d9abd82e1aacdd80",
 pytest = ["5d0d20a9a66e39b5845ab14f8989f3463a7aa973700e6cdf02db69da9821e738", "692d9351353ef709c1126266579edd4fd469dcf6b5f4f583050f72161d6f3592"]
 pytest-cov = ["cc6742d8bac45070217169f5f72ceee1e0e55b0221f54bcf24845972d3a47f2b", "cdbdef4f870408ebdbfeb44e63e07eb18bb4619fae852f6e760645fa36172626"]
 pytest-flakes = ["341964bf5760ebbdde9619f68a17d5632c674c3f6903ef66daa0a4f540b3d143", "daaf319250eeefa8cb13b0ba78ffdda67926c4b6446a9e14f946b86d1ba6af23"]
-pytest-forked = ["5fe33fbd07d7b1302c95310803a5e5726a4ff7f19d5a542b7ce57c76fed8135f", "d352aaced2ebd54d42a65825722cb433004b4446ab5d2044851d9cc7a00c9e38"]
+pytest-forked = ["1805699ed9c9e60cb7a8179b8d4fa2b8898098e82d229b0825d8095f0f261100", "1ae25dba8ee2e56fb47311c9638f9e58552691da87e82d25b0ce0e4bf52b7d87"]
 pytest-mypy = ["419d1d4877d41a6a80f0eb31faa7c50bb9445557f7ff1b02a1a26d10d7dc7691", "917438af835beb87f14c9f6261137f8e992b3bf87ebf73f836ac7ede03424a0f"]
 pytest-pycodestyle = ["d4f1c1d633158c1a27b02a40cf8e27da7264a9cbd6f59b5d692368e82412ac78"]
 pytest-runner = ["175d3d9271332b54df0190bec59c3614676f6895ad1056aa391ed034e03f95f6", "d1cb3d654b120d6124914bc33dcd25679860464545e4509bb6bf96eed5a2f1ef"]
