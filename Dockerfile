@@ -30,7 +30,7 @@ RUN set -o pipefail && \
     \
     poetry config settings.virtualenvs.create false && \
     poetry install --no-dev && \
-    pip --no-cache-dir install -e . && \
+    pip --no-cache-dir install . && \
     \
     python get-poetry.py --uninstall --yes && \
     rm -rf $HOME/.cache && \
