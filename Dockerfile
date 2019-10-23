@@ -30,6 +30,7 @@ RUN set -o pipefail && \
     \
     poetry config settings.virtualenvs.create false && \
     poetry install --no-dev && \
+    pip --no-cache-dir install . && \
     \
     python get-poetry.py --uninstall --yes && \
     rm -rf $HOME/.cache && \
@@ -37,4 +38,6 @@ RUN set -o pipefail && \
     cd $HOME && \
     rm -rf /usr/src/preacher && \
     \
-    apk --no-cache del .build-deps
+    apk --no-cache del .build-deps && \
+    \
+    preacher-cli --version
