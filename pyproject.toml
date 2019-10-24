@@ -28,7 +28,7 @@ lxml = "^4.4"
 jinja2 = "^2.10"
 
 [tool.poetry.dev-dependencies]
-pytest = "^4.3"
+pytest = "^5.2"
 pytest-runner = "^4.4"
 pytest-flakes = "^4.0"
 pytest-pycodestyle = "^1.4"
