@@ -6,7 +6,6 @@ import responder
 
 
 api = responder.API(
-    static_dir=None,
     templates_dir=os.path.join(os.path.dirname(__file__), 'templates'),
 )
 
