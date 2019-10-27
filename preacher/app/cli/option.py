@@ -1,11 +1,11 @@
 import logging
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
-from typing import Mapping
+from typing import List, Mapping, Optional
 
 from preacher import __version__ as version
 
 
-LOGGING_LEVEL_MAP: Mapping[str, int] = {
+_LOGGING_LEVEL_MAP: Mapping[str, int] = {
     'skipped': logging.DEBUG,
     'success': logging.INFO,
     'unstable': logging.WARN,
@@ -34,7 +34,7 @@ def zero_or_positive_float(value: str) -> float:
     return float_value
 
 
-def parse_args() -> Namespace:
+def parse_args(args: Optional[List[str]] = None) -> Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         'scenario',
@@ -54,7 +54,7 @@ def parse_args() -> Namespace:
     )
     parser.add_argument(
         '-l', '--level',
-        choices=LOGGING_LEVEL_MAP.keys(),
+        choices=_LOGGING_LEVEL_MAP.keys(),
         help='show only above or equal to this level',
         default='success',
     )
@@ -91,7 +91,7 @@ def parse_args() -> Namespace:
         help='report directory (experimental)',
     )
 
-    args = parser.parse_args()
-    args.level = LOGGING_LEVEL_MAP[args.level]
+    args = parser.parse_args(args)
+    args.level = _LOGGING_LEVEL_MAP[args.level]
 
     return args

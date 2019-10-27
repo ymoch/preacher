@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 
 
-def report_to(path: Optional[str] = None) -> Listener:
+def _report_to(path: Optional[str] = None) -> Listener:
     if not path:
         return EmptyListener()
     return ReportingListener(path)
@@ -34,7 +34,7 @@ def main() -> None:
 
     with ThreadPoolExecutor(args.concurrency) as executor, \
             LoggingListener(LOGGER) as logging_listener, \
-            report_to(args.report) as reporting_listener:
+            _report_to(args.report) as reporting_listener:
         app = Application(
             presentations=[logging_listener, reporting_listener],
             base_url=args.url,
