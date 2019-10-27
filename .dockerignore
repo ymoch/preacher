@@ -2,6 +2,7 @@
 LICENSE
 .circleci
 .readthedocs.yml
+.gitignore
 docs
 examples
 tests
@@ -9,6 +10,7 @@ pytest.ini
 Makefile
 
 # Temporary files.
+.coverage
 .eggs
 .mypy_cache
 .pytest_cache
