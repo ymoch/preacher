@@ -106,4 +106,5 @@ that are equivalent to commandline options.
    * - ``PREACHER_CLI_REPORT``
      - ``-r``, ``--report``
 
-.. note:: Empty environment variables are ignored.
+Environment variables that have empty strings are ignored.
+This behavior is useful to handle optional settings.
