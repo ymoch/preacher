@@ -7,9 +7,7 @@ WORKDIR /work
 COPY README.md pyproject.toml poetry.lock /usr/src/preacher/
 COPY preacher /usr/src/preacher/preacher
 
-RUN set -o pipefail && \
-    \
-    apk --no-cache add libxml2 libxslt && \
+RUN apk --no-cache add libxml2 libxslt && \
     apk --no-cache add --virtual .build-deps \
         libc-dev \
         libxml2-dev \
