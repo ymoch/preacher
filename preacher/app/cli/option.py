@@ -1,10 +1,11 @@
 import logging
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
+from typing import Mapping
 
 from preacher import __version__ as version
 
 
-LOGGING_LEVEL_MAP = {
+LOGGING_LEVEL_MAP: Mapping[str, int] = {
     'skipped': logging.DEBUG,
     'success': logging.INFO,
     'unstable': logging.WARN,
@@ -90,5 +91,8 @@ def parse_args() -> Namespace:
         help='report directory (experimental)',
     )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+    args.level = LOGGING_LEVEL_MAP[args.level]
+
+    return args
 

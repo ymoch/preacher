@@ -1,22 +1,17 @@
 """Preacher CLI."""
 
-from __future__ import annotations
-
 import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 from preacher.app.application import Application
-from preacher.app.cli.option import parse_args, LOGGING_LEVEL_MAP
+from preacher.app.cli.option import parse_args
 from preacher.app.listener import Listener
 from preacher.app.listener.empty import EmptyListener
 from preacher.app.listener.logging import LoggingListener
 from preacher.app.listener.report import ReportingListener
 
-
-DEFAULT_URL = 'http://localhost:5042'
-DEFAULT_URL_DESCRIPTION = 'the sample'
 
 HANDLER = logging.StreamHandler()
 LOGGER = logging.getLogger(__name__)
@@ -33,7 +28,7 @@ def main() -> None:
     """Main."""
     args = parse_args()
 
-    level = LOGGING_LEVEL_MAP[args.level]
+    level = args.level
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
