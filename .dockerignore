@@ -1,8 +1,9 @@
 # Not product codes.
 LICENSE
 .circleci
-.readthedocs.yml
+.git
 .gitignore
+.readthedocs.yml
 docs
 examples
 tests
