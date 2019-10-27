@@ -1,18 +1,24 @@
 """CLI Options."""
 
 import logging
+from enum import Enum
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from typing import List, Mapping, Optional
 
 from preacher import __version__ as version
 
 
-_LOGGING_LEVEL_MAP: Mapping[str, int] = {
-    'skipped': logging.DEBUG,
-    'success': logging.INFO,
-    'unstable': logging.WARN,
-    'failure': logging.ERROR,
-}
+class Level(Enum):
+    SKIPPED = logging.DEBUG
+    SUCCESS = logging.INFO
+    UNSTABLE = logging.WARN
+    FAILURE = logging.ERROR
+
+    def __str__(self):
+        return self.name.lower()
+
+
+_LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
 
 
 _ENV_PREFIX = 'PREACHER_CLI_'
@@ -30,29 +36,36 @@ _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
 def positive_int(value: str) -> int:
     int_value = int(value)
     if int_value <= 0:
-        raise ArgumentTypeError(f"must be positive or 0, given {int_value}")
+        raise ArgumentTypeError(f'must be positive or 0, given {int_value}')
     return int_value
 
 
 def zero_or_positive_int(value: str) -> int:
     int_value = int(value)
     if int_value < 0:
-        raise ArgumentTypeError(f"must be positive or 0, given {int_value}")
+        raise ArgumentTypeError(f'must be positive or 0, given {int_value}')
     return int_value
 
 
 def positive_float(value: str) -> float:
     float_value = float(value)
     if float_value <= 0.0:
-        raise ArgumentTypeError(f"must be positive, given {float_value}")
+        raise ArgumentTypeError(f'must be positive, given {float_value}')
     return float_value
 
 
 def zero_or_positive_float(value: str) -> float:
     float_value = float(value)
     if float_value < 0.0:
-        raise ArgumentTypeError(f"must be positive or 0, given {float_value}")
+        raise ArgumentTypeError(f'must be positive or 0, given {float_value}')
     return float_value
+
+
+def level(value: str) -> Level:
+    result = _LEVEL_MAP.get(value)
+    if not result:
+        raise ArgumentTypeError(f'invalid level: {value}')
+    return result
 
 
 def parse_args(
@@ -84,7 +97,8 @@ def parse_args(
     )
     parser.add_argument(
         '-l', '--level',
-        choices=_LOGGING_LEVEL_MAP.keys(),
+        type=level,
+        choices=Level,
         help='show only above or equal to this level',
         default=defaults.get(f'{_ENV_PREFIX}LEVEL'),
     )
@@ -124,6 +138,6 @@ def parse_args(
     )
 
     args = parser.parse_args(argv)
-    args.level = _LOGGING_LEVEL_MAP[args.level]
+    args.level = args.level.value
 
     return args

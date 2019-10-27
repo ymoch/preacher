@@ -30,9 +30,22 @@ def test_show_and_exit(argv):
     ['-c', 'foo', 'scenario.yml'],
     ['--concurrency', '0', 'scenario.yml'],
 ])
-def test_invalid_args(argv):
+def test_invalid_argv(argv):
     with raises(SystemExit) as ex_info:
         parse_args(argv=argv)
+    assert ex_info.value.code == 2
+
+
+@mark.parametrize('environ', [
+    {'PREACHER_CLI_LEVEL': 'foo'},
+    {'PREACHER_CLI_RETRY': 'foo'},
+    {'PREACHER_CLI_DELAY': 'foo'},
+    {'PREACHER_CLI_TIMEOUT': 'foo'},
+    {'PREACHER_CLI_CONCURRENCY': 'foo'},
+])
+def test_invalid_environ(environ):
+    with raises(SystemExit) as ex_info:
+        parse_args(argv=['foo.yml'], environ=environ)
     assert ex_info.value.code == 2
 
 
