@@ -4,12 +4,8 @@ ARG POETRY_VERSION=0.12.17
 
 WORKDIR /work
 
-COPY README.md pyproject.toml poetry.lock /usr/src/preacher/
-COPY preacher /usr/src/preacher/preacher
-
-RUN set -o pipefail && \
-    \
-    apk --no-cache add libxml2 libxslt && \
+COPY . /usr/src/preacher
+RUN apk --no-cache add libxml2 libxslt && \
     apk --no-cache add --virtual .build-deps \
         libc-dev \
         libxml2-dev \
