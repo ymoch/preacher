@@ -15,7 +15,7 @@ _LOGGING_LEVEL_MAP: Mapping[str, int] = {
 }
 
 
-_ENV_PREFIX = 'PREACHER_'
+_ENV_PREFIX = 'PREACHER_CLI_'
 _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
     f'{_ENV_PREFIX}URL': 'http://localhost:5042',
     f'{_ENV_PREFIX}LEVEL': 'success',
