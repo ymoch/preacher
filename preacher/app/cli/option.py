@@ -1,3 +1,5 @@
+"""CLI Options."""
+
 import logging
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from typing import List, Mapping, Optional
@@ -11,6 +13,13 @@ _LOGGING_LEVEL_MAP: Mapping[str, int] = {
     'unstable': logging.WARN,
     'failure': logging.ERROR,
 }
+
+
+def positive_int(value: str) -> int:
+    int_value = int(value)
+    if int_value <= 0:
+        raise ArgumentTypeError(f"must be positive or 0, given {int_value}")
+    return int_value
 
 
 def zero_or_positive_int(value: str) -> int:
@@ -80,7 +89,7 @@ def parse_args(args: Optional[List[str]] = None) -> Namespace:
     )
     parser.add_argument(
         '-c', '--concurrency',
-        type=int,
+        type=positive_int,
         metavar='num',
         help='set the request concurrency',
         default=1,
