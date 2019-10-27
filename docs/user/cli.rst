@@ -94,7 +94,7 @@ that are equivalent to commandline options.
    * - ``PREACHER_CLI_URL``
      - ``-u``, ``--base-url``
    * - ``PREACHER_CLI_LEVEL``
-     - ``-level``, ``--level``
+     - ``-l``, ``--level``
    * - ``PREACHER_CLI_RETRY``
      - ``-r``, ``--retry``
    * - ``PREACHER_CLI_DELAY``
