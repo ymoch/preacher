@@ -91,7 +91,7 @@ def parse_args(args: Optional[List[str]] = None) -> Namespace:
         help='report directory (experimental)',
     )
 
-    args = parser.parse_args(args)
-    args.level = _LOGGING_LEVEL_MAP[args.level]
+    parsed = parser.parse_args(args)
+    parsed.level = _LOGGING_LEVEL_MAP[parsed.level]
 
-    return args
+    return parsed

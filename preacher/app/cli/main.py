@@ -5,8 +5,8 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
+from .option import parse_args
 from preacher.app.application import Application
-from preacher.app.cli.option import parse_args
 from preacher.app.listener import Listener
 from preacher.app.listener.empty import EmptyListener
 from preacher.app.listener.logging import LoggingListener
