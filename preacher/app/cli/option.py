@@ -1,3 +1,5 @@
+"""CLI Options."""
+
 import logging
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from typing import List, Mapping, Optional
