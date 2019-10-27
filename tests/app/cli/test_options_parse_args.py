@@ -5,19 +5,19 @@ from pytest import mark, raises
 from preacher.app.cli.option import parse_args
 
 
-@mark.parametrize('args', [
+@mark.parametrize('argv', [
     ['-h'],
     ['--help'],
     ['-v'],
     ['--version'],
 ])
-def test_show_and_exit(args):
+def test_show_and_exit(argv):
     with raises(SystemExit) as ex_info:
-        parse_args(['-v'])
+        parse_args(argv=argv)
     assert ex_info.value.code == 0
 
 
-@mark.parametrize('args', [
+@mark.parametrize('argv', [
     [],
     ['-l', 'foo', 'scenario.yml'],
     ['--level', 'bar', 'scenario.yml'],
@@ -30,9 +30,9 @@ def test_show_and_exit(args):
     ['-c', 'foo', 'scenario.yml'],
     ['--concurrency', '0', 'scenario.yml'],
 ])
-def test_invalid_args(args):
+def test_invalid_args(argv):
     with raises(SystemExit) as ex_info:
-        parse_args(args)
+        parse_args(argv=argv)
     assert ex_info.value.code == 2
 
 

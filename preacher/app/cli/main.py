@@ -1,6 +1,7 @@
 """Preacher CLI."""
 
 import logging
+import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
@@ -26,7 +27,7 @@ def _report_to(path: Optional[str] = None) -> Listener:
 
 def main() -> None:
     """Main."""
-    args = parse_args()
+    args = parse_args(environ=os.environ)
 
     level = args.level
     HANDLER.setLevel(level)

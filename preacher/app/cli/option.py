@@ -55,8 +55,15 @@ def zero_or_positive_float(value: str) -> float:
     return float_value
 
 
-def parse_args(args: Optional[List[str]] = None) -> Namespace:
-    env_map = _DEFAULT_ENV_MAP
+def parse_args(
+    argv: Optional[List[str]] = None,
+    environ: Optional[Mapping[str, str]] = None,
+) -> Namespace:
+    environ = environ or {}
+    defaults = {
+        name: environ.get(name) or value
+        for (name, value) in _DEFAULT_ENV_MAP.items()
+    }
 
     parser = ArgumentParser()
     parser.add_argument(
@@ -73,50 +80,50 @@ def parse_args(args: Optional[List[str]] = None) -> Namespace:
         '-u', '--url',
         metavar='url',
         help='specify the base URL',
-        default=env_map.get(f'{_ENV_PREFIX}URL'),
+        default=defaults.get(f'{_ENV_PREFIX}URL'),
     )
     parser.add_argument(
         '-l', '--level',
         choices=_LOGGING_LEVEL_MAP.keys(),
         help='show only above or equal to this level',
-        default=env_map.get(f'{_ENV_PREFIX}LEVEL'),
+        default=defaults.get(f'{_ENV_PREFIX}LEVEL'),
     )
     parser.add_argument(
         '-r', '--retry',
         type=zero_or_positive_int,
         metavar='num',
         help='set the max retry count',
-        default=env_map.get(f'{_ENV_PREFIX}RETRY'),
+        default=defaults.get(f'{_ENV_PREFIX}RETRY'),
     )
     parser.add_argument(
         '-d', '--delay',
         type=zero_or_positive_float,
         metavar='sec',
         help='set the delay between attempts in seconds',
-        default=env_map.get(f'{_ENV_PREFIX}DELAY'),
+        default=defaults.get(f'{_ENV_PREFIX}DELAY'),
     )
     parser.add_argument(
         '-t', '--timeout',
         type=positive_float,
         metavar='sec',
         help='set the request timeout in seconds',
-        default=env_map.get(f'{_ENV_PREFIX}TIMEOUT'),
+        default=defaults.get(f'{_ENV_PREFIX}TIMEOUT'),
     )
     parser.add_argument(
         '-c', '--concurrency',
         type=positive_int,
         metavar='num',
         help='set the request concurrency',
-        default=env_map.get(f'{_ENV_PREFIX}CONCURRENCY'),
+        default=defaults.get(f'{_ENV_PREFIX}CONCURRENCY'),
     )
     parser.add_argument(
         '-R', '--report',
         metavar='dir',
         help='report directory (experimental)',
-        default=env_map.get(f'{_ENV_PREFIX}REPORT'),
+        default=defaults.get(f'{_ENV_PREFIX}REPORT'),
     )
 
-    parsed = parser.parse_args(args)
-    parsed.level = _LOGGING_LEVEL_MAP[parsed.level]
+    args = parser.parse_args(argv)
+    args.level = _LOGGING_LEVEL_MAP[args.level]
 
-    return parsed
+    return args
