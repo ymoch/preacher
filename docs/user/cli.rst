@@ -10,7 +10,6 @@ Options
 
 .. list-table:: Preacher CLI Options
    :header-rows: 1
-   :widths: 10, 20, 15, 40, 15
 
    * - Short
      - Long
@@ -76,3 +75,36 @@ Allowed values are:
 - success
 - unstable
 - failure
+
+Environment Variables Interface
+-------------------------------
+Using commandline options bother us in some situation like:
+
+- Giving CI build parameters to Preacher.
+- Wrapping Preacher execution with shell scripts.
+
+Alternatively, Preacher supports environment variables
+that are equivalent to commandline options.
+
+.. list-table:: Supported environment variables
+   :header-rows: 1
+
+   * - Name
+     - Equivalent to
+   * - ``PREACHER_CLI_URL``
+     - ``-u``, ``--base-url``
+   * - ``PREACHER_CLI_LEVEL``
+     - ``-level``, ``--level``
+   * - ``PREACHER_CLI_RETRY``
+     - ``-r``, ``--retry``
+   * - ``PREACHER_CLI_DELAY``
+     - ``-d``, ``--delay``
+   * - ``PREACHER_CLI_TIMEOUT``
+     - ``-t``, ``--timeout``
+   * - ``PREACHER_CLI_CONCURRENCY``
+     - ``-c``, ``--concurrency``
+   * - ``PREACHER_CLI_REPORT``
+     - ``-r``, ``--report``
+
+Environment variables that have empty strings are ignored.
+This behavior is useful to handle optional settings.

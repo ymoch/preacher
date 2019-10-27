@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"POT-Creation-Date: 2019-10-28 01:13+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,215 +19,335 @@ msgstr ""
 
 #: ../../user/cli.rst:2
 msgid "CLI Application"
-msgstr ""
+msgstr "CLI アプリケーション"
 
 #: ../../user/cli.rst:5
 msgid "Arguments"
-msgstr ""
+msgstr "引数"
 
 #: ../../user/cli.rst:6
 msgid "Scenario YAML file paths (one or more)."
-msgstr ""
+msgstr "シナリオ YAML ファイルパス (1 つ以上)"
 
 #: ../../user/cli.rst:9
 msgid "Options"
-msgstr ""
+msgstr "オプション"
 
 #: ../../user/cli.rst:11
 msgid "Preacher CLI Options"
-msgstr ""
+msgstr "Preacher CLI オプション"
 
-#: ../../user/cli.rst:15
+#: ../../user/cli.rst:14
 msgid "Short"
 msgstr ""
 
-#: ../../user/cli.rst:16
+#: ../../user/cli.rst:15
 msgid "Long"
 msgstr ""
 
-#: ../../user/cli.rst:17
+#: ../../user/cli.rst:16
 msgid "Type"
-msgstr ""
+msgstr "型"
+
+#: ../../user/cli.rst:17
+msgid "Description"
+msgstr "説明"
 
 #: ../../user/cli.rst:18
-msgid "Description"
-msgstr ""
+msgid "Default"
+msgstr "デフォルト値"
 
 #: ../../user/cli.rst:19
-msgid "Default"
-msgstr ""
-
-#: ../../user/cli.rst:20
 msgid "``-h``"
 msgstr ""
 
-#: ../../user/cli.rst:21
+#: ../../user/cli.rst:20
 msgid "``--help``"
 msgstr ""
 
-#: ../../user/cli.rst:23
+#: ../../user/cli.rst:22
 msgid "Show the help message and exit."
 msgstr ""
 
-#: ../../user/cli.rst:25
+#: ../../user/cli.rst:24
 msgid "``-v``"
 msgstr ""
 
-#: ../../user/cli.rst:26
+#: ../../user/cli.rst:25
 msgid "``--version``"
 msgstr ""
 
-#: ../../user/cli.rst:28
+#: ../../user/cli.rst:27
 msgid "Show program's version number and exit."
 msgstr ""
 
-#: ../../user/cli.rst:30
+#: ../../user/cli.rst:29
 msgid "``-u URL``"
 msgstr ""
 
-#: ../../user/cli.rst:31
+#: ../../user/cli.rst:30
 msgid "``--url url``"
 msgstr ""
 
-#: ../../user/cli.rst:32 ../../user/cli.rst:64
+#: ../../user/cli.rst:31 ../../user/cli.rst:63
 msgid "string"
 msgstr ""
 
-#: ../../user/cli.rst:33
+#: ../../user/cli.rst:32
 msgid "Set the base URL."
 msgstr ""
 
-#: ../../user/cli.rst:34
+#: ../../user/cli.rst:33
 msgid "http://localhost:5042 (As the sample server)"
 msgstr ""
 
-#: ../../user/cli.rst:36
+#: ../../user/cli.rst:35
 msgid "``-l level``"
 msgstr ""
 
-#: ../../user/cli.rst:37
+#: ../../user/cli.rst:36
 msgid "``--level level``"
 msgstr ""
 
-#: ../../user/cli.rst:38
+#: ../../user/cli.rst:37
 msgid ":ref:`level`"
 msgstr ""
 
-#: ../../user/cli.rst:39
+#: ../../user/cli.rst:38
 msgid ""
 "Show only above or equal to this level on the console (cannot affect "
 "other reports.)"
 msgstr ""
 
-#: ../../user/cli.rst:41 ../../user/cli.rst:76
+#: ../../user/cli.rst:40 ../../user/cli.rst:75
 msgid "success"
 msgstr ""
 
-#: ../../user/cli.rst:42
+#: ../../user/cli.rst:41
 msgid "``-r num``"
 msgstr ""
 
-#: ../../user/cli.rst:43
+#: ../../user/cli.rst:42
 msgid "``--retry num``"
 msgstr ""
 
-#: ../../user/cli.rst:44 ../../user/cli.rst:59
+#: ../../user/cli.rst:43 ../../user/cli.rst:58
 msgid "int"
 msgstr ""
 
-#: ../../user/cli.rst:45
+#: ../../user/cli.rst:44
 msgid "Set the max retry count."
 msgstr ""
 
-#: ../../user/cli.rst:46
+#: ../../user/cli.rst:45
 msgid "0"
 msgstr ""
 
-#: ../../user/cli.rst:47
+#: ../../user/cli.rst:46
 msgid "``-d sec``"
 msgstr ""
 
-#: ../../user/cli.rst:48
+#: ../../user/cli.rst:47
 msgid "``--delay sec``"
 msgstr ""
 
-#: ../../user/cli.rst:49 ../../user/cli.rst:54
+#: ../../user/cli.rst:48 ../../user/cli.rst:53
 msgid "float"
 msgstr ""
 
-#: ../../user/cli.rst:50
+#: ../../user/cli.rst:49
 msgid "Set the delay between attempts in seconds."
 msgstr ""
 
-#: ../../user/cli.rst:51
+#: ../../user/cli.rst:50
 msgid "0.1"
 msgstr ""
 
-#: ../../user/cli.rst:52
+#: ../../user/cli.rst:51
 msgid "``-t sec``"
 msgstr ""
 
-#: ../../user/cli.rst:53
+#: ../../user/cli.rst:52
 msgid "``--timeout sec``"
 msgstr ""
 
-#: ../../user/cli.rst:55
+#: ../../user/cli.rst:54
 msgid "Set the request timeout in seconds."
 msgstr ""
 
-#: ../../user/cli.rst:56
+#: ../../user/cli.rst:55
 msgid "no timeout"
 msgstr ""
 
-#: ../../user/cli.rst:57
+#: ../../user/cli.rst:56
 msgid "``-c num``"
 msgstr ""
 
-#: ../../user/cli.rst:58
+#: ../../user/cli.rst:57
 msgid "``--concurrency num``"
 msgstr ""
 
-#: ../../user/cli.rst:60
+#: ../../user/cli.rst:59
 msgid "Set the request concurrency."
 msgstr ""
 
-#: ../../user/cli.rst:61
+#: ../../user/cli.rst:60
 msgid "1"
 msgstr ""
 
-#: ../../user/cli.rst:62
+#: ../../user/cli.rst:61
 msgid "``-R dir``"
 msgstr ""
 
-#: ../../user/cli.rst:63
+#: ../../user/cli.rst:62
 msgid "``--report dir``"
 msgstr ""
 
-#: ../../user/cli.rst:65
+#: ../../user/cli.rst:64
 msgid "Set the report directory. (experimental)"
 msgstr ""
 
-#: ../../user/cli.rst:66
+#: ../../user/cli.rst:65
 msgid "no report"
 msgstr ""
 
-#: ../../user/cli.rst:72
+#: ../../user/cli.rst:71
 msgid "Level"
 msgstr ""
 
-#: ../../user/cli.rst:73
+#: ../../user/cli.rst:72
 msgid "Allowed values are:"
 msgstr ""
 
-#: ../../user/cli.rst:75
+#: ../../user/cli.rst:74
 msgid "skipped"
 msgstr ""
 
-#: ../../user/cli.rst:77
+#: ../../user/cli.rst:76
 msgid "unstable"
 msgstr ""
 
-#: ../../user/cli.rst:78
+#: ../../user/cli.rst:77
 msgid "failure"
 msgstr ""
 
+# 2f283ba346024a15b1727fdd53698064
+#: ../../user/cli.rst:80
+msgid "Environment Variables Interface"
+msgstr "環境変数インタフェース"
+
+# 3a4f4d20e05d438d8313b2f601456faa
+#: ../../user/cli.rst:81
+msgid "Using commandline options bother us in some situation like:"
+msgstr "以下のような状況では, コマンドラインオプションは面倒に感じることがあります."
+
+# c1bf834bda254fb7b794c5842a72baa9
+#: ../../user/cli.rst:83
+msgid "Giving CI build parameters to Preacher."
+msgstr "CI のビルドパラメータを Preacher に渡す."
+
+# cdb69e25c9b047269e1a3ce550370a6f
+#: ../../user/cli.rst:84
+msgid "Wrapping Preacher execution with shell scripts."
+msgstr "Preacher の実行をシェルスクリプトでラップする."
+
+# 21aae72bf62f412892594a672a9657f1
+#: ../../user/cli.rst:86
+msgid ""
+"Alternatively, Preacher supports environment variables that are "
+"equivalent to commandline options."
+msgstr "代わりに, Preacher はコマンドラインオプションと同等の環境変数をサポートしています."
+
+# c6c4ec10a2044ec78bbbf1c36eef0a35
+#: ../../user/cli.rst:89
+msgid "Supported environment variables"
+msgstr "サポートされている環境変数"
+
+# 662e1cd461af4560bce23a8543075345
+#: ../../user/cli.rst:92
+msgid "Name"
+msgstr "名前"
+
+# 1153c72dd9f04e25ae876d6b15fd3a15
+#: ../../user/cli.rst:93
+msgid "Equivalent to"
+msgstr "同等のコマンドラインオプション"
+
+# 4d8b1bea03434df4afb9c5eec8b712d0
+#: ../../user/cli.rst:94
+msgid "``PREACHER_CLI_URL``"
+msgstr ""
+
+# e5b6e1fa6ded45628172509ede078487
+#: ../../user/cli.rst:95
+msgid "``-u``, ``--base-url``"
+msgstr ""
+
+# 18b3ce4f387e411982e54cf315c7605a
+#: ../../user/cli.rst:96
+msgid "``PREACHER_CLI_LEVEL``"
+msgstr ""
+
+# 55927893583143a09056093457d9bcb4
+#: ../../user/cli.rst:97
+msgid "``-level``, ``--level``"
+msgstr ""
+
+# ccb5dfc1041c41f3af63101a575ad315
+#: ../../user/cli.rst:98
+msgid "``PREACHER_CLI_RETRY``"
+msgstr ""
+
+# 5fa2a0ef3fc14329851b69eb7e37cc5d
+#: ../../user/cli.rst:99
+msgid "``-r``, ``--retry``"
+msgstr ""
+
+# ae31c5594c3244318fb83335ea6d09da
+#: ../../user/cli.rst:100
+msgid "``PREACHER_CLI_DELAY``"
+msgstr ""
+
+# 91f3709f83ce4a1e9ce4217b4d338c56
+#: ../../user/cli.rst:101
+msgid "``-d``, ``--delay``"
+msgstr ""
+
+# bdfda258269c4d358e2d46716e712501
+#: ../../user/cli.rst:102
+msgid "``PREACHER_CLI_TIMEOUT``"
+msgstr ""
+
+# cc00c936975542fca079b570d7479ab7
+#: ../../user/cli.rst:103
+msgid "``-t``, ``--timeout``"
+msgstr ""
+
+# cec52b3360ea49bfaf7401fd7a6cb420
+#: ../../user/cli.rst:104
+msgid "``PREACHER_CLI_CONCURRENCY``"
+msgstr ""
+
+# be5919a66656467d81dd5f705a6e57ed
+#: ../../user/cli.rst:105
+msgid "``-c``, ``--concurrency``"
+msgstr ""
+
+# 40ebaf9e54b447898066f9cf244e11e6
+#: ../../user/cli.rst:106
+msgid "``PREACHER_CLI_REPORT``"
+msgstr ""
+
+# b08b3bb39a4e4fdea3a7ebd029faad65
+#: ../../user/cli.rst:107
+msgid "``-r``, ``--report``"
+msgstr ""
+
+# 00c3f89cb75340d9b31ca20a90639aec
+#: ../../user/cli.rst:109
+msgid ""
+"Environment variables that have empty strings are ignored. This behavior "
+"is useful to handle optional settings."
+msgstr ""
+"空文字が格納されている環境変数は無視されます."
+" この挙動は任意の設定を取り扱う上で便利です."

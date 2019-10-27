@@ -1,49 +1,83 @@
 """CLI Options."""
 
 import logging
+from enum import Enum
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from typing import List, Mapping, Optional
 
 from preacher import __version__ as version
 
 
-_LOGGING_LEVEL_MAP: Mapping[str, int] = {
-    'skipped': logging.DEBUG,
-    'success': logging.INFO,
-    'unstable': logging.WARN,
-    'failure': logging.ERROR,
+class Level(Enum):
+    SKIPPED = logging.DEBUG
+    SUCCESS = logging.INFO
+    UNSTABLE = logging.WARN
+    FAILURE = logging.ERROR
+
+    def __str__(self):
+        return self.name.lower()
+
+
+_LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
+
+
+_ENV_PREFIX = 'PREACHER_CLI_'
+_DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
+    f'{_ENV_PREFIX}URL': 'http://localhost:5042',
+    f'{_ENV_PREFIX}LEVEL': 'success',
+    f'{_ENV_PREFIX}RETRY': '0',
+    f'{_ENV_PREFIX}DELAY': '0.1',
+    f'{_ENV_PREFIX}TIMEOUT': None,
+    f'{_ENV_PREFIX}CONCURRENCY': '1',
+    f'{_ENV_PREFIX}REPORT': None,
 }
 
 
 def positive_int(value: str) -> int:
     int_value = int(value)
     if int_value <= 0:
-        raise ArgumentTypeError(f"must be positive or 0, given {int_value}")
+        raise ArgumentTypeError(f'must be positive or 0, given {int_value}')
     return int_value
 
 
 def zero_or_positive_int(value: str) -> int:
     int_value = int(value)
     if int_value < 0:
-        raise ArgumentTypeError(f"must be positive or 0, given {int_value}")
+        raise ArgumentTypeError(f'must be positive or 0, given {int_value}')
     return int_value
 
 
 def positive_float(value: str) -> float:
     float_value = float(value)
     if float_value <= 0.0:
-        raise ArgumentTypeError(f"must be positive, given {float_value}")
+        raise ArgumentTypeError(f'must be positive, given {float_value}')
     return float_value
 
 
 def zero_or_positive_float(value: str) -> float:
     float_value = float(value)
     if float_value < 0.0:
-        raise ArgumentTypeError(f"must be positive or 0, given {float_value}")
+        raise ArgumentTypeError(f'must be positive or 0, given {float_value}')
     return float_value
 
 
-def parse_args(args: Optional[List[str]] = None) -> Namespace:
+def level(value: str) -> Level:
+    result = _LEVEL_MAP.get(value)
+    if not result:
+        raise ArgumentTypeError(f'invalid level: {value}')
+    return result
+
+
+def parse_args(
+    argv: Optional[List[str]] = None,
+    environ: Optional[Mapping[str, str]] = None,
+) -> Namespace:
+    environ = environ or {}
+    defaults = {
+        name: environ.get(name) or value
+        for (name, value) in _DEFAULT_ENV_MAP.items()
+    }
+
     parser = ArgumentParser()
     parser.add_argument(
         'scenario',
@@ -59,48 +93,51 @@ def parse_args(args: Optional[List[str]] = None) -> Namespace:
         '-u', '--url',
         metavar='url',
         help='specify the base URL',
-        default='http://localhost:5042',
+        default=defaults.get(f'{_ENV_PREFIX}URL'),
     )
     parser.add_argument(
         '-l', '--level',
-        choices=_LOGGING_LEVEL_MAP.keys(),
+        type=level,
+        choices=Level,
         help='show only above or equal to this level',
-        default='success',
+        default=defaults.get(f'{_ENV_PREFIX}LEVEL'),
     )
     parser.add_argument(
         '-r', '--retry',
         type=zero_or_positive_int,
         metavar='num',
         help='set the max retry count',
-        default=0,
+        default=defaults.get(f'{_ENV_PREFIX}RETRY'),
     )
     parser.add_argument(
         '-d', '--delay',
         type=zero_or_positive_float,
         metavar='sec',
         help='set the delay between attempts in seconds',
-        default=0.1,
+        default=defaults.get(f'{_ENV_PREFIX}DELAY'),
     )
     parser.add_argument(
         '-t', '--timeout',
         type=positive_float,
         metavar='sec',
         help='set the request timeout in seconds',
+        default=defaults.get(f'{_ENV_PREFIX}TIMEOUT'),
     )
     parser.add_argument(
         '-c', '--concurrency',
         type=positive_int,
         metavar='num',
         help='set the request concurrency',
-        default=1,
+        default=defaults.get(f'{_ENV_PREFIX}CONCURRENCY'),
     )
     parser.add_argument(
         '-R', '--report',
         metavar='dir',
         help='report directory (experimental)',
+        default=defaults.get(f'{_ENV_PREFIX}REPORT'),
     )
 
-    parsed = parser.parse_args(args)
-    parsed.level = _LOGGING_LEVEL_MAP[parsed.level]
+    args = parser.parse_args(argv)
+    args.level = args.level.value
 
-    return parsed
+    return args
