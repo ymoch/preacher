@@ -22,7 +22,7 @@ _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
     f'{_ENV_PREFIX}RETRY': '0',
     f'{_ENV_PREFIX}DELAY': '0.1',
     f'{_ENV_PREFIX}TIMEOUT': None,
-    f'{_ENV_PREFIX}CONCURRENCY': 1,
+    f'{_ENV_PREFIX}CONCURRENCY': '1',
     f'{_ENV_PREFIX}REPORT': None,
 }
 
