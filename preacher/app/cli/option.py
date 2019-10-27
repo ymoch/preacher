@@ -95,4 +95,3 @@ def parse_args() -> Namespace:
     args.level = LOGGING_LEVEL_MAP[args.level]
 
     return args
-
