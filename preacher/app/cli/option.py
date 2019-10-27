@@ -15,6 +15,18 @@ _LOGGING_LEVEL_MAP: Mapping[str, int] = {
 }
 
 
+_ENV_PREFIX = 'PREACHER_'
+_DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
+    f'{_ENV_PREFIX}URL': 'http://localhost:5042',
+    f'{_ENV_PREFIX}LEVEL': 'success',
+    f'{_ENV_PREFIX}RETRY': '0',
+    f'{_ENV_PREFIX}DELAY': '0.1',
+    f'{_ENV_PREFIX}TIMEOUT': None,
+    f'{_ENV_PREFIX}CONCURRENCY': 1,
+    f'{_ENV_PREFIX}REPORT': None,
+}
+
+
 def positive_int(value: str) -> int:
     int_value = int(value)
     if int_value <= 0:
@@ -44,6 +56,8 @@ def zero_or_positive_float(value: str) -> float:
 
 
 def parse_args(args: Optional[List[str]] = None) -> Namespace:
+    env_map = _DEFAULT_ENV_MAP
+
     parser = ArgumentParser()
     parser.add_argument(
         'scenario',
@@ -59,45 +73,47 @@ def parse_args(args: Optional[List[str]] = None) -> Namespace:
         '-u', '--url',
         metavar='url',
         help='specify the base URL',
-        default='http://localhost:5042',
+        default=env_map.get(f'{_ENV_PREFIX}URL'),
     )
     parser.add_argument(
         '-l', '--level',
         choices=_LOGGING_LEVEL_MAP.keys(),
         help='show only above or equal to this level',
-        default='success',
+        default=env_map.get(f'{_ENV_PREFIX}LEVEL'),
     )
     parser.add_argument(
         '-r', '--retry',
         type=zero_or_positive_int,
         metavar='num',
         help='set the max retry count',
-        default=0,
+        default=env_map.get(f'{_ENV_PREFIX}RETRY'),
     )
     parser.add_argument(
         '-d', '--delay',
         type=zero_or_positive_float,
         metavar='sec',
         help='set the delay between attempts in seconds',
-        default=0.1,
+        default=env_map.get(f'{_ENV_PREFIX}DELAY'),
     )
     parser.add_argument(
         '-t', '--timeout',
         type=positive_float,
         metavar='sec',
         help='set the request timeout in seconds',
+        default=env_map.get(f'{_ENV_PREFIX}TIMEOUT'),
     )
     parser.add_argument(
         '-c', '--concurrency',
         type=positive_int,
         metavar='num',
         help='set the request concurrency',
-        default=1,
+        default=env_map.get(f'{_ENV_PREFIX}CONCURRENCY'),
     )
     parser.add_argument(
         '-R', '--report',
         metavar='dir',
         help='report directory (experimental)',
+        default=env_map.get(f'{_ENV_PREFIX}REPORT'),
     )
 
     parsed = parser.parse_args(args)
