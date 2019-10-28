@@ -22,14 +22,22 @@ _LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
 
 
 _ENV_PREFIX = 'PREACHER_CLI_'
+_ENV_BASE_URL = f'{_ENV_PREFIX}BASE_URL'
+_ENV_LEVEL = f'{_ENV_PREFIX}LEVEL'
+_ENV_RETRY = f'{_ENV_PREFIX}RETRY'
+_ENV_DELAY = f'{_ENV_PREFIX}DELAY'
+_ENV_TIMEOUT = f'{_ENV_PREFIX}TIMEOUT'
+_ENV_CONCURRENCY = f'{_ENV_PREFIX}CONCURRENCY'
+_ENV_REPORT = f'{_ENV_PREFIX}REPORT'
+
 _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
-    f'{_ENV_PREFIX}URL': 'http://localhost:5042',
-    f'{_ENV_PREFIX}LEVEL': 'success',
-    f'{_ENV_PREFIX}RETRY': '0',
-    f'{_ENV_PREFIX}DELAY': '0.1',
-    f'{_ENV_PREFIX}TIMEOUT': None,
-    f'{_ENV_PREFIX}CONCURRENCY': '1',
-    f'{_ENV_PREFIX}REPORT': None,
+    _ENV_BASE_URL: 'http://localhost:5042',
+    _ENV_LEVEL: 'success',
+    _ENV_RETRY: '0',
+    _ENV_DELAY: '0.1',
+    _ENV_TIMEOUT: None,
+    _ENV_CONCURRENCY: '1',
+    _ENV_REPORT: None,
 }
 
 
@@ -93,48 +101,48 @@ def parse_args(
         '-u', '--url',
         metavar='url',
         help='specify the base URL',
-        default=defaults.get(f'{_ENV_PREFIX}URL'),
+        default=defaults[_ENV_BASE_URL],
     )
     parser.add_argument(
         '-l', '--level',
         type=level,
         choices=Level,
         help='show only above or equal to this level',
-        default=defaults.get(f'{_ENV_PREFIX}LEVEL'),
+        default=defaults[_ENV_LEVEL],
     )
     parser.add_argument(
         '-r', '--retry',
         type=zero_or_positive_int,
         metavar='num',
         help='set the max retry count',
-        default=defaults.get(f'{_ENV_PREFIX}RETRY'),
+        default=defaults[_ENV_RETRY],
     )
     parser.add_argument(
         '-d', '--delay',
         type=zero_or_positive_float,
         metavar='sec',
         help='set the delay between attempts in seconds',
-        default=defaults.get(f'{_ENV_PREFIX}DELAY'),
+        default=defaults[_ENV_DELAY],
     )
     parser.add_argument(
         '-t', '--timeout',
         type=positive_float,
         metavar='sec',
         help='set the request timeout in seconds',
-        default=defaults.get(f'{_ENV_PREFIX}TIMEOUT'),
+        default=defaults[_ENV_TIMEOUT],
     )
     parser.add_argument(
         '-c', '--concurrency',
         type=positive_int,
         metavar='num',
         help='set the request concurrency',
-        default=defaults.get(f'{_ENV_PREFIX}CONCURRENCY'),
+        default=defaults[_ENV_CONCURRENCY],
     )
     parser.add_argument(
         '-R', '--report',
         metavar='dir',
         help='report directory (experimental)',
-        default=defaults.get(f'{_ENV_PREFIX}REPORT'),
+        default=defaults[_ENV_REPORT],
     )
 
     args = parser.parse_args(argv)

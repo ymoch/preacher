@@ -86,12 +86,12 @@ Using commandline options bother us in some situation like:
 Alternatively, Preacher supports environment variables
 that are equivalent to commandline options.
 
-.. list-table:: Supported environment variables
+.. list-table:: Environment variables instead of commandline options
    :header-rows: 1
 
    * - Name
      - Equivalent to
-   * - ``PREACHER_CLI_URL``
+   * - ``PREACHER_CLI_BASE_URL``
      - ``-u``, ``--base-url``
    * - ``PREACHER_CLI_LEVEL``
      - ``-l``, ``--level``
@@ -108,3 +108,15 @@ that are equivalent to commandline options.
 
 Environment variables that have empty strings are ignored.
 This behavior is useful to handle optional settings.
+
+Preacher requests your server using `requests`_,
+which allows you to pass environment variables that `requests`_ supports.
+For example, when you want to proxy requests,
+you can achieve it by ``HTTP_PROXY`` or ``HTTPS_PROXY`` variable.
+
+.. code-block:: sh
+
+    $ HTTP_PROXY=http://proxy.com:3128 preacher-cli scenario.yml
+
+
+.. _requests: https://requests.kennethreitz.org/

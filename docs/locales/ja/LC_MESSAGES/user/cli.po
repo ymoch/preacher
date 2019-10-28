@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-28 01:13+0900\n"
+"POT-Creation-Date: 2019-10-29 00:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -258,10 +258,10 @@ msgid ""
 "equivalent to commandline options."
 msgstr "代わりに, Preacher はコマンドラインオプションと同等の環境変数をサポートしています."
 
-# c6c4ec10a2044ec78bbbf1c36eef0a35
+# 2f283ba346024a15b1727fdd53698064
 #: ../../user/cli.rst:89
-msgid "Supported environment variables"
-msgstr "サポートされている環境変数"
+msgid "Environment variables instead of commandline options"
+msgstr "コマンドラインオプションの代わりになる環境変数"
 
 # 662e1cd461af4560bce23a8543075345
 #: ../../user/cli.rst:92
@@ -275,7 +275,7 @@ msgstr "同等のコマンドラインオプション"
 
 # 4d8b1bea03434df4afb9c5eec8b712d0
 #: ../../user/cli.rst:94
-msgid "``PREACHER_CLI_URL``"
+msgid "``PREACHER_CLI_BASE_URL``"
 msgstr ""
 
 # e5b6e1fa6ded45628172509ede078487
@@ -290,7 +290,7 @@ msgstr ""
 
 # 55927893583143a09056093457d9bcb4
 #: ../../user/cli.rst:97
-msgid "``-level``, ``--level``"
+msgid "``-l``, ``--level``"
 msgstr ""
 
 # ccb5dfc1041c41f3af63101a575ad315
@@ -348,6 +348,17 @@ msgstr ""
 msgid ""
 "Environment variables that have empty strings are ignored. This behavior "
 "is useful to handle optional settings."
+msgstr "空文字が格納されている環境変数は無視されます. この挙動は任意の設定を取り扱う上で便利です."
+
+# c459efd8029a469f9daa3487f3ec4b8e
+#: ../../user/cli.rst:112
+msgid ""
+"Preacher requests your server using `requests`_, which allows you to pass"
+" environment variables that `requests`_ supports. For example, when you "
+"want to proxy requests, you can achieve it by ``HTTP_PROXY`` or "
+"``HTTPS_PROXY`` variable."
 msgstr ""
-"空文字が格納されている環境変数は無視されます."
-" この挙動は任意の設定を取り扱う上で便利です."
+"Preacher はサーバに対し `requests`_ を利用してリクエストを実行します."
+" この仕組みにより, `requests`_ がサポートする環境変数を渡すことができます."
+" たとえば, リクエストをプロキシ経由で実行したいときは,"
+" ``HTTP_PROXY`` や ``HTTPS_PROXY`` 環境変数で実現できます."
