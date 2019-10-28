@@ -362,16 +362,3 @@ msgstr ""
 " この仕組みにより, `requests`_ がサポートする環境変数を渡すことができます."
 " たとえば, リクエストをプロキシ経由で実行したいときは,"
 " ``HTTP_PROXY`` や ``HTTPS_PROXY`` 環境変数で実現できます."
-
-# c6c4ec10a2044ec78bbbf1c36eef0a35
-#~ msgid "Supported environment variables"
-#~ msgstr "サポートされている環境変数"
-
-# 4d8b1bea03434df4afb9c5eec8b712d0
-#~ msgid "``PREACHER_CLI_URL``"
-#~ msgstr ""
-
-# 55927893583143a09056093457d9bcb4
-#~ msgid "``-level``, ``--level``"
-#~ msgstr ""
-
