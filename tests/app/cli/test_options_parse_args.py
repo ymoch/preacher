@@ -53,7 +53,7 @@ def test_invalid_environ(environ):
     None,
     {},
     {
-        'PREACHER_CLI_URL': '',
+        'PREACHER_CLI_BASE_URL': '',
         'PREACHER_CLI_LEVEL': '',
         'PREACHER_CLI_RETRY': '',
         'PREACHER_CLI_DELAY': '',
@@ -85,7 +85,7 @@ def test_valid_argv():
             'scenario1.yml', 'scenario2.yml',
         ],
         environ={
-            'PREACHER_CLI_URL': 'https://my-domain.com/api',
+            'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
             'PREACHER_CLI_LEVEL': 'foo',
             'PREACHER_CLI_RETRY': 'foo',
             'PREACHER_CLI_DELAY': 'foo',
@@ -107,7 +107,7 @@ def test_valid_environ():
     args = parse_args(
         argv=['scenario.yml'],
         environ={
-            'PREACHER_CLI_URL': 'https://my-domain.com/api',
+            'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
             'PREACHER_CLI_LEVEL': 'failure',
             'PREACHER_CLI_RETRY': '10',
             'PREACHER_CLI_DELAY': '1.2',

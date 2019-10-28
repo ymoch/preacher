@@ -91,7 +91,7 @@ that are equivalent to commandline options.
 
    * - Name
      - Equivalent to
-   * - ``PREACHER_CLI_URL``
+   * - ``PREACHER_CLI_BASE_URL``
      - ``-u``, ``--base-url``
    * - ``PREACHER_CLI_LEVEL``
      - ``-l``, ``--level``
