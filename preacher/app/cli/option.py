@@ -5,7 +5,7 @@ from enum import Enum
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from typing import List, Mapping, Optional
 
-from preacher import __version__ as version
+from preacher import __version__ as _version
 
 
 class Level(Enum):
@@ -95,7 +95,7 @@ def parse_args(
     parser.add_argument(
         '-v', '--version',
         action='version',
-        version=version,
+        version=_version,
     )
     parser.add_argument(
         '-u', '--url',

@@ -9,10 +9,10 @@ import requests
 
 from .datetime import now
 
-from preacher import __version__ as _VERSION
+from preacher import __version__ as _version
 
 
-_DEFAULT_HEADERS = {'User-Agent': f'Preacher {_VERSION}'}
+_DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
 
 @dataclass(frozen=True)
