@@ -1,10 +1,11 @@
 """Test case."""
 
+import abc
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from .request import Request
+from .request import Request, Response
 from .response_description import (
     ResponseDescription,
     ResponseVerification,
@@ -12,6 +13,12 @@ from .response_description import (
 from .status import Status, StatusedMixin, merge_statuses
 from .util import retry_while_false
 from .verification import Verification
+
+
+class CaseListener(abc.ABC):
+
+    def on_response(self, response: Response) -> None:
+        pass
 
 
 @dataclass(frozen=True)
@@ -42,11 +49,22 @@ class Case:
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
+        listener: Optional[CaseListener] = None,
     ) -> CaseResult:
-        func = partial(self._run, base_url=base_url, timeout=timeout)
+        func = partial(
+            self._run,
+            base_url=base_url,
+            timeout=timeout,
+            listener=listener,
+        )
         return retry_while_false(func, attempts=retry + 1, delay=delay)
 
-    def _run(self, base_url: str, timeout: Optional[float]) -> CaseResult:
+    def _run(
+        self,
+        base_url: str,
+        timeout: Optional[float],
+        listener: Optional[CaseListener],
+    ) -> CaseResult:
         try:
             response = self._request(base_url, timeout=timeout)
         except Exception as error:
@@ -55,6 +73,8 @@ class Case:
                 request=Verification.of_error(error),
                 label=self._label,
             )
+        if listener:
+            listener.on_response(response)
         request_verification = Verification.succeed()
 
         response_verification = self._response_description.verify(

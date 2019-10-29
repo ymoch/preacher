@@ -2,7 +2,7 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import fixture
 
-from preacher.core.case import Case
+from preacher.core.case import Case, CaseListener
 from preacher.core.request import Response
 from preacher.core.response_description import ResponseVerification
 from preacher.core.status import Status
@@ -10,7 +10,7 @@ from preacher.core.verification import Verification
 
 
 @fixture
-def response():
+def response() -> Response:
     return Response(
         id='response-id',
         elapsed=1.23,
@@ -29,6 +29,10 @@ def retry_patch():
     )
 
 
+def test_case_listener(response):
+    CaseListener().on_response(response)
+
+
 def test_when_the_request_fails(retry_patch):
     case = Case(
         label='Request fails',
@@ -36,8 +40,9 @@ def test_when_the_request_fails(retry_patch):
         response_description=MagicMock(),
     )
 
+    listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
-        result = case('base-url')
+        result = case('base-url', listener=listener)
 
     assert not result
     assert result.label == 'Request fails'
@@ -48,6 +53,8 @@ def test_when_the_request_fails(retry_patch):
     case.request.assert_called_with('base-url', timeout=None)
     case.response_description.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
+
+    listener.on_response.assert_not_called()
 
 
 def test_when_given_an_invalid_response(response, retry_patch):
@@ -64,8 +71,15 @@ def test_when_given_an_invalid_response(response, retry_patch):
         )),
     )
 
+    listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
-        result = case(base_url='base-url', retry=3, delay=1.0, timeout=5.0)
+        result = case(
+            base_url='base-url',
+            retry=3,
+            delay=1.0,
+            timeout=5.0,
+            listener=listener,
+        )
 
     assert not result
     assert result.label == 'Response should be unstable'
@@ -82,6 +96,7 @@ def test_when_given_an_invalid_response(response, retry_patch):
         request_datetime=sentinel.request_datetime,
     )
     retry.assert_called_once_with(ANY, attempts=4, delay=1.0)
+    listener.on_response.assert_called_once_with(response)
 
 
 def test_when_given_an_valid_response(response, retry_patch):
