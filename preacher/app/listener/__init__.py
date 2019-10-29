@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
-from preacher.core.scenario import ScenarioResult
+from preacher.core.scenario import ScenarioListener, ScenarioResult
 
 
-class Listener(ABC):
+class Listener(ScenarioListener):
 
     @abstractmethod
     def __enter__(self) -> Listener:
