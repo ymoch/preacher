@@ -12,13 +12,13 @@ from .listener import Listener
 class Application:
     def __init__(
         self,
-        presentations: List[Listener],
+        listeners: List[Listener],
         base_url: str,
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
     ):
-        self._presentations = presentations
+        self._presentations = listeners
         self._base_url = base_url
         self._retry = retry
         self._delay = delay
@@ -41,7 +41,7 @@ class Application:
         for result in results:
             self._is_succeeded &= result.status.is_succeeded
             for presentation in self._presentations:
-                presentation.accept(result)
+                presentation.on_scenario(result)
 
     def _submit_each(
         self,

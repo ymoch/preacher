@@ -37,7 +37,7 @@ def main() -> None:
             LoggingListener(LOGGER) as logging_listener, \
             _report_to(args.report) as reporting_listener:
         app = Application(
-            presentations=[logging_listener, reporting_listener],
+            listeners=[logging_listener, reporting_listener],
             base_url=args.url,
             retry=args.retry,
             delay=args.delay,

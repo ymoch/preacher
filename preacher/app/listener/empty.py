@@ -12,5 +12,5 @@ class EmptyListener(Listener):
     def __exit__(self, ex_type, ex_value, trace) -> None:
         pass
 
-    def accept(self, result: ScenarioResult) -> None:
+    def on_scenario(self, result: ScenarioResult) -> None:
         pass

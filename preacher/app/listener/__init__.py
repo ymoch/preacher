@@ -16,5 +16,5 @@ class Listener(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def accept(self, result: ScenarioResult) -> None:
+    def on_scenario(self, result: ScenarioResult) -> None:
         raise NotImplementedError()
