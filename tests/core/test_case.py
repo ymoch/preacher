@@ -12,6 +12,7 @@ from preacher.core.verification import Verification
 @fixture
 def response():
     return Response(
+        id='response-id',
         status_code=402,
         headers={},
         body='body',

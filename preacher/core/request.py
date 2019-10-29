@@ -1,5 +1,6 @@
 """Request."""
 
+import uuid
 from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
@@ -17,6 +18,7 @@ _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
 @dataclass(frozen=True)
 class Response:
+    id: str
     status_code: int
     headers: Mapping[str, str]
     body: str
@@ -24,6 +26,7 @@ class Response:
 
 
 class Request:
+
     def __init__(
         self,
         path: str = '',
@@ -51,6 +54,7 @@ class Request:
         )
 
         return Response(
+            id=str(uuid.uuid4()),
             status_code=res.status_code,
             headers={
                 # Convert to the normal dictionary to adapt jq.
