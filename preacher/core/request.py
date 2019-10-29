@@ -1,5 +1,6 @@
 """Request."""
 
+import uuid
 from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
@@ -9,14 +10,16 @@ import requests
 
 from .datetime import now
 
-from preacher import __version__ as _VERSION
+from preacher import __version__ as _version
 
 
-_DEFAULT_HEADERS = {'User-Agent': f'Preacher {_VERSION}'}
+_DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
 
 @dataclass(frozen=True)
 class Response:
+    id: str
+    elapsed: float
     status_code: int
     headers: Mapping[str, str]
     body: str
@@ -24,6 +27,7 @@ class Response:
 
 
 class Request:
+
     def __init__(
         self,
         path: str = '',
@@ -51,6 +55,8 @@ class Request:
         )
 
         return Response(
+            id=str(uuid.uuid4()),
+            elapsed=res.elapsed.total_seconds(),
             status_code=res.status_code,
             headers={
                 # Convert to the normal dictionary to adapt jq.
