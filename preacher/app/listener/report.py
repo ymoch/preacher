@@ -31,5 +31,5 @@ class ReportingListener(Listener):
                 scenarios=self._results,
             ).dump(f)
 
-    def accept(self, result: ScenarioResult) -> None:
+    def on_scenario(self, result: ScenarioResult) -> None:
         self._results.append(result)

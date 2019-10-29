@@ -6,13 +6,17 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
-from .case import Case, CaseResult
+from .case import Case, CaseListener, CaseResult
 from .context import Context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
 )
 from .verification import Verification, collect
+
+
+class ScenarioListener(CaseListener):
+    pass
 
 
 @dataclass(frozen=True)
@@ -86,6 +90,7 @@ class Scenario:
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
+        listener: Optional[ScenarioListener] = None,
     ) -> ScenarioResult:
         with ThreadPoolExecutor(1) as executor:
             return self.submit(
@@ -94,6 +99,7 @@ class Scenario:
                 retry=retry,
                 delay=delay,
                 timeout=timeout,
+                listener=listener,
             ).result()
 
     def submit(
@@ -103,6 +109,7 @@ class Scenario:
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
+        listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
         context = Context(base_url=base_url)
         context_analyzer = context.analyze()
@@ -128,6 +135,7 @@ class Scenario:
             retry=retry,
             delay=delay,
             timeout=timeout,
+            listener=listener,
         )
         subscenarios = [
             subscenario.submit(
@@ -136,6 +144,7 @@ class Scenario:
                 retry=retry,
                 delay=delay,
                 timeout=timeout,
+                listener=listener,
             )
             for subscenario in self._subscenarios
         ]
@@ -149,11 +158,18 @@ class Scenario:
     def _run_cases(
         self,
         base_url: str,
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
+        retry: int,
+        delay: float,
+        timeout: Optional[float],
+        listener: Optional[CaseListener],
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(
-            case(base_url, timeout=timeout, retry=retry, delay=delay)
+            case(
+                base_url,
+                timeout=timeout,
+                retry=retry,
+                delay=delay,
+                listener=listener,
+            )
             for case in self._cases
         )

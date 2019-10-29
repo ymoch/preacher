@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
-from preacher.core.scenario import ScenarioResult
+from preacher.core.scenario import ScenarioListener, ScenarioResult
 
 
-class Listener(ABC):
+class Listener(ScenarioListener):
 
     @abstractmethod
     def __enter__(self) -> Listener:
@@ -15,6 +15,5 @@ class Listener(ABC):
     def __exit__(self, ex_type, ex_value, trace) -> None:
         raise NotImplementedError()
 
-    @abstractmethod
-    def accept(self, result: ScenarioResult) -> None:
-        raise NotImplementedError()
+    def on_scenario(self, result: ScenarioResult) -> None:
+        pass

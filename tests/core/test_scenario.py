@@ -33,8 +33,12 @@ def test_given_a_filled_scenario():
     assert result.status == Status.UNSTABLE
     assert list(result.cases) == [sentinel.result1, sentinel.result2]
 
-    case1.assert_called_once_with('base_url', retry=3, delay=2.0, timeout=5.0)
-    case2.assert_called_once_with('base_url', retry=3, delay=2.0, timeout=5.0)
+    case1.assert_called_once_with(
+        'base_url', retry=3, delay=2.0, timeout=5.0, listener=None,
+    )
+    case2.assert_called_once_with(
+        'base_url', retry=3, delay=2.0, timeout=5.0, listener=None,
+    )
 
 
 @patch('preacher.core.scenario.Context')
@@ -77,7 +81,14 @@ def test_given_subscenarios(context_ctor):
         cases=[case1],
         subscenarios=[subscenario1, subscenario2, subscenario3, subscenario4],
     )
-    result = scenario.run(base_url='url', retry=5, delay=3.0, timeout=7.0)
+
+    result = scenario.run(
+        base_url='url',
+        retry=5,
+        delay=3.0,
+        timeout=7.0,
+        listener=sentinel.listener,
+    )
     assert result.status == Status.FAILURE
     assert result.subscenarios[0].status == Status.UNSTABLE
     assert result.subscenarios[1].status == Status.FAILURE
@@ -98,8 +109,14 @@ def test_given_subscenarios(context_ctor):
 
     context_ctor.assert_called_with(base_url='url')
     condition1.assert_called_with(sentinel.context_analyzer)
-    subcase1.assert_called_once_with('url', retry=5, delay=3.0, timeout=7.0)
-    subcase2.assert_called_once_with('url', retry=5, delay=3.0, timeout=7.0)
-    subcase3.assert_called_once_with('url', retry=5, delay=3.0, timeout=7.0)
+    subcase1.assert_called_once_with(
+        'url', retry=5, delay=3.0, timeout=7.0, listener=sentinel.listener,
+    )
+    subcase2.assert_called_once_with(
+        'url', retry=5, delay=3.0, timeout=7.0, listener=sentinel.listener,
+    )
+    subcase3.assert_called_once_with(
+        'url', retry=5, delay=3.0, timeout=7.0, listener=sentinel.listener,
+    )
     subcase4.assert_not_called()
     subcase5.assert_not_called()
