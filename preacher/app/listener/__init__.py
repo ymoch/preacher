@@ -15,6 +15,5 @@ class Listener(ScenarioListener):
     def __exit__(self, ex_type, ex_value, trace) -> None:
         raise NotImplementedError()
 
-    @abstractmethod
     def on_scenario(self, result: ScenarioResult) -> None:
-        raise NotImplementedError()
+        pass
