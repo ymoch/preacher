@@ -19,6 +19,7 @@ _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 @dataclass(frozen=True)
 class Response:
     id: str
+    elapsed: float
     status_code: int
     headers: Mapping[str, str]
     body: str
@@ -55,6 +56,7 @@ class Request:
 
         return Response(
             id=str(uuid.uuid4()),
+            elapsed=res.elapsed.total_seconds(),
             status_code=res.status_code,
             headers={
                 # Convert to the normal dictionary to adapt jq.

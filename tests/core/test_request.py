@@ -1,4 +1,5 @@
 import uuid
+import datetime
 from unittest.mock import MagicMock, patch, sentinel
 
 from requests import Response
@@ -16,6 +17,7 @@ PACKAGE = 'preacher.core.request'
 @patch(f'{PACKAGE}.now', return_value=sentinel.now)
 @patch('requests.get', return_value=MagicMock(
     spec=Response,
+    elapsed=datetime.timedelta(seconds=1.23),
     status_code=402,
     headers={'Header-Name': 'Header-Value'},
     text='text',
@@ -28,6 +30,7 @@ def test_request(requests_get, now, uuid4):
 
     response = request('base-url', timeout=5.0)
     assert response.id == 'uuid'
+    assert response.elapsed == 1.23
     assert response.status_code == 402
     assert response.headers == {'header-name': 'Header-Value'}
     assert response.body == 'text'
@@ -46,6 +49,7 @@ def test_request(requests_get, now, uuid4):
 
 @patch('requests.get', return_value=MagicMock(
     spec=Response,
+    elapsed=datetime.timedelta(seconds=1.23),
     status_code=402,
     headers={'header-key': 'header-value'},
     text='text',

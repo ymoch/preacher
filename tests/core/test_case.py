@@ -13,6 +13,7 @@ from preacher.core.verification import Verification
 def response():
     return Response(
         id='response-id',
+        elapsed=1.23,
         status_code=402,
         headers={},
         body='body',
