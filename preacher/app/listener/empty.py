@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from preacher.core.scenario import ScenarioResult
 from . import Listener
 
 
