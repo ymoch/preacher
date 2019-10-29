@@ -231,4 +231,4 @@ subscenarios:
           headers:
             describe: ."content-type"
             should:
-              be: 'text/plain'
+              start_with: 'text/plain'
