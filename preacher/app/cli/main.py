@@ -30,14 +30,13 @@ def main() -> None:
     if args.report:
         listener.append(ReportingListener(args.report))
 
-    with ThreadPoolExecutor(args.concurrency) as executor, \
-            listener as listening:
+    with ThreadPoolExecutor(args.concurrency) as executor:
         app = Application(
             base_url=args.url,
             retry=args.retry,
             delay=args.delay,
             timeout=args.timeout,
-            listener=listening,
+            listener=listener,
         )
         app.run(executor, args.scenario)
 

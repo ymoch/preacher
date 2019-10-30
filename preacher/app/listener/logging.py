@@ -38,9 +38,6 @@ class LoggingListener(Listener):
     def on_scenario(self, result: ScenarioResult) -> None:
         self.show_scenario_result(result)
 
-    def end(self) -> None:
-        pass
-
     def show_scenario_result(self, scenario: ScenarioResult) -> None:
         status = scenario.status
         level = _LEVEL_MAP[status]
