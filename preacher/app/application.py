@@ -1,11 +1,11 @@
 from concurrent.futures import ThreadPoolExecutor
-from typing import Callable, Iterable, List, Optional
+from typing import Callable, Iterable, Optional
 
+from preacher.compilation.error import CompilationError
+from preacher.compilation.scenario import ScenarioCompiler
+from preacher.compilation.yaml import load
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
-from preacher.compilation.error import CompilationError
-from preacher.compilation.yaml import load
-from preacher.compilation.scenario import ScenarioCompiler
 from .listener import Listener
 
 
