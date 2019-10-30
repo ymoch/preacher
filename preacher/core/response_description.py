@@ -15,6 +15,7 @@ from .verification import Verification
 
 @dataclass(frozen=True)
 class ResponseVerification:
+    response_id: str
     status: Status
     status_code: Verification
     headers: Verification
@@ -59,6 +60,7 @@ class ResponseDescription:
             body.status,
         )
         return ResponseVerification(
+            response_id=response.id,
             status=status,
             status_code=status_code,
             headers=headers,

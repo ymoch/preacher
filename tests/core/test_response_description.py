@@ -13,7 +13,7 @@ def test_when_given_no_description():
     description = ResponseDescription()
     verification = description.verify(
         Response(
-            id=sentinel.id,
+            id=sentinel.response_id,
             elapsed=sentinel.elapsed,
             status_code=200,
             headers={},
@@ -21,6 +21,7 @@ def test_when_given_no_description():
             request_datetime=sentinel.request_datetime
         ),
     )
+    assert verification.response_id == sentinel.response_id
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.SKIPPED
     assert verification.status == Status.SKIPPED
@@ -32,7 +33,7 @@ def test_when_header_verification_fails():
 
     verification = description.verify(
         Response(
-            id=sentinel.id,
+            id=sentinel.response_id,
             elapsed=sentinel.elapsed,
             status_code=200,
             headers={},
@@ -40,6 +41,7 @@ def test_when_header_verification_fails():
             request_datetime=sentinel.request_datetime
         ),
     )
+    assert verification.response_id == sentinel.response_id
     assert verification.headers.status == Status.FAILURE
 
 
@@ -61,7 +63,7 @@ def test_when_given_descriptions():
     )
     verification = description.verify(
         Response(
-            id=sentinel.id,
+            id=sentinel.response_id,
             elapsed=sentinel.elapsed,
             status_code=200,
             headers={},
@@ -70,6 +72,7 @@ def test_when_given_descriptions():
         ),
         k='v',
     )
+    assert verification.response_id == sentinel.response_id
     assert verification.status == Status.UNSTABLE
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.UNSTABLE
@@ -112,7 +115,7 @@ def test_merge_statuses(
     )
     verification = description.verify(
         Response(
-            id=sentinel.id,
+            id=sentinel.response_id,
             elapsed=sentinel.elapsed,
             status_code=200,
             headers={},
