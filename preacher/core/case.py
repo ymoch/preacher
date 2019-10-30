@@ -1,6 +1,5 @@
 """Test case."""
 
-import abc
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
@@ -15,7 +14,7 @@ from .util import retry_while_false
 from .verification import Verification
 
 
-class CaseListener(abc.ABC):
+class CaseListener:
 
     def on_response(self, response: Response) -> None:
         pass
@@ -75,15 +74,9 @@ class Case:
             )
         if listener:
             listener.on_response(response)
+
         request_verification = Verification.succeed()
-
-        response_verification = self._response_description.verify(
-            status_code=response.status_code,
-            headers=response.headers,
-            body=response.body,
-            request_datetime=response.request_datetime,
-        )
-
+        response_verification = self._response_description.verify(response)
         status = merge_statuses(
             request_verification.status,
             response_verification.status,

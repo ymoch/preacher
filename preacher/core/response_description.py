@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, List, Mapping, Optional
 
+from preacher.core.request import Response
 from .analysis import Analyzer, JsonAnalyzer
 from .body_description import BodyDescription
 from .description import Description, Predicate
@@ -14,6 +15,7 @@ from .verification import Verification
 
 @dataclass(frozen=True)
 class ResponseVerification:
+    response_id: str
     status: Status
     status_code: Verification
     headers: Verification
@@ -37,36 +39,32 @@ class ResponseDescription:
 
     def verify(
         self,
-        status_code: int,
-        headers: Mapping[str, str],
-        body: str,
+        response: Response,
         **kwargs: Any,
     ) -> ResponseVerification:
         """`**kwargs` will be delegated to descriptions."""
-        status_code_verification = self._verify_status_code(
-            status_code,
-            **kwargs,
-        )
+        status_code = self._verify_status_code(response.status_code, **kwargs)
 
         try:
-            headers_verification = self._verify_headers(headers, **kwargs)
+            headers = self._verify_headers(response.headers, **kwargs)
         except Exception as error:
-            headers_verification = Verification.of_error(error)
+            headers = Verification.of_error(error)
 
-        body_verification = Verification.skipped()
+        body = Verification.skipped()
         if self._body_description:
-            body_verification = self._body_description.verify(body, **kwargs)
+            body = self._body_description.verify(response.body, **kwargs)
 
         status = merge_statuses(
-            status_code_verification.status,
-            headers_verification.status,
-            body_verification.status,
+            status_code.status,
+            headers.status,
+            body.status,
         )
         return ResponseVerification(
+            response_id=response.id,
             status=status,
-            status_code=status_code_verification,
-            headers=headers_verification,
-            body=body_verification,
+            status_code=status_code,
+            headers=headers,
+            body=body,
         )
 
     @property
@@ -95,10 +93,10 @@ class ResponseDescription:
 
     def _verify_headers(
         self,
-        header: Mapping[str, str],
+        headers: Mapping[str, str],
         **kwargs: Any,
     ) -> Verification:
-        analyzer = self._analyze_headers(header)
+        analyzer = self._analyze_headers(headers)
         verifications = [
             describe(analyzer, **kwargs)
             for describe in self._headers_descriptions

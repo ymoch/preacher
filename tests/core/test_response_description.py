@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, sentinel
 from pytest import mark
 
 from preacher.core.body_description import BodyDescription
+from preacher.core.request import Response
 from preacher.core.response_description import ResponseDescription
 from preacher.core.status import Status
 from preacher.core.verification import Verification
@@ -10,7 +11,17 @@ from preacher.core.verification import Verification
 
 def test_when_given_no_description():
     description = ResponseDescription()
-    verification = description.verify(status_code=200, headers={}, body='xxx')
+    verification = description.verify(
+        Response(
+            id=sentinel.response_id,
+            elapsed=sentinel.elapsed,
+            status_code=200,
+            headers={},
+            body='xxx',
+            request_datetime=sentinel.request_datetime
+        ),
+    )
+    assert verification.response_id == sentinel.response_id
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.SKIPPED
     assert verification.status == Status.SKIPPED
@@ -20,7 +31,17 @@ def test_when_header_verification_fails():
     headers_descs = [MagicMock(side_effect=RuntimeError('message'))]
     description = ResponseDescription(headers_descriptions=headers_descs)
 
-    verification = description.verify(status_code=200, headers={}, body='xxx')
+    verification = description.verify(
+        Response(
+            id=sentinel.response_id,
+            elapsed=sentinel.elapsed,
+            status_code=200,
+            headers={},
+            body='xxx',
+            request_datetime=sentinel.request_datetime
+        ),
+    )
+    assert verification.response_id == sentinel.response_id
     assert verification.headers.status == Status.FAILURE
 
 
@@ -41,11 +62,17 @@ def test_when_given_descriptions():
         analyze_headers=analyze_headers,
     )
     verification = description.verify(
-        status_code=200,
-        headers={},
-        body='{}',
+        Response(
+            id=sentinel.response_id,
+            elapsed=sentinel.elapsed,
+            status_code=200,
+            headers={},
+            body='{}',
+            request_datetime=sentinel.request_datetime
+        ),
         k='v',
     )
+    assert verification.response_id == sentinel.response_id
     assert verification.status == Status.UNSTABLE
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.UNSTABLE
@@ -86,5 +113,14 @@ def test_merge_statuses(
         headers_descriptions=headers_descriptions,
         body_description=body_description,
     )
-    verification = description.verify(status_code=200, headers={}, body='{}')
+    verification = description.verify(
+        Response(
+            id=sentinel.response_id,
+            elapsed=sentinel.elapsed,
+            status_code=200,
+            headers={},
+            body='xxx',
+            request_datetime=sentinel.request_datetime
+        ),
+    )
     assert verification.status == expected
