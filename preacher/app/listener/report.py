@@ -16,10 +16,13 @@ class ReportingListener(Listener):
         self._path = path
         self._responses_path = os.path.join(self._path, 'responses')
         self._results: List[ScenarioResult] = []
-        self._env = jinja2.Environment(
+
+        env = jinja2.Environment(
             loader=jinja2.PackageLoader('preacher', 'resources/html'),
             autoescape=jinja2.select_autoescape(['html', 'xml'])
         )
+        self._index_template = env.get_template('index.html')
+        self._response_view_template = env.get_template('response-view.html')
 
         self._initialize()
 
@@ -31,9 +34,7 @@ class ReportingListener(Listener):
         name = f'{response.id}.html'
         path = os.path.join(self._responses_path, name)
         with open(path, 'w') as f:
-            self._env.get_template('view.html').stream(
-                response=response,
-            ).dump(f)
+            self._response_view_template.stream(response=response).dump(f)
 
     def on_scenario(self, result: ScenarioResult) -> None:
         self._results.append(result)
@@ -41,6 +42,4 @@ class ReportingListener(Listener):
     def on_end(self) -> None:
         html_path = os.path.join(self._path, 'index.html')
         with open(html_path, 'w') as f:
-            self._env.get_template('index.html').stream(
-               scenarios=self._results,
-            ).dump(f)
+            self._index_template.stream(scenarios=self._results).dump(f)
