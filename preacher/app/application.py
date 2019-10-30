@@ -22,7 +22,7 @@ class Application:
         self._retry = retry
         self._delay = delay
         self._timeout = timeout
-        self._listener = listener
+        self._listener = listener or Listener()
 
         self._scenario_compiler = ScenarioCompiler()
         self._is_succeeded = True
@@ -40,8 +40,9 @@ class Application:
         results = (task() for task in tasks)
         for result in results:
             self._is_succeeded &= result.status.is_succeeded
-            if self._listener:
-                self._listener.on_scenario(result)
+            self._listener.on_scenario(result)
+
+        self._listener.on_end()
 
     def _submit_each(
         self,

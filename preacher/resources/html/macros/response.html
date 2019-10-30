@@ -8,6 +8,11 @@
     </a>
 
     <div class="accordion-content" data-tab-content>
+      <dl>
+        <dt>Response ID</dt>
+        <dd>{{ item.response_id }}</dd>
+      </dl>
+
       {% if item.message %}
       <pre>{{ item.message }}</pre>
       {% endif %}
