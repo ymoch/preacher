@@ -54,5 +54,9 @@ class ReportingListener(Listener):
         html_path = os.path.join(self._path, 'index.html')
         with open(html_path, 'w') as f:
             env.get_template('index.html').stream(
-                scenarios=self._results,
+               scenarios=self._results,
             ).dump(f)
+
+        view_path = os.path.join(self._path, 'view.html')
+        with open(view_path, 'w') as f:
+            env.get_template('view.html').stream().dump(f)

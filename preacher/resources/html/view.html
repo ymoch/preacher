@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Response Viewer</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
+</head>
+
+<body>
+  <h1>Response Viewer</h1>
+
+  <ul class="tabs" data-tabs id="response-tabs">
+    <li class="tabs-title is-active"><a data-tabs-target="response-raw" aria-selected="true">Raw</a></li>
+    <li class="tabs-title"><a data-tabs-target="response-json" href="#panel2">JSON</a></li>
+  </ul>
+
+  <div class="tabs-content" data-tabs-content="response-tabs">
+    <div class="tabs-panel is-active" id="response-raw">
+      <p>Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus.</p>
+    </div>
+    <div class="tabs-panel" id="response-json">
+      <p>Suspendisse dictum feugiat nisl ut dapibus.  Vivamus hendrerit arcu sed erat molestie vehicula. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor.  Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
+    </div>
+  </div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
+<script>
+$(document).foundation()
+</script>
+
+</html>
