@@ -27,6 +27,10 @@ class ReportingListener(Listener):
         self._path = path
         self._responses_path = os.path.join(self._path, 'responses')
         self._results: List[ScenarioResult] = []
+        self._env = jinja2.Environment(
+            loader=jinja2.PackageLoader('preacher', 'resources/html'),
+            autoescape=jinja2.select_autoescape(['html', 'xml'])
+        )
 
         self._initialize()
 
@@ -42,21 +46,19 @@ class ReportingListener(Listener):
         with open(path, 'w') as f:
             json.dump(record, f, default=_json_serial)
 
+        name = f'{response.id}.html'
+        path = os.path.join(self._responses_path, name)
+        with open(path, 'w') as f:
+            self._env.get_template('view.html').stream(
+                response=response,
+            ).dump(f)
+
     def on_scenario(self, result: ScenarioResult) -> None:
         self._results.append(result)
 
     def on_end(self) -> None:
-        env = jinja2.Environment(
-            loader=jinja2.PackageLoader('preacher', 'resources/html'),
-            autoescape=jinja2.select_autoescape(['html', 'xml'])
-        )
-
         html_path = os.path.join(self._path, 'index.html')
         with open(html_path, 'w') as f:
-            env.get_template('index.html').stream(
+            self._env.get_template('index.html').stream(
                scenarios=self._results,
             ).dump(f)
-
-        view_path = os.path.join(self._path, 'view.html')
-        with open(view_path, 'w') as f:
-            env.get_template('view.html').stream().dump(f)

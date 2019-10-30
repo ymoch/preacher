@@ -6,22 +6,51 @@
   <title>Response Viewer</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
+  <style>
+    body {
+      padding: 0em 1em;
+    }
+
+    .response-body-raw {
+      font-size: 14px;
+      height: 20em;
+    }
+  </style>
 </head>
 
 <body>
   <h1>Response Viewer</h1>
 
+  <dl>
+    <dt>ID</dt>
+    <dd>{{ response.id }}</dd>
+    <dt>Starts</dt>
+    <dd>{{ response.request_datetime }}</dd>
+    <dt>Elapsed</dt>
+    <dd>{{ response.elapsed }} seconds</dd>
+    <dt>Status Code</dt>
+    <dd>{{ response.status_code }}</dd>
+  </dl>
+
+  <h3>Headers</h3>
+  <dl>
+    {% for name, value in response.headers.items() %}
+    <dt>{{ name }}</dt>
+    <dd>{{ value }}</dd>
+    {% endfor %}
+  </dl>
+
+  <h3>Body</h3>
   <ul class="tabs" data-tabs id="response-tabs">
     <li class="tabs-title is-active"><a data-tabs-target="response-raw" aria-selected="true">Raw</a></li>
     <li class="tabs-title"><a data-tabs-target="response-json" href="#panel2">JSON</a></li>
   </ul>
-
   <div class="tabs-content" data-tabs-content="response-tabs">
     <div class="tabs-panel is-active" id="response-raw">
-      <p>Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus.</p>
+      <textarea id="response-body" class="response-body-raw" readonly>{{ response.body }}</textarea>
     </div>
     <div class="tabs-panel" id="response-json">
-      <p>Suspendisse dictum feugiat nisl ut dapibus.  Vivamus hendrerit arcu sed erat molestie vehicula. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor.  Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
+      <p>Not Available.</p>
     </div>
   </div>
 </body>
