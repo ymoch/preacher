@@ -74,15 +74,9 @@ class Case:
             )
         if listener:
             listener.on_response(response)
+
         request_verification = Verification.succeed()
-
-        response_verification = self._response_description.verify(
-            status_code=response.status_code,
-            headers=response.headers,
-            body=response.body,
-            request_datetime=response.request_datetime,
-        )
-
+        response_verification = self._response_description.verify(response)
         status = merge_statuses(
             request_verification.status,
             response_verification.status,

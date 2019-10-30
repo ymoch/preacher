@@ -3,22 +3,9 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 from pytest import fixture
 
 from preacher.core.case import Case, CaseListener
-from preacher.core.request import Response
 from preacher.core.response_description import ResponseVerification
 from preacher.core.status import Status
 from preacher.core.verification import Verification
-
-
-@fixture
-def response() -> Response:
-    return Response(
-        id='response-id',
-        elapsed=1.23,
-        status_code=402,
-        headers={},
-        body='body',
-        request_datetime=sentinel.request_datetime,
-    )
 
 
 @fixture
@@ -29,8 +16,8 @@ def retry_patch():
     )
 
 
-def test_case_listener(response):
-    CaseListener().on_response(response)
+def test_case_listener():
+    CaseListener().on_response(sentinel.response)
 
 
 def test_when_the_request_fails(retry_patch):
@@ -57,10 +44,10 @@ def test_when_the_request_fails(retry_patch):
     listener.on_response.assert_not_called()
 
 
-def test_when_given_an_invalid_response(response, retry_patch):
+def test_when_given_an_invalid_response(retry_patch):
     case = Case(
         label='Response should be unstable',
-        request=MagicMock(return_value=response),
+        request=MagicMock(return_value=sentinel.response),
         response_description=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
                 status=Status.UNSTABLE,
@@ -89,20 +76,15 @@ def test_when_given_an_invalid_response(response, retry_patch):
     assert result.response.body.status == Status.UNSTABLE
 
     case.request.assert_called_with('base-url', timeout=5.0)
-    case.response_description.verify.assert_called_with(
-        status_code=402,
-        headers={},
-        body='body',
-        request_datetime=sentinel.request_datetime,
-    )
+    case.response_description.verify.assert_called_with(sentinel.response)
     retry.assert_called_once_with(ANY, attempts=4, delay=1.0)
-    listener.on_response.assert_called_once_with(response)
+    listener.on_response.assert_called_once_with(sentinel.response)
 
 
-def test_when_given_an_valid_response(response, retry_patch):
+def test_when_given_an_valid_response(retry_patch):
     case = Case(
         label='Response should be success',
-        request=MagicMock(return_value=response),
+        request=MagicMock(return_value=sentinel.response),
         response_description=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
                 status=Status.SUCCESS,
