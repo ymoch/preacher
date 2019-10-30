@@ -15,9 +15,9 @@ class ReportingListener(Listener):
         self._path = path
         self._results: List[ScenarioResult] = []
 
-        self.initialize()
+        self._initialize()
 
-    def initialize(self) -> None:
+    def _initialize(self) -> None:
         os.makedirs(self._path, exist_ok=True)
 
     def on_scenario(self, result: ScenarioResult) -> None:
