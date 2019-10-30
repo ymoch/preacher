@@ -5,7 +5,7 @@ from preacher.core.scenario import ScenarioListener, ScenarioResult
 
 class Listener(ScenarioListener):
 
-    def after(self):
+    def on_end(self):
         pass
 
     def on_scenario(self, result: ScenarioResult) -> None:

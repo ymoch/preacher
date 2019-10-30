@@ -24,6 +24,6 @@ class MergingListener(Listener):
         for listener in self._listeners:
             listener.on_scenario(result)
 
-    def after(self):
+    def on_end(self):
         for listener in self._listeners:
-            listener.after()
+            listener.on_end()

@@ -23,7 +23,7 @@ class ReportingListener(Listener):
     def on_scenario(self, result: ScenarioResult) -> None:
         self._results.append(result)
 
-    def after(self) -> None:
+    def on_end(self) -> None:
         env = jinja2.Environment(
             loader=jinja2.PackageLoader('preacher', 'resources/html'),
             autoescape=jinja2.select_autoescape(['html', 'xml'])
