@@ -6,12 +6,13 @@
   <title>Response Viewer</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css">
   <style>
     body {
       padding: 0em 1em;
     }
 
-    .response-body-raw {
+    .response-body-raw-content {
       font-size: 14px;
       height: 20em;
     }
@@ -32,7 +33,7 @@
     <dd>{{ response.status_code }}</dd>
   </dl>
 
-  <h3>Headers</h3>
+  <h2>Headers</h2>
   <dl>
     {% for name, value in response.headers.items() %}
     <dt>{{ name }}</dt>
@@ -40,25 +41,49 @@
     {% endfor %}
   </dl>
 
-  <h3>Body</h3>
-  <ul class="tabs" data-tabs id="response-tabs">
-    <li class="tabs-title is-active"><a data-tabs-target="response-raw" aria-selected="true">Raw</a></li>
-    <li class="tabs-title"><a data-tabs-target="response-json" href="#panel2">JSON</a></li>
+  <h2>Body</h2>
+  <ul class="tabs" data-tabs id="response-body-tabs">
+    <li class="tabs-title is-active">
+      <a href="#response-body-raw" aria-selected="true">Raw</a>
+    </li>
+    <li class="tabs-title">
+      <a href="#response-body-json">JSON</a>
+    </li>
   </ul>
-  <div class="tabs-content" data-tabs-content="response-tabs">
-    <div class="tabs-panel is-active" id="response-raw">
-      <textarea id="response-body" class="response-body-raw" readonly>{{ response.body }}</textarea>
+  <div class="tabs-content" data-tabs-content="response-body-tabs">
+    <div class="tabs-panel is-active" id="response-body-raw">
+      <textarea id="response-body-raw-content" class="response-body-raw-content" readonly>{{ response.body }}</textarea>
     </div>
-    <div class="tabs-panel" id="response-json">
-      <p>Not Available.</p>
+    <div class="tabs-panel" id="response-body-json">
+      <div id="response-body-json-content">Loading...</div>
     </div>
   </div>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script>
 <script>
 $(document).foundation()
+
+function getBodyAsJson() {
+  const bodyRaw = $('#response-body-raw-content').val()
+  try {
+    return JSON.parse(bodyRaw)
+  } catch (e) {
+    console.log('Not a JSON body.')
+    return undefined
+  }
+
+}
+const bodyJson = getBodyAsJson()
+const $bodyJson = $('#response-body-json-content')
+if (bodyJson !== undefined) {
+  $bodyJson.JSONView(bodyJson)
+  $('#response-body-tabs').foundation('selectTab', $('#response-body-json'), true)
+} else {
+  $bodyJson.text('Not available for this response')
+}
 </script>
 
 </html>
