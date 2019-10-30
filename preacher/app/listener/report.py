@@ -13,13 +13,17 @@ class ReportingListener(Listener):
 
     def __init__(self, path):
         self._path = path
-
-    def __enter__(self) -> ReportingListener:
         self._results: List[ScenarioResult] = []
-        os.makedirs(self._path, exist_ok=True)
-        return self
 
-    def __exit__(self, ex_type, ex_value, trace) -> None:
+        self._initialize()
+
+    def _initialize(self) -> None:
+        os.makedirs(self._path, exist_ok=True)
+
+    def on_scenario(self, result: ScenarioResult) -> None:
+        self._results.append(result)
+
+    def on_end(self) -> None:
         env = jinja2.Environment(
             loader=jinja2.PackageLoader('preacher', 'resources/html'),
             autoescape=jinja2.select_autoescape(['html', 'xml'])
@@ -30,6 +34,3 @@ class ReportingListener(Listener):
             env.get_template('index.html').stream(
                 scenarios=self._results,
             ).dump(f)
-
-    def on_scenario(self, result: ScenarioResult) -> None:
-        self._results.append(result)
