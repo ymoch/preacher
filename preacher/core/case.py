@@ -1,6 +1,5 @@
 """Test case."""
 
-import abc
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
@@ -15,7 +14,7 @@ from .util import retry_while_false
 from .verification import Verification
 
 
-class CaseListener(abc.ABC):
+class CaseListener:
 
     def on_response(self, response: Response) -> None:
         pass
