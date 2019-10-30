@@ -4,7 +4,6 @@ from typing import List
 
 from preacher.core.request import Response
 from preacher.core.scenario import ScenarioResult
-
 from . import Listener
 
 
