@@ -10,7 +10,9 @@
     <div class="accordion-content" data-tab-content>
       <dl>
         <dt>Response ID</dt>
-        <dd>{{ item.response_id }}</dd>
+        <dd>
+          <a href="responses/{{ item.response_id }}.html" target="response-viewer">{{ item.response_id }}</a>
+        </dd>
       </dl>
 
       {% if item.message %}
