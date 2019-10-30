@@ -50,6 +50,7 @@ def test_when_given_an_invalid_response(retry_patch):
         request=MagicMock(return_value=sentinel.response),
         response_description=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
+                response_id=sentinel.response_id,
                 status=Status.UNSTABLE,
                 status_code=Verification.succeed(),
                 headers=Verification.succeed(),
@@ -87,6 +88,7 @@ def test_when_given_an_valid_response(retry_patch):
         request=MagicMock(return_value=sentinel.response),
         response_description=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
+                response_id=sentinel.response_id,
                 status=Status.SUCCESS,
                 status_code=Verification.succeed(),
                 headers=Verification.succeed(),
