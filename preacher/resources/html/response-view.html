@@ -22,24 +22,24 @@
 
 <body>
 
-<h1>Response Viewer</h1>
+<h1 class="h2">Response Viewer</h1>
 
 <dl>
   <div class="grid-x">
-    <dt class="cell medium-2 large-1">ID</dt>
-    <dd class="cell medium-10 large-11">{{ response.id }}</dd>
+    <dt class="cell medium-2">ID</dt>
+    <dd class="cell medium-10">{{ response.id }}</dd>
   </div>
   <div class="grid-x">
-    <dt class="cell medium-2 large-1">Starts</dt>
-    <dd class="cell medium-10 large-11">{{ response.request_datetime }}</dd>
+    <dt class="cell medium-2">Requested</dt>
+    <dd class="cell medium-10">{{ response.request_datetime }}</dd>
   </div>
   <div class="grid-x">
-    <dt class="cell medium-2 large-1">Elapsed</dt>
-    <dd class="cell medium-10 large-11">{{ response.elapsed }} seconds</dd>
+    <dt class="cell medium-2">Elapsed</dt>
+    <dd class="cell medium-10">{{ response.elapsed * 1000 }} ms</dd>
   </div>
   <div class="grid-x">
-    <dt class="cell medium-2 large-1">Status</dt>
-    <dd class="cell medium-10 large-11">{{ response.status_code }}</dd>
+    <dt class="cell medium-2">Status</dt>
+    <dd class="cell medium-10">{{ response.status_code }}</dd>
   </div>
 </dl>
 
