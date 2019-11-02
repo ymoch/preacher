@@ -33,24 +33,27 @@
     <dt class="cell medium-2">Requested</dt>
     <dd class="cell medium-10">{{ response.request_datetime }}</dd>
   </div>
-  <div class="grid-x">
-    <dt class="cell medium-2">Elapsed</dt>
-    <dd class="cell medium-10">{{ response.elapsed * 1000 }} ms</dd>
-  </div>
-  <div class="grid-x">
-    <dt class="cell medium-2">Status</dt>
-    <dd class="cell medium-10">{{ response.status_code }}</dd>
-  </div>
 </dl>
 
-<ul id="response-tabs" class="tabs" data-tabs>
-  <li class="tabs-title is-active">
-    <a href="#response-body">Body</a>
-  </li>
-  <li class="tabs-title">
-    <a href="#response-headers">Headers ({{ response.headers | length }})</a>
-  </li>
-</ul>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <ul id="response-tabs" class="menu" data-tabs>
+      <li class="tabs-title is-active">
+        <a href="#response-body">Body</a>
+      </li>
+      <li class="tabs-title">
+        <a href="#response-headers">Headers ({{ response.headers | length }})</a>
+      </li>
+    </ul>
+  </div>
+  <div class="top-bar-right">
+    <ul class="menu">
+      <li class="menu-text">Status: {{ response.status_code }}</li>
+      <li class="menu-text">Time: {{ response.elapsed * 1000 }} ms</li>
+    </ul>
+  </div>
+</div>
+
 <div class="tabs-content" data-tabs-content="response-tabs">
   <div id="response-body" class="tabs-panel is-active">
     <ul id="response-body-tabs" class="tabs" data-tabs>
@@ -63,8 +66,7 @@
     </ul>
     <div class="tabs-content" data-tabs-content="response-body-tabs">
       <div id="response-body-raw" class="tabs-panel is-active">
-        <textarea id="response-body-raw-content" class="response-body-raw-content"
-                  readonly>{{ response.body }}</textarea>
+        <pre id="response-body-raw-content">{{ response.body }}</pre>
       </div>
       <div id="response-body-json" class="tabs-panel">
         <div id="response-body-json-content">Loading...</div>
@@ -92,7 +94,7 @@
 $(document).foundation()
 
 function getBodyAsJson() {
-  const bodyRaw = $('#response-body-raw-content').val()
+  const bodyRaw = $('#response-body-raw-content').text()
   try {
     return JSON.parse(bodyRaw)
   } catch (e) {
@@ -109,9 +111,6 @@ if (bodyJson !== undefined) {
 } else {
   $bodyJson.text('Not available for this response')
 }
-
-
-
 </script>
 
 </body>
