@@ -20,44 +20,56 @@
 </head>
 
 <body>
-  <h1>Response Viewer</h1>
 
-  <dl>
-    <dt>ID</dt>
-    <dd>{{ response.id }}</dd>
-    <dt>Starts</dt>
-    <dd>{{ response.request_datetime }}</dd>
-    <dt>Elapsed</dt>
-    <dd>{{ response.elapsed }} seconds</dd>
-    <dt>Status Code</dt>
-    <dd>{{ response.status_code }}</dd>
-  </dl>
+<h1>Response Viewer</h1>
 
-  <h2>Headers</h2>
-  <dl>
-    {% for name, value in response.headers.items() %}
-    <dt>{{ name }}</dt>
-    <dd>{{ value }}</dd>
-    {% endfor %}
-  </dl>
-
-  <h2>Body</h2>
-  <ul class="tabs" data-tabs id="response-body-tabs">
-    <li class="tabs-title is-active">
-      <a href="#response-body-raw" aria-selected="true">Raw</a>
-    </li>
-    <li class="tabs-title">
-      <a href="#response-body-json">JSON</a>
-    </li>
-  </ul>
-  <div class="tabs-content" data-tabs-content="response-body-tabs">
-    <div class="tabs-panel is-active" id="response-body-raw">
-      <textarea id="response-body-raw-content" class="response-body-raw-content" readonly>{{ response.body }}</textarea>
-    </div>
-    <div class="tabs-panel" id="response-body-json">
-      <div id="response-body-json-content">Loading...</div>
-    </div>
+<dl>
+  <div class="grid-x">
+    <dt class="cell medium-3 large-2">ID</dt>
+    <dd class="cell medium-9 large-10">{{ response.id }}</dd>
   </div>
+  <div class="grid-x">
+    <dt class="cell medium-3 large-2">Starts</dt>
+    <dd class="cell medium-9 large-10">{{ response.request_datetime }}</dd>
+  </div>
+  <div class="grid-x">
+    <dt class="cell medium-3 large-2">Elapsed</dt>
+    <dd class="cell medium-9 large-10">{{ response.elapsed }} seconds</dd>
+  </div>
+  <div class="grid-x">
+    <dt class="cell medium-3 large-2">Status Code</dt>
+    <dd class="cell medium-9 large-10">{{ response.status_code }}</dd>
+  </div>
+</dl>
+
+<h2>Headers</h2>
+<dl>
+  {% for name, value in response.headers.items() %}
+  <div class="grid-x">
+    <dt class="cell medium-3 large-2">{{ name }}</dt>
+    <dd class="cell medium-9 large-10">{{ value }}</dd>
+  </div>
+  {% endfor %}
+</dl>
+
+<h2>Body</h2>
+<ul class="tabs" data-tabs id="response-body-tabs">
+  <li class="tabs-title is-active">
+    <a href="#response-body-raw" aria-selected="true">Raw</a>
+  </li>
+  <li class="tabs-title">
+    <a href="#response-body-json">JSON</a>
+  </li>
+</ul>
+<div class="tabs-content" data-tabs-content="response-body-tabs">
+  <div class="tabs-panel is-active" id="response-body-raw">
+    <textarea id="response-body-raw-content" class="response-body-raw-content" readonly>{{ response.body }}</textarea>
+  </div>
+  <div class="tabs-panel" id="response-body-json">
+    <div id="response-body-json-content">Loading...</div>
+  </div>
+</div>
+
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -84,6 +96,7 @@ if (bodyJson !== undefined) {
 } else {
   $bodyJson.text('Not available for this response')
 }
+
 </script>
 
 </html>
