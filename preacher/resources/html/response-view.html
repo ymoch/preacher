@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Response View: {{ response.id }}</title>
+  <title>Response Viewer: {{ response.id }}</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css">
@@ -13,8 +13,16 @@
       padding: 0em 1em;
     }
 
+    footer {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+      color: #444444;
+      text-align: right;
+    }
+
     .tabs-title>a {
       font-size: 0.9rem;
+      padding: 0.7rem 1.0rem;
     }
 
     .response-body-raw-content {
@@ -28,16 +36,7 @@
 
 <h1 class="h2">Response Viewer</h1>
 
-<dl>
-  <div class="grid-x">
-    <dt class="cell medium-2">ID</dt>
-    <dd class="cell medium-10">{{ response.id }}</dd>
-  </div>
-  <div class="grid-x">
-    <dt class="cell medium-2">Requested</dt>
-    <dd class="cell medium-10">{{ response.request_datetime }}</dd>
-  </div>
-</dl>
+<p>ID: {{ response.id }}</p>
 
 <div class="top-bar">
   <div class="top-bar-left">
@@ -53,7 +52,7 @@
   <div class="top-bar-right">
     <ul class="menu">
       <li class="menu-text">Status: {{ response.status_code }}</li>
-      <li class="menu-text">Time: {{ response.elapsed * 1000 }} ms</li>
+      <li class="menu-text">Time: {{ (response.elapsed * 1000) | round(3) }} ms</li>
     </ul>
   </div>
 </div>
@@ -90,6 +89,10 @@
   </div>
 
 </div>
+
+<footer>
+  <small>Requested at {{ response.request_datetime.strftime('%Y-%m-%d %H:%M:%S %Z') }}</small>
+</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
