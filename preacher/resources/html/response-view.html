@@ -4,13 +4,20 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Response View: {{ response.id }}</title>
+  <title>Response Viewer: {{ response.id }}</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css">
   <style>
     body {
       padding: 0em 1em;
+    }
+
+    footer {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+      color: #444444;
+      text-align: right;
     }
 
     .tabs-title>a {
@@ -28,16 +35,7 @@
 
 <h1 class="h2">Response Viewer</h1>
 
-<dl>
-  <div class="grid-x">
-    <dt class="cell medium-2">ID</dt>
-    <dd class="cell medium-10">{{ response.id }}</dd>
-  </div>
-  <div class="grid-x">
-    <dt class="cell medium-2">Requested</dt>
-    <dd class="cell medium-10">{{ response.request_datetime }}</dd>
-  </div>
-</dl>
+<p>ID: {{ response.id }}</p>
 
 <div class="top-bar">
   <div class="top-bar-left">
@@ -90,6 +88,10 @@
   </div>
 
 </div>
+
+<footer>
+  Requested at {{ response.request_datetime }}
+</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
