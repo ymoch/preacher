@@ -51,7 +51,7 @@
   <div class="top-bar-right">
     <ul class="menu">
       <li class="menu-text">Status: {{ response.status_code }}</li>
-      <li class="menu-text">Time: {{ response.elapsed * 1000 }} ms</li>
+      <li class="menu-text">Time: {{ (response.elapsed * 1000) | round(3) }} ms</li>
     </ul>
   </div>
 </div>
@@ -90,7 +90,7 @@
 </div>
 
 <footer>
-  Requested at {{ response.request_datetime }}
+  <small>Requested at {{ response.request_datetime.strftime('%Y-%m-%d %H:%M:%S %Z') }}</small>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
