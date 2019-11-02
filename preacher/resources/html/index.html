@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-
 {% from "./macros/scenario.html" import show_scenario %}
-
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -82,15 +80,13 @@
 
 <body>
 
-  <h1>Preacher Test Report</h1>
+<h1 class="h2">Preacher Test Report</h1>
 
-  <ul class="scenarios accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    {% for scenario in scenarios %}
-      {{ show_scenario(scenario) }}
-    {% endfor %}
-  </ul>
-
-</body>
+<ul class="scenarios accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+  {% for scenario in scenarios %}
+  {{ show_scenario(scenario) }}
+  {% endfor %}
+</ul>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
@@ -98,4 +94,7 @@
 $(document).foundation()
 $('.scenarios').foundation('down', $('.status-UNSTABLE,.status-FAILURE').children('.accordion-content'))
 </script>
+
+</body>
+
 </html>
