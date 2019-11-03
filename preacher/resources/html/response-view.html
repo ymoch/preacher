@@ -135,6 +135,11 @@ function getBodyAsJson(body) {
   }
 }
 
+function isXml(body) {
+  const doc = new DOMParser().parseFromString(body, 'application/xml')
+  return doc.getElementsByTagName("parsererror").length < 1;
+}
+
 function prettify() {
   const body = $('#response-body-raw').text()
   const $prettyBody = $('#response-body-pretty')
@@ -145,8 +150,12 @@ function prettify() {
     return
   }
 
-  const bodyXml = formatXml(body)
-  $prettyBody.text(bodyXml)
+  if (isXml(body)) {
+    $prettyBody.text(formatXml(body))
+    return
+  }
+
+  $prettyBody.text(body)
 }
 
 prettify()
