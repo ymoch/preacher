@@ -100,7 +100,7 @@ function formatXml(xml) {
   xml = xml.replace(reg, '$1\r\n$2$3');
 
   var pad = 0;
-  jQuery.each(xml.split('\r\n'), function(index, node) {
+  for (const node of xml.split('\r\n')) {
     var indent = 0;
     if (node.match( /.+<\/\w[^>]*>$/ )) {
       indent = 0;
@@ -121,7 +121,7 @@ function formatXml(xml) {
 
     formatted += padding + node + '\r\n';
     pad += indent;
-  });
+  }
 
   return formatted;
 }
