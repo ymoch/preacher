@@ -76,8 +76,8 @@ class BodyDescriptionCompiler:
 
         descs_obj = obj.get(_KEY_DESCRIPTIONS)
         if descs_obj is not None:
-            replacements['descriptions'] = (  # type: ignore
-                self._compile_descriptions(descs_obj)
+            replacements['descriptions'] = (
+                self._compile_descriptions(descs_obj)  # type: ignore
             )
 
         return replace(self._default, **replacements)
