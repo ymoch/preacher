@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <root>
-    <foo id="foo1">1</foo>
-    <foo id="foo2">2</foo>
-    <bar id="bar1">
-        <baz id="baz1"/>
-    </bar>
-    <bar id="bar2">
-        <baz id="baz2"/>
-    </bar>
+  <foo id="foo1">1</foo>
+  <foo id="foo2">2</foo>
+  <bar id="bar1">
+    <baz id="baz1"/>
+  </bar>
+  <bar id="bar2">
+    <baz id="baz2"/>
+  </bar>
 </root>
