@@ -29,6 +29,10 @@
     .tabs-panel.response-body {
       padding: 0px;
     }
+
+    .body-raw {
+      padding: 0.5em;
+    }
   </style>
 </head>
 
@@ -69,7 +73,7 @@
         <pre id="response-body-pretty-content">Loading...</pre>
       </div>
       <div id="response-body-raw" class="tabs-panel response-body">
-        <pre id="response-body-raw-content">{{ response.body }}</pre>
+        <pre id="response-body-raw-content" class="body-raw">{{ response.body }}</pre>
       </div>
     </div>
   </div>
@@ -137,10 +141,8 @@ function isXml(body) {
   return doc.getElementsByTagName("parsererror").length < 1;
 }
 
-function highlight() {
-  document.querySelectorAll('#response-body-pretty-content').forEach((block) => {
-    hljs.highlightBlock(block);
-  });
+function highlight(element) {
+  hljs.highlightBlock(element);
 }
 
 function prettify() {
@@ -150,13 +152,17 @@ function prettify() {
   const bodyJson = getBodyAsJson(body)
   if (bodyJson !== undefined) {
     $prettyBody.text(JSON.stringify(bodyJson, null, 2))
-    highlight()
+    $prettyBody.each(function (index, element) {
+      highlight(element)
+    })
     return
   }
 
   if (isXml(body)) {
     $prettyBody.text(formatXml(body))
-    highlight()
+    $prettyBody.each(function (index, element) {
+      highlight(element)
+    })
     return
   }
 
