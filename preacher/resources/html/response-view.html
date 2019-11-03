@@ -100,6 +100,15 @@
 <script>
 $(document).foundation()
 
+function parseJson(body) {
+  try {
+    return JSON.parse(body)
+  } catch (e) {
+    console.log('Not a JSON body.')
+    return undefined
+  }
+}
+
 function formatXml(xml) {
   const reg = /(>)(<)(\/*)/g;
 
@@ -126,15 +135,6 @@ function formatXml(xml) {
   return formatted;
 }
 
-function getBodyAsJson(body) {
-  try {
-    return JSON.parse(body)
-  } catch (e) {
-    console.log('Not a JSON body.')
-    return undefined
-  }
-}
-
 function isXml(body) {
   const doc = new DOMParser().parseFromString(body, 'application/xml')
   return doc.getElementsByTagName("parsererror").length < 1;
@@ -148,7 +148,7 @@ function prettify() {
   const body = $('#response-body-raw-content').text()
   const $prettyBody = $('#response-body-pretty-content')
 
-  const bodyJson = getBodyAsJson(body)
+  const bodyJson = parseJson(body)
   if (bodyJson !== undefined) {
     $prettyBody.text(JSON.stringify(bodyJson, null, 2))
     $prettyBody.each(function (index, element) {
