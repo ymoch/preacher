@@ -23,7 +23,7 @@ aniso8601 = "^8.0"
 pyhamcrest = "^1.9"
 pyjq = "^2.3"
 requests = "^2.21"
-"ruamel.yaml" = "^0.15.89"
+"ruamel.yaml" = "^0.16.5"
 lxml = "^4.4"
 jinja2 = "^2.10"
 
