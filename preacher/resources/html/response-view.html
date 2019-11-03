@@ -64,15 +64,15 @@
         <a href="#response-body-raw">Raw</a>
       </li>
       <li class="tabs-title">
-        <a href="#response-body-json">JSON</a>
+        <a href="#response-body-pretty">Pretty</a>
       </li>
     </ul>
     <div class="tabs-content" data-tabs-content="response-body-tabs">
       <div id="response-body-raw" class="tabs-panel is-active">
         <pre id="response-body-raw-content">{{ response.body }}</pre>
       </div>
-      <div id="response-body-json" class="tabs-panel">
-        <pre id="response-body-json-content" class="prettyprint linenums">Loading...</pre>
+      <div id="response-body-pretty" class="tabs-panel">
+        <pre id="response-body-pretty-content" class="prettyprint linenums">Loading...</pre>
       </div>
     </div>
   </div>
@@ -142,19 +142,13 @@ function getBodyAsJson(body) {
   }
 }
 
-function prettifyXML(body) {
-  const formattedBody = formatXml(body)
-  return formattedBody
-}
-
 function prettify() {
   const body = $('#response-body-raw-content').text()
-  const $prettyBody = $('#response-body-json-content')
+  const $prettyBody = $('#response-body-pretty-content')
 
   const bodyJson = getBodyAsJson(body)
   if (bodyJson !== undefined) {
     $prettyBody.text(JSON.stringify(bodyJson, null, 2))
-    $('#response-body-tabs').foundation('selectTab', $('#response-body-json'), true)
     return
   }
 
