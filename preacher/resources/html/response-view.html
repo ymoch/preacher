@@ -7,7 +7,7 @@
   <title>Response Viewer: {{ response.id }}</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css" />
   <style>
     body {
       padding: 0em 1em;
@@ -25,9 +25,11 @@
       padding: 0.7rem 1.0rem;
     }
 
-    .response-body-raw-content {
-      font-size: 14px;
-      height: 20em;
+    .tabs-panel.response-body {
+      padding: 0px;
+    }
+    .tabs-panel.response-body>pre {
+      padding: 0.5em;
     }
   </style>
 </head>
@@ -58,21 +60,18 @@
 </div>
 
 <div class="tabs-content" data-tabs-content="response-tabs">
+
   <div id="response-body" class="tabs-panel is-active">
     <ul id="response-body-tabs" class="tabs" data-tabs>
-      <li class="tabs-title is-active">
-        <a href="#response-body-raw">Raw</a>
-      </li>
-      <li class="tabs-title">
-        <a href="#response-body-json">JSON</a>
-      </li>
+      <li class="tabs-title is-active"><a href="#response-body-pretty">Pretty</a></li>
+      <li class="tabs-title"><a href="#response-body-raw">Raw</a></li>
     </ul>
     <div class="tabs-content" data-tabs-content="response-body-tabs">
-      <div id="response-body-raw" class="tabs-panel is-active">
-        <pre id="response-body-raw-content">{{ response.body }}</pre>
+      <div id="response-body-pretty" class="tabs-panel response-body is-active">
+        <pre id="response-body-pretty-content">Loading...</pre>
       </div>
-      <div id="response-body-json" class="tabs-panel">
-        <div id="response-body-json-content">Loading...</div>
+      <div id="response-body-raw" class="tabs-panel response-body">
+        <pre id="response-body-raw-content" class="body-raw">{{ response.body }}</pre>
       </div>
     </div>
   </div>
@@ -96,28 +95,79 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
 <script>
 $(document).foundation()
 
-function getBodyAsJson() {
-  const bodyRaw = $('#response-body-raw-content').text()
+function parseJson(body) {
   try {
-    return JSON.parse(bodyRaw)
+    return JSON.parse(body)
   } catch (e) {
     console.log('Not a JSON body.')
     return undefined
   }
+}
 
+function formatXml(xml) {
+  const reg = /(>)(<)(\/*)/g;
+
+  xml = xml.replace(reg, '$1\r\n$2$3');
+
+  var formatted = '';
+  var pad = 0;
+  for (const node of xml.split('\r\n')) {
+    var indent = 0;
+    if (node.match(/.+<\/\w[^>]*>$/)) {
+      indent = 0;
+    } else if (node.match(/^<\/\w/)) {
+      pad = Math.max(0, pad - 1)
+    } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+      indent = 1;
+    } else {
+      indent = 0;
+    }
+
+    formatted += '  '.repeat(pad) + node + '\r\n';
+    pad += indent;
+  }
+
+  return formatted;
 }
-const bodyJson = getBodyAsJson()
-const $bodyJson = $('#response-body-json-content')
-if (bodyJson !== undefined) {
-  $bodyJson.JSONView(bodyJson)
-  $('#response-body-tabs').foundation('selectTab', $('#response-body-json'), true)
-} else {
-  $bodyJson.text('Not available for this response')
+
+function isXml(body) {
+  const doc = new DOMParser().parseFromString(body, 'application/xml')
+  return doc.getElementsByTagName("parsererror").length < 1;
 }
+
+function highlight(element) {
+  hljs.highlightBlock(element);
+}
+
+function prettify() {
+  const body = $('#response-body-raw-content').text()
+  const $prettyBody = $('#response-body-pretty-content')
+
+  const bodyJson = parseJson(body)
+  if (bodyJson !== undefined) {
+    $prettyBody.text(JSON.stringify(bodyJson, null, 2))
+    $prettyBody.each(function (index, element) {
+      highlight(element)
+    })
+    return
+  }
+
+  if (isXml(body)) {
+    $prettyBody.text(formatXml(body))
+    $prettyBody.each(function (index, element) {
+      highlight(element)
+    })
+    return
+  }
+
+  $prettyBody.text(body)
+}
+
+prettify()
 </script>
 
 </body>
