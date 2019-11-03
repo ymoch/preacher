@@ -58,22 +58,15 @@
 </div>
 
 <div class="tabs-content" data-tabs-content="response-tabs">
+
   <div id="response-body" class="tabs-panel is-active">
     <ul id="response-body-tabs" class="tabs" data-tabs>
-      <li class="tabs-title is-active">
-        <a href="#response-body-raw">Raw</a>
-      </li>
-      <li class="tabs-title">
-        <a href="#response-body-pretty">Pretty</a>
-      </li>
+      <li class="tabs-title is-active"><a href="#response-body-pretty">Pretty</a></li>
+      <li class="tabs-title"><a href="#response-body-raw">Raw</a></li>
     </ul>
     <div class="tabs-content" data-tabs-content="response-body-tabs">
-      <div id="response-body-raw" class="tabs-panel is-active">
-        <pre id="response-body-raw-content">{{ response.body }}</pre>
-      </div>
-      <div id="response-body-pretty" class="tabs-panel">
-        <pre id="response-body-pretty-content" class="prettyprint linenums">Loading...</pre>
-      </div>
+      <pre id="response-body-pretty" class="tabs-panel is-active prettyprint">Loading...</pre>
+      <pre id="response-body-raw" class="tabs-panel">{{ response.body }}</pre>
     </div>
   </div>
 
@@ -143,8 +136,8 @@ function getBodyAsJson(body) {
 }
 
 function prettify() {
-  const body = $('#response-body-raw-content').text()
-  const $prettyBody = $('#response-body-pretty-content')
+  const body = $('#response-body-raw').text()
+  const $prettyBody = $('#response-body-pretty')
 
   const bodyJson = getBodyAsJson(body)
   if (bodyJson !== undefined) {
