@@ -82,17 +82,17 @@ class ResponseDescriptionCompiler:
 
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
-            replacements['headers'] = run_on_key(  # type: ignore
+            replacements['headers'] = run_on_key(
                 _KEY_HEADERS,
-                self._compile_headers,
+                self._compile_headers,  # type: ignore
                 headers_obj,
             )
 
         body_obj = obj.get(_KEY_BODY)
         if body_obj is not None:
-            replacements['body'] = run_on_key(  # type: ignore
+            replacements['body'] = run_on_key(
                 _KEY_BODY,
-                self._body_description_compiler.compile,
+                self._body_description_compiler.compile,  # type: ignore
                 body_obj,
             )
 
