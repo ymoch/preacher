@@ -318,7 +318,7 @@ version = "7.2.0"
 [[package]]
 category = "dev"
 description = "Optional static typing for Python"
-marker = "python_version >= \"3.5\" and python_version < \"3.8.0b1\" or python_version >= \"3.8.0b1\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
 name = "mypy"
 optional = false
 python-versions = ">=3.5"
@@ -332,7 +332,7 @@ typing-extensions = ">=3.7.4"
 [[package]]
 category = "dev"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-marker = "python_version >= \"3.5\" and python_version < \"3.8.0b1\" or python_version >= \"3.8.0b1\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
 name = "mypy-extensions"
 optional = false
 python-versions = "*"
@@ -513,16 +513,16 @@ description = "Mypy static type checker plugin for Pytest"
 name = "pytest-mypy"
 optional = false
 python-versions = "~=3.4"
-version = "0.4.1"
+version = "0.4.2"
 
 [package.dependencies]
 [[package.dependencies.mypy]]
-python = ">=3.5,<3.8.0b1"
-version = ">=0.570"
+python = ">=3.5,<3.8"
+version = ">=0.500"
 
 [[package.dependencies.mypy]]
-python = ">=3.8.0b1"
-version = ">=0.701"
+python = ">=3.8"
+version = ">=0.700"
 
 [package.dependencies.pytest]
 python = ">=3.5"
@@ -822,7 +822,7 @@ version = "6.0.3"
 [[package]]
 category = "dev"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
-marker = "python_version >= \"3.5\" and python_version < \"3.8.0b1\" or python_version >= \"3.8.0b1\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
 name = "typed-ast"
 optional = false
 python-versions = "*"
@@ -839,7 +839,7 @@ version = "0.2.4"
 [[package]]
 category = "dev"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-marker = "python_version >= \"3.5\" and python_version < \"3.8.0b1\" or python_version >= \"3.8.0b1\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
 name = "typing-extensions"
 optional = false
 python-versions = "*"
@@ -983,7 +983,7 @@ pytest = ["27abc3fef618a01bebb1f0d6d303d2816a99aa87a5968ebc32fe971be91eb1e6", "5
 pytest-cov = ["cc6742d8bac45070217169f5f72ceee1e0e55b0221f54bcf24845972d3a47f2b", "cdbdef4f870408ebdbfeb44e63e07eb18bb4619fae852f6e760645fa36172626"]
 pytest-flakes = ["341964bf5760ebbdde9619f68a17d5632c674c3f6903ef66daa0a4f540b3d143", "daaf319250eeefa8cb13b0ba78ffdda67926c4b6446a9e14f946b86d1ba6af23"]
 pytest-forked = ["1805699ed9c9e60cb7a8179b8d4fa2b8898098e82d229b0825d8095f0f261100", "1ae25dba8ee2e56fb47311c9638f9e58552691da87e82d25b0ce0e4bf52b7d87"]
-pytest-mypy = ["c01a2c3baeab6086412c614f1f92d3962ff92cdf13881c608d98a5c23bc79b77", "f6348a3aa08d7b38b05c12ed0965415e1b60d402d7ceb353f5116f6eaf7dac28"]
+pytest-mypy = ["3b7b56912d55439d5f447cc609f91caac7f74f0f1c89f1379d04f06bac777c32", "5a5338cecff17f005b181546a13e282761754b481225df37f33d37f86ac5b304"]
 pytest-pycodestyle = ["d4f1c1d633158c1a27b02a40cf8e27da7264a9cbd6f59b5d692368e82412ac78"]
 pytest-xdist = ["5d1b1d4461518a6023d56dab62fb63670d6f7537f23e2708459a557329accf48", "a8569b027db70112b290911ce2ed732121876632fb3f40b1d39cd2f72f58b147"]
 python-multipart = ["f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"]
