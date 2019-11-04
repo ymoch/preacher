@@ -542,14 +542,6 @@ pytest = "*"
 
 [[package]]
 category = "dev"
-description = "Invoke py.test as distutils command with dependency resolution"
-name = "pytest-runner"
-optional = false
-python-versions = ">=2.7"
-version = "5.2"
-
-[[package]]
-category = "dev"
 description = "pytest xdist plugin for distributed testing and loop-on-failing modes"
 name = "pytest-xdist"
 optional = false
@@ -935,7 +927,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "d1eef2014600c58761848e169e9456b787abf438d87c70a6de5a03f1b179ecb7"
+content-hash = "bfb7016aa70f064305aabb3e5a62393b7d2a1f10b7d228c066d9e728de761e32"
 python-versions = "^3.7"
 
 [metadata.hashes]
@@ -993,7 +985,6 @@ pytest-flakes = ["341964bf5760ebbdde9619f68a17d5632c674c3f6903ef66daa0a4f540b3d1
 pytest-forked = ["1805699ed9c9e60cb7a8179b8d4fa2b8898098e82d229b0825d8095f0f261100", "1ae25dba8ee2e56fb47311c9638f9e58552691da87e82d25b0ce0e4bf52b7d87"]
 pytest-mypy = ["c01a2c3baeab6086412c614f1f92d3962ff92cdf13881c608d98a5c23bc79b77", "f6348a3aa08d7b38b05c12ed0965415e1b60d402d7ceb353f5116f6eaf7dac28"]
 pytest-pycodestyle = ["d4f1c1d633158c1a27b02a40cf8e27da7264a9cbd6f59b5d692368e82412ac78"]
-pytest-runner = ["5534b08b133ef9a5e2c22c7886a8f8508c95bb0b0bdc6cc13214f269c3c70d51", "96c7e73ead7b93e388c5d614770d2bae6526efd997757d3543fe17b557a0942b"]
 pytest-xdist = ["5d1b1d4461518a6023d56dab62fb63670d6f7537f23e2708459a557329accf48", "a8569b027db70112b290911ce2ed732121876632fb3f40b1d39cd2f72f58b147"]
 python-multipart = ["f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"]
 pytz = ["1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d", "b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"]
