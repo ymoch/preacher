@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-22 23:58+0900\n"
+"POT-Creation-Date: 2019-11-04 18:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,16 +216,53 @@ msgstr ""
 msgid "It encountered an unexpected situation and failed."
 msgstr "想定外の状況に遭遇し, 失敗した"
 
-# d186a9e086424b41844c1bbeeee97268
+# 3accac329cab461581ee33f7930d1417
 #: ../../user/quickstart.rst:107
+msgid "Allowing Random Errors"
+msgstr "ランダムなエラーの許容"
+
+# 5cf20862026645aeae5b90f1ae62607a
+#: ../../user/quickstart.rst:108
+msgid ""
+"Web API cannot always responds due to communication errors and so on. To "
+"allow these errors to some extent, Preacher supports retrying. you can "
+"set the retry count by ``-r`` or ``--retry`` options. The default is "
+"``0`` (no retry.)"
+msgstr ""
+"Web API は通信エラーなどにより, 必ず応答するとは限りません. 多少応答しなくてもテストを成立させるように, リトライすることができます."
+" ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
+
+# 876aacd3f244492192ec5d1834017c5a
+#: ../../user/quickstart.rst:113
+msgid ""
+"Extreme response delaying can affect the testing process. You can set the"
+" timeout by ``-t`` or ``--timeout`` options (in seconds). The default is "
+"none (no timeout.)"
+msgstr ""
+"極端なレスポンス遅延が, テストの進行に影響することがあります. ``-t`` もしくは ``--timeout`` "
+"オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
+
+# 5cf20862026645aeae5b90f1ae62607a
+#: ../../user/quickstart.rst:117
+msgid ""
+"Retrying should have intervals to avoid overloading. You can set the "
+"retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
+" is ``0.1``."
+msgstr ""
+"テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです. ``-d`` もしくは ``--delay`` "
+"オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
+
+# d186a9e086424b41844c1bbeeee97268
+#: ../../user/quickstart.rst:123
 msgid "Control Outputs"
 msgstr "出力制御"
 
 # de1468c7541e4b3ab55e27747e4d7ef8
-#: ../../user/quickstart.rst:108
+#: ../../user/quickstart.rst:124
 msgid ""
 "By default, not ``SKIPPED`` test results are shown. It is useful for "
 "debugging your test cases, but will be noisy when your test scenarios "
 "become huge. The output level control will help you find important "
 "errors."
 msgstr ""
+
