@@ -30,7 +30,7 @@ _STYLE_FUNC_MAP = {
     logging.INFO: _info,
     logging.WARNING: _warning,
     logging.ERROR: _error,
-    logging.CRITICAL: _error,
+    logging.CRITICAL: _critical,
 }
 
 
