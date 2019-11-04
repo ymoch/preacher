@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-04 18:39+0900\n"
+"POT-Creation-Date: 2019-11-04 19:28+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,13 +216,41 @@ msgstr ""
 msgid "It encountered an unexpected situation and failed."
 msgstr "想定外の状況に遭遇し, 失敗した"
 
-# 3accac329cab461581ee33f7930d1417
+# 91ca36cabad34b04907b8035073f3ed4
 #: ../../user/quickstart.rst:107
+msgid "Test Report"
+msgstr "テストレポート"
+
+# 69f5745d08ed41b396dad4b0f2e02b91
+#: ../../user/quickstart.rst:108
+msgid ""
+"Preacher can export a rich test report in HTML format, which visualize "
+"test results and provide actual responses."
+msgstr ""
+"Preacher は HTML 形式のテストレポートを出力することができます. テスト結果を視覚的に確認したり, "
+"実際のレスポンスを閲覧することができます."
+
+# b3eb805d76b2482cb6627723632717d2
+#: ../../user/quickstart.rst:111
+msgid ""
+"When given a directory path in ``-R`` or ``--report`` option, Preacher "
+"exports the test report to that directory. The directory is automatically"
+" created. When given ``path/to/report`` as a report directory path, "
+"``path/to/report/index.html`` should be the entry point. When running "
+"Preacher on CI, you may save the report as a build artifact."
+msgstr ""
+"``-R`` もしくは ``--report`` オプションで出力先のディレクトリを指定すると, そのディレクトリにレポートを出力します. "
+"レポートディレクトリは自動的に作られます. ``path/to/report`` をレポートディレクトリとして指定すると, "
+"``path/to/report/index.html`` がエントリーポイントになります. Preacher を CI で実行しているのであれば, "
+"レポートをビルド成果物として保存するとよいでしょう."
+
+# 3accac329cab461581ee33f7930d1417
+#: ../../user/quickstart.rst:119
 msgid "Allowing Random Errors"
 msgstr "ランダムなエラーの許容"
 
 # 5cf20862026645aeae5b90f1ae62607a
-#: ../../user/quickstart.rst:108
+#: ../../user/quickstart.rst:120
 msgid ""
 "Web API cannot always responds due to communication errors and so on. To "
 "allow these errors to some extent, Preacher supports retrying. you can "
@@ -233,15 +261,14 @@ msgstr ""
 " ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
 
 # 19e4a9d4aeed4560be81bfac9e3fa3aa
-#: ../../user/quickstart.rst:113
+#: ../../user/quickstart.rst:125
 msgid ""
 "Preacher retries while not only request fails but also a validation "
 "doesn't succeed."
-msgstr ""
-"Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
+msgstr "Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
 
 # 876aacd3f244492192ec5d1834017c5a
-#: ../../user/quickstart.rst:115
+#: ../../user/quickstart.rst:127
 msgid ""
 "Extreme response delaying can affect the testing process. You can set the"
 " timeout by ``-t`` or ``--timeout`` options (in seconds). The default is "
@@ -251,7 +278,7 @@ msgstr ""
 "オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
 
 # 5cf20862026645aeae5b90f1ae62607a
-#: ../../user/quickstart.rst:119
+#: ../../user/quickstart.rst:131
 msgid ""
 "Retrying should have intervals to avoid overloading. You can set the "
 "retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
@@ -261,12 +288,12 @@ msgstr ""
 "オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
 
 # d186a9e086424b41844c1bbeeee97268
-#: ../../user/quickstart.rst:125
+#: ../../user/quickstart.rst:137
 msgid "Control Outputs"
 msgstr "出力制御"
 
 # de1468c7541e4b3ab55e27747e4d7ef8
-#: ../../user/quickstart.rst:126
+#: ../../user/quickstart.rst:138
 msgid ""
 "By default, not ``SKIPPED`` test results are shown. It is useful for "
 "debugging your test cases, but will be noisy when your test scenarios "

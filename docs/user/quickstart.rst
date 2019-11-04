@@ -103,6 +103,18 @@ Each verification result has a "Verification Status."
      - no
      - It encountered an unexpected situation and failed.
 
+Test Report
+-----------
+Preacher can export a rich test report in HTML format,
+which visualize test results and provide actual responses.
+
+When given a directory path in ``-R`` or ``--report`` option,
+Preacher exports the test report to that directory.
+The directory is automatically created.
+When given ``path/to/report`` as a report directory path,
+``path/to/report/index.html`` should be the entry point.
+When running Preacher on CI, you may save the report as a build artifact.
+
 Allowing Random Errors
 ----------------------
 Web API cannot always responds due to communication errors and so on.
