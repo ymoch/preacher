@@ -6,13 +6,16 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 from preacher.app.application import Application
+from preacher.app.cli.logging import ColoredFormatter
+from preacher.app.cli.option import parse_args
 from preacher.app.listener.logging import LoggingListener
 from preacher.app.listener.merging import MergingListener
 from preacher.app.listener.report import ReportingListener
-from .option import parse_args
 
 
+FORMATTER = ColoredFormatter()
 HANDLER = logging.StreamHandler()
+HANDLER.setFormatter(FORMATTER)
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 
