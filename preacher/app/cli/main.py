@@ -9,10 +9,13 @@ from preacher.app.application import Application
 from preacher.app.listener.logging import LoggingListener
 from preacher.app.listener.merging import MergingListener
 from preacher.app.listener.report import ReportingListener
+from .logging import ColoredFormatter
 from .option import parse_args
 
 
+FORMATTER = ColoredFormatter()
 HANDLER = logging.StreamHandler()
+HANDLER.setFormatter(FORMATTER)
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 

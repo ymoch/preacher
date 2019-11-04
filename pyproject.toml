@@ -25,6 +25,7 @@ pyjq = "^2.3"
 requests = "^2.21"
 "ruamel.yaml" = "^0.16.5"
 lxml = "^4.4"
+colorama = "^0.4.1"
 jinja2 = "^2.10"
 
 [tool.poetry.dev-dependencies]
