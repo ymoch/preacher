@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "preacher"
-version = "0.11.5"
+version = "0.11.6"
 description = "A web API verification tool."
 authors = ["Yu Mochizuki <ymoch.dev@gmail.com>"]
 readme = "README.md"
