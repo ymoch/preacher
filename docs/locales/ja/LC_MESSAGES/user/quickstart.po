@@ -57,7 +57,6 @@ msgstr "Docker で実行する"
 
 # c9adef6dbe804aa8894232640375c497
 #: ../../user/quickstart.rst:24
-#, fuzzy
 msgid ""
 "We provide `Docker`_ images on `Docker Hub`_ to avoid problems caused by "
 "environments. By default, the container working directory is ``/work``, "
@@ -227,8 +226,8 @@ msgid ""
 "Preacher can export a rich test report in HTML format, which visualize "
 "test results and provide actual responses."
 msgstr ""
-"Preacher は HTML 形式のテストレポートを出力することができます. テスト結果を視覚的に確認したり, "
-"実際のレスポンスを閲覧することができます."
+"Preacher は HTML 形式の詳細なテストレポートを出力することができます."
+" テスト結果を視覚的に確認したり, 実際のレスポンスを閲覧することができます."
 
 # b3eb805d76b2482cb6627723632717d2
 #: ../../user/quickstart.rst:111
@@ -239,10 +238,13 @@ msgid ""
 "``path/to/report/index.html`` should be the entry point. When running "
 "Preacher on CI, you may save the report as a build artifact."
 msgstr ""
-"``-R`` もしくは ``--report`` オプションで出力先のディレクトリを指定すると, そのディレクトリにレポートを出力します. "
-"レポートディレクトリは自動的に作られます. ``path/to/report`` をレポートディレクトリとして指定すると, "
-"``path/to/report/index.html`` がエントリーポイントになります. Preacher を CI で実行しているのであれば, "
-"レポートをビルド成果物として保存するとよいでしょう."
+"``-R`` もしくは ``--report`` オプションで出力先のディレクトリを指定すると,"
+" そのディレクトリにレポートを出力します. "
+" レポートディレクトリは自動的に作られます."
+" ``path/to/report`` をレポートディレクトリとして指定すると,"
+" ``path/to/report/index.html`` がエントリーポイントになります."
+" Preacher を CI で実行しているのであれば,"
+" レポートをビルド成果物として保存するとよいでしょう."
 
 # 3accac329cab461581ee33f7930d1417
 #: ../../user/quickstart.rst:119
@@ -257,8 +259,10 @@ msgid ""
 "set the retry count by ``-r`` or ``--retry`` options. The default is "
 "``0`` (no retry.)"
 msgstr ""
-"Web API は通信エラーなどにより, 必ず応答するとは限りません. 多少応答しなくてもテストを成立させるように, リトライすることができます."
-" ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
+"Web API は通信エラーなどにより, 必ず応答するとは限りません."
+" 多少応答しなくてもテストを成立させるように, リトライすることができます."
+" ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます."
+" デフォルトは ``0`` (リトライしない) です"
 
 # 19e4a9d4aeed4560be81bfac9e3fa3aa
 #: ../../user/quickstart.rst:125
@@ -284,8 +288,9 @@ msgid ""
 "retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
 " is ``0.1``."
 msgstr ""
-"テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです. ``-d`` もしくは ``--delay`` "
-"オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
+"テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです."
+" ``-d`` もしくは ``--delay`` オプションでリトライ間隔 (単位は秒) を指定できます."
+" デフォルトは ``0.1`` です."
 
 # d186a9e086424b41844c1bbeeee97268
 #: ../../user/quickstart.rst:137
