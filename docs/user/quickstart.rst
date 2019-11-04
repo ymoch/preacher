@@ -110,6 +110,8 @@ To allow these errors to some extent, Preacher supports retrying.
 you can set the retry count by ``-r`` or ``--retry`` options.
 The default is ``0`` (no retry.)
 
+.. note:: Preacher retries while not only request fails but also a validation doesn't succeed.
+
 Extreme response delaying can affect the testing process.
 You can set the timeout by ``-t`` or ``--timeout`` options (in seconds).
 The default is none (no timeout.)

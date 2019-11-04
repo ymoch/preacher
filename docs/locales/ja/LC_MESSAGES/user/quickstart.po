@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-04 18:17+0900\n"
+"POT-Creation-Date: 2019-11-04 18:39+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -232,8 +232,16 @@ msgstr ""
 "Web API は通信エラーなどにより, 必ず応答するとは限りません. 多少応答しなくてもテストを成立させるように, リトライすることができます."
 " ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
 
-# 876aacd3f244492192ec5d1834017c5a
+# 19e4a9d4aeed4560be81bfac9e3fa3aa
 #: ../../user/quickstart.rst:113
+msgid ""
+"Preacher retries while not only request fails but also a validation "
+"doesn't succeed."
+msgstr ""
+"Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
+
+# 876aacd3f244492192ec5d1834017c5a
+#: ../../user/quickstart.rst:115
 msgid ""
 "Extreme response delaying can affect the testing process. You can set the"
 " timeout by ``-t`` or ``--timeout`` options (in seconds). The default is "
@@ -243,7 +251,7 @@ msgstr ""
 "オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
 
 # 5cf20862026645aeae5b90f1ae62607a
-#: ../../user/quickstart.rst:117
+#: ../../user/quickstart.rst:119
 msgid ""
 "Retrying should have intervals to avoid overloading. You can set the "
 "retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
@@ -253,12 +261,12 @@ msgstr ""
 "オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
 
 # d186a9e086424b41844c1bbeeee97268
-#: ../../user/quickstart.rst:123
+#: ../../user/quickstart.rst:125
 msgid "Control Outputs"
 msgstr "出力制御"
 
 # de1468c7541e4b3ab55e27747e4d7ef8
-#: ../../user/quickstart.rst:124
+#: ../../user/quickstart.rst:126
 msgid ""
 "By default, not ``SKIPPED`` test results are shown. It is useful for "
 "debugging your test cases, but will be noisy when your test scenarios "
