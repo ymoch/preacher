@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 14:03+0900\n"
+"POT-Creation-Date: 2019-11-28 00:40+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,64 +38,81 @@ msgstr ""
 msgid "Preacher prefers:"
 msgstr "Preacher は以下を率先して取り組んでいます:"
 
+# 0652ab0381f143e9ab5f688a22f2dabe
 #: ../../user/intro.rst:11
+msgid "Be declarative"
+msgstr "宣言的であること"
+
+# 288cc729fd3c45b996f5245316cad84a
+#: ../../user/intro.rst:12
+msgid "To keep test cases readable, coding should be avoided."
+msgstr "テストケースの可読性を保つため, コーディングは避けられるべきです."
+
+# 8db1c4e50f2f49278c105aeab5174e70
+#: ../../user/intro.rst:14
+msgid "Be flexible"
+msgstr "柔軟であること"
+
+#: ../../user/intro.rst:14
 msgid ""
-"Flexible validation: Real backends causes fuzzy behavior. Matcher-based "
-"validation allow fuzziness caused by real backends."
+"Real backends causes fuzzy behavior. Matcher-based validation allow "
+"fuzziness caused by real backends."
 msgstr ""
-"柔軟なバリデーション: 本物のバックエンドを利用すると, システムの挙動はファジーになります. Matcher に基づいた検証によって, "
+"本物のバックエンドを利用すると, システムの挙動はファジーになります. Matcher に基づいた検証によって, "
 "ファジーな挙動を許容します."
 
-#: ../../user/intro.rst:13
-msgid ""
-"CI friendship: CI tools are basic automation ways. CLI applications and "
-"YAML based test scenarios are suitable for CI."
-msgstr ""
-"CI との親和性:"
-" CI ツールは標準的な自動化の方法です."
-" CLI アプリケーションと YAML ベースのテストシナリオは CI に適しています."
+# 19ac70e8b1e84cd9ba37980376c83448
+#: ../../user/intro.rst:17
+msgid "Be CI friendly"
+msgstr "CI で利用しやすいこと"
 
-#: ../../user/intro.rst:15
+#: ../../user/intro.rst:17
 msgid ""
-"Simple GET requests: Testing with real backends often targets data "
-"fetching rather than HTTP interactions such as authorization. Development"
-" for complex HTTP interactions is less priored."
-msgstr ""
-"シンプルな GET リクエスト:"
-" 本物のバックエンドを利用した検証は, HTTP 通信のやりとり (たとえば認証など) より,"
-" データフェッチを対象にすることが多いです."
-" 複雑な HTTP 通信に対する開発は優先度を低くしています."
+"CI tools are basic automation ways. CLI applications and file-based test "
+"scenarios are suitable for CI."
+msgstr "CI ツールは標準的な自動化の方法です. CLI アプリケーションとファイルベースのテストシナリオは CI に適しています."
 
-#: ../../user/intro.rst:19
+# 1aaf8f306179427ab2d3e610954b8a50
+#: ../../user/intro.rst:22
+msgid "Be suitable for Simple GET requests"
+msgstr "シンプルな GET リクエストに適していること"
+
+#: ../../user/intro.rst:20
+msgid ""
+"Testing with real backends often targets data fetching rather than HTTP "
+"interactions such as authorization. Development for complex HTTP "
+"interactions is less priored."
+msgstr ""
+"本物のバックエンドを利用した検証は, HTTP 通信のやりとり (たとえば認証など) より, "
+"データフェッチを対象にすることが多いです. 複雑な HTTP 通信に対する開発は優先度を低くしています."
+
+#: ../../user/intro.rst:25
 msgid "Comparison to similar tools"
 msgstr "類似ツールとの比較"
 
-#: ../../user/intro.rst:22
+#: ../../user/intro.rst:27
 msgid ""
-"`Postman`_ gives rich insights on Web APIs."
-" On the other hand, testing with CLI applications and configuration files is "
-"more suitable for CI automation."
+"`Postman`_ gives rich insights on Web APIs. On the other hand, testing "
+"with CLI applications and configuration files is more suitable for CI "
+"automation."
 msgstr ""
-"`Postman`_ は Web API に対する多くの洞察を与えてくれます."
-" 一方で, CLI アプリケーションと設定ファイルによるテストのほうが,"
-" CI による自動化により適しています."
-
-#: ../../user/intro.rst:25
-msgid ""
-"`Tavern`_ is more suitable for"
-" testing HTTP interactions. It seems to be more suitable for testing "
-"simple systems or testing without real backends than Preacher because of "
-"simple validators."
-msgstr ""
-"`Tavern`_ は HTTP 通信のやりとりのテストにより適しています."
-" バリデータがシンプルなため, Preacher と比較すると,"
-" シンプルなシステムのテストおよび本物のバックエンドを利用しないテストに向いているでしょう."
+"`Postman`_ は Web API に対する多くの洞察を与えてくれます. 一方で, CLI "
+"アプリケーションと設定ファイルによるテストのほうが, CI による自動化により適しています."
 
 #: ../../user/intro.rst:30
+msgid ""
+"`Tavern`_ is more suitable for testing HTTP interactions. It seems to be "
+"more suitable for testing simple systems or testing without real backends"
+" than Preacher because of simple validators."
+msgstr ""
+"`Tavern`_ は HTTP 通信のやりとりのテストにより適しています. バリデータがシンプルなため, Preacher と比較すると, "
+"シンプルなシステムのテストおよび本物のバックエンドを利用しないテストに向いているでしょう."
+
+#: ../../user/intro.rst:35
 msgid "License"
 msgstr "ライセンス"
 
-#: ../../user/intro.rst:32
+#: ../../user/intro.rst:37
 msgid "Preacher is released under terms of `MIT License`_."
 msgstr "Preacher は `MIT License`_ でリリースされています."
 
@@ -134,4 +151,3 @@ msgid ""
 "OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE"
 " USE OR OTHER DEALINGS IN THE SOFTWARE."
 msgstr ""
-

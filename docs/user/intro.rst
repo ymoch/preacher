@@ -8,13 +8,18 @@ Supporting both automation and real backends has been challenging.
 
 Preacher prefers:
 
-- Flexible validation: Real backends causes fuzzy behavior.
-  Matcher-based validation allow fuzziness caused by real backends.
-- CI friendship: CI tools are basic automation ways.
-  CLI applications and YAML based test scenarios are suitable for CI.
-- Simple GET requests: Testing with real backends often targets data fetching
-  rather than HTTP interactions such as authorization.
-  Development for complex HTTP interactions is less priored.
+- Be declarative
+    - To keep test cases readable, coding should be avoided.
+- Be flexible
+    - Real backends causes fuzzy behavior.
+      Matcher-based validation allow fuzziness caused by real backends.
+- Be CI friendly
+    - CI tools are basic automation ways.
+      CLI applications and file-based test scenarios are suitable for CI.
+- Be suitable for Simple GET requests
+    - Testing with real backends often targets data fetching
+      rather than HTTP interactions such as authorization.
+      Development for complex HTTP interactions is less priored.
 
 Comparison to similar tools
 ---------------------------
