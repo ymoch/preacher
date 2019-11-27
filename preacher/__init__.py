@@ -1,13 +1,8 @@
 """Preacher: A Web API Verification Tool."""
 
-__version__ = '0.11.6'
+__version__ = '0.11.7'
 __author__ = 'Yu Mochizuki'
 __author_email__ = 'ymoch.dev@gmail.com'
-
-NAME = 'preacher'
-DESCRIPTION = 'A Web API verification tool.'
-URL = 'https://github.com/ymoch/preacher'
-LICENSE = 'MIT'
 
 
 def __dummy__() -> None:
