@@ -97,6 +97,10 @@ class Case:
         return self._label
 
     @property
+    def enabled(self) -> bool:
+        return self._enabled
+
+    @property
     def request(self) -> Request:
         return self._request
 

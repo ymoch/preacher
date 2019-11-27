@@ -32,6 +32,7 @@ def response_compiler() -> ResponseDescriptionCompiler:
 @mark.parametrize('value, expected_path', (
     ('', []),
     ({'label': []}, [NamedNode('label')]),
+    ({'enabled': []}, [NamedNode('enabled')]),
 ))
 def test_given_invalid_values(
     value,
@@ -80,6 +81,7 @@ def test_response_compilation_fails(request_compiler):
 def test_given_an_empty_object(request_compiler, response_compiler):
     compiler = CaseCompiler(request_compiler, response_compiler)
     case = compiler.compile({})
+    assert case.enabled
     assert case.request == sentinel.request
     assert case.response_description == sentinel.response_description
 
@@ -100,10 +102,12 @@ def test_creates_a_case(request_compiler, response_compiler):
     compiler = CaseCompiler(request_compiler, response_compiler)
     case = compiler.compile({
         'label': 'label',
+        'enabled': False,
         'request': {'path': '/path'},
         'response': {'key': 'value'},
     })
     assert case.label == 'label'
+    assert not case.enabled
     assert case.request == sentinel.request
     assert case.response_description == sentinel.response_description
 
