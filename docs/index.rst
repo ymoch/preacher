@@ -1,5 +1,5 @@
-Preacher: Web API Verification Valuing Automation and Reality
-=============================================================
+Preacher: Web API Verification without Coding
+=============================================
 
 .. image:: https://img.shields.io/badge/python-3.7+-blue.svg
     :target: https://www.python.org/
@@ -15,9 +15,12 @@ Preacher: Web API Verification Valuing Automation and Reality
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Test scenarios are written in `YAML`_, response bodies are analyzed `jq`_ or `XPath`_ queries
-and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
-so that any developers can write without learning toughly.
+Test scenarios are written only in `YAML`_ declaratively, without codes.
+In spite of that, Preacher can validate your web API flexibly,
+which enables you to test using real (neither mocks nor sandboxes) backends.
+
+- Responses are analyzed `jq`_ or `XPath`_ queries
+- Validation rules are based on `Hamcrest`_ (implemented by `PyHamcrest`_).
 
 The User Guide
 --------------
