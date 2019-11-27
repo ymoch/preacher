@@ -19,7 +19,7 @@ Test scenarios are written in `YAML`_, response bodies are analyzed `jq`_ or `XP
 and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
 so that any developers can write without learning toughly.
 
-The Basic Guide
+The User Guide
 ---------------
 
 .. toctree::

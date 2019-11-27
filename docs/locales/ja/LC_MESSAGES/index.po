@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-27 23:55+0900\n"
+"POT-Creation-Date: 2019-11-28 00:00+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,6 @@ msgstr ""
 "`Hamcrest`_ (`PyHamcrest`_) に基づいています. 開発者は大変な学習をせずに利用することができます."
 
 #: ../../index.rst:23
-#, fuzzy
-msgid "The Basic Guide"
+msgid "The User Guide"
 msgstr "ユーザーガイド"
 
