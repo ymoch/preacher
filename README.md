@@ -9,9 +9,12 @@
 Preacher verifies API servers,
 which requests to the servers and verify the responses along to given scenarios.
 
-Scenarios are written in [YAML][], bodies are analyzed [jq][] or [XPath][] queries
-and validation rules are based on [Hamcrest][] ([PyHamcrest][])
-so that any developers can write without learning toughly.
+Test scenarios are written only in [YAML][] declaratively, without codes.
+In spite of that, Preacher can validate your web API flexibly,
+which enables you to test using real (neither mocks nor sandboxes) backends.
+
+- Responses are analyzed [jq][] or [XPath][] queries
+- Validation rules are based on [Hamcrest][] (implemented by [PyHamcrest][]).
 
 The full documentation is available at [preacher.readthedocs.io][Read the Docs].
 
