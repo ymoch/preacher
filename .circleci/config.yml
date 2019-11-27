@@ -3,13 +3,13 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-3.7
       - test-3.8
+      - test-3.7
 
 jobs:
-  test-3.7:  # Primary build.
+  test-3.8:  # Primary build.
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
@@ -34,9 +34,9 @@ jobs:
             sudo pip install codecov
             codecov
 
-  test-3.8:  # Secondary build.
+  test-3.7:  # Secondary build.
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run:
