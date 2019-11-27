@@ -1,4 +1,4 @@
-# Preacher: Web API Verification Valuing Automation and Reality
+# Preacher: Web API Verification without Coding
 
 [![PyPI version](https://badge.fury.io/py/preacher.svg)][PyPI]
 [![Documentation Status](https://readthedocs.org/projects/preacher/badge/?version=latest)][Read the Docs]

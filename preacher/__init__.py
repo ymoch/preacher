@@ -1,18 +1,3 @@
-"""Preacher: A Web API Verification Tool."""
+"""Preacher: Web API Verification without Coding"""
 
 __version__ = '0.11.6'
-__author__ = 'Yu Mochizuki'
-__author_email__ = 'ymoch.dev@gmail.com'
-
-NAME = 'preacher'
-DESCRIPTION = 'A Web API verification tool.'
-URL = 'https://github.com/ymoch/preacher'
-LICENSE = 'MIT'
-
-
-def __dummy__() -> None:
-    """
-    Dummy function so that tests cover this module.
-    >>> __dummy__()
-    """
-    pass
