@@ -153,7 +153,7 @@ add ``enabled: false`` to that cases.
 
     cases:
       - label: Disabled case
-        enabled: False
+        enabled: false
         request: ...
 
 
