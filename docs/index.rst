@@ -20,7 +20,7 @@ and validation rules are based on `Hamcrest`_ (`PyHamcrest`_)
 so that any developers can write without learning toughly.
 
 The User Guide
----------------
+--------------
 
 .. toctree::
    :maxdepth: 2
