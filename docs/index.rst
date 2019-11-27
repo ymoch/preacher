@@ -15,7 +15,7 @@ Preacher: Web API Verification without Coding
 Preacher verifies API servers,
 which requests to API servers and verify the response along to given scenarios.
 
-Test scenarios are written only in `YAML`_ declaratively, without codes.
+Test scenarios are written only in `YAML`_ declaratively, without coding.
 In spite of that, Preacher can validate your web API flexibly,
 which enables you to test using real (neither mocks nor sandboxes) backends.
 
