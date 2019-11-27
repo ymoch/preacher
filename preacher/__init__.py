@@ -1,3 +1,3 @@
-"""Preacher: A Web API Verification Tool."""
+"""Preacher: Web API Verification without Coding"""
 
 __version__ = '0.11.7'
