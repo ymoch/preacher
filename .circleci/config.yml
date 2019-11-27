@@ -1,6 +1,40 @@
 version: 2
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-3.8
+      - test-3.7
+
 jobs:
-  build:
+  test-3.8:  # Primary build.
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: Set up
+          command: sudo pip install poetry
+      - run:
+          name: Run with no dev package
+          command: |
+            poetry install --no-dev
+            poetry run preacher-cli --help
+      - run:
+          name: Run unit tests
+          command: |
+            poetry install
+            poetry run pytest
+      - run:
+          name: Build documents
+          command: poetry run make html
+      - run:
+          name: Send the test coverage report
+          command: |
+            sudo pip install codecov
+            codecov
+
+  test-3.7:  # Secondary build.
     docker:
       - image: circleci/python:3.7
     steps:
@@ -8,25 +42,13 @@ jobs:
       - run:
           name: Set up
           command: sudo pip install poetry
-
       - run:
           name: Run with no dev package
           command: |
             poetry install --no-dev
             poetry run preacher-cli --help
-
       - run:
           name: Run unit tests
           command: |
             poetry install
             poetry run pytest
-
-      - run:
-          name: Build documents
-          command: poetry run make html
-
-      - run:
-          name: Send the test coverage report
-          command: |
-            sudo pip install codecov
-            codecov
