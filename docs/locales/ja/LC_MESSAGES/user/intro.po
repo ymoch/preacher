@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-28 00:40+0900\n"
+"POT-Creation-Date: 2019-11-28 01:04+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,9 +57,7 @@ msgstr "柔軟であること"
 msgid ""
 "Real backends causes fuzzy behavior. Matcher-based validation allow "
 "fuzziness caused by real backends."
-msgstr ""
-"本物のバックエンドを利用すると, システムの挙動はファジーになります. Matcher に基づいた検証によって, "
-"ファジーな挙動を許容します."
+msgstr "本物のバックエンドを利用すると, システムの挙動はファジーになります. Matcher に基づいた検証によって, ファジーな挙動を許容します."
 
 # 19ac70e8b1e84cd9ba37980376c83448
 #: ../../user/intro.rst:17
@@ -83,23 +81,27 @@ msgid ""
 "interactions such as authorization. Development for complex HTTP "
 "interactions is less priored."
 msgstr ""
-"本物のバックエンドを利用した検証は, HTTP 通信のやりとり (たとえば認証など) より, "
-"データフェッチを対象にすることが多いです. 複雑な HTTP 通信に対する開発は優先度を低くしています."
+"本物のバックエンドを利用した検証は, HTTP 通信のやりとり (たとえば認証など) より, データフェッチを対象にすることが多いです. 複雑な "
+"HTTP 通信に対する開発は優先度を低くしています."
 
 #: ../../user/intro.rst:25
 msgid "Comparison to similar tools"
 msgstr "類似ツールとの比較"
 
+# 23da8986de654ba6ab341f718a28be63
 #: ../../user/intro.rst:27
 msgid ""
-"`Postman`_ gives rich insights on Web APIs. On the other hand, testing "
-"with CLI applications and configuration files is more suitable for CI "
-"automation."
+"`Postman`_ gives rich insights on Web APIs. On the other hand, test cases"
+" are written in JavaScript, which is very flexible but not declarative. "
+"Additionally, the continuous automation is complicated and overdoing: "
+"writing test codes in Postman GUI, exporting and running them by "
+"`Newman`_."
 msgstr ""
-"`Postman`_ は Web API に対する多くの洞察を与えてくれます. 一方で, CLI "
-"アプリケーションと設定ファイルによるテストのほうが, CI による自動化により適しています."
+"`Postman`_ は web API に対する豊富な知見を与えてくれます. 一方で, テストケースを JavaScript で書くことは, "
+"とても柔軟ですが宣言的とはいえません. 加えて, その継続的な自動化プロセスは, GUI でテストコードを書き, それを出力して `Newman`_ "
+"で実行するというもので, 複雑かつ大袈裟です."
 
-#: ../../user/intro.rst:30
+#: ../../user/intro.rst:32
 msgid ""
 "`Tavern`_ is more suitable for testing HTTP interactions. It seems to be "
 "more suitable for testing simple systems or testing without real backends"
@@ -108,11 +110,11 @@ msgstr ""
 "`Tavern`_ は HTTP 通信のやりとりのテストにより適しています. バリデータがシンプルなため, Preacher と比較すると, "
 "シンプルなシステムのテストおよび本物のバックエンドを利用しないテストに向いているでしょう."
 
-#: ../../user/intro.rst:35
+#: ../../user/intro.rst:37
 msgid "License"
 msgstr "ライセンス"
 
-#: ../../user/intro.rst:37
+#: ../../user/intro.rst:39
 msgid "Preacher is released under terms of `MIT License`_."
 msgstr "Preacher は `MIT License`_ でリリースされています."
 

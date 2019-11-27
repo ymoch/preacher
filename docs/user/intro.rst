@@ -25,8 +25,10 @@ Comparison to similar tools
 ---------------------------
 
 - `Postman`_ gives rich insights on Web APIs.
-  On the other hand, testing with CLI applications and configuration files is
-  more suitable for CI automation.
+  On the other hand, test cases are written in JavaScript,
+  which is very flexible but not declarative.
+  Additionally, the continuous automation is complicated and overdoing:
+  writing test codes in Postman GUI, exporting and running them by `Newman`_.
 - `Tavern`_ is more suitable for testing HTTP interactions.
   It seems to be more suitable for testing simple systems
   or testing without real backends than Preacher because of simple validators.
@@ -39,5 +41,6 @@ Preacher is released under terms of `MIT License`_.
     .. include:: ../../LICENSE
 
 .. _Postman: https://www.getpostman.com/
+.. _Newman: https://github.com/postmanlabs/newman
 .. _Tavern: https://tavern.readthedocs.io/en/latest/
 .. _MIT License: https://opensource.org/licenses/MIT
