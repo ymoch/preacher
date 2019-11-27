@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-28 00:00+0900\n"
+"POT-Creation-Date: 2019-11-28 00:29+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,8 +19,8 @@ msgstr ""
 
 # 173150739c4448419601cfd40749c533
 #: ../../index.rst:2
-msgid "Preacher: Web API Verification Valuing Automation and Reality"
-msgstr "Preacher: 自動化とリアルさを重視する Web API 検証ツール"
+msgid "Preacher: Web API Verification without Coding"
+msgstr "Preacher: コーディングが不要な Web API 検証ツール"
 
 #: ../../index.rst:15
 msgid ""
@@ -28,17 +28,27 @@ msgid ""
 "the response along to given scenarios."
 msgstr "Preacher は API サーバを検証するツールです. シナリオに従って API サーバにリクエストし, レスポンスを検証します."
 
+# 22510c01e1544e7e8b90df47d923e32a
 #: ../../index.rst:18
 msgid ""
-"Test scenarios are written in `YAML`_, response bodies are analyzed `jq`_"
-" or `XPath`_ queries and validation rules are based on `Hamcrest`_ "
-"(`PyHamcrest`_) so that any developers can write without learning "
-"toughly."
+"Test scenarios are written only in `YAML`_ declaratively, without codes. "
+"In spite of that, Preacher can validate your web API flexibly, which "
+"enables you to test using real (neither mocks nor sandboxes) backends."
 msgstr ""
-"テストシナリオは `YAML`_ で記述され, レスポンスボディは `jq`_ または `XPath`_ で解析され, 検証ルールの記述は "
-"`Hamcrest`_ (`PyHamcrest`_) に基づいています. 開発者は大変な学習をせずに利用することができます."
+"テストシナリオはコードを書かずに `YAML`_ だけで宣言的に記述できます. にもかかわらず, Preacher は Web API "
+"を柔軟に検証でき, 本物の (mock や sandbox でない) バックエンドを用いた検証も可能にします."
 
+# baf88c1915fd4790822dc6c5d13a5632
+#: ../../index.rst:22
+msgid "Responses are analyzed `jq`_ or `XPath`_ queries"
+msgstr "レスポンスを `jq`_ ないし `XPath`_ を用いて解析します."
+
+# d839a6712cbc42f5baa095954858548d
 #: ../../index.rst:23
+msgid "Validation rules are based on `Hamcrest`_ (implemented by `PyHamcrest`_)."
+msgstr "検証ルールは `Hamcrest`_ に基づいています. (実装は `PyHamcrest`_)"
+
+#: ../../index.rst:26
 msgid "The User Guide"
 msgstr "ユーザーガイド"
 
