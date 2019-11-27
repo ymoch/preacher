@@ -535,7 +535,7 @@ description = "pytest plugin to run pycodestyle"
 name = "pytest-pycodestyle"
 optional = false
 python-versions = "~=3.5"
-version = "1.4.1"
+version = "2.0.0"
 
 [package.dependencies]
 pycodestyle = "*"
@@ -928,7 +928,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "bfb7016aa70f064305aabb3e5a62393b7d2a1f10b7d228c066d9e728de761e32"
+content-hash = "b7dbc78ea297218bfa6ede60b4f7ecb07cd581ab9b77ce05a50c602901025e8c"
 python-versions = "^3.7"
 
 [metadata.hashes]
@@ -985,7 +985,7 @@ pytest-cov = ["cc6742d8bac45070217169f5f72ceee1e0e55b0221f54bcf24845972d3a47f2b"
 pytest-flakes = ["341964bf5760ebbdde9619f68a17d5632c674c3f6903ef66daa0a4f540b3d143", "daaf319250eeefa8cb13b0ba78ffdda67926c4b6446a9e14f946b86d1ba6af23"]
 pytest-forked = ["1805699ed9c9e60cb7a8179b8d4fa2b8898098e82d229b0825d8095f0f261100", "1ae25dba8ee2e56fb47311c9638f9e58552691da87e82d25b0ce0e4bf52b7d87"]
 pytest-mypy = ["3b7b56912d55439d5f447cc609f91caac7f74f0f1c89f1379d04f06bac777c32", "5a5338cecff17f005b181546a13e282761754b481225df37f33d37f86ac5b304"]
-pytest-pycodestyle = ["b3d257f6b40308cff63a1f71e60604b38efbc952ab716f6e3f25363f02d97855"]
+pytest-pycodestyle = ["ff40c48bb2c20d02410834dc9183bcd4213bbe8d49585dc2ec9ca57a0f7d250a"]
 pytest-xdist = ["5d1b1d4461518a6023d56dab62fb63670d6f7537f23e2708459a557329accf48", "a8569b027db70112b290911ce2ed732121876632fb3f40b1d39cd2f72f58b147"]
 python-multipart = ["f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"]
 pytz = ["1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d", "b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"]
