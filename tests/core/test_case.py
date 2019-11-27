@@ -20,6 +20,21 @@ def test_case_listener():
     CaseListener().on_response(sentinel.response)
 
 
+def test_when_disabled():
+    case = Case(
+        label='Disabled',
+        enabled=False,
+        request=MagicMock(),
+        response_description=MagicMock()
+    )
+    actual = case('base-url')
+    assert actual.label == 'Disabled'
+    assert actual.status == Status.SKIPPED
+
+    case.request.assert_not_called()
+    case.response_description.assert_not_called()
+
+
 def test_when_the_request_fails(retry_patch):
     case = Case(
         label='Request fails',

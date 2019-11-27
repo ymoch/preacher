@@ -37,10 +37,12 @@ class Case:
         request: Request,
         response_description: ResponseDescription,
         label: Optional[str] = None,
+        enabled: bool = True,
     ):
         self._label = label
         self._request = request
         self._response_description = response_description
+        self._enabled = enabled
 
     def __call__(
         self,
@@ -50,6 +52,8 @@ class Case:
         timeout: Optional[float] = None,
         listener: Optional[CaseListener] = None,
     ) -> CaseResult:
+        if not self._enabled:
+            return CaseResult(label=self._label)
         func = partial(
             self._run,
             base_url=base_url,
