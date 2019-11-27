@@ -144,6 +144,18 @@ The output level control will help you find important errors.
 
     $ preacher-cli --level unstable scenario.yml
 
+Ignore cases
+------------
+To skip some cases temporarily for some reason,
+add ``enabled: false`` to that cases.
+
+.. code-block:: yaml
+
+    cases:
+      - label: Disabled case
+        enabled: False
+        request: ...
+
 
 .. _PyPI: https://pypi.org/project/preacher/
 .. _Docker: https://www.docker.com/

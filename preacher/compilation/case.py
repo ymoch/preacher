@@ -13,6 +13,7 @@ from .util import run_on_key
 
 
 _KEY_LABEL = 'label'
+_KEY_ENABLED = 'enabled'
 _KEY_REQUEST = 'request'
 _KEY_RESPONSE = 'response'
 
@@ -42,8 +43,15 @@ class CaseCompiler:
         label = obj.get(_KEY_LABEL)
         if label is not None and not isinstance(label, str):
             raise CompilationError(
-                message=f'Case.{_KEY_LABEL} must be a string',
+                message=f'must be a string',
                 path=[NamedNode(_KEY_LABEL)],
+            )
+
+        enabled = obj.get(_KEY_ENABLED, True)
+        if not isinstance(enabled, bool):
+            raise CompilationError(
+                message=f'must be a boolean',
+                path=[NamedNode(_KEY_ENABLED)]
             )
 
         request = run_on_key(
@@ -58,6 +66,7 @@ class CaseCompiler:
         ).convert()
         return Case(
             label=label,
+            enabled=enabled,
             request=request,
             response_description=response_description,
         )

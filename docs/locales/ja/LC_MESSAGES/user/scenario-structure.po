@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"POT-Creation-Date: 2019-11-27 23:55+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,296 +33,306 @@ msgstr ""
 msgid "Here is a configuration example."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:59
+#: ../../user/scenario-structure.rst:60
 msgid "Components"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:62
+#: ../../user/scenario-structure.rst:63
 msgid "Scenario"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:63
+#: ../../user/scenario-structure.rst:64
 msgid ""
 "A ``Scenario`` is written in `YAML`_. A ``Scenario`` is a mapping that "
 "consists of below:"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:67 ../../user/scenario-structure.rst:84
+#: ../../user/scenario-structure.rst:68 ../../user/scenario-structure.rst:85
 msgid "label: ``String`` (Recommended)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:67
+#: ../../user/scenario-structure.rst:68
 msgid "A label of this scenario."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:68
+#: ../../user/scenario-structure.rst:69
 msgid ""
 "This field is actually optional but recommended to tell this scenario "
 "from another."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:69
+#: ../../user/scenario-structure.rst:70
 msgid "default: ``Default`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:70
+#: ../../user/scenario-structure.rst:71
 msgid "Default of this scenario."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:72
+#: ../../user/scenario-structure.rst:73
 msgid "when: ``Description`` or ``List<Description>`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:72
+#: ../../user/scenario-structure.rst:73
 msgid "Run this scenario only when the context satisfies these description."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:73
+#: ../../user/scenario-structure.rst:74
 msgid "See: :doc:`Application Running Context<context>`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:74
+#: ../../user/scenario-structure.rst:75
 msgid "cases: ``List<Case>`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:75
+#: ../../user/scenario-structure.rst:76
 msgid "Test cases."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:77
+#: ../../user/scenario-structure.rst:78
 msgid "subscenarios: ``List<Scenario>`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:77
+#: ../../user/scenario-structure.rst:78
 msgid "Nested scenarios."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:80
+#: ../../user/scenario-structure.rst:81
 msgid "Case"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:81
+#: ../../user/scenario-structure.rst:82
 msgid "A ``Case`` is a mapping that consists of below:"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:84
+#: ../../user/scenario-structure.rst:85
 msgid "A label of this case."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:85
+#: ../../user/scenario-structure.rst:86
 msgid ""
 "This field is actually optional but recommended to tell this case from "
 "another."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:86 ../../user/scenario-structure.rst:154
-msgid "request: ``Request`` (Optional)"
+# 8b970692dd9443d3811c3f169f06dc13
+#: ../../user/scenario-structure.rst:87
+msgid "enabled: ``Boolean`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:87
-msgid "A request."
+# 126b21595a394c89b7acc698c6a5a11e
+#: ../../user/scenario-structure.rst:88
+msgid "Whether this case is enabled. The default value is ``true``."
 msgstr ""
 
 #: ../../user/scenario-structure.rst:89 ../../user/scenario-structure.rst:157
+msgid "request: ``Request`` (Optional)"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:90
+msgid "A request."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:92 ../../user/scenario-structure.rst:160
 msgid "response: ``ResponseDescription`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:89
+#: ../../user/scenario-structure.rst:92
 msgid "A response description."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:92
+#: ../../user/scenario-structure.rst:95
 msgid "Request"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:93
+#: ../../user/scenario-structure.rst:96
 msgid "A ``Request`` is a mapping or a string."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:95
+#: ../../user/scenario-structure.rst:98
 msgid "A mapping for ``Request`` has items below:"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:97
+#: ../../user/scenario-structure.rst:100
 msgid "path: ``String`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:98
+#: ../../user/scenario-structure.rst:101
 msgid "A request path. The default value is ``''``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:99
+#: ../../user/scenario-structure.rst:102
 msgid "Headers: ``Mapping<String, String>`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:100
+#: ../../user/scenario-structure.rst:103
 msgid "Request headers as a mapping of names to values."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:102
+#: ../../user/scenario-structure.rst:105
 msgid "params: ``Mapping<String, String>`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:102
+#: ../../user/scenario-structure.rst:105
 msgid "Query parameters as a mapping of keys to values."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:104
+#: ../../user/scenario-structure.rst:107
 msgid "When given a string, that is equivalent to ``{\"path\": it}``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:107
+#: ../../user/scenario-structure.rst:110
 msgid "Response Decription"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:108
+#: ../../user/scenario-structure.rst:111
 msgid "A ``ResponseDescription`` is a mapping that consists of below:"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:111
+#: ../../user/scenario-structure.rst:114
 msgid "status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:111
+#: ../../user/scenario-structure.rst:114
 msgid "Predicates that match a status code as an integer value."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:112
+#: ../../user/scenario-structure.rst:115
 msgid "When given a number, that is equivalent to ``{\"equal\": it}``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:117
+#: ../../user/scenario-structure.rst:120
 msgid "headers:"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:114
+#: ../../user/scenario-structure.rst:117
 msgid "Descriptions that descript the response headers."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:115
+#: ../../user/scenario-structure.rst:118
 msgid ""
 "Response headers are converted to be a JSON that is a mapping of names to"
 " values and can be descripted as a JSON (e.g. ``.\"content-type\"``). "
 "*Note that Names are lower-cased* to normalize."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:120
+#: ../../user/scenario-structure.rst:123
 msgid "body: ``BodyDescription`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:120
+#: ../../user/scenario-structure.rst:123
 msgid "A description that descript the response body."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:123
+#: ../../user/scenario-structure.rst:126
 msgid "Body Description"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:124
+#: ../../user/scenario-structure.rst:127
 msgid "A ``BodyDescription`` is a mapping or a list."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:126
+#: ../../user/scenario-structure.rst:129
 msgid "A mapping for ``BodyDescription`` has items below."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:130
+#: ../../user/scenario-structure.rst:133
 msgid "analyzed_as: ``String`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:129
+#: ../../user/scenario-structure.rst:132
 msgid "The method to analyze the body. The default value is ``json``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:130
+#: ../../user/scenario-structure.rst:133
 msgid "When given ``json``, the body is analyzed as a JSON."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:131
+#: ../../user/scenario-structure.rst:134
 msgid "When given ``xml``, the body is analyzed as an XML."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:133
+#: ../../user/scenario-structure.rst:136
 msgid "descriptions: ``Description`` or ``List<Description>``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:133
+#: ../../user/scenario-structure.rst:136
 msgid "Descriptions that descript the response body."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:135
+#: ../../user/scenario-structure.rst:138
 msgid "When given a list, that is equivalent to ``{\"descritptions\": it}``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:138
+#: ../../user/scenario-structure.rst:141
 msgid "Description"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:139
+#: ../../user/scenario-structure.rst:142
 msgid "A ``Description`` is a mapping that consists of below:"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:141
+#: ../../user/scenario-structure.rst:144
 msgid "describe: :doc:`Extraction<extraction>`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:142
+#: ../../user/scenario-structure.rst:145
 msgid "An extraction process."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:144
+#: ../../user/scenario-structure.rst:147
 msgid "should: ``Predicate``, or ``List<Predicate>>`` (Optional)"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:144
+#: ../../user/scenario-structure.rst:147
 msgid "Predicates that match the descripted value."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:147
+#: ../../user/scenario-structure.rst:150
 msgid "Predicate"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:148
+#: ../../user/scenario-structure.rst:151
 msgid ""
 "A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the "
 "future)."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:151
+#: ../../user/scenario-structure.rst:154
 msgid "Default"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:152
+#: ../../user/scenario-structure.rst:155
 msgid "A ``Default`` is a mapping that consists of below:"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:155
+#: ../../user/scenario-structure.rst:158
 msgid "A request to overwrite the default request values."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:157
+#: ../../user/scenario-structure.rst:160
 msgid ""
 "A response description to overwrite the default response description "
 "values."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:160
+#: ../../user/scenario-structure.rst:163
 msgid "Inclusion"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:161
+#: ../../user/scenario-structure.rst:164
 msgid ""
 "Using ``!include`` tag, you can include other YAML files. This macro is "
 "available anywhere in your scenario."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:168
+#: ../../user/scenario-structure.rst:171
 msgid ""
 "A good practice of this feature is locating subscenarios on "
 "subdirectories."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:177
+#: ../../user/scenario-structure.rst:180
 msgid ""
 "Anchors in a including YAML are not available in included YAMLs, because "
 "the included YAMLs are parsed after the including YAML is parsed."

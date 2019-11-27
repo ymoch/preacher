@@ -219,6 +219,12 @@ cases:
         should:
           be_greater_than: 0
 
+  - label: Disabled
+    enabled: false
+    request: /invalid
+    response:
+      status_code: 200
+
 subscenarios:
   - !include ./example-skipped.yml
   - label: Subscenario succeeds

@@ -29,6 +29,7 @@ Here is a configuration example.
               should:
                 equal: bar
       - label: A Little Complecated
+        enabled: true
         request:
           path: /path/to/foo
           headers:
@@ -83,6 +84,8 @@ A ``Case`` is a mapping that consists of below:
 - label: ``String`` (Recommended)
     - A label of this case.
     - This field is actually optional but recommended to tell this case from another.
+- enabled: ``Boolean`` (Optional)
+    - Whether this case is enabled. The default value is ``true``.
 - request: ``Request`` (Optional)
     - A request.
 - response: ``ResponseDescription`` (Optional)

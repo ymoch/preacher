@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-22 10:08+0900\n"
+"POT-Creation-Date: 2019-11-28 00:00+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,8 +26,7 @@ msgstr "Preacher: 自動化とリアルさを重視する Web API 検証ツー�
 msgid ""
 "Preacher verifies API servers, which requests to API servers and verify "
 "the response along to given scenarios."
-msgstr ""
-"Preacher は API サーバを検証するツールです. シナリオに従って API サーバにリクエストし, レスポンスを検証します."
+msgstr "Preacher は API サーバを検証するツールです. シナリオに従って API サーバにリクエストし, レスポンスを検証します."
 
 #: ../../index.rst:18
 msgid ""
@@ -42,3 +41,4 @@ msgstr ""
 #: ../../index.rst:23
 msgid "The User Guide"
 msgstr "ユーザーガイド"
+
