@@ -10,10 +10,7 @@ def func():
     return MagicMock(side_effect=[0, 0, 1])
 
 
-@mark.parametrize('attempts', (
-    -1,
-    0,
-))
+@mark.parametrize('attempts', (-1, 0))
 @mark.xfail(raises=ValueError)
 def test_when_given_invalid_args(func, attempts):
     retry_while_false(func, attempts=attempts)
