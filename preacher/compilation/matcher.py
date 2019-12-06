@@ -4,22 +4,27 @@ from collections.abc import Mapping
 from typing import Any
 
 import hamcrest
-from hamcrest.core.matcher import Matcher
 
+from preacher.core.matcher import (
+    Matcher,
+    StaticMatcher,
+    SingleValueMatcher,
+    RecursiveMatcher,
+)
+from preacher.core.value import StaticValue
 from .error import CompilationError, NamedNode
 from .util import map_on_key, run_on_key
 
-
 _STATIC_MATCHER_MAP = {
     # For objects.
-    'be_null': hamcrest.is_(hamcrest.none()),
-    'not_be_null': hamcrest.is_(hamcrest.not_none()),
+    'be_null': StaticMatcher(hamcrest.is_(hamcrest.none())),
+    'not_be_null': StaticMatcher(hamcrest.is_(hamcrest.not_none())),
 
     # For collections.
-    'be_empty': hamcrest.is_(hamcrest.empty()),
+    'be_empty': StaticMatcher(hamcrest.is_(hamcrest.empty())),
 
     # Logical.
-    'anything': hamcrest.is_(hamcrest.anything()),
+    'anything': StaticMatcher(hamcrest.is_(hamcrest.anything())),
 }
 
 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
@@ -63,25 +68,25 @@ _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS = {
 }
 
 
-def _compile_taking_single_matcher(key: str, value: Any):
-    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER[key]
+def _compile_taking_single_matcher(key: str, value: Any) -> Matcher:
+    hamcrest_factory = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER[key]
 
     if isinstance(value, str) or isinstance(value, Mapping):
         inner = run_on_key(key, compile, value)
     else:
-        inner = hamcrest.equal_to(value)
+        inner = SingleValueMatcher(hamcrest.equal_to, StaticValue(value))
 
-    return func(inner)
+    return RecursiveMatcher(hamcrest_factory, [inner])
 
 
-def _compile_taking_multi_matchers(key: str, value: Any):
-    func = _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS[key]
+def _compile_taking_multi_matchers(key: str, value: Any) -> Matcher:
+    hamcrest_factory = _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS[key]
 
     if not isinstance(value, list):
         raise CompilationError('Must be a string', path=[NamedNode(key)])
 
-    inner_matchers = map_on_key(key, compile, value)
-    return func(*inner_matchers)
+    inner_matchers = list(map_on_key(key, compile, value))
+    return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 
 def compile(obj: Any) -> Matcher:
@@ -98,7 +103,10 @@ def compile(obj: Any) -> Matcher:
         key, value = next(iter(obj.items()))
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
-            return _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key](value)
+            return SingleValueMatcher(
+                _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key],
+                StaticValue(value),
+            )
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
             return _compile_taking_single_matcher(key, value)
@@ -106,4 +114,4 @@ def compile(obj: Any) -> Matcher:
         if key in _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS:
             return _compile_taking_multi_matchers(key, value)
 
-    return hamcrest.equal_to(obj)
+    return SingleValueMatcher(hamcrest.equal_to, StaticValue(obj))
