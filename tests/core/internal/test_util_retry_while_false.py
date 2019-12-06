@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch, sentinel
 
 from pytest import fixture, mark
 
-from preacher.core.util import retry_while_false
+from preacher.core.internal.retry import retry_while_false
 
 
 @fixture
