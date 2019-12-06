@@ -10,7 +10,7 @@ from .response_description import (
     ResponseVerification,
 )
 from .status import Status, StatusedMixin, merge_statuses
-from .util import retry_while_false
+from preacher.core.internal.retry import retry_while_false
 from .verification import Verification
 
 

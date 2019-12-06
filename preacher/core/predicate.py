@@ -5,6 +5,7 @@ from typing import Any, Callable
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher
 
+from .internal.functional import identify
 from .status import Status
 from .verification import Verification
 
@@ -33,7 +34,7 @@ class DynamicMatcherPredicate:
     def __init__(
         self,
         matcher_factory: Callable,
-        converter: Callable[[Any], Any] = lambda x: x,
+        converter: Callable[[Any], Any] = identify,
     ):
         self._matcher_factory = matcher_factory
         self._converter = converter
