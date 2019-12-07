@@ -16,6 +16,9 @@ from .verification import Verification, collect
 
 
 class ScenarioListener(CaseListener):
+    """
+    Interface to listen to scenario running.
+    """
     pass
 
 
@@ -75,14 +78,14 @@ class Scenario:
     def __init__(
         self,
         label: Optional[str] = None,
-        conditions: List[Description] = [],
-        cases: List[Case] = [],
-        subscenarios: List[Scenario] = [],
+        conditions: Optional[List[Description]] = None,
+        cases: Optional[List[Case]] = None,
+        subscenarios: Optional[List[Scenario]] = None,
     ):
         self._label = label
-        self._conditions = conditions
-        self._cases = cases
-        self._subscenarios = subscenarios
+        self._conditions = conditions or []
+        self._cases = cases or []
+        self._subscenarios = subscenarios or []
 
     def run(
         self,
