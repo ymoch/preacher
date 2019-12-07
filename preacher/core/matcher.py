@@ -5,9 +5,9 @@ from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from .status import Status
+from preacher.interpretation import identify
 from preacher.interpretation.value import Value
 from .verification import Verification
-
 
 T = TypeVar('T')
 
@@ -46,7 +46,7 @@ class SingleValueMatcher(Matcher, Generic[T]):
         self,
         hamcrest_factory: Callable[..., HamcrestMatcher],
         value: Value[T],
-        interpret: Callable,
+        interpret: Callable = identify,
     ):
         self._hamcrest_factory = hamcrest_factory
         self._value = value
