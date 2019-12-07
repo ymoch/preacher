@@ -5,14 +5,24 @@ from .analysis import Analyzer, JsonAnalyzer
 
 
 @dataclass(frozen=True)
-class ApplicationContext:
+class ApplicationContextComponent:
     started: datetime
     base_url: str
 
 
 @dataclass(frozen=True)
-class ScenarioContext:
+class ApplicationContext:
+    app: ApplicationContextComponent
+
+
+@dataclass(frozen=True)
+class ScenarioContextComponent:
     started: datetime
+
+
+@dataclass(frozen=True)
+class ScenarioContext(ApplicationContext):
+    scenario: ScenarioContextComponent
 
 
 @dataclass(frozen=True)
@@ -21,7 +31,13 @@ class CaseContext:
 
 
 @dataclass(frozen=True)
+class CaseContext(ScenarioContext):
+    case: CaseContext
+
+
+@dataclass(frozen=True)
 class Context:
+    """Deprecated!"""
     base_url: str = ''
 
     def analyze(self) -> Analyzer:

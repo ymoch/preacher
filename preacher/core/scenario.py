@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import Context, ApplicationContext, ScenarioContext
+from .context import Context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -74,11 +74,6 @@ ScenarioTask = Union[RunningScenarioTask, StaticScenarioTask]
 
 
 class Scenario:
-
-    @dataclass(frozen=True)
-    class Context:
-        app: ApplicationContext
-        scenario: ScenarioContext
 
     def __init__(
         self,
