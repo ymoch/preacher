@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, sentinel
 from pytest import fixture
 
 from preacher.core.description import Description
+from preacher.core.predicate import Predicate
 from preacher.core.status import Status
 from preacher.core.verification import Verification
 
@@ -32,13 +33,20 @@ def test_when_given_no_predicates(extractor):
 
 
 def test_when_given_a_predicate_to_fail(extractor):
+    predicates = [
+        MagicMock(Predicate, verify=MagicMock(
+            return_value=Verification(Status.UNSTABLE),
+        )),
+        MagicMock(Predicate, verify=MagicMock(
+            return_value=Verification(Status.FAILURE),
+        )),
+        MagicMock(Predicate, verify=MagicMock(
+            return_value=Verification(Status.SUCCESS),
+        )),
+    ]
     description = Description(
         extractor=extractor,
-        predicates=[
-            MagicMock(return_value=Verification(Status.UNSTABLE)),
-            MagicMock(return_value=Verification(Status.FAILURE)),
-            MagicMock(return_value=Verification(Status.SUCCESS)),
-        ]
+        predicates=predicates,
     )
     verification = description(sentinel.analyzer, k='v')
     assert verification.status == Status.FAILURE
@@ -48,18 +56,22 @@ def test_when_given_a_predicate_to_fail(extractor):
     assert verification.children[2].status == Status.SUCCESS
 
     extractor.extract.assert_called_once_with(sentinel.analyzer)
-    description.predicates[0].assert_called_once_with(sentinel.target, k='v')
-    description.predicates[1].assert_called_once_with(sentinel.target, k='v')
-    description.predicates[2].assert_called_once_with(sentinel.target, k='v')
+    for predicate in predicates:
+        predicate.verify.assert_called_once_with(sentinel.target, k='v')
 
 
 def test_when_given_predicates_to_success(extractor):
+    predicates = [
+        MagicMock(Predicate, verify=MagicMock(
+            return_value=Verification(Status.SUCCESS),
+        )),
+        MagicMock(Predicate, verify=MagicMock(
+            return_value=Verification(Status.SUCCESS)
+        )),
+    ]
     description = Description(
         extractor=extractor,
-        predicates=[
-            MagicMock(return_value=Verification(Status.SUCCESS)),
-            MagicMock(return_value=Verification(Status.SUCCESS)),
-        ]
+        predicates=predicates,
     )
     verification = description(sentinel.analyzer, k='v')
     assert verification.status == Status.SUCCESS
@@ -68,5 +80,6 @@ def test_when_given_predicates_to_success(extractor):
     assert verification.children[1].status == Status.SUCCESS
 
     extractor.extract.assert_called_once_with(sentinel.analyzer)
-    description.predicates[0].assert_called_once_with(sentinel.target, k='v')
-    description.predicates[1].assert_called_once_with(sentinel.target, k='v')
+    for predicate in predicates:
+        predicate.verify.assert_called_once_with(sentinel.target, k='v')
+        predicate.verify.assert_called_once_with(sentinel.target, k='v')

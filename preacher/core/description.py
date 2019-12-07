@@ -1,14 +1,12 @@
 """Description."""
 
-from typing import Any, Callable, List
+from typing import Any, List
 
 from .analysis import Analyzer
 from .extraction import Extractor
+from .predicate import Predicate
 from .status import merge_statuses
 from .verification import Verification
-
-
-Predicate = Callable
 
 
 class Description:
@@ -25,7 +23,7 @@ class Description:
             return Verification.of_error(error)
 
         verifications = [
-            predicate(verified_value, **kwargs)
+            predicate.verify(verified_value, **kwargs)
             for predicate in self._predicates
         ]
         status = merge_statuses(v.status for v in verifications)
