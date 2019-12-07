@@ -3,12 +3,17 @@ from unittest.mock import MagicMock, patch, sentinel
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from pytest import fixture, raises
 
-from preacher.core.matcher import Matcher, match, StaticMatcher, ValueMatcher
+from preacher.core.matcher import Matcher, match, StaticMatcher, ValueMatcher, RecursiveMatcher
 from preacher.core.status import Status
 from preacher.interpretation.error import InterpretationError
 from preacher.interpretation.value import Value
 
 PACKAGE = 'preacher.core.matcher'
+
+
+@fixture
+def hamcrest_factory():
+    return MagicMock(return_value=sentinel.hamcrest)
 
 
 @fixture
@@ -33,8 +38,7 @@ def test_static_matcher():
     assert matcher.to_hamcrest(k='v') == sentinel.hamcrest
 
 
-def test_value_matcher():
-    hamcrest_factory = MagicMock(return_value=sentinel.hamcrest)
+def test_value_matcher(hamcrest_factory):
     value = MagicMock(Value)
     value.apply_context.return_value = sentinel.value_in_context
     interpret = MagicMock(return_value=sentinel.value_interpreted)
@@ -46,6 +50,28 @@ def test_value_matcher():
     value.apply_context.assert_called_once_with(key='value')
     interpret.assert_called_once_with(sentinel.value_in_context, key='value')
     hamcrest_factory.assert_called_once_with(sentinel.value_interpreted)
+
+
+def test_recursive_matcher(hamcrest_factory):
+    inner_matchers = [
+        MagicMock(Matcher, to_hamcrest=MagicMock(
+            return_value=sentinel.inner_hamcrest_0
+        )),
+        MagicMock(Matcher, to_hamcrest=MagicMock(
+            return_value=sentinel.inner_hamcrest_1
+        )),
+    ]
+
+    matcher = RecursiveMatcher(hamcrest_factory, inner_matchers)
+    hamcrest = matcher.to_hamcrest(key='value')
+    assert hamcrest == sentinel.hamcrest
+    for inner_matcher in inner_matchers:
+        inner_matcher.to_hamcrest.assert_called_once_with(key='value')
+        inner_matcher.to_hamcrest.assert_called_once_with(key='value')
+    hamcrest_factory.assert_called_once_with(
+        sentinel.inner_hamcrest_0,
+        sentinel.inner_hamcrest_1,
+    )
 
 
 def test_match_when_an_interpretation_error_occurs():

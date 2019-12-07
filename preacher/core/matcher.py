@@ -58,7 +58,7 @@ class RecursiveMatcher(Matcher):
 
     def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
         inner_hamcrest_matchers = (
-            inner_matcher.to_hamcrest()
+            inner_matcher.to_hamcrest(**kwargs)
             for inner_matcher in self._inner_matchers
         )
         return self._hamcrest_factory(*inner_hamcrest_matchers)
