@@ -153,7 +153,7 @@ def test_verification(compiled, verified, expected_status):
     assert match(compile(compiled), verified).status == expected_status
 
 
-@patch(f'{PACKAGE}.SingleValueMatcher', return_value=sentinel.matcher)
+@patch(f'{PACKAGE}.ValueMatcher', return_value=sentinel.matcher)
 @patch(f'{PACKAGE}.value_of', return_value=sentinel.value)
 @mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
     ({'be_before': 'now'}, 'now', hamcrest.less_than),

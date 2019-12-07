@@ -30,7 +30,7 @@ _STATIC_MATCHER_MAP = {
     'anything': StaticMatcher(hamcrest.is_(hamcrest.anything())),
 }
 
-_MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
+_VALUE_MATCHER_HAMCREST_MAP = {
     # For objects.
     'equal': hamcrest.equal_to,
     'have_length': hamcrest.has_length,
@@ -52,13 +52,13 @@ _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
     'be_after': hamcrest.greater_than,
 }
 
-_MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
+_SINGLE_MATCHER_HAMCREST_MAP = {
     'be': hamcrest.is_,
     'not': hamcrest.not_,
     'have_item': hamcrest.has_item,
 }
 
-_MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS = {
+_MULTI_MATCHERS_HAMCREST_MAP = {
     'contain': hamcrest.contains,
     'contain_in_any_order': hamcrest.contains_inanyorder,
     'have_items': hamcrest.has_items,
@@ -73,7 +73,7 @@ _INTERPRETER_MAP = {
 
 
 def _compile_taking_single_matcher(key: str, value: Any) -> Matcher:
-    hamcrest_factory = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER[key]
+    hamcrest_factory = _SINGLE_MATCHER_HAMCREST_MAP[key]
 
     if isinstance(value, str) or isinstance(value, Mapping):
         inner = run_on_key(key, compile, value)
@@ -84,7 +84,7 @@ def _compile_taking_single_matcher(key: str, value: Any) -> Matcher:
 
 
 def _compile_taking_multi_matchers(key: str, value: Any) -> Matcher:
-    hamcrest_factory = _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS[key]
+    hamcrest_factory = _MULTI_MATCHERS_HAMCREST_MAP[key]
 
     if not isinstance(value, list):
         raise CompilationError('Must be a string', path=[NamedNode(key)])
@@ -106,18 +106,17 @@ def compile(obj: Any) -> Matcher:
 
         key, value = next(iter(obj.items()))
 
-        if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
-            interpret = _INTERPRETER_MAP.get(key, identify)
+        if key in _VALUE_MATCHER_HAMCREST_MAP:
             return ValueMatcher(
-                _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key],
+                _VALUE_MATCHER_HAMCREST_MAP[key],
                 value_of(value),
-                interpret=interpret,
+                interpret=_INTERPRETER_MAP.get(key, identify),
             )
 
-        if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
+        if key in _SINGLE_MATCHER_HAMCREST_MAP:
             return _compile_taking_single_matcher(key, value)
 
-        if key in _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS:
+        if key in _MULTI_MATCHERS_HAMCREST_MAP:
             return _compile_taking_multi_matchers(key, value)
 
     return ValueMatcher(hamcrest.equal_to, value_of(obj))
