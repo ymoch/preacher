@@ -2,11 +2,8 @@
 
 from typing import Any, Callable
 
-from hamcrest import assert_that
-from hamcrest.core.matcher import Matcher
-
 from .internal.functional import identify
-from .status import Status
+from .matcher import Matcher
 from .verification import Verification
 
 
@@ -17,15 +14,7 @@ class MatcherPredicate:
         self._matcher = matcher
 
     def __call__(self, actual: Any, **kwargs: Any) -> Verification:
-        try:
-            assert_that(actual, self._matcher)
-        except AssertionError as error:
-            message = str(error).strip()
-            return Verification(status=Status.UNSTABLE, message=message)
-        except Exception as error:
-            return Verification.of_error(error)
-
-        return Verification.succeed()
+        return self._matcher.verify(actual, **kwargs)
 
 
 class DynamicMatcherPredicate:

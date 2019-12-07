@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, List, Optional
+from typing import Callable, List
 
 from hamcrest import assert_that, equal_to
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
