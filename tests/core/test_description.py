@@ -16,7 +16,7 @@ def extractor():
 def test_when_analysis_fails():
     extractor = MagicMock(extract=MagicMock(side_effect=Exception('message')))
     description = Description(extractor=extractor, predicates=[])
-    verification = description(sentinel.analyzer)
+    verification = description.verify(sentinel.analyzer)
     assert verification.status == Status.FAILURE
     assert verification.message == 'Exception: message'
 
@@ -25,7 +25,7 @@ def test_when_analysis_fails():
 
 def test_when_given_no_predicates(extractor):
     description = Description(extractor=extractor, predicates=[])
-    verification = description(sentinel.analyzer)
+    verification = description.verify(sentinel.analyzer)
     assert verification.status == Status.SKIPPED
     assert len(verification.children) == 0
 
@@ -48,7 +48,7 @@ def test_when_given_a_predicate_to_fail(extractor):
         extractor=extractor,
         predicates=predicates,
     )
-    verification = description(sentinel.analyzer, k='v')
+    verification = description.verify(sentinel.analyzer, k='v')
     assert verification.status == Status.FAILURE
     assert len(verification.children) == 3
     assert verification.children[0].status == Status.UNSTABLE
@@ -73,7 +73,7 @@ def test_when_given_predicates_to_success(extractor):
         extractor=extractor,
         predicates=predicates,
     )
-    verification = description(sentinel.analyzer, k='v')
+    verification = description.verify(sentinel.analyzer, k='v')
     assert verification.status == Status.SUCCESS
     assert len(verification.children) == 2
     assert verification.children[0].status == Status.SUCCESS

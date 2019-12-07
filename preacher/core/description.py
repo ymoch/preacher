@@ -15,7 +15,7 @@ class Description:
         self._extractor = extractor
         self._predicates = predicates
 
-    def __call__(self, analyzer: Analyzer, **kwargs: Any) -> Verification:
+    def verify(self, analyzer: Analyzer, **kwargs: Any) -> Verification:
         """`**kwargs` will be delegated to predicates."""
         try:
             verified_value = self._extractor.extract(analyzer)

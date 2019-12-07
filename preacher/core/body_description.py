@@ -23,8 +23,8 @@ class BodyDescription:
             return Verification.of_error(error)
 
         verifications = [
-            describe(analyzer, **kwargs)
-            for describe in self._descriptions
+            description.verify(analyzer, **kwargs)
+            for description in self._descriptions
         ]
         status = merge_statuses(v.status for v in verifications)
         return Verification(status=status, children=verifications)

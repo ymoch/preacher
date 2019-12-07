@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Collection, Iterable, Optional
+from typing import Iterable, Optional, Sequence
 
 from .status import Status, StatusedMixin, merge_statuses
 
@@ -11,7 +11,7 @@ from .status import Status, StatusedMixin, merge_statuses
 @dataclass(frozen=True)
 class Verification(StatusedMixin):
     message: Optional[str] = None
-    children: Collection[Verification] = tuple()
+    children: Sequence[Verification] = tuple()
 
     @staticmethod
     def skipped() -> Verification:
