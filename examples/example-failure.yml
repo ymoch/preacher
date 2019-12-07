@@ -11,3 +11,10 @@ cases:
     response:
       body: {}
 
+  - label: Datetime parse error
+    request: /json
+    response:
+      body:
+        - describe: .foo
+          should:
+            be_after: now
