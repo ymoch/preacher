@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
-from unittest.mock import MagicMock, patch, sentinel
+from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from preacher.core.context import Context
 from preacher.core.description import Description
@@ -35,10 +35,10 @@ def test_given_a_filled_scenario():
     assert list(result.cases) == [sentinel.result1, sentinel.result2]
 
     case1.assert_called_once_with(
-        'base_url', retry=3, delay=2.0, timeout=5.0, listener=None,
+        'base_url', retry=3, delay=2.0, timeout=5.0, listener=ANY,
     )
     case2.assert_called_once_with(
-        'base_url', retry=3, delay=2.0, timeout=5.0, listener=None,
+        'base_url', retry=3, delay=2.0, timeout=5.0, listener=ANY,
     )
 
 

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import Context
+from .context import Context, ApplicationContext, ScenarioContext
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -75,6 +75,11 @@ ScenarioTask = Union[RunningScenarioTask, StaticScenarioTask]
 
 class Scenario:
 
+    @dataclass(frozen=True)
+    class Context:
+        app: ApplicationContext
+        scenario: ScenarioContext
+
     def __init__(
         self,
         label: Optional[str] = None,
@@ -133,6 +138,7 @@ class Scenario:
                 conditions=conditions,
             ))
 
+        listener = listener or ScenarioListener()
         cases = executor.submit(
             self._run_cases,
             base_url=base_url,
@@ -165,7 +171,7 @@ class Scenario:
         retry: int,
         delay: float,
         timeout: Optional[float],
-        listener: Optional[CaseListener],
+        listener: CaseListener,
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(
             case(
