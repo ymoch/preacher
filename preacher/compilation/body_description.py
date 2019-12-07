@@ -25,7 +25,7 @@ class Compiled:
     def convert(self) -> BodyDescription:
         return BodyDescription(
             analyze=or_default(self.analyze, analyze_json_str),
-            descriptions=or_default(self.descriptions, []),
+            descriptions=self.descriptions,
         )
 
 

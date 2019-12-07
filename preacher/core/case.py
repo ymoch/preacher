@@ -15,7 +15,10 @@ from .verification import Verification
 
 
 class CaseListener:
-
+    """
+    Interface to listen to running cases.
+    Default implementations do nothing.
+    """
     def on_response(self, response: Response) -> None:
         pass
 
@@ -58,7 +61,7 @@ class Case:
             self._run,
             base_url=base_url,
             timeout=timeout,
-            listener=listener,
+            listener=listener or CaseListener(),
         )
         return retry_while_false(func, attempts=retry + 1, delay=delay)
 
@@ -66,7 +69,7 @@ class Case:
         self,
         base_url: str,
         timeout: Optional[float],
-        listener: Optional[CaseListener],
+        listener: CaseListener,
     ) -> CaseResult:
         try:
             response = self._request(base_url, timeout=timeout)
@@ -76,8 +79,7 @@ class Case:
                 request=Verification.of_error(error),
                 label=self._label,
             )
-        if listener:
-            listener.on_response(response)
+        listener.on_response(response)
 
         request_verification = Verification.succeed()
         response_verification = self._response_description.verify(
