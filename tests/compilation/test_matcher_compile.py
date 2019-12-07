@@ -1,9 +1,14 @@
+from unittest.mock import patch, sentinel
+
+import hamcrest
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.matcher import compile
 from preacher.core.status import Status
+from preacher.interpretation.datetime import interpret_datetime
 
+PACKAGE = 'preacher.compilation.matcher'
 
 SUCCESS = Status.SUCCESS
 UNSTABLE = Status.UNSTABLE
@@ -145,3 +150,27 @@ def test_given_not_a_list_for_multiple_matchers():
 ])
 def test_verification(compiled, verified, expected_status):
     assert compile(compiled).verify(verified).status == expected_status
+
+
+@patch(f'{PACKAGE}.SingleValueMatcher', return_value=sentinel.matcher)
+@patch(f'{PACKAGE}.value_of', return_value=sentinel.value)
+@mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
+    ({'be_before': 'now'}, 'now', hamcrest.less_than),
+    ({'be_after': '1 second'}, '1 second', hamcrest.greater_than),
+])
+def test_verification_with_datetime(
+    value_of,
+    matcher_ctor,
+    compiled,
+    expected_value,
+    expected_hamcrest_factory,
+):
+    actual = compile(compiled)
+    assert actual == sentinel.matcher
+
+    value_of.assert_called_once_with(expected_value)
+    matcher_ctor.assert_called_once_with(
+        expected_hamcrest_factory,
+        sentinel.value,
+        interpret=interpret_datetime,
+    )

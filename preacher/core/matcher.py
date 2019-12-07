@@ -19,6 +19,7 @@ class Matcher(ABC):
         raise NotImplementedError()
 
     def verify(self, actual, **kwargs) -> Verification:
+        """Default implementation."""
         try:
             matcher = self.to_hamcrest(**kwargs)
             assert_that(actual, matcher)
