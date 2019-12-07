@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Generic, List, TypeVar
+from typing import Any, Callable, Generic, List, Optional, TypeVar
 
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
-from .status import Status
 from preacher.interpretation import identify
 from preacher.interpretation.value import Value
+from .status import Status
 from .verification import Verification
 
 T = TypeVar('T')
@@ -64,7 +64,7 @@ class RecursiveMatcher(Matcher):
         return self._hamcrest_factory(*inner_hamcrest_matchers)
 
 
-def match(matcher: Matcher, actual, **kwargs) -> Verification:
+def match(matcher: Matcher, actual: Optional[Any], **kwargs) -> Verification:
     try:
         matcher = matcher.to_hamcrest(**kwargs)
         assert_that(actual, matcher)

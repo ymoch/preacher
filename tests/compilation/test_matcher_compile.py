@@ -1,10 +1,10 @@
 from unittest.mock import patch, sentinel
 
-import hamcrest
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.matcher import compile
+from preacher.core.hamcrest import after, before
 from preacher.core.matcher import match
 from preacher.core.status import Status
 from preacher.interpretation.datetime import interpret_datetime
@@ -156,8 +156,8 @@ def test_verification(compiled, verified, expected_status):
 @patch(f'{PACKAGE}.ValueMatcher', return_value=sentinel.matcher)
 @patch(f'{PACKAGE}.value_of', return_value=sentinel.value)
 @mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
-    ({'be_before': 'now'}, 'now', hamcrest.less_than),
-    ({'be_after': '1 second'}, '1 second', hamcrest.greater_than),
+    ({'be_before': 'now'}, 'now', before),
+    ({'be_after': '1 second'}, '1 second', after),
 ])
 def test_verification_with_datetime(
     value_of,

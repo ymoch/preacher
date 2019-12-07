@@ -5,6 +5,7 @@ from typing import Any
 
 import hamcrest
 
+from preacher.core.hamcrest import after, before
 from preacher.core.matcher import (
     Matcher,
     StaticMatcher,
@@ -16,7 +17,6 @@ from preacher.interpretation.datetime import interpret_datetime
 from preacher.interpretation.value import value_of
 from .error import CompilationError, NamedNode
 from .util import map_on_key, run_on_key
-
 
 _STATIC_MATCHER_MAP = {
     # For objects.
@@ -48,8 +48,8 @@ _VALUE_MATCHER_HAMCREST_MAP = {
     'match_regexp': hamcrest.matches_regexp,
 
     # For datetime.
-    'be_before': hamcrest.less_than,
-    'be_after': hamcrest.greater_than,
+    'be_before': before,
+    'be_after': after,
 }
 
 _SINGLE_MATCHER_HAMCREST_MAP = {
