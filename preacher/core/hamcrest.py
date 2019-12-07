@@ -14,11 +14,17 @@ class _ConvertingMatcher(BaseMatcher):
         self._convert = convert
 
     def _matches(self, item):
-        datetime_item = self._convert(item)
-        return self._matcher._matches(datetime_item)
+        converted_item = self._convert(item)
+        return self._matcher._matches(converted_item)
 
     def describe_to(self, description):
         self._matcher.describe_to(description)
+
+    def describe_mismatch(self, item, mismatch_description):
+        converted_item = self._convert(item)
+        mismatch_description.append_text('was ').append_description_of(
+            converted_item
+        )
 
 
 def _string_datetime_matcher(matcher: BaseMatcher) -> Matcher:
