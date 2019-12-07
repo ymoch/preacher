@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from .matcher import Matcher
+from .matcher import Matcher, match
 from .verification import Verification
 
 
@@ -13,4 +13,4 @@ class MatcherPredicate:
         self._matcher = matcher
 
     def __call__(self, actual: Any, **kwargs: Any) -> Verification:
-        return self._matcher.verify(actual, **kwargs)
+        return match(self._matcher, actual, **kwargs)
