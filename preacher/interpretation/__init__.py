@@ -4,12 +4,12 @@ from typing import TypeVar
 T = TypeVar('T')
 
 
-def identify(arg: T) -> T:
+def identify(value: T, **kwargs) -> T:
     """
     >>> identify(None)
     >>> identify(1)
     1
-    >>> identify('str')
-    'str'
+    >>> identify('A', key='value')
+    'A'
     """
-    return arg
+    return value

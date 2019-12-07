@@ -108,11 +108,11 @@ cases:
     response:
       status_code: 200
       body:
-        describe: .now
-        should:
-          - be_before: 1 minute
-          - be_after: -2 minutes
-          - be_after: 1 second  # Must be processed after 1 seconds.
+        - describe: .now
+          should:
+            - be_before: 1 minute
+            - be_after: -2 minutes
+            - be_after: 1 second  # Must be processed after 1 seconds.
 
   - label: Matches sequences
     response:

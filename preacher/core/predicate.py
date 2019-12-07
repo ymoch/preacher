@@ -1,12 +1,8 @@
 """Predicate."""
 
-from typing import Any, Callable
+from typing import Any
 
-from hamcrest import assert_that
-from hamcrest.core.matcher import Matcher
-
-from .internal.functional import identify
-from .status import Status
+from .matcher import Matcher, match
 from .verification import Verification
 
 
@@ -17,34 +13,4 @@ class MatcherPredicate:
         self._matcher = matcher
 
     def __call__(self, actual: Any, **kwargs: Any) -> Verification:
-        try:
-            assert_that(actual, self._matcher)
-        except AssertionError as error:
-            message = str(error).strip()
-            return Verification(status=Status.UNSTABLE, message=message)
-        except Exception as error:
-            return Verification.of_error(error)
-
-        return Verification.succeed()
-
-
-class DynamicMatcherPredicate:
-    """Predicate of a dynamic Hamcrest matcher and conversion."""
-
-    def __init__(
-        self,
-        matcher_factory: Callable,
-        converter: Callable[[Any], Any] = identify,
-    ):
-        self._matcher_factory = matcher_factory
-        self._converter = converter
-
-    def __call__(self, actual: Any, **kwargs: Any) -> Verification:
-        try:
-            matcher = self._matcher_factory(**kwargs)
-            predicated_value = self._converter(actual)
-        except Exception as error:
-            return Verification.of_error(error)
-
-        predicate = MatcherPredicate(matcher)
-        return predicate(predicated_value, **kwargs)
+        return match(self._matcher, actual, **kwargs)

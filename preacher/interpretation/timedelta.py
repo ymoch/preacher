@@ -1,0 +1,27 @@
+import re
+from datetime import timedelta
+from typing import Any, Optional
+
+from preacher.interpretation.error import InterpretationError
+
+
+TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
+
+
+def interpret_timedelta(value: Optional[Any]) -> timedelta:
+    """`value` should be a string."""
+
+    if not isinstance(value, str):
+        raise InterpretationError('Must be a string')
+
+    normalized = value.strip().lower()
+
+    if normalized == 'now':
+        return timedelta()
+
+    match = TIMEDELTA_PATTERN.match(normalized)
+    if not match:
+        raise InterpretationError(f'Invalid timedelta format: {value}')
+    offset = int(match.group(1))
+    unit = match.group(2) + 's'
+    return timedelta(**{unit: offset})

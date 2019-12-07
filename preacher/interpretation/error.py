@@ -1,0 +1,2 @@
+class InterpretationError(RuntimeError):
+    pass

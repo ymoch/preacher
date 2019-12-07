@@ -4,57 +4,61 @@ from collections.abc import Mapping
 from typing import Any
 
 import hamcrest
-from hamcrest.core.matcher import Matcher
 
+from preacher.core.hamcrest import after, before
+from preacher.core.matcher import (
+    Matcher,
+    StaticMatcher,
+    ValueMatcher,
+    RecursiveMatcher,
+)
+from preacher.interpretation import identify
+from preacher.interpretation.datetime import interpret_datetime
+from preacher.interpretation.value import value_of
 from .error import CompilationError, NamedNode
 from .util import map_on_key, run_on_key
 
-
 _STATIC_MATCHER_MAP = {
     # For objects.
-    'be_null': hamcrest.is_(hamcrest.none()),
-    'not_be_null': hamcrest.is_(hamcrest.not_none()),
+    'be_null': StaticMatcher(hamcrest.is_(hamcrest.none())),
+    'not_be_null': StaticMatcher(hamcrest.is_(hamcrest.not_none())),
 
     # For collections.
-    'be_empty': hamcrest.is_(hamcrest.empty()),
+    'be_empty': StaticMatcher(hamcrest.is_(hamcrest.empty())),
 
     # Logical.
-    'anything': hamcrest.is_(hamcrest.anything()),
+    'anything': StaticMatcher(hamcrest.is_(hamcrest.anything())),
 }
 
-_MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE = {
+_VALUE_MATCHER_HAMCREST_MAP = {
     # For objects.
-    'equal': lambda expected: hamcrest.is_(hamcrest.equal_to(expected)),
+    'equal': hamcrest.equal_to,
     'have_length': hamcrest.has_length,
 
-    # For numbers.
-    'be_greater_than': (
-        lambda value: hamcrest.is_(hamcrest.greater_than(value))
-    ),
-    'be_greater_than_or_equal_to': (
-        lambda value: hamcrest.is_(hamcrest.greater_than_or_equal_to(value))
-    ),
-    'be_less_than': (
-        lambda value: hamcrest.is_(hamcrest.less_than(value))
-    ),
-    'be_less_than_or_equal_to': (
-        lambda value: hamcrest.is_(hamcrest.less_than_or_equal_to(value))
-    ),
+    # For comparables.
+    'be_greater_than': hamcrest.greater_than,
+    'be_greater_than_or_equal_to': hamcrest.greater_than_or_equal_to,
+    'be_less_than': hamcrest.less_than,
+    'be_less_than_or_equal_to': hamcrest.less_than_or_equal_to,
 
     # For strings.
     'contain_string': hamcrest.contains_string,
     'start_with': hamcrest.starts_with,
     'end_with': hamcrest.ends_with,
     'match_regexp': hamcrest.matches_regexp,
+
+    # For datetime.
+    'be_before': before,
+    'be_after': after,
 }
 
-_MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER = {
+_SINGLE_MATCHER_HAMCREST_MAP = {
     'be': hamcrest.is_,
     'not': hamcrest.not_,
     'have_item': hamcrest.has_item,
 }
 
-_MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS = {
+_MULTI_MATCHERS_HAMCREST_MAP = {
     'contain': hamcrest.contains,
     'contain_in_any_order': hamcrest.contains_inanyorder,
     'have_items': hamcrest.has_items,
@@ -62,26 +66,31 @@ _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS = {
     'any_of': hamcrest.any_of,
 }
 
+_INTERPRETER_MAP = {
+    'be_before': interpret_datetime,
+    'be_after': interpret_datetime,
+}
 
-def _compile_taking_single_matcher(key: str, value: Any):
-    func = _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER[key]
+
+def _compile_taking_single_matcher(key: str, value: Any) -> Matcher:
+    hamcrest_factory = _SINGLE_MATCHER_HAMCREST_MAP[key]
 
     if isinstance(value, str) or isinstance(value, Mapping):
         inner = run_on_key(key, compile, value)
     else:
-        inner = hamcrest.equal_to(value)
+        inner = ValueMatcher(hamcrest.equal_to, value_of(value))
 
-    return func(inner)
+    return RecursiveMatcher(hamcrest_factory, [inner])
 
 
-def _compile_taking_multi_matchers(key: str, value: Any):
-    func = _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS[key]
+def _compile_taking_multi_matchers(key: str, value: Any) -> Matcher:
+    hamcrest_factory = _MULTI_MATCHERS_HAMCREST_MAP[key]
 
     if not isinstance(value, list):
         raise CompilationError('Must be a string', path=[NamedNode(key)])
 
-    inner_matchers = map_on_key(key, compile, value)
-    return func(*inner_matchers)
+    inner_matchers = list(map_on_key(key, compile, value))
+    return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 
 def compile(obj: Any) -> Matcher:
@@ -97,13 +106,17 @@ def compile(obj: Any) -> Matcher:
 
         key, value = next(iter(obj.items()))
 
-        if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
-            return _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key](value)
+        if key in _VALUE_MATCHER_HAMCREST_MAP:
+            return ValueMatcher(
+                _VALUE_MATCHER_HAMCREST_MAP[key],
+                value_of(value),
+                interpret=_INTERPRETER_MAP.get(key, identify),
+            )
 
-        if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_MATCHER:
+        if key in _SINGLE_MATCHER_HAMCREST_MAP:
             return _compile_taking_single_matcher(key, value)
 
-        if key in _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS:
+        if key in _MULTI_MATCHERS_HAMCREST_MAP:
             return _compile_taking_multi_matchers(key, value)
 
-    return hamcrest.equal_to(obj)
+    return ValueMatcher(hamcrest.equal_to, value_of(obj))
