@@ -21,11 +21,11 @@ class Matcher(ABC):
 
 class StaticMatcher(Matcher):
 
-    def __init__(self, matcher: HamcrestMatcher):
-        self._matcher = matcher
+    def __init__(self, hamcrest: HamcrestMatcher):
+        self._hamcrest = hamcrest
 
     def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
-        return self._matcher
+        return self._hamcrest
 
 
 class ValueMatcher(Matcher, Generic[T]):

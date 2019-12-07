@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch, sentinel
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from pytest import fixture, raises
 
-from preacher.core.matcher import Matcher, match
+from preacher.core.matcher import Matcher, match, StaticMatcher
 from preacher.core.status import Status
 from preacher.interpretation.error import InterpretationError
 
@@ -25,6 +25,11 @@ def test_matcher_interface():
     matcher = IncompleteMatcher()
     with raises(NotImplementedError):
         matcher.to_hamcrest()
+
+
+def test_static_matcher():
+    matcher = StaticMatcher(sentinel.hamcrest)
+    assert matcher.to_hamcrest(key='value') == sentinel.hamcrest
 
 
 def test_match_when_an_interpretation_error_occurs():
