@@ -1,12 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import Callable, List
+from typing import Callable, Generic, List, TypeVar
 
-from hamcrest import assert_that, equal_to
+from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from .status import Status
-from .value import Value
+from preacher.interpretation.value import Value
 from .verification import Verification
+
+
+T = TypeVar('T')
 
 
 class Matcher(ABC):
@@ -37,29 +40,22 @@ class StaticMatcher(Matcher):
         return self._matcher
 
 
-class ValueMatcher(Matcher):
-
-    def __init__(self, value: Value):
-        self._value = value
-
-    def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
-        value_in_context = self._value.apply_context(**kwargs)
-        return equal_to(value_in_context)
-
-
-class SingleValueMatcher(Matcher):
+class SingleValueMatcher(Matcher, Generic[T]):
 
     def __init__(
         self,
         hamcrest_factory: Callable[..., HamcrestMatcher],
-        value: Value,
+        value: Value[T],
+        interpret: Callable,
     ):
         self._hamcrest_factory = hamcrest_factory
         self._value = value
+        self._interpret = interpret
 
     def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
         value_in_context = self._value.apply_context(**kwargs)
-        return self._hamcrest_factory(value_in_context)
+        value_interpreted = self._interpret(value_in_context, **kwargs)
+        return self._hamcrest_factory(value_interpreted)
 
 
 class RecursiveMatcher(Matcher):

@@ -19,3 +19,7 @@ class StaticValue(Value[T]):
 
     def apply_context(self, **kwargs) -> T:
         return self._value
+
+
+def value_of(obj: T) -> Value[T]:
+    return StaticValue(obj)
