@@ -12,8 +12,7 @@ from .body_description import BodyDescriptionCompiler, Compiled as BodyCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .predicate import PredicateCompiler
-from .util import map_on_key, or_default, run_on_key
-
+from .util import map_on_key, run_on_key
 
 _KEY_STATUS_CODE = 'status_code'
 _KEY_HEADERS = 'headers'
@@ -28,8 +27,8 @@ class Compiled:
 
     def convert(self) -> ResponseDescription:
         return ResponseDescription(
-            status_code_predicates=or_default(self.status_code, []),
-            headers_descriptions=or_default(self.headers, []),
+            status_code_predicates=self.status_code,
+            headers_descriptions=self.headers,
             body_description=self.body.convert() if self.body else None,
         )
 

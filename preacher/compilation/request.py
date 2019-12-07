@@ -32,8 +32,8 @@ class _Compiled:
     def to_request(self) -> Request:
         return Request(
             path=or_default(self.path, ''),
-            headers=or_default(self.headers, {}),
-            params=or_default(self.params, {}),
+            headers=self.headers,
+            params=self.params,
         )
 
 
