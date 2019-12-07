@@ -1,18 +1,18 @@
 from datetime import timedelta
 
-from pytest import mark
+from pytest import mark, raises
 
 from preacher.interpretation.error import InterpretationError
 from preacher.interpretation.datetime import interpret_timedelta
 
 
-@mark.xfail(raises=InterpretationError)
 @mark.parametrize('value', (
     'invalid',
     'now +1 day',
 ))
 def test_interpret_datetime_given_an_invalid_format(value):
-    interpret_timedelta(value)
+    with raises(InterpretationError):
+        interpret_timedelta(value)
 
 
 @mark.parametrize('value, expected', (
