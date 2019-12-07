@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Any, List
+from typing import Any, List, Optional
 
 from .analysis import Analysis, analyze_json_str
 from .description import Description
@@ -13,10 +11,10 @@ class BodyDescription:
     def __init__(
         self,
         analyze: Analysis = analyze_json_str,
-        descriptions: List[Description] = [],
+        descriptions: Optional[List[Description]] = None,
     ):
         self._analyze = analyze
-        self._descriptions = descriptions
+        self._descriptions = descriptions or []
 
     def verify(self, body: str, **kwargs: Any) -> Verification:
         try:
