@@ -3,7 +3,13 @@ from unittest.mock import MagicMock, patch, sentinel
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from pytest import fixture, raises
 
-from preacher.core.matcher import Matcher, match, StaticMatcher, ValueMatcher, RecursiveMatcher
+from preacher.core.matcher import (
+    Matcher,
+    StaticMatcher,
+    ValueMatcher,
+    RecursiveMatcher,
+    match,
+)
 from preacher.core.status import Status
 from preacher.interpretation.error import InterpretationError
 from preacher.interpretation.value import Value
