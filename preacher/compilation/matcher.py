@@ -8,7 +8,7 @@ import hamcrest
 from preacher.core.matcher import (
     Matcher,
     StaticMatcher,
-    SingleValueMatcher,
+    ValueMatcher,
     RecursiveMatcher,
 )
 from preacher.interpretation import identify
@@ -78,7 +78,7 @@ def _compile_taking_single_matcher(key: str, value: Any) -> Matcher:
     if isinstance(value, str) or isinstance(value, Mapping):
         inner = run_on_key(key, compile, value)
     else:
-        inner = SingleValueMatcher(hamcrest.equal_to, value_of(value))
+        inner = ValueMatcher(hamcrest.equal_to, value_of(value))
 
     return RecursiveMatcher(hamcrest_factory, [inner])
 
@@ -108,7 +108,7 @@ def compile(obj: Any) -> Matcher:
 
         if key in _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE:
             interpret = _INTERPRETER_MAP.get(key, identify)
-            return SingleValueMatcher(
+            return ValueMatcher(
                 _MATCHER_FUNCTION_MAP_TAKING_SINGLE_VALUE[key],
                 value_of(value),
                 interpret=interpret,
@@ -120,4 +120,4 @@ def compile(obj: Any) -> Matcher:
         if key in _MATCHER_FUNCTION_MAP_TAKING_MULTI_MATCHERS:
             return _compile_taking_multi_matchers(key, value)
 
-    return SingleValueMatcher(hamcrest.equal_to, value_of(obj))
+    return ValueMatcher(hamcrest.equal_to, value_of(obj))

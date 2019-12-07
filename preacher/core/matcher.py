@@ -28,7 +28,7 @@ class StaticMatcher(Matcher):
         return self._matcher
 
 
-class SingleValueMatcher(Matcher, Generic[T]):
+class ValueMatcher(Matcher, Generic[T]):
 
     def __init__(
         self,
