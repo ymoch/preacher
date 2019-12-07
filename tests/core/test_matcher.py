@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch, sentinel
 
-from pytest import fixture
+from hamcrest.core.matcher import Matcher as HamcrestMatcher
+from pytest import fixture, raises
 
 from preacher.core.matcher import Matcher, match
 from preacher.core.status import Status
@@ -16,7 +17,17 @@ def matcher():
     return matcher
 
 
-def test_when_an_interpretation_error_occurs():
+def test_matcher_interface():
+    class IncompleteMatcher(Matcher):
+        def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
+            return super().to_hamcrest()
+
+    matcher = IncompleteMatcher()
+    with raises(NotImplementedError):
+        matcher.to_hamcrest()
+
+
+def test_match_when_an_interpretation_error_occurs():
     matcher = MagicMock(Matcher)
     matcher.to_hamcrest.side_effect = InterpretationError('interpretation')
     verification = match(matcher, sentinel.actual, k='v')
@@ -27,7 +38,7 @@ def test_when_an_interpretation_error_occurs():
 
 
 @patch(f'{PACKAGE}.assert_that', side_effect=RuntimeError('message'))
-def test_when_an_error_occurs_on_assertion(assert_that, matcher):
+def test_match_when_an_error_occurs_on_assertion(assert_that, matcher):
     verification = match(matcher, sentinel.actual, key='value')
 
     assert verification.status == Status.FAILURE
@@ -37,7 +48,7 @@ def test_when_an_error_occurs_on_assertion(assert_that, matcher):
 
 
 @patch(f'{PACKAGE}.assert_that', side_effect=AssertionError('message'))
-def test_when_assertion_fails(assert_that, matcher):
+def test_match_when_assertion_fails(assert_that, matcher):
     verification = match(matcher, sentinel.actual)
 
     assert verification.status == Status.UNSTABLE
@@ -47,7 +58,7 @@ def test_when_assertion_fails(assert_that, matcher):
 
 
 @patch(f'{PACKAGE}.assert_that')
-def test_when_the_assertion_succeeds(assert_that, matcher):
+def test_match_when_the_assertion_succeeds(assert_that, matcher):
     verification = match(matcher, sentinel.actual)
 
     assert verification.status == Status.SUCCESS
