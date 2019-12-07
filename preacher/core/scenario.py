@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import Context
+from .context import Context, analyze_context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -115,7 +115,7 @@ class Scenario:
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
         context = Context(base_url=base_url)
-        context_analyzer = context.analyze()
+        context_analyzer = analyze_context(context)
         conditions = collect(
             condition.verify(context_analyzer)
             for condition in self._conditions

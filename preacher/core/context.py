@@ -26,13 +26,13 @@ class ScenarioContext(ApplicationContext):
 
 
 @dataclass(frozen=True)
-class CaseContext:
+class CaseContextComponent:
     started: datetime
 
 
 @dataclass(frozen=True)
 class CaseContext(ScenarioContext):
-    case: CaseContext
+    case: CaseContextComponent
 
 
 @dataclass(frozen=True)
@@ -40,5 +40,6 @@ class Context:
     """Deprecated!"""
     base_url: str = ''
 
-    def analyze(self) -> Analyzer:
-        return JsonAnalyzer(asdict(self))
+
+def analyze_context(context) -> Analyzer:
+    return JsonAnalyzer(asdict(context))
