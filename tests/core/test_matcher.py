@@ -3,9 +3,10 @@ from unittest.mock import MagicMock, patch, sentinel
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from pytest import fixture, raises
 
-from preacher.core.matcher import Matcher, match, StaticMatcher
+from preacher.core.matcher import Matcher, match, StaticMatcher, ValueMatcher
 from preacher.core.status import Status
 from preacher.interpretation.error import InterpretationError
+from preacher.interpretation.value import Value
 
 PACKAGE = 'preacher.core.matcher'
 
@@ -29,7 +30,22 @@ def test_matcher_interface():
 
 def test_static_matcher():
     matcher = StaticMatcher(sentinel.hamcrest)
-    assert matcher.to_hamcrest(key='value') == sentinel.hamcrest
+    assert matcher.to_hamcrest(k='v') == sentinel.hamcrest
+
+
+def test_value_matcher():
+    hamcrest_factory = MagicMock(return_value=sentinel.hamcrest)
+    value = MagicMock(Value)
+    value.apply_context.return_value = sentinel.value_in_context
+    interpret = MagicMock(return_value=sentinel.value_interpreted)
+
+    matcher = ValueMatcher(hamcrest_factory, value, interpret=interpret)
+    hamcrest = matcher.to_hamcrest(key='value')
+
+    assert hamcrest == sentinel.hamcrest
+    value.apply_context.assert_called_once_with(key='value')
+    interpret.assert_called_once_with(sentinel.value_in_context, key='value')
+    hamcrest_factory.assert_called_once_with(sentinel.value_interpreted)
 
 
 def test_match_when_an_interpretation_error_occurs():
