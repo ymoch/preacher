@@ -31,12 +31,12 @@ class Request:
     def __init__(
         self,
         path: str = '',
-        headers: Mapping[str, str] = {},
-        params: Mapping[str, Any] = {},
+        headers: Optional[Mapping[str, str]] = None,
+        params: Optional[Mapping[str, Any]] = None,
     ):
         self._path = path
-        self._headers = headers
-        self._params = params
+        self._headers = headers or {}
+        self._params = params or {}
 
     def __call__(
         self,
