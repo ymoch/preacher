@@ -5,8 +5,7 @@ from typing import Any, List
 from .analysis import Analyzer
 from .extraction import Extractor
 from .predicate import Predicate
-from .status import merge_statuses
-from .verification import Verification
+from .verification import Verification, collect
 
 
 class Description:
@@ -22,12 +21,10 @@ class Description:
         except Exception as error:
             return Verification.of_error(error)
 
-        verifications = [
+        return collect(
             predicate.verify(verified_value, **kwargs)
             for predicate in self._predicates
-        ]
-        status = merge_statuses(v.status for v in verifications)
-        return Verification(status, children=verifications)
+        )
 
     @property
     def extractor(self) -> Extractor:

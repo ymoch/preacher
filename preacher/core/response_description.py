@@ -11,7 +11,7 @@ from .body_description import BodyDescription
 from .description import Description
 from .predicate import Predicate
 from .status import Status, merge_statuses
-from .verification import Verification
+from .verification import Verification, collect
 
 
 @dataclass(frozen=True)
@@ -85,12 +85,10 @@ class ResponseDescription:
         code: int,
         **kwargs: Any,
     ) -> Verification:
-        children = [
+        return collect(
             predicate.verify(code, **kwargs)
             for predicate in self._status_code_predicates
-        ]
-        status = merge_statuses(v.status for v in children)
-        return Verification(status=status, children=children)
+        )
 
     def _verify_headers(
         self,
@@ -98,9 +96,7 @@ class ResponseDescription:
         **kwargs: Any,
     ) -> Verification:
         analyzer = self._analyze_headers(headers)
-        verifications = [
+        return collect(
             description.verify(analyzer, **kwargs)
             for description in self._headers_descriptions
-        ]
-        status = merge_statuses(v.status for v in verifications)
-        return Verification(status=status, children=verifications)
+        )
