@@ -5,6 +5,7 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.matcher import compile
+from preacher.core.matcher import match
 from preacher.core.status import Status
 from preacher.interpretation.datetime import interpret_datetime
 
@@ -149,7 +150,7 @@ def test_given_not_a_list_for_multiple_matchers():
     ('anything', {'key': 'value'}, SUCCESS),
 ])
 def test_verification(compiled, verified, expected_status):
-    assert compile(compiled).verify(verified).status == expected_status
+    assert match(compile(compiled), verified).status == expected_status
 
 
 @patch(f'{PACKAGE}.SingleValueMatcher', return_value=sentinel.matcher)

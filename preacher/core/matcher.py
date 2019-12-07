@@ -18,19 +18,6 @@ class Matcher(ABC):
     def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
         raise NotImplementedError()
 
-    def verify(self, actual, **kwargs) -> Verification:
-        """Default implementation."""
-        try:
-            matcher = self.to_hamcrest(**kwargs)
-            assert_that(actual, matcher)
-        except AssertionError as error:
-            message = str(error).strip()
-            return Verification(status=Status.UNSTABLE, message=message)
-        except Exception as error:
-            return Verification.of_error(error)
-
-        return Verification.succeed()
-
 
 class StaticMatcher(Matcher):
 
@@ -75,3 +62,16 @@ class RecursiveMatcher(Matcher):
             for inner_matcher in self._inner_matchers
         )
         return self._hamcrest_factory(*inner_hamcrest_matchers)
+
+
+def match(matcher: Matcher, actual, **kwargs) -> Verification:
+    try:
+        matcher = matcher.to_hamcrest(**kwargs)
+        assert_that(actual, matcher)
+    except AssertionError as error:
+        message = str(error).strip()
+        return Verification(status=Status.UNSTABLE, message=message)
+    except Exception as error:
+        return Verification.of_error(error)
+
+    return Verification.succeed()
