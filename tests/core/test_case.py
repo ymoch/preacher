@@ -60,6 +60,7 @@ def test_when_the_request_fails(retry_patch):
 
 
 def test_when_given_an_invalid_response(retry_patch):
+    sentinel.response.request_datetime = sentinel.request_datetime
     case = Case(
         label='Response should be unstable',
         request=MagicMock(return_value=sentinel.response),
@@ -92,12 +93,16 @@ def test_when_given_an_invalid_response(retry_patch):
     assert result.response.body.status == Status.UNSTABLE
 
     case.request.assert_called_with('base-url', timeout=5.0)
-    case.response_description.verify.assert_called_with(sentinel.response)
+    case.response_description.verify.assert_called_with(
+        sentinel.response,
+        request_datetime=sentinel.request_datetime,
+    )
     retry.assert_called_once_with(ANY, attempts=4, delay=1.0)
     listener.on_response.assert_called_once_with(sentinel.response)
 
 
 def test_when_given_an_valid_response(retry_patch):
+    sentinel.response.request_datetime = sentinel.request_datetime
     case = Case(
         label='Response should be success',
         request=MagicMock(return_value=sentinel.response),

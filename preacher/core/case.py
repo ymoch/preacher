@@ -80,7 +80,10 @@ class Case:
             listener.on_response(response)
 
         request_verification = Verification.succeed()
-        response_verification = self._response_description.verify(response)
+        response_verification = self._response_description.verify(
+            response,
+            request_datetime=response.request_datetime,
+        )
         status = merge_statuses(
             request_verification.status,
             response_verification.status,
