@@ -8,10 +8,8 @@ from typing import Any, Mapping, Optional
 
 import requests
 
-from .datetime import now
-
 from preacher import __version__ as _version
-
+from .datetime import now
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 

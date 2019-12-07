@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import MagicMock, patch, sentinel
 
 from preacher.core.context import Context
+from preacher.core.description import Description
 from preacher.core.scenario import Scenario
 from preacher.core.status import Status
 from preacher.core.verification import Verification
@@ -47,11 +48,21 @@ def test_given_subscenarios(context_ctor):
     context.analyze.return_value = sentinel.context_analyzer
     context_ctor.return_value = context
 
-    condition1 = MagicMock(return_value=Verification.succeed())
-    condition2 = MagicMock(return_value=Verification(status=Status.UNSTABLE))
-    condition3 = MagicMock(return_value=Verification.succeed())
-    condition4 = MagicMock(return_value=Verification(status=Status.FAILURE))
-    condition5 = MagicMock(return_value=Verification(status=Status.UNSTABLE))
+    condition1 = MagicMock(Description, verify=MagicMock(
+        return_value=Verification.succeed()
+    ))
+    condition2 = MagicMock(Description, verify=MagicMock(
+        return_value=Verification(status=Status.UNSTABLE)
+    ))
+    condition3 = MagicMock(Description, verify=MagicMock(
+        return_value=Verification.succeed()
+    ))
+    condition4 = MagicMock(Description, verify=MagicMock(
+        return_value=Verification(status=Status.FAILURE)
+    ))
+    condition5 = MagicMock(Description, verify=MagicMock(
+        return_value=Verification(status=Status.UNSTABLE)
+    ))
 
     sentinel.result1.status = Status.SUCCESS
     case1 = MagicMock(return_value=sentinel.result1)
@@ -108,7 +119,7 @@ def test_given_subscenarios(context_ctor):
     )
 
     context_ctor.assert_called_with(base_url='url')
-    condition1.assert_called_with(sentinel.context_analyzer)
+    condition1.verify.assert_called_with(sentinel.context_analyzer)
     subcase1.assert_called_once_with(
         'url', retry=5, delay=3.0, timeout=7.0, listener=sentinel.listener,
     )

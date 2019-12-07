@@ -2,8 +2,7 @@ from typing import Any, List, Optional
 
 from .analysis import Analysis, analyze_json_str
 from .description import Description
-from .status import merge_statuses
-from .verification import Verification
+from .verification import Verification, collect
 
 
 class BodyDescription:
@@ -22,12 +21,10 @@ class BodyDescription:
         except Exception as error:
             return Verification.of_error(error)
 
-        verifications = [
+        return collect(
             description.verify(analyzer, **kwargs)
             for description in self._descriptions
-        ]
-        status = merge_statuses(v.status for v in verifications)
-        return Verification(status=status, children=verifications)
+        )
 
     @property
     def descriptions(self) -> List[Description]:

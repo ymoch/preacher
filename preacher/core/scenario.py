@@ -114,7 +114,8 @@ class Scenario:
         context = Context(base_url=base_url)
         context_analyzer = context.analyze()
         conditions = collect(
-            condition(context_analyzer) for condition in self._conditions
+            condition.verify(context_analyzer)
+            for condition in self._conditions
         )
         if conditions.status == Status.FAILURE:
             return StaticScenarioTask(ScenarioResult(
