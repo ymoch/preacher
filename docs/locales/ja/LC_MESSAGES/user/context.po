@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-08 16:47+0900\n"
+"POT-Creation-Date: 2019-12-08 17:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,73 +20,199 @@ msgstr ""
 # 414781ed3c2749ca95fb1cb5292e4711
 #: ../../user/context.rst:2
 msgid "Context Reference"
-msgstr ""
+msgstr "Context リファレンス"
 
-# ed734a2f87df4a2a97062a6ae5dad7ca
-#: ../../user/context.rst:4
-msgid "Here is the definition of ``Context`` Object."
-msgstr ""
-
-#: ../../user/context.rst:7
+#: ../../user/context.rst:5
 msgid "Definition"
-msgstr ""
+msgstr "定義"
 
-#: ../../user/context.rst:8
+#: ../../user/context.rst:6
 msgid "The definition of ``Context`` Object"
-msgstr ""
+msgstr "``Context`` オブジェクトの定義"
 
-#: ../../user/context.rst:12
+#: ../../user/context.rst:10 ../../user/context.rst:31
+#: ../../user/context.rst:64
 msgid "Key"
-msgstr ""
+msgstr "キー"
 
-#: ../../user/context.rst:13
+#: ../../user/context.rst:11 ../../user/context.rst:32
+#: ../../user/context.rst:65
 msgid "Type"
-msgstr ""
+msgstr "型"
 
-#: ../../user/context.rst:14
+#: ../../user/context.rst:12 ../../user/context.rst:33
+#: ../../user/context.rst:66
 msgid "Description"
-msgstr ""
+msgstr "説明"
 
-#: ../../user/context.rst:15
+#: ../../user/context.rst:13 ../../user/context.rst:34
+#: ../../user/context.rst:67
 msgid "Example"
+msgstr "例"
+
+# 06a0eeb0815f4cd6a4fa9caa10f3345d
+#: ../../user/context.rst:14
+msgid "app"
 msgstr ""
 
+# 014f0c48c7b1490aa7c68e7b91090974
+#: ../../user/context.rst:15
+msgid "ApplicationContext"
+msgstr ""
+
+# a3feca0ea7454479b569c1ec8a027373
 #: ../../user/context.rst:16
+msgid ":ref:`application-context`"
+msgstr ""
+
+# 0877671caca746d5b90cc774f91551ed
+#: ../../user/context.rst:17
+msgid "``{\"base_url\": \"http://localhost:5042/base\"}``"
+msgstr ""
+
+# c9ecad4934d64d01892b9a77c2792e40
+#: ../../user/context.rst:18
+msgid "scenario"
+msgstr ""
+
+# a9605de1e3714daf969cc574496021c7
+#: ../../user/context.rst:19
+msgid "ScenarioContext"
+msgstr ""
+
+# fcee15ca3ed245d880fdabee13b83ee5
+#: ../../user/context.rst:20
+msgid ":ref:`scenario-context`"
+msgstr ""
+
+# f5cc148878d441509f444cfeb9704198
+#: ../../user/context.rst:21
+msgid "``{\"starts\": \"2019-01-23T12:34:56.123456+00:00\"}``"
+msgstr ""
+
+# 5e5f906b5afe429d9b5cac348d2da656
+#: ../../user/context.rst:26
+msgid "Application Context"
+msgstr "アプリケーションコンテキスト"
+
+# 391a7ce90d3e4f76897bfe9d46aac38b
+#: ../../user/context.rst:27
+msgid "The definition of ``ApplicationContext`` Object"
+msgstr "``ApplicationContext`` オブジェクトの定義"
+
+# 33d1035bed9e4ce389a6e47b9bc746dc
+# c05cc3ef2a244083a31afff31bdc68ae
+#: ../../user/context.rst:35 ../../user/context.rst:68
+msgid "starts"
+msgstr ""
+
+# abf15ee9890548f0a751ba25c0d1355d
+# 9f4203da04c74fdb9b9eb60f18211145
+#: ../../user/context.rst:36 ../../user/context.rst:69
+msgid "DateTime"
+msgstr ""
+
+# b91714317b7d4098b56fa3a82ab0ce38
+#: ../../user/context.rst:37
+msgid "When the application starts"
+msgstr "アプリケーション実行の開始時刻"
+
+# df0edca693474f98b330aa0e9fef45d9
+# 0f38db0c37b84a28875c74a5bfe238c3
+#: ../../user/context.rst:38 ../../user/context.rst:71
+msgid "``2019-01-23T12:34:56.123456+00:00``"
+msgstr ""
+
+#: ../../user/context.rst:39
 msgid "base_url"
 msgstr ""
 
-#: ../../user/context.rst:17
-msgid "string"
+# e8298d8074a5471eb2e02f03b0b2761b
+#: ../../user/context.rst:40
+msgid "String"
 msgstr ""
 
-#: ../../user/context.rst:18
-msgid "Base URL"
+# 1589c1f4e4a641219417dbe42797fca0
+#: ../../user/context.rst:41
+msgid "The base URL"
+msgstr "リクエストの基準 URL"
+
+# b6cd79618f0d43e6ab38f40226b77f0f
+#: ../../user/context.rst:42
+msgid "``http://localhost:5042/base``"
 msgstr ""
 
-#: ../../user/context.rst:19
-msgid "http://localhost:5042/base"
+# 1b65b15afdf747d6899095893caed65a
+#: ../../user/context.rst:43
+msgid "retry"
 msgstr ""
 
-#~ msgid "Application Running Context"
-#~ msgstr ""
+# 0490880136e74e99b5b639b65fce579d
+#: ../../user/context.rst:44
+msgid "Integer"
+msgstr ""
 
-#~ msgid "You can toggle scenarios using application running context."
-#~ msgstr ""
+# 83758662cd4e426cb1afd07f56c247be
+#: ../../user/context.rst:45
+msgid "The max retry count"
+msgstr "最大リトライ数"
 
-#~ msgid "Conditional Scenario"
-#~ msgstr ""
+# fdb8f0b956ba48fc8260ffa5f75afa9e
+#: ../../user/context.rst:46
+msgid "0"
+msgstr ""
 
-#~ msgid ""
-#~ "Using ``when`` properties, you can run"
-#~ " scenarios conditionally. Scenarios are run"
-#~ " only when the context satisfied the"
-#~ " descriptions in ``when`` properties."
-#~ msgstr ""
+# 1ac22e2add394fada4b3f8799dd02295
+#: ../../user/context.rst:47
+msgid "delay"
+msgstr ""
 
-#~ msgid ""
-#~ "A ``Context`` is a JSON-like "
-#~ "value, which can be descripted by "
-#~ "`jq`_ Here is the definition of "
-#~ "``Context`` Object."
-#~ msgstr ""
+# 69e68ff69f044fceaa849be70b030e6a
+#: ../../user/context.rst:48
+msgid "Float"
+msgstr ""
 
+# 63d996deb38e4acf93805c4d00bbc1bf
+#: ../../user/context.rst:49
+msgid "The delay between attempts in seconds"
+msgstr "試行間の待ち時間 (秒)"
+
+# 7679a91c06054277b57f3d9a98845425
+#: ../../user/context.rst:50
+msgid "0.1"
+msgstr ""
+
+# 4f07bcc4f2f24f54808fce077302b318
+#: ../../user/context.rst:51
+msgid "timeout"
+msgstr ""
+
+# efdffd094a0b45ecb8b03259a31f09f1
+#: ../../user/context.rst:52
+msgid "Optional[Float]"
+msgstr ""
+
+# 64f7b71c85ad479390747d4eb6cca9d9
+#: ../../user/context.rst:53
+msgid "The request timeout in seconds"
+msgstr "リクエストタイムアウト時間 (秒)"
+
+# 64850066638e4ebd841a78bde314b72d
+#: ../../user/context.rst:54
+msgid "``null``, 1.0"
+msgstr ""
+
+# 52544e7a57af45b295a3b605327f539c
+#: ../../user/context.rst:59
+msgid "シナリオコンテキスト"
+msgstr ""
+
+# 15b212e51ebc4acc8a5b1bbc6e9d5219
+#: ../../user/context.rst:60
+msgid "The definition of ``ScenarioContext`` Object"
+msgstr ""
+
+# 38ad1c5893344f02a17832d82411140c
+#: ../../user/context.rst:70
+msgid "When the scenario starts"
+msgstr "シナリオの実行開始時刻"

@@ -242,28 +242,3 @@ msgstr ""
 "レポートディレクトリは自動的に作られます. ``path/to/report`` をレポートディレクトリとして指定すると, "
 "``path/to/report/index.html`` がエントリーポイントになります. Preacher を CI "
 "で実行しているのであれば, レポートをビルド成果物として保存するとよいでしょう."
-
-# de1468c7541e4b3ab55e27747e4d7ef8
-#~ msgid ""
-#~ "By default, not ``SKIPPED`` test results"
-#~ " are shown. It is useful for "
-#~ "debugging your test cases, but will "
-#~ "be noisy when your test scenarios "
-#~ "become huge. The output level control"
-#~ " will help you find important errors."
-#~ msgstr ""
-#~ "デフォルトでは, ``SKIPPED`` ではないテスト結果が出力されます. "
-#~ "これはテストケースのデバッグには便利ですが, テストが巨大になるにつれ煩わしくなります. "
-#~ "出力レベルの制御は重要なエラーを見つけるために有用です."
-
-# 95844c414c134603a9af88233b748226
-#~ msgid "Ignore cases"
-#~ msgstr "テストケースを無視する"
-
-# 1be6143dfd8d42659d9842e0be5219b4
-#~ msgid ""
-#~ "To skip some cases temporarily for "
-#~ "some reason, add ``enabled: false`` to"
-#~ " that cases."
-#~ msgstr "何らかの理由で一時的にテストを実行したくない場合, そのケースに ``enabled: false`` を付与します."
-

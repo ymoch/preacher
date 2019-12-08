@@ -1,8 +1,6 @@
 Context Reference
 =================
 
-Here is the definition of ``Context`` Object.
-
 Definition
 ----------
 .. list-table:: The definition of ``Context`` Object
