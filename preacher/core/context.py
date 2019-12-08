@@ -7,7 +7,7 @@ from .datetime import now
 
 
 @dataclass(frozen=True)
-class ApplicationContextComponent:
+class ApplicationContext:
     starts: datetime = field(default_factory=now)
     base_url: str = ''
     retry: int = 0
@@ -16,32 +16,28 @@ class ApplicationContextComponent:
 
 
 @dataclass(frozen=True)
-class ApplicationContext:
-    app: ApplicationContextComponent = field(
-        default_factory=ApplicationContextComponent
-    )
+class ContextOnApplication:
+    app: ApplicationContext = field(default_factory=ApplicationContext)
 
 
 @dataclass(frozen=True)
-class ScenarioContextComponent:
+class ScenarioContext:
     starts: datetime = field(default_factory=now)
 
 
 @dataclass(frozen=True)
-class ScenarioContext(ApplicationContext):
-    scenario: ScenarioContextComponent = field(
-        default_factory=ScenarioContextComponent
-    )
+class ContextOnScenario(ContextOnApplication):
+    scenario: ScenarioContext = field(default_factory=ScenarioContext)
 
 
 @dataclass(frozen=True)
-class CaseContextComponent:
+class CaseContext:
     started: datetime = field(default_factory=now)
 
 
 @dataclass(frozen=True)
-class CaseContext(ScenarioContext):
-    case: CaseContextComponent = field(default_factory=CaseContextComponent)
+class ContextOnCase(ContextOnScenario):
+    case: CaseContext = field(default_factory=CaseContext)
 
 
 def _to_serializable(value: object) -> object:

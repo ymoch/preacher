@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from preacher.core.case import Case
-from preacher.core.context import ApplicationContext
+from preacher.core.context import ContextOnApplication
 from preacher.core.description import Description
 from preacher.core.scenario import Scenario
 from preacher.core.status import Status
@@ -14,13 +14,13 @@ PACKAGE = 'preacher.core.scenario'
 def test_given_an_empty_scenario():
     scenario = Scenario(label=None, cases=[])
     with ThreadPoolExecutor(1) as executor:
-        result = scenario.submit(executor, ApplicationContext()).result()
+        result = scenario.submit(executor, ContextOnApplication()).result()
     assert result.label is None
     assert result.status == Status.SKIPPED
     assert list(result.cases) == []
 
 
-@patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
+@patch(f'{PACKAGE}.ContextOnScenario', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
 def test_given_a_filled_scenario(analyze_context, context_ctor):
     sentinel.result1.status = Status.UNSTABLE
@@ -29,7 +29,7 @@ def test_given_a_filled_scenario(analyze_context, context_ctor):
     case2 = MagicMock(Case, run=MagicMock(return_value=sentinel.result2))
 
     scenario = Scenario(label='label', cases=[case1, case2])
-    context = ApplicationContext(app=sentinel.app_context)
+    context = ContextOnApplication(app=sentinel.app_context)
     result = scenario.run(context)
     assert result.label == 'label'
     assert result.status == Status.UNSTABLE
@@ -41,7 +41,7 @@ def test_given_a_filled_scenario(analyze_context, context_ctor):
     case2.run.assert_called_once_with(sentinel.context, ANY)
 
 
-@patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
+@patch(f'{PACKAGE}.ContextOnScenario', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
 def test_given_subscenarios(analyze_context, context_ctor):
     condition1 = MagicMock(Description, verify=MagicMock(
@@ -95,7 +95,7 @@ def test_given_subscenarios(analyze_context, context_ctor):
         subscenarios=[subscenario1, subscenario2, subscenario3, subscenario4],
     )
 
-    context = ApplicationContext(app=sentinel.app_context)
+    context = ContextOnApplication(app=sentinel.app_context)
     sentinel.context.app = context.app
     result = scenario.run(context, sentinel.listener)
     assert result.status == Status.FAILURE

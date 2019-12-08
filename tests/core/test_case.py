@@ -3,7 +3,7 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 from pytest import fixture
 
 from preacher.core.case import Case, CaseListener
-from preacher.core.context import ScenarioContext, ApplicationContextComponent
+from preacher.core.context import ContextOnScenario, ApplicationContext
 from preacher.core.request import Request
 from preacher.core.response_description import (
     ResponseDescription,
@@ -34,7 +34,7 @@ def test_when_disabled():
         request=request,
         response_description=response_description
     )
-    context = ScenarioContext()
+    context = ContextOnScenario()
     actual = case.run(context)
     assert actual.label == 'Disabled'
     assert actual.status == Status.SKIPPED
@@ -52,9 +52,7 @@ def test_when_the_request_fails(retry_patch):
         response_description=response_description,
     )
 
-    context = ScenarioContext(
-        app=ApplicationContextComponent(base_url='base-url')
-    )
+    context = ContextOnScenario(app=ApplicationContext(base_url='base-url'))
     listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
         result = case.run(context, listener)
@@ -90,8 +88,8 @@ def test_when_given_an_invalid_response(retry_patch):
         response_description=response_description,
     )
 
-    context = ScenarioContext(
-        app=ApplicationContextComponent(
+    context = ContextOnScenario(
+        app=ApplicationContext(
             base_url='base-url',
             retry=3,
             delay=1.0,
@@ -135,7 +133,7 @@ def test_when_given_an_valid_response(retry_patch):
     )
 
     with retry_patch:
-        result = case.run(ScenarioContext())
+        result = case.run(ContextOnScenario())
 
     assert result
     assert result.status == Status.SUCCESS

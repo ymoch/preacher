@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from .context import ScenarioContext
+from .context import ContextOnScenario
 from .request import Request, Response
 from .response_description import (
     ResponseDescription,
@@ -50,7 +50,7 @@ class Case:
 
     def run(
         self,
-        context: ScenarioContext,
+        context: ContextOnScenario,
         listener: Optional[CaseListener] = None,
     ) -> CaseResult:
         if not self._enabled:
@@ -64,7 +64,7 @@ class Case:
 
     def _run(
         self,
-        context: ScenarioContext,
+        context: ContextOnScenario,
         listener: CaseListener,
     ) -> CaseResult:
         try:
