@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import ApplicationContext, ScenarioContext, analyze_context
+from .context import ContextOnApplication, ContextOnScenario, analyze_context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -89,7 +89,7 @@ class Scenario:
 
     def run(
         self,
-        context: ApplicationContext,
+        context: ContextOnApplication,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioResult:
         with ThreadPoolExecutor(1) as executor:
@@ -98,13 +98,16 @@ class Scenario:
     def submit(
         self,
         executor: ThreadPoolExecutor,
-        context: ApplicationContext,
+        context: ContextOnApplication,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
-        current_context = ScenarioContext(app=context.app)
+        current_context = ContextOnScenario(app=context.app)
         context_analyzer = analyze_context(current_context)
         conditions = collect(
-            condition.verify(context_analyzer)
+            condition.verify(
+                context_analyzer,
+                origin_datetime=current_context.scenario.starts,
+            )
             for condition in self._conditions
         )
         if conditions.status == Status.FAILURE:
@@ -135,7 +138,7 @@ class Scenario:
 
     def _run_cases(
         self,
-        context: ScenarioContext,
+        context: ContextOnScenario,
         listener: CaseListener,
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(

@@ -1,4 +1,5 @@
-from typing import Callable
+from datetime import datetime
+from typing import Callable, Optional
 
 import hamcrest
 from hamcrest.core.base_matcher import BaseMatcher
@@ -27,8 +28,14 @@ class _ConvertingMatcher(BaseMatcher):
         )
 
 
+def _convert_to_datetime(value: object) -> Optional[datetime]:
+    if not isinstance(value, str):
+        raise TypeError(f'Must be a string, but given {value}')
+    return parse_datetime(value)
+
+
 def _string_datetime_matcher(matcher: BaseMatcher) -> Matcher:
-    return _ConvertingMatcher(matcher, parse_datetime)
+    return _ConvertingMatcher(matcher, _convert_to_datetime)
 
 
 def before(value) -> Matcher:

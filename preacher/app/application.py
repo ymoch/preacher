@@ -4,9 +4,7 @@ from typing import Callable, Iterable, Optional
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.compilation.yaml import load
-from preacher.core.context import (
-    ApplicationContext, ApplicationContextComponent
-)
+from preacher.core.context import ContextOnApplication, ApplicationContext
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from .listener import Listener
@@ -39,8 +37,8 @@ class Application:
         executor: ThreadPoolExecutor,
         config_paths: Iterable[str],
     ) -> None:
-        context = ApplicationContext(
-            app=ApplicationContextComponent(
+        context = ContextOnApplication(
+            app=ApplicationContext(
                 base_url=self._base_url,
                 retry=self._retry,
                 delay=self._delay,
@@ -62,7 +60,7 @@ class Application:
         self,
         executor: ThreadPoolExecutor,
         config_path: str,
-        context: ApplicationContext,
+        context: ContextOnApplication,
     ) -> Callable[[], ScenarioResult]:
         try:
             scenario_obj = load(config_path)
