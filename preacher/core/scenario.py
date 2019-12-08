@@ -104,7 +104,10 @@ class Scenario:
         current_context = ContextOnScenario(app=context.app)
         context_analyzer = analyze_context(current_context)
         conditions = collect(
-            condition.verify(context_analyzer)
+            condition.verify(
+                context_analyzer,
+                origin_datetime=current_context.scenario.starts,
+            )
             for condition in self._conditions
         )
         if conditions.status == Status.FAILURE:

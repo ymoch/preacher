@@ -97,6 +97,8 @@ def test_given_subscenarios(analyze_context, context_ctor):
 
     context = ContextOnApplication(app=sentinel.app_context)
     sentinel.context.app = context.app
+    sentinel.context.scenario = sentinel.scenario_context
+    sentinel.context.scenario.starts = sentinel.scenario_starts
     result = scenario.run(context, sentinel.listener)
     assert result.status == Status.FAILURE
     assert result.subscenarios[0].status == Status.UNSTABLE
@@ -118,7 +120,10 @@ def test_given_subscenarios(analyze_context, context_ctor):
 
     context_ctor.assert_called_with(app=sentinel.app_context)
     analyze_context.assert_called_with(sentinel.context)
-    condition1.verify.assert_called_with(sentinel.context_analyzer)
+    condition1.verify.assert_called_with(
+        sentinel.context_analyzer,
+        origin_datetime=sentinel.scenario_starts,
+    )
     subcase1.run.assert_called_once_with(sentinel.context, sentinel.listener)
     subcase2.run.assert_called_once_with(sentinel.context, sentinel.listener)
     subcase3.run.assert_called_once_with(sentinel.context, sentinel.listener)
