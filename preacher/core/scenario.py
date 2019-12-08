@@ -7,12 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import (
-    ApplicationContext,
-    ScenarioContext,
-    ScenarioContextComponent,
-    analyze_context,
-)
+from .context import ApplicationContext, ScenarioContext, analyze_context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -106,10 +101,7 @@ class Scenario:
         context: ApplicationContext,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
-        current_context = ScenarioContext(
-            app=context.app,
-            scenario=ScenarioContextComponent(),
-        )
+        current_context = ScenarioContext(app=context.app)
         context_analyzer = analyze_context(current_context)
         conditions = collect(
             condition.verify(context_analyzer)
@@ -147,12 +139,5 @@ class Scenario:
         listener: CaseListener,
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(
-            case(
-                context.app.base_url,
-                timeout=context.app.timeout,
-                retry=context.app.retry,
-                delay=context.app.delay,
-                listener=listener,
-            )
-            for case in self._cases
+            case(context, listener) for case in self._cases
         )

@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
+from .context import ScenarioContext
 from .request import Request, Response
 from .response_description import (
     ResponseDescription,
@@ -49,30 +50,28 @@ class Case:
 
     def __call__(
         self,
-        base_url: str,
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
+        context: ScenarioContext,
         listener: Optional[CaseListener] = None,
     ) -> CaseResult:
         if not self._enabled:
             return CaseResult(label=self._label)
-        func = partial(
-            self._run,
-            base_url=base_url,
-            timeout=timeout,
-            listener=listener or CaseListener(),
+        func = partial(self._run, context, listener or CaseListener())
+        return retry_while_false(
+            func,
+            attempts=context.app.retry + 1,
+            delay=context.app.delay,
         )
-        return retry_while_false(func, attempts=retry + 1, delay=delay)
 
     def _run(
         self,
-        base_url: str,
-        timeout: Optional[float],
+        context: ScenarioContext,
         listener: CaseListener,
     ) -> CaseResult:
         try:
-            response = self._request(base_url, timeout=timeout)
+            response = self._request(
+                context.app.base_url,
+                timeout=context.app.timeout,
+            )
         except Exception as error:
             return CaseResult(
                 status=Status.FAILURE,
