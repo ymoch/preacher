@@ -1,11 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
-from preacher.core.context import Context
 from preacher.core.description import Description
 from preacher.core.scenario import Scenario
 from preacher.core.status import Status
 from preacher.core.verification import Verification
+
+PACKAGE = 'preacher.core.scenario'
 
 
 def test_given_an_empty_scenario():
@@ -42,12 +43,9 @@ def test_given_a_filled_scenario():
     )
 
 
-@patch('preacher.core.scenario.Context')
-def test_given_subscenarios(context_ctor):
-    context = MagicMock(spec=Context)
-    context.analyze.return_value = sentinel.context_analyzer
-    context_ctor.return_value = context
-
+@patch(f'{PACKAGE}.Context', return_value=sentinel.context)
+@patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
+def test_given_subscenarios(analyze_context, context_ctor):
     condition1 = MagicMock(Description, verify=MagicMock(
         return_value=Verification.succeed()
     ))
@@ -119,6 +117,7 @@ def test_given_subscenarios(context_ctor):
     )
 
     context_ctor.assert_called_with(base_url='url')
+    analyze_context.assert_called_with(sentinel.context)
     condition1.verify.assert_called_with(sentinel.context_analyzer)
     subcase1.assert_called_once_with(
         'url', retry=5, delay=3.0, timeout=7.0, listener=sentinel.listener,
