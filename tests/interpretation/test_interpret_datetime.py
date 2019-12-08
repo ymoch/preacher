@@ -31,13 +31,13 @@ def test_interpret_datetime_given_timedelta_and_no_kwargs(
 
 @patch(f'{PACKAGE}.interpret_timedelta', return_value=timedelta(days=2))
 @patch(f'{PACKAGE}.now')
-def test_interpret_datetime_given_timedelta_and_request_datetime(
+def test_interpret_datetime_given_timedelta_and_origin_datetime(
     now,
     interpret_timedelta,
 ):
     actual = interpret_datetime(
         '+1 day',
-        request_datetime=datetime(2019, 2, 3, tzinfo=JST),
+        origin_datetime=datetime(2019, 2, 3, tzinfo=JST),
     )
     assert actual == datetime(2019, 2, 5, tzinfo=JST)
     interpret_timedelta.assert_called_once_with('+1 day')

@@ -1,16 +1,19 @@
 import re
 from datetime import timedelta
-from typing import Any, Optional
 
 from preacher.interpretation.error import InterpretationError
-
 
 TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
 
 
-def interpret_timedelta(value: Optional[Any]) -> timedelta:
-    """`value` should be a string."""
+def interpret_timedelta(value: object) -> timedelta:
+    """
+    Args:
+        value: The interpreted value, which should be a string.
 
+    Raises:
+        InterpretationError: When interpretation fails.
+    """
     if not isinstance(value, str):
         raise InterpretationError('Must be a string')
 
