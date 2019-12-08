@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-27 23:56+0900\n"
+"POT-Creation-Date: 2019-12-08 16:32+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -242,78 +242,3 @@ msgstr ""
 "レポートディレクトリは自動的に作られます. ``path/to/report`` をレポートディレクトリとして指定すると, "
 "``path/to/report/index.html`` がエントリーポイントになります. Preacher を CI "
 "で実行しているのであれば, レポートをビルド成果物として保存するとよいでしょう."
-
-# 3accac329cab461581ee33f7930d1417
-#: ../../user/quickstart.rst:119
-msgid "Allowing Random Errors"
-msgstr "ランダムなエラーの許容"
-
-# 5cf20862026645aeae5b90f1ae62607a
-#: ../../user/quickstart.rst:120
-msgid ""
-"Web API cannot always responds due to communication errors and so on. To "
-"allow these errors to some extent, Preacher supports retrying. you can "
-"set the retry count by ``-r`` or ``--retry`` options. The default is "
-"``0`` (no retry.)"
-msgstr ""
-"Web API は通信エラーなどにより, 必ず応答するとは限りません. 多少応答しなくてもテストを成立させるように, リトライすることができます."
-" ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
-
-# 19e4a9d4aeed4560be81bfac9e3fa3aa
-#: ../../user/quickstart.rst:125
-msgid ""
-"Preacher retries while not only request fails but also a validation "
-"doesn't succeed."
-msgstr "Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
-
-# 876aacd3f244492192ec5d1834017c5a
-#: ../../user/quickstart.rst:127
-msgid ""
-"Extreme response delaying can affect the testing process. You can set the"
-" timeout by ``-t`` or ``--timeout`` options (in seconds). The default is "
-"none (no timeout.)"
-msgstr ""
-"極端なレスポンス遅延が, テストの進行に影響することがあります. ``-t`` もしくは ``--timeout`` "
-"オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
-
-# 5cf20862026645aeae5b90f1ae62607a
-#: ../../user/quickstart.rst:131
-msgid ""
-"Retrying should have intervals to avoid overloading. You can set the "
-"retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
-" is ``0.1``."
-msgstr ""
-"テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです. ``-d`` もしくは ``--delay`` "
-"オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
-
-# d186a9e086424b41844c1bbeeee97268
-#: ../../user/quickstart.rst:137
-msgid "Control Outputs"
-msgstr "出力制御"
-
-# de1468c7541e4b3ab55e27747e4d7ef8
-#: ../../user/quickstart.rst:138
-msgid ""
-"By default, not ``SKIPPED`` test results are shown. It is useful for "
-"debugging your test cases, but will be noisy when your test scenarios "
-"become huge. The output level control will help you find important "
-"errors."
-msgstr ""
-"デフォルトでは, ``SKIPPED`` ではないテスト結果が出力されます."
-" これはテストケースのデバッグには便利ですが, テストが巨大になるにつれ煩わしくなります."
-" 出力レベルの制御は重要なエラーを見つけるために有用です."
-
-# 95844c414c134603a9af88233b748226
-#: ../../user/quickstart.rst:148
-msgid "Ignore cases"
-msgstr "テストケースを無視する"
-
-# 1be6143dfd8d42659d9842e0be5219b4
-#: ../../user/quickstart.rst:149
-msgid ""
-"To skip some cases temporarily for some reason, add ``enabled: false`` to"
-" that cases."
-msgstr ""
-"何らかの理由で一時的にテストを実行したくない場合,"
-" そのケースに ``enabled: false`` を付与します."
-
