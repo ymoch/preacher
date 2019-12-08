@@ -42,3 +42,24 @@ add ``enabled: false`` to that cases.
         enabled: false
         request: ...
 
+Conditional Scenario
+--------------------
+Using ``when`` properties, you can run scenarios conditionally.
+Scenarios are run only when the context satisfied the descriptions
+in ``when`` properties.
+
+.. code-block:: yaml
+
+    label: Run this scenario only for localhost.
+    when:
+      - describe: .app.base_url
+        should:
+          contain_string: localhost
+    cases:
+      - ...
+
+A ``Context`` is a JSON-like value, which can be descripted by `jq`_.
+See :doc:`context` to find available context.
+
+
+.. _jq: https://stedolan.github.io/jq/
