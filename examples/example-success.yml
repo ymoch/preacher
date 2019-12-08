@@ -1,7 +1,7 @@
 label: Scenario succeeds
 
 when:
-  - describe: ".base_url"
+  - describe: ".app.base_url"
     should:
       contain_string: "localhost"
 

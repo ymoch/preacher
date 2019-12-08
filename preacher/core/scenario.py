@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import Context
+from .context import ApplicationContext, ScenarioContext, analyze_context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -16,6 +16,9 @@ from .verification import Verification, collect
 
 
 class ScenarioListener(CaseListener):
+    """
+    Interface to listen to scenario running.
+    """
     pass
 
 
@@ -75,44 +78,31 @@ class Scenario:
     def __init__(
         self,
         label: Optional[str] = None,
-        conditions: List[Description] = [],
-        cases: List[Case] = [],
-        subscenarios: List[Scenario] = [],
+        conditions: Optional[List[Description]] = None,
+        cases: Optional[List[Case]] = None,
+        subscenarios: Optional[List[Scenario]] = None,
     ):
         self._label = label
-        self._conditions = conditions
-        self._cases = cases
-        self._subscenarios = subscenarios
+        self._conditions = conditions or []
+        self._cases = cases or []
+        self._subscenarios = subscenarios or []
 
     def run(
         self,
-        base_url: str,
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
+        context: ApplicationContext,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioResult:
         with ThreadPoolExecutor(1) as executor:
-            return self.submit(
-                executor,
-                base_url=base_url,
-                retry=retry,
-                delay=delay,
-                timeout=timeout,
-                listener=listener,
-            ).result()
+            return self.submit(executor, context, listener).result()
 
     def submit(
         self,
         executor: ThreadPoolExecutor,
-        base_url: str,
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
+        context: ApplicationContext,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
-        context = Context(base_url=base_url)
-        context_analyzer = context.analyze()
+        current_context = ScenarioContext(app=context.app)
+        context_analyzer = analyze_context(current_context)
         conditions = collect(
             condition.verify(context_analyzer)
             for condition in self._conditions
@@ -130,23 +120,10 @@ class Scenario:
                 conditions=conditions,
             ))
 
-        cases = executor.submit(
-            self._run_cases,
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-            listener=listener,
-        )
+        listener = listener or ScenarioListener()
+        cases = executor.submit(self._run_cases, current_context, listener)
         subscenarios = [
-            subscenario.submit(
-                executor,
-                base_url=base_url,
-                retry=retry,
-                delay=delay,
-                timeout=timeout,
-                listener=listener,
-            )
+            subscenario.submit(executor, current_context, listener)
             for subscenario in self._subscenarios
         ]
         return RunningScenarioTask(
@@ -158,19 +135,9 @@ class Scenario:
 
     def _run_cases(
         self,
-        base_url: str,
-        retry: int,
-        delay: float,
-        timeout: Optional[float],
-        listener: Optional[CaseListener],
+        context: ScenarioContext,
+        listener: CaseListener,
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(
-            case(
-                base_url,
-                timeout=timeout,
-                retry=retry,
-                delay=delay,
-                listener=listener,
-            )
-            for case in self._cases
+            case.run(context, listener) for case in self._cases
         )

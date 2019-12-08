@@ -4,6 +4,9 @@ from typing import Callable, Iterable, Optional
 from preacher.compilation.error import CompilationError
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.compilation.yaml import load
+from preacher.core.context import (
+    ApplicationContext, ApplicationContextComponent
+)
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from .listener import Listener
@@ -36,7 +39,18 @@ class Application:
         executor: ThreadPoolExecutor,
         config_paths: Iterable[str],
     ) -> None:
-        tasks = [self._submit_each(executor, path) for path in config_paths]
+        context = ApplicationContext(
+            app=ApplicationContextComponent(
+                base_url=self._base_url,
+                retry=self._retry,
+                delay=self._delay,
+                timeout=self._timeout,
+            )
+        )
+        tasks = [
+            self._submit_each(executor, path, context)
+            for path in config_paths
+        ]
         results = (task() for task in tasks)
         for result in results:
             self._is_succeeded &= result.status.is_succeeded
@@ -48,6 +62,7 @@ class Application:
         self,
         executor: ThreadPoolExecutor,
         config_path: str,
+        context: ApplicationContext,
     ) -> Callable[[], ScenarioResult]:
         try:
             scenario_obj = load(config_path)
@@ -60,11 +75,4 @@ class Application:
             )
             return lambda: result
 
-        return scenario.submit(
-            executor,
-            base_url=self._base_url,
-            retry=self._retry,
-            delay=self._delay,
-            timeout=self._timeout,
-            listener=self._listener,
-        ).result
+        return scenario.submit(executor, context, self._listener).result
