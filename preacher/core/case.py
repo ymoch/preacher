@@ -48,7 +48,7 @@ class Case:
         self._response_description = response_description
         self._enabled = enabled
 
-    def __call__(
+    def run(
         self,
         context: ScenarioContext,
         listener: Optional[CaseListener] = None,

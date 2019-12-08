@@ -139,5 +139,5 @@ class Scenario:
         listener: CaseListener,
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(
-            case(context, listener) for case in self._cases
+            case.run(context, listener) for case in self._cases
         )

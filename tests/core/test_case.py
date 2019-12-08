@@ -35,7 +35,7 @@ def test_when_disabled():
         response_description=response_description
     )
     context = ScenarioContext()
-    actual = case(context)
+    actual = case.run(context)
     assert actual.label == 'Disabled'
     assert actual.status == Status.SKIPPED
 
@@ -57,7 +57,7 @@ def test_when_the_request_fails(retry_patch):
     )
     listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
-        result = case(context, listener)
+        result = case.run(context, listener)
 
     assert not result
     assert result.label == 'Request fails'
@@ -100,7 +100,7 @@ def test_when_given_an_invalid_response(retry_patch):
     )
     listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
-        result = case(context, listener)
+        result = case.run(context, listener)
 
     assert not result
     assert result.label == 'Response should be unstable'
@@ -135,7 +135,7 @@ def test_when_given_an_valid_response(retry_patch):
     )
 
     with retry_patch:
-        result = case(ScenarioContext())
+        result = case.run(ScenarioContext())
 
     assert result
     assert result.status == Status.SUCCESS
