@@ -1,6 +1,9 @@
 from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
+from preacher.core.context import (
+    ApplicationContext, ApplicationContextComponent
+)
 from preacher.core.description import Description
 from preacher.core.scenario import Scenario
 from preacher.core.status import Status
@@ -12,7 +15,7 @@ PACKAGE = 'preacher.core.scenario'
 def test_given_an_empty_scenario():
     scenario = Scenario(label=None, cases=[])
     with ThreadPoolExecutor(1) as executor:
-        result = scenario.submit(executor, base_url='base_url').result()
+        result = scenario.submit(executor, ApplicationContext()).result()
     assert result.label is None
     assert result.status == Status.SKIPPED
     assert list(result.cases) == []
@@ -25,12 +28,15 @@ def test_given_a_filled_scenario():
     case2 = MagicMock(return_value=sentinel.result2)
 
     scenario = Scenario(label='label', cases=[case1, case2])
-    result = scenario.run(
-        base_url='base_url',
-        retry=3,
-        delay=2.0,
-        timeout=5.0,
+    context = ApplicationContext(
+        app=ApplicationContextComponent(
+            base_url='base_url',
+            retry=3,
+            delay=2.0,
+            timeout=5.0,
+        )
     )
+    result = scenario.run(context)
     assert result.label == 'label'
     assert result.status == Status.UNSTABLE
     assert list(result.cases) == [sentinel.result1, sentinel.result2]
@@ -43,7 +49,7 @@ def test_given_a_filled_scenario():
     )
 
 
-@patch(f'{PACKAGE}.Context', return_value=sentinel.context)
+@patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
 def test_given_subscenarios(analyze_context, context_ctor):
     condition1 = MagicMock(Description, verify=MagicMock(
@@ -91,13 +97,16 @@ def test_given_subscenarios(analyze_context, context_ctor):
         subscenarios=[subscenario1, subscenario2, subscenario3, subscenario4],
     )
 
-    result = scenario.run(
-        base_url='url',
-        retry=5,
-        delay=3.0,
-        timeout=7.0,
-        listener=sentinel.listener,
+    context = ApplicationContext(
+        app=ApplicationContextComponent(
+            base_url='url',
+            retry=5,
+            delay=3.0,
+            timeout=7.0,
+        )
     )
+    sentinel.context.app = context.app
+    result = scenario.run(context, sentinel.listener)
     assert result.status == Status.FAILURE
     assert result.subscenarios[0].status == Status.UNSTABLE
     assert result.subscenarios[1].status == Status.FAILURE
@@ -116,7 +125,7 @@ def test_given_subscenarios(analyze_context, context_ctor):
         result.subscenarios[3].conditions.children[1].status == Status.UNSTABLE
     )
 
-    context_ctor.assert_called_with(base_url='url')
+    context_ctor.assert_called_with(app=context.app, scenario=ANY)
     analyze_context.assert_called_with(sentinel.context)
     condition1.verify.assert_called_with(sentinel.context_analyzer)
     subcase1.assert_called_once_with(

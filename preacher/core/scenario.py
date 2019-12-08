@@ -129,14 +129,7 @@ class Scenario:
             ))
 
         listener = listener or ScenarioListener()
-        cases = executor.submit(
-            self._run_cases,
-            base_url=current_context.app.base_url,
-            retry=current_context.app.retry,
-            delay=current_context.app.delay,
-            timeout=current_context.app.timeout,
-            listener=listener,
-        )
+        cases = executor.submit(self._run_cases, current_context, listener)
         subscenarios = [
             subscenario.submit(executor, current_context, listener)
             for subscenario in self._subscenarios

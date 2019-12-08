@@ -17,7 +17,9 @@ class ApplicationContextComponent:
 
 @dataclass(frozen=True)
 class ApplicationContext:
-    app: ApplicationContextComponent
+    app: ApplicationContextComponent = field(
+        default_factory=ApplicationContextComponent
+    )
 
 
 @dataclass(frozen=True)
@@ -27,7 +29,9 @@ class ScenarioContextComponent:
 
 @dataclass(frozen=True)
 class ScenarioContext(ApplicationContext):
-    scenario: ScenarioContextComponent
+    scenario: ScenarioContextComponent = field(
+        default_factory=ScenarioContextComponent
+    )
 
 
 @dataclass(frozen=True)
@@ -37,7 +41,7 @@ class CaseContextComponent:
 
 @dataclass(frozen=True)
 class CaseContext(ScenarioContext):
-    case: CaseContextComponent
+    case: CaseContextComponent = field(default_factory=CaseContextComponent)
 
 
 def analyze_context(context) -> Analyzer:
