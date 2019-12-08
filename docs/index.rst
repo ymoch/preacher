@@ -30,6 +30,7 @@ The User Guide
 
    user/intro
    user/quickstart
+   user/advanced-usage
    user/cli
    user/scenario-structure
    user/extraction
