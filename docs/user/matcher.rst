@@ -43,8 +43,10 @@ String
 
 Datetime
 --------
-- be_before: ``String``
+- be_before: ``Datetime`` or ``String``
     - Matches if it is a datetime and before the given datetime.
+    - When given a ``Datetime``, then compares to it.
+      Naive datetime values are regarded as UTC time.
     - When given ``now``, then compares to the datetime just when the request starts.
     - When given an offset, then compares to the datetime when the request starts.
         - Days, hours, minutes and seconds offsets are available.

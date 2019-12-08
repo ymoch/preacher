@@ -8,7 +8,7 @@ from .datetime import now
 
 @dataclass(frozen=True)
 class ApplicationContextComponent:
-    started: datetime = field(default_factory=now)
+    starts: datetime = field(default_factory=now)
     base_url: str = ''
     retry: int = 0
     delay: float = 0.1
@@ -24,7 +24,7 @@ class ApplicationContext:
 
 @dataclass(frozen=True)
 class ScenarioContextComponent:
-    started: datetime = field(default_factory=now)
+    starts: datetime = field(default_factory=now)
 
 
 @dataclass(frozen=True)
