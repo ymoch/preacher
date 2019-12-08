@@ -1,11 +1,18 @@
 from datetime import datetime, timezone
 
 from hamcrest.core.string_description import StringDescription
-from pytest import mark
+from pytest import mark, raises
 
 from preacher.core.hamcrest import after, before
 
 ORIGIN = datetime(2019, 12, 15, 12, 34, 56, tzinfo=timezone.utc)
+
+
+@mark.parametrize('item', [None, 1])
+def test_before_none(item):
+    matcher = before(ORIGIN)
+    with raises(TypeError):
+        matcher.matches(item)
 
 
 @mark.parametrize('item, expected', [
