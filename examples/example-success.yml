@@ -1,9 +1,12 @@
 label: Scenario succeeds
 
 when:
-  - describe: ".app.base_url"
+  - describe: .app.base_url
     should:
-      contain_string: "localhost"
+      contain_string: localhost
+  - describe: .scenario.starts
+    should:
+      be_after: 2019-12-07T00:00:00Z
 
 default:
   request:
