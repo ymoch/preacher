@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"POT-Creation-Date: 2019-12-08 16:47+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,68 +17,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
+# 414781ed3c2749ca95fb1cb5292e4711
 #: ../../user/context.rst:2
-msgid "Application Running Context"
+msgid "Context Reference"
 msgstr ""
 
-#: ../../user/context.rst:3
-msgid "You can toggle scenarios using application running context."
-msgstr ""
-
-#: ../../user/context.rst:6
-msgid "Conditional Scenario"
+# ed734a2f87df4a2a97062a6ae5dad7ca
+#: ../../user/context.rst:4
+msgid "Here is the definition of ``Context`` Object."
 msgstr ""
 
 #: ../../user/context.rst:7
-msgid ""
-"Using ``when`` properties, you can run scenarios conditionally. Scenarios"
-" are run only when the context satisfied the descriptions in ``when`` "
-"properties."
-msgstr ""
-
-#: ../../user/context.rst:24
 msgid "Definition"
 msgstr ""
 
-#: ../../user/context.rst:25
-msgid ""
-"A ``Context`` is a JSON-like value, which can be descripted by `jq`_ Here"
-" is the definition of ``Context`` Object."
-msgstr ""
-
-#: ../../user/context.rst:28
+#: ../../user/context.rst:8
 msgid "The definition of ``Context`` Object"
 msgstr ""
 
-#: ../../user/context.rst:32
+#: ../../user/context.rst:12
 msgid "Key"
 msgstr ""
 
-#: ../../user/context.rst:33
+#: ../../user/context.rst:13
 msgid "Type"
 msgstr ""
 
-#: ../../user/context.rst:34
+#: ../../user/context.rst:14
 msgid "Description"
 msgstr ""
 
-#: ../../user/context.rst:35
+#: ../../user/context.rst:15
 msgid "Example"
 msgstr ""
 
-#: ../../user/context.rst:36
+#: ../../user/context.rst:16
 msgid "base_url"
 msgstr ""
 
-#: ../../user/context.rst:37
+#: ../../user/context.rst:17
 msgid "string"
 msgstr ""
 
-#: ../../user/context.rst:38
+#: ../../user/context.rst:18
 msgid "Base URL"
 msgstr ""
 
-#: ../../user/context.rst:39
+#: ../../user/context.rst:19
 msgid "http://localhost:5042/base"
 msgstr ""
+
+#~ msgid "Application Running Context"
+#~ msgstr ""
+
+#~ msgid "You can toggle scenarios using application running context."
+#~ msgstr ""
+
+#~ msgid "Conditional Scenario"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Using ``when`` properties, you can run"
+#~ " scenarios conditionally. Scenarios are run"
+#~ " only when the context satisfied the"
+#~ " descriptions in ``when`` properties."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "A ``Context`` is a JSON-like "
+#~ "value, which can be descripted by "
+#~ "`jq`_ Here is the definition of "
+#~ "``Context`` Object."
+#~ msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-08 16:32+0900\n"
+"POT-Creation-Date: 2019-12-08 16:53+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,10 +35,8 @@ msgid ""
 "set the retry count by ``-r`` or ``--retry`` options. The default is "
 "``0`` (no retry.)"
 msgstr ""
-"Web API は通信エラーなどにより, 必ず応答するとは限りません."
-" 多少応答しなくてもテストを成立させるように, リトライすることができます. ``-r`` もしくは"
-" ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0``"
-" (リトライしない) です"
+"Web API は通信エラーなどにより, 必ず応答するとは限りません. 多少応答しなくてもテストを成立させるように, リトライすることができます."
+" ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
 
 # 3b47ff03344b4e3dbf773d739ba1780f
 #: ../../user/advanced-usage.rst:11
@@ -54,9 +52,8 @@ msgid ""
 " timeout by ``-t`` or ``--timeout`` options (in seconds). The default is "
 "none (no timeout.)"
 msgstr ""
-"極端なレスポンス遅延が, テストの進行に影響することがあります. ``-t`` もしくは "
-"``--timeout`` オプションでリクエストのタイムアウト (単位は秒) を指定できます. "
-"デフォルトはタイムアウトなしです."
+"極端なレスポンス遅延が, テストの進行に影響することがあります. ``-t`` もしくは ``--timeout`` "
+"オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
 
 # d27c47106c004884b2c888a9c88e313a
 #: ../../user/advanced-usage.rst:17
@@ -65,9 +62,8 @@ msgid ""
 "retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
 " is ``0.1``."
 msgstr ""
-"テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです. ``-d`` "
-"もしくは ``--delay`` オプションでリトライ間隔 (単位は秒) を指定できます."
-" デフォルトは ``0.1`` です."
+"テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです. ``-d`` もしくは ``--delay`` "
+"オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
 
 # 889d898ebfbf4d7591b777aca497f7e4
 #: ../../user/advanced-usage.rst:23
@@ -82,9 +78,8 @@ msgid ""
 "become huge. The output level control will help you find important "
 "errors."
 msgstr ""
-"デフォルトでは, ``SKIPPED`` ではないテスト結果が出力されます. "
-"これはテストケースのデバッグには便利ですが, テストが巨大になるにつれ煩わしくなります. "
-"出力レベルの制御は重要なエラーを見つけるために有用です."
+"デフォルトでは, ``SKIPPED`` ではないテスト結果が出力されます. これはテストケースのデバッグには便利ですが, "
+"テストが巨大になるにつれ煩わしくなります. 出力レベルの制御は重要なエラーを見つけるために有用です."
 
 # fac7a37ce24c4bc8b0c7473fb795e3ab
 #: ../../user/advanced-usage.rst:34
@@ -98,3 +93,28 @@ msgid ""
 " that cases."
 msgstr "何らかの理由で一時的にテストを実行したくない場合, そのケースに ``enabled: false`` を付与します."
 
+# c7946552237c437c9c905d85f53dbe4e
+#: ../../user/advanced-usage.rst:46
+msgid "Conditional Scenario"
+msgstr "条件に応じて実行するシナリオ"
+
+# 993027b0dbef4117a9af5bfb73df3e47
+#: ../../user/advanced-usage.rst:47
+msgid ""
+"Using ``when`` properties, you can run scenarios conditionally. Scenarios"
+" are run only when the *context* satisfied the descriptions in ``when`` "
+"properties."
+msgstr ""
+"``when`` プロパティを用いることで, 条件を満たしたときだけシナリオを実行することができます.  シナリオは *コンテキスト* が "
+"``when`` プロパティの記述を満たしたときだけ実行されます."
+
+# ac5ec679db4b429b9eb93f9340a67283
+#: ../../user/advanced-usage.rst:61
+msgid ""
+"A ``Context`` object, which stands for *context*, is a JSON-like value, "
+"which can be descripted by `jq`_. See :doc:`context` to find available "
+"context."
+msgstr ""
+"*コンテキスト* を表す ``Context`` オブジェクトは JSON-like な値で,"
+" `jq`_ によって記述することができます."
+" :doc:`context` で利用可能なコンテキストを閲覧できます."

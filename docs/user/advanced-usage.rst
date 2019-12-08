@@ -45,7 +45,7 @@ add ``enabled: false`` to that cases.
 Conditional Scenario
 --------------------
 Using ``when`` properties, you can run scenarios conditionally.
-Scenarios are run only when the context satisfied the descriptions
+Scenarios are run only when the *context* satisfied the descriptions
 in ``when`` properties.
 
 .. code-block:: yaml
@@ -58,7 +58,8 @@ in ``when`` properties.
     cases:
       - ...
 
-A ``Context`` is a JSON-like value, which can be descripted by `jq`_.
+A ``Context`` object, which stands for *context*, is a JSON-like value,
+which can be descripted by `jq`_.
 See :doc:`context` to find available context.
 
 
