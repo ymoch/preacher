@@ -32,7 +32,7 @@ RUN apk --no-cache add libxml2 libxslt && \
     python get-poetry.py --uninstall --yes && \
     \
     pip --no-cache-dir install . && \
-    rm -rf $HOME/.cache && \
+    rm -rf $HOME/.cache $HOME/.config && \
     \
     cd $HOME && \
     rm -rf /usr/src/preacher && \
