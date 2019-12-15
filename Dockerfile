@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-ARG POETRY_VERSION=0.12.17
+ARG POETRY_VERSION=1.0.0
 
 WORKDIR /work
 
@@ -10,6 +10,8 @@ RUN apk --no-cache add libxml2 libxslt && \
         libc-dev \
         libxml2-dev \
         libxslt-dev \
+        libffi-dev \
+        openssl-dev \
         libtool \
         autoconf \
         automake \
@@ -24,11 +26,12 @@ RUN apk --no-cache add libxml2 libxslt && \
     python get-poetry.py && \
     source $HOME/.poetry/env && \
     \
-    poetry config settings.virtualenvs.create false && \
+    poetry config virtualenvs.create false && \
     poetry install --no-dev && \
-    pip --no-cache-dir install . && \
     \
     python get-poetry.py --uninstall --yes && \
+    \
+    pip --no-cache-dir install . && \
     rm -rf $HOME/.cache && \
     \
     cd $HOME && \
