@@ -19,7 +19,7 @@ RUN apk --no-cache add libxml2 libxslt && \
         && \
     \
     pip --no-cache-dir install /usr/src/preacher && \
-    rm -rf /usr/src/preacher && \
+    rm -rf /usr/src/preacher $HOME/.cache && \
     \
     apk --no-cache del .build-deps && \
     \
