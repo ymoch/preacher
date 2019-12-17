@@ -1,7 +1,5 @@
 FROM python:3.8-alpine
 
-ARG POETRY_VERSION=1.0.0
-
 WORKDIR /work
 
 COPY . /usr/src/preacher
@@ -20,21 +18,7 @@ RUN apk --no-cache add libxml2 libxslt && \
         curl \
         && \
     \
-    cd /usr/src/preacher && \
-    \
-    curl -sSLO https://raw.githubusercontent.com/sdispater/poetry/$POETRY_VERSION/get-poetry.py && \
-    python get-poetry.py && \
-    source $HOME/.poetry/env && \
-    \
-    poetry config virtualenvs.create false && \
-    poetry install --no-dev && \
-    \
-    python get-poetry.py --uninstall --yes && \
-    \
-    pip --no-cache-dir install . && \
-    rm -rf $HOME/.cache $HOME/.config && \
-    \
-    cd $HOME && \
+    pip --no-cache-dir install /usr/src/preacher && \
     rm -rf /usr/src/preacher && \
     \
     apk --no-cache del .build-deps && \
