@@ -19,7 +19,7 @@ def test_given_an_empty_scenario():
     assert list(result.cases) == []
 
 
-@patch(f'{PACKAGE}.ApplicationContext', return_value=sentinel.context)
+@patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
 def test_given_a_filled_scenario(analyze_context, context_ctor):
     sentinel.result1.status = Status.UNSTABLE
@@ -50,7 +50,7 @@ def test_given_a_filled_scenario(analyze_context, context_ctor):
         )
 
 
-@patch(f'{PACKAGE}.ApplicationContext', return_value=sentinel.context)
+@patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
 def test_given_subscenarios(analyze_context, context_ctor):
     condition1 = MagicMock(Description, verify=MagicMock(

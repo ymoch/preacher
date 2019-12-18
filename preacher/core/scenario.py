@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import analyze_context, ApplicationContext
+from .context import ScenarioContext, analyze_context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -114,7 +114,7 @@ class Scenario:
         timeout: Optional[float] = None,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
-        context = ApplicationContext(
+        context = ScenarioContext(
             base_url=base_url,
             retry=retry,
             delay=delay,
