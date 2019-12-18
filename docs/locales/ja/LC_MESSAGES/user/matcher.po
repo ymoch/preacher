@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"POT-Creation-Date: 2019-12-19 02:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,278 +18,349 @@ msgstr ""
 "Generated-By: Babel 2.7.0\n"
 
 #: ../../user/matcher.rst:2
+#: ec0755f225994f9a969d1cecf0cc9c62
 msgid "Matcher"
 msgstr ""
 
 #: ../../user/matcher.rst:3
+#: 28a5b8826bbf4fac9b19f4b1c572f978
 msgid ""
 "A ``Matcher`` is a string or a mapping that has an item. Allowed matchers"
 " are below."
 msgstr ""
 
 #: ../../user/matcher.rst:6
+#: 14ebd6e19dfc452893f33aa640ed8cdb
 msgid ""
 "A matchers taking ``none`` is given as a string like ``{\"should\": "
 "\"be_null\"}``."
 msgstr ""
 
 #: ../../user/matcher.rst:7
+#: 820be49f96634ee79e663a5e336fd2e0
 msgid "A ``Value`` given as a ``Matcher`` is equivalent to ``{\"equal\": it}``."
 msgstr ""
 
 #: ../../user/matcher.rst:10
+#: 25c6b6ebe84b4379877e19ccc78c6680
 msgid "Object"
 msgstr ""
 
 #: ../../user/matcher.rst:11
+#: adc30892bca84b468476d3438774619e
 msgid "be: ``Matcher``"
 msgstr ""
 
 #: ../../user/matcher.rst:12
+#: 76134e008a704d10b47a0aa691ee21c4
 msgid "Matches the given matcher."
 msgstr ""
 
 #: ../../user/matcher.rst:13
+#: a8710f0ab49c46c6821e6ca44b845702
 msgid "be_null: ``none``"
 msgstr ""
 
 #: ../../user/matcher.rst:14
+#: bdc06d1a3aa84337beb828d18284aed4
 msgid "Matches if it is a null value."
 msgstr ""
 
 #: ../../user/matcher.rst:15
+#: 63aeb0e4164d45569b7cae7f1122786c
 msgid "not_be_null: ``none``"
 msgstr ""
 
 #: ../../user/matcher.rst:16
+#: c4dfcd6ac55f4b26afb85a3e0a2a6a95
 msgid "Matches if it is not a null value."
 msgstr ""
 
 #: ../../user/matcher.rst:17
+#: a2cd73db86df4be184a50a4c9fb90884
 msgid "equal: ``Value``"
 msgstr ""
 
 #: ../../user/matcher.rst:18
+#: b922bac5b2d348cf92e09fcbb7383e08
 msgid "Matches if it equals the given value."
 msgstr ""
 
 #: ../../user/matcher.rst:20
+#: 95d9bef298ea42d3a65b3af86f20cfda
 msgid "have_length: ``Integer``"
 msgstr ""
 
 #: ../../user/matcher.rst:20
+#: d68c40543c64497ab207e66848c1fb6b
 msgid "Matches if it has a length and its length is equal to the given value."
 msgstr ""
 
 #: ../../user/matcher.rst:23
+#: ab6979fa2a25495e83370c8868c2b637
 msgid "Comparable"
 msgstr ""
 
 #: ../../user/matcher.rst:24
+#: dd59b9c9e447448eb5221cb13c6f1be9
 msgid "be_greater_than: ``Comparable``"
 msgstr ""
 
 #: ../../user/matcher.rst:25
+#: 8aad614e767943569dbd03be7325c004
 msgid "Matches if it is greater than the given value (it > argument)."
 msgstr ""
 
 #: ../../user/matcher.rst:26
+#: 6e4d6a707ad24ab3809c3130ca530b7c
 msgid "be_greater_than_or_equal_to: ``Comparable``"
 msgstr ""
 
 #: ../../user/matcher.rst:27
+#: 666c151fd2b64b2c9d0e717c4c79cfb9
 msgid ""
 "Matches if it is greater than or equal to the given value (it >= "
 "argument)."
 msgstr ""
 
 #: ../../user/matcher.rst:28
+#: 36b8adbd61a84569a99b9c16624ce511
 msgid "be_less_than: ``Comparable``"
 msgstr ""
 
 #: ../../user/matcher.rst:29
+#: 416e4f0ecae34f1bb6d92923dc33e5bb
 msgid "Matches if it is less than the given value (it < argument)."
 msgstr ""
 
 #: ../../user/matcher.rst:31
+#: c447de1a16e44c138a973864eaebf766
 msgid "be_less_than_or_equal_to: ``Comparable``"
 msgstr ""
 
 #: ../../user/matcher.rst:31
+#: 0ae85b4b954b45ca88f59c316bce09d7
 msgid "Matches if it is less than or equal to the given value (it < argument)."
 msgstr ""
 
 #: ../../user/matcher.rst:34
+#: 3afacbf6976b4c8fbce93b9f0b27a952
 msgid "String"
 msgstr ""
 
 #: ../../user/matcher.rst:35
+#: 47e852d7058e4c7d89d76919027dc7c2
 msgid "contain_string: ``String``"
 msgstr ""
 
 #: ../../user/matcher.rst:36
+#: 7577c0518000426283e43ccdaa987f5a
 msgid "Matches if it is an string and contains the given value."
 msgstr ""
 
 #: ../../user/matcher.rst:37
+#: b1002e9265444dc296d5ef1d15627973
 msgid "start_with: ``String``"
 msgstr ""
 
 #: ../../user/matcher.rst:38
+#: ab362326dc7d4befbe1917573090a854
 msgid "Matches if it is an string and starts with the given value."
 msgstr ""
 
 #: ../../user/matcher.rst:39
+#: 65cc58bc9ceb4989a54753091fa8c91a
 msgid "end_with: ``String``"
 msgstr ""
 
 #: ../../user/matcher.rst:40
+#: b8ac914bbf974160a9e13f41e142f0f5
 msgid "Matches if it is an string and ends with the given value."
 msgstr ""
 
 #: ../../user/matcher.rst:42
+#: 52dd3c6b1a4843f78dc12601978e99f1
 msgid "match_regexp: ``String``"
 msgstr ""
 
 #: ../../user/matcher.rst:42
+#: 595ba53ebff94b54b49259d7d51d29f8
 msgid "Matches if it is an string and matches the given regular expression."
 msgstr ""
 
 #: ../../user/matcher.rst:45
+#: 13d3daa45b6a48a0a59ba9e845f33e51
 msgid "Datetime"
 msgstr ""
 
-#: ../../user/matcher.rst:53
-msgid "be_before: ``String``"
+#: ../../user/matcher.rst:55
+#: 33e48e2692c345f58219d1ce1ffa3263
+msgid "be_before: ``Datetime`` or ``String``"
 msgstr ""
 
 #: ../../user/matcher.rst:47
+#: 117a4a696bce401da2882aa89987c127
 msgid "Matches if it is a datetime and before the given datetime."
 msgstr ""
 
 #: ../../user/matcher.rst:48
+#: 35b1d423557f4674a388251a5657b241
+msgid ""
+"When given a ``Datetime``, then compares to it. Naive datetime values are"
+" regarded as UTC time."
+msgstr ""
+
+#: ../../user/matcher.rst:50
+#: 35b1d423557f4674a388251a5657b241
 msgid ""
 "When given ``now``, then compares to the datetime just when the request "
 "starts."
 msgstr ""
 
-#: ../../user/matcher.rst:53
+#: ../../user/matcher.rst:55
+#: cfecf8b2155e463f981221f7e4cf9f80
 msgid ""
 "When given an offset, then compares to the datetime when the request "
 "starts."
 msgstr ""
 
-#: ../../user/matcher.rst:50
+#: ../../user/matcher.rst:52
+#: 152e042932e74830853e370e24a743f6
 msgid "Days, hours, minutes and seconds offsets are available."
 msgstr ""
 
-#: ../../user/matcher.rst:51
+#: ../../user/matcher.rst:53
+#: 9848294a83f1465a9cd1ea9bb9f9aa99
 msgid ""
 "When given a positive offset like ``1 day`` or ``+2 hours``, then "
 "compares to the future datetime."
 msgstr ""
 
-#: ../../user/matcher.rst:53
+#: ../../user/matcher.rst:55
+#: a302231ac9f243da84ca0bfa54a7154c
 msgid ""
 "When given a negative offset like ``-1 minute`` or ``-2 seconds``, then "
 "compares to the past datetime."
 msgstr ""
 
-#: ../../user/matcher.rst:57
+#: ../../user/matcher.rst:59
+#: 442ed1118e0143aebb27b61c2fd0d741
 msgid "be_after: ``String``"
 msgstr ""
 
-#: ../../user/matcher.rst:56
+#: ../../user/matcher.rst:58
+#: 096d69ab142b4ab685e4313875dea690
 msgid "Matches if it is a datetime and after the given datetime."
 msgstr ""
 
-#: ../../user/matcher.rst:57
+#: ../../user/matcher.rst:59
+#: 5c08935800cf443396509d173663451b
 msgid "Usage is the same as ``be_before``."
 msgstr ""
 
-#: ../../user/matcher.rst:59
+#: ../../user/matcher.rst:61
+#: bb9ff019ca834cecaeb27843037ceb85
 msgid ""
 "Validated datetime values must be in ISO 8601 format like "
 "``2019-01-23T12:34:56Z``."
 msgstr ""
 
-#: ../../user/matcher.rst:63
+#: ../../user/matcher.rst:65
+#: acf760297d3040dab8d94c143aee7ece
 msgid "Sequence"
 msgstr ""
 
-#: ../../user/matcher.rst:64
+#: ../../user/matcher.rst:66
+#: c422a2c2cd6740a0be170cb05177d1f2
 msgid "be_empty: ``none``"
 msgstr ""
 
-#: ../../user/matcher.rst:65
+#: ../../user/matcher.rst:67
+#: 5a1872372f8e4504bb406ec0002293b7
 msgid "Matches an empty sequence."
 msgstr ""
 
-#: ../../user/matcher.rst:66
+#: ../../user/matcher.rst:68
+#: 1c528767d91c4d2eb0708b54f67fac55
 msgid "have_item: ``Matcher``"
 msgstr ""
 
-#: ../../user/matcher.rst:67
+#: ../../user/matcher.rst:69
+#: 5fd3439ce5bc4765bda061434697908b
 msgid "Matches if it is a collection and has the given item."
 msgstr ""
 
-#: ../../user/matcher.rst:68
+#: ../../user/matcher.rst:70
+#: 734c47f97e4444fbaa2aaa538578fbe1
 msgid "have_items: ``List<Matcher>``"
 msgstr ""
 
-#: ../../user/matcher.rst:69
+#: ../../user/matcher.rst:71
+#: 9c329486bcb54fc8ae3cc58ad0c51fc8
 msgid "Matches if all given items appear in the list, in any order."
 msgstr ""
 
-#: ../../user/matcher.rst:70
+#: ../../user/matcher.rst:72
+#: 062a3acb71dc40c086becce139ef19f3
 msgid "contain: ``List<Matcher>``"
 msgstr ""
 
-#: ../../user/matcher.rst:71
+#: ../../user/matcher.rst:73
+#: 73532963f9ca43cfbb30320146ea4d23
 msgid "Exactly matches the entire sequence."
 msgstr ""
 
-#: ../../user/matcher.rst:73
+#: ../../user/matcher.rst:75
+#: 6ac1a828f2a04b03b125edb2eabd9126
 msgid "contain_in_any_order: ``List<Matcher>``"
 msgstr ""
 
-#: ../../user/matcher.rst:73
+#: ../../user/matcher.rst:75
+#: 48fcd64453c3463a9fc701667383ade4
 msgid "Matches the entire sequence, but in any order."
 msgstr ""
 
-#: ../../user/matcher.rst:76
+#: ../../user/matcher.rst:78
+#: d81156c53fc14c4a9cb5e27e84e84dde
 msgid "Logical"
 msgstr ""
 
-#: ../../user/matcher.rst:77
+#: ../../user/matcher.rst:79
+#: 670e07db5c384d50b59815c269811cb1
 msgid "not: ``Matcher``"
 msgstr ""
 
-#: ../../user/matcher.rst:78
+#: ../../user/matcher.rst:80
+#: 07148615792346dc8fe43bb52d5122b1
 msgid "Matches if it doesn't match the given matcher."
 msgstr ""
 
-#: ../../user/matcher.rst:79
+#: ../../user/matcher.rst:81
+#: 33da0e278c914932a2057847d01f371e
 msgid "all_of: ``List<Matcher>``"
 msgstr ""
 
-#: ../../user/matcher.rst:80
+#: ../../user/matcher.rst:82
+#: e09bbbaf91414b44966b60ed49162861
 msgid "Matches if it matches all of the given matchers."
 msgstr ""
 
-#: ../../user/matcher.rst:81
+#: ../../user/matcher.rst:83
+#: 3d1665ad896542119d2387362db63981
 msgid "any_of: ``List<Matcher>``"
 msgstr ""
 
-#: ../../user/matcher.rst:82
+#: ../../user/matcher.rst:84
+#: 1c07712c4a7847d7a246b76486e8cae4
 msgid "Matches if it matches any of the given matchers."
 msgstr ""
 
-#: ../../user/matcher.rst:83
+#: ../../user/matcher.rst:85
+#: 773d340b60d048b99c0895a32c152c0c
 msgid "anything: ``none``"
 msgstr ""
 
-#: ../../user/matcher.rst:84
+#: ../../user/matcher.rst:86
+#: b40fef488d804a7f9a5d2783a51a395b
 msgid "Matches anything."
 msgstr ""
-

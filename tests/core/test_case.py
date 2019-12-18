@@ -3,7 +3,6 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 from pytest import fixture
 
 from preacher.core.case import Case, CaseListener
-from preacher.core.context import ContextOnScenario, ApplicationContext
 from preacher.core.request import Request
 from preacher.core.response_description import (
     ResponseDescription,
@@ -34,8 +33,7 @@ def test_when_disabled():
         request=request,
         response_description=response_description
     )
-    context = ContextOnScenario()
-    actual = case.run(context)
+    actual = case.run()
     assert actual.label == 'Disabled'
     assert actual.status == Status.SKIPPED
 
@@ -52,10 +50,9 @@ def test_when_the_request_fails(retry_patch):
         response_description=response_description,
     )
 
-    context = ContextOnScenario(app=ApplicationContext(base_url='base-url'))
     listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
-        result = case.run(context, listener)
+        result = case.run(base_url='base-url', listener=listener)
 
     assert not result
     assert result.label == 'Request fails'
@@ -88,17 +85,15 @@ def test_when_given_an_invalid_response(retry_patch):
         response_description=response_description,
     )
 
-    context = ContextOnScenario(
-        app=ApplicationContext(
+    listener = MagicMock(spec=CaseListener)
+    with retry_patch as retry:
+        result = case.run(
             base_url='base-url',
             retry=3,
             delay=1.0,
             timeout=5.0,
+            listener=listener,
         )
-    )
-    listener = MagicMock(spec=CaseListener)
-    with retry_patch as retry:
-        result = case.run(context, listener)
 
     assert not result
     assert result.label == 'Response should be unstable'
@@ -133,7 +128,7 @@ def test_when_given_an_valid_response(retry_patch):
     )
 
     with retry_patch:
-        result = case.run(ContextOnScenario())
+        result = case.run()
 
     assert result
     assert result.status == Status.SUCCESS

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 from .case import Case, CaseListener, CaseResult
-from .context import ContextOnApplication, ContextOnScenario, analyze_context
+from .context import ScenarioContext, analyze_context
 from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
@@ -89,25 +89,40 @@ class Scenario:
 
     def run(
         self,
-        context: ContextOnApplication,
+        base_url: str = '',
+        retry: int = 0,
+        delay: float = 0.1,
+        timeout: Optional[float] = None,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioResult:
         with ThreadPoolExecutor(1) as executor:
-            return self.submit(executor, context, listener).result()
+            return self.submit(
+                executor,
+                base_url=base_url,
+                retry=retry,
+                delay=delay,
+                timeout=timeout,
+                listener=listener,
+            ).result()
 
     def submit(
         self,
         executor: ThreadPoolExecutor,
-        context: ContextOnApplication,
+        base_url: str = '',
+        retry: int = 0,
+        delay: float = 0.1,
+        timeout: Optional[float] = None,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
-        current_context = ContextOnScenario(app=context.app)
-        context_analyzer = analyze_context(current_context)
+        context = ScenarioContext(
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
+            timeout=timeout,
+        )
+        context_analyzer = analyze_context(context)
         conditions = collect(
-            condition.verify(
-                context_analyzer,
-                origin_datetime=current_context.scenario.starts,
-            )
+            condition.verify(context_analyzer, origin_datetime=context.starts)
             for condition in self._conditions
         )
         if conditions.status == Status.FAILURE:
@@ -124,9 +139,23 @@ class Scenario:
             ))
 
         listener = listener or ScenarioListener()
-        cases = executor.submit(self._run_cases, current_context, listener)
+        cases = executor.submit(
+            self._run_cases,
+            base_url,
+            retry,
+            delay,
+            timeout,
+            listener,
+        )
         subscenarios = [
-            subscenario.submit(executor, current_context, listener)
+            subscenario.submit(
+                executor,
+                base_url=base_url,
+                retry=retry,
+                delay=delay,
+                timeout=timeout,
+                listener=listener,
+            )
             for subscenario in self._subscenarios
         ]
         return RunningScenarioTask(
@@ -138,9 +167,19 @@ class Scenario:
 
     def _run_cases(
         self,
-        context: ContextOnScenario,
+        base_url: str,
+        retry: int,
+        delay: float,
+        timeout: Optional[float],
         listener: CaseListener,
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(
-            case.run(context, listener) for case in self._cases
+            case.run(
+                base_url=base_url,
+                retry=retry,
+                delay=delay,
+                timeout=timeout,
+                listener=listener,
+            )
+            for case in self._cases
         )

@@ -7,37 +7,12 @@ from .datetime import now
 
 
 @dataclass(frozen=True)
-class ApplicationContext:
+class ScenarioContext:
     starts: datetime = field(default_factory=now)
     base_url: str = ''
     retry: int = 0
     delay: float = 0.1
     timeout: Optional[float] = None
-
-
-@dataclass(frozen=True)
-class ContextOnApplication:
-    app: ApplicationContext = field(default_factory=ApplicationContext)
-
-
-@dataclass(frozen=True)
-class ScenarioContext:
-    starts: datetime = field(default_factory=now)
-
-
-@dataclass(frozen=True)
-class ContextOnScenario(ContextOnApplication):
-    scenario: ScenarioContext = field(default_factory=ScenarioContext)
-
-
-@dataclass(frozen=True)
-class CaseContext:
-    started: datetime = field(default_factory=now)
-
-
-@dataclass(frozen=True)
-class ContextOnCase(ContextOnScenario):
-    case: CaseContext = field(default_factory=CaseContext)
 
 
 def _to_serializable(value: object) -> object:
