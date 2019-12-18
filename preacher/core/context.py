@@ -30,16 +30,6 @@ class ContextOnScenario(ContextOnApplication):
     scenario: ScenarioContext = field(default_factory=ScenarioContext)
 
 
-@dataclass(frozen=True)
-class CaseContext:
-    started: datetime = field(default_factory=now)
-
-
-@dataclass(frozen=True)
-class ContextOnCase(ContextOnScenario):
-    case: CaseContext = field(default_factory=CaseContext)
-
-
 def _to_serializable(value: object) -> object:
     if isinstance(value, dict):
         return {k: _to_serializable(v) for (k, v) in value.items()}

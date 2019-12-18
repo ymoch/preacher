@@ -142,5 +142,11 @@ class Scenario:
         listener: CaseListener,
     ) -> StatusedSequence[CaseResult]:
         return collect_statused(
-            case.run(context, listener) for case in self._cases
+            case.run(
+                base_url=context.app.base_url,
+                retry=context.app.retry,
+                delay=context.app.delay,
+                timeout=context.app.timeout,
+                listener=listener,
+            ) for case in self._cases
         )

@@ -4,14 +4,13 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from .context import ContextOnScenario
+from .internal.retry import retry_while_false
 from .request import Request, Response
 from .response_description import (
     ResponseDescription,
     ResponseVerification,
 )
 from .status import Status, StatusedMixin, merge_statuses
-from preacher.core.internal.retry import retry_while_false
 from .verification import Verification
 
 
@@ -20,6 +19,7 @@ class CaseListener:
     Interface to listen to running cases.
     Default implementations do nothing.
     """
+
     def on_response(self, response: Response) -> None:
         pass
 
@@ -50,28 +50,26 @@ class Case:
 
     def run(
         self,
-        context: ContextOnScenario,
+        base_url: str = '',
+        retry: int = 0,
+        delay: float = 0.1,
+        timeout: Optional[float] = None,
         listener: Optional[CaseListener] = None,
     ) -> CaseResult:
         if not self._enabled:
             return CaseResult(label=self._label)
-        func = partial(self._run, context, listener or CaseListener())
-        return retry_while_false(
-            func,
-            attempts=context.app.retry + 1,
-            delay=context.app.delay,
-        )
+        listener = listener or CaseListener()
+        func = partial(self._run, base_url, timeout, listener)
+        return retry_while_false(func, attempts=retry + 1, delay=delay)
 
     def _run(
         self,
-        context: ContextOnScenario,
+        base_url: str,
+        timeout: Optional[float],
         listener: CaseListener,
     ) -> CaseResult:
         try:
-            response = self._request(
-                context.app.base_url,
-                timeout=context.app.timeout,
-            )
+            response = self._request(base_url, timeout=timeout)
         except Exception as error:
             return CaseResult(
                 status=Status.FAILURE,

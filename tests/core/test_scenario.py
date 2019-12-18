@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from preacher.core.case import Case
-from preacher.core.context import ContextOnApplication
+from preacher.core.context import ContextOnApplication, ApplicationContext
 from preacher.core.description import Description
 from preacher.core.scenario import Scenario
 from preacher.core.status import Status
@@ -29,16 +29,24 @@ def test_given_a_filled_scenario(analyze_context, context_ctor):
     case2 = MagicMock(Case, run=MagicMock(return_value=sentinel.result2))
 
     scenario = Scenario(label='label', cases=[case1, case2])
-    context = ContextOnApplication(app=sentinel.app_context)
+    app_context = ApplicationContext()
+    context = ContextOnApplication(app=app_context)
+    sentinel.context.app = ApplicationContext()
     result = scenario.run(context)
     assert result.label == 'label'
     assert result.status == Status.UNSTABLE
     assert list(result.cases) == [sentinel.result1, sentinel.result2]
 
-    context_ctor.assert_called_once_with(app=sentinel.app_context)
+    context_ctor.assert_called_once_with(app=app_context)
     analyze_context.assert_called_once_with(sentinel.context)
-    case1.run.assert_called_once_with(sentinel.context, ANY)
-    case2.run.assert_called_once_with(sentinel.context, ANY)
+    for case in [case1, case2]:
+        case.run.assert_called_once_with(
+            base_url='',
+            retry=0,
+            delay=0.1,
+            timeout=None,
+            listener=ANY,
+        )
 
 
 @patch(f'{PACKAGE}.ContextOnScenario', return_value=sentinel.context)
@@ -95,7 +103,13 @@ def test_given_subscenarios(analyze_context, context_ctor):
         subscenarios=[subscenario1, subscenario2, subscenario3, subscenario4],
     )
 
-    context = ContextOnApplication(app=sentinel.app_context)
+    app_context = ApplicationContext(
+        base_url='base-url',
+        retry=2,
+        delay=0.5,
+        timeout=1.0,
+    )
+    context = ContextOnApplication(app=app_context)
     sentinel.context.app = context.app
     sentinel.context.scenario = sentinel.scenario_context
     sentinel.context.scenario.starts = sentinel.scenario_starts
@@ -118,14 +132,19 @@ def test_given_subscenarios(analyze_context, context_ctor):
         result.subscenarios[3].conditions.children[1].status == Status.UNSTABLE
     )
 
-    context_ctor.assert_called_with(app=sentinel.app_context)
+    context_ctor.assert_called_with(app=app_context)
     analyze_context.assert_called_with(sentinel.context)
     condition1.verify.assert_called_with(
         sentinel.context_analyzer,
         origin_datetime=sentinel.scenario_starts,
     )
-    subcase1.run.assert_called_once_with(sentinel.context, sentinel.listener)
-    subcase2.run.assert_called_once_with(sentinel.context, sentinel.listener)
-    subcase3.run.assert_called_once_with(sentinel.context, sentinel.listener)
-    subcase4.run.assert_not_called()
-    subcase5.run.assert_not_called()
+    for case in [subcase1, subcase2, subcase3]:
+        case.run.assert_called_once_with(
+            base_url='base-url',
+            retry=2,
+            delay=0.5,
+            timeout=1.0,
+            listener=sentinel.listener,
+        )
+    for case in [subcase4, subcase5]:
+        case.run.assert_not_called()
