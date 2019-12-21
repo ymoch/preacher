@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
@@ -35,7 +36,14 @@ class ScenarioResult(StatusedMixin):
     )
 
 
-class RunningScenarioTask:
+class ScenarioTask(ABC):
+
+    @abstractmethod
+    def result(self) -> ScenarioResult:
+        raise NotImplementedError()
+
+
+class RunningScenarioTask(ScenarioTask):
 
     def __init__(
         self, label: Optional[str],
@@ -61,16 +69,13 @@ class RunningScenarioTask:
         )
 
 
-class StaticScenarioTask:
+class StaticScenarioTask(ScenarioTask):
 
     def __init__(self, result: ScenarioResult):
         self._result = result
 
     def result(self) -> ScenarioResult:
         return self._result
-
-
-ScenarioTask = Union[RunningScenarioTask, StaticScenarioTask]
 
 
 class Scenario:
