@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Callable, List, Optional, TypeVar
 
 import pyjq as jq
-from lxml.etree import _Element as Element
+from lxml.etree import _Element as Element, XPathEvalError
 
 from .analysis import Analyzer
 
@@ -16,10 +16,18 @@ def _default_cast(value: T) -> T:
     return value
 
 
+class EvaluationError(RuntimeError):
+    pass
+
+
 class Extractor(ABC):
 
     @abstractmethod
     def extract(self, analyzer: Analyzer) -> object:
+        """
+        Raises:
+            EvaluationError: when the evaluation of this extractor fails.
+        """
         raise NotImplementedError()
 
 
@@ -39,7 +47,7 @@ class JqExtractor(Extractor):
         try:
             compiled = jq.compile(self._query)
         except ValueError:
-            raise ValueError(f'Invalid jq script: {self._query}')
+            raise EvaluationError(f'Invalid jq script: {self._query}')
 
         values = (
             self._cast(value) if value is not None else value
@@ -81,4 +89,7 @@ class XPathExtractor(Extractor):
         return str(elem)
 
     def _extract(self, elem: Element) -> List[Element]:
-        return elem.xpath(self._query)
+        try:
+            return elem.xpath(self._query)
+        except XPathEvalError:
+            raise EvaluationError(f'Invalid XPath: {self._query}')
