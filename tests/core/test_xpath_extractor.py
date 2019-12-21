@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
-from lxml.etree import XMLParser, fromstring
-from pytest import fixture, mark
+from lxml.etree import XMLParser, fromstring, XPathEvalError
+from pytest import fixture, mark, raises
 
 from preacher.core.extraction import XPathExtractor
 
@@ -32,6 +32,12 @@ def analyzer():
     return MagicMock(
         xpath=MagicMock(side_effect=lambda x: x(elem))
     )
+
+
+def test_extract_invalid(analyzer):
+    extractor = XPathExtractor('.items')
+    with raises(XPathEvalError):
+        extractor.extract(analyzer)
 
 
 @mark.parametrize('query, expected', (
