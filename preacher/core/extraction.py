@@ -35,13 +35,15 @@ class JqExtractor(Extractor):
         self._multiple = multiple
         self._cast = cast or _default_cast
 
-        compiled = jq.compile(self._query)
-        self._jq = compiled.all
-
     def extract(self, analyzer: Analyzer) -> object:
+        try:
+            compiled = jq.compile(self._query)
+        except ValueError:
+            raise ValueError(f'Invalid jq script: {self._query}')
+
         values = (
             self._cast(value) if value is not None else value
-            for value in analyzer.jq(self._jq)
+            for value in analyzer.jq(compiled.all)
         )
         if self._multiple:
             return list(values)
