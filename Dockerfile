@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:3.11
 
 WORKDIR /work
 
@@ -16,7 +16,6 @@ RUN apk --no-cache add python3 libxml2 libxslt && \
         automake \
         make \
         gcc \
-        curl \
         && \
     \
     pip3 --no-cache-dir install /usr/src/preacher && \
