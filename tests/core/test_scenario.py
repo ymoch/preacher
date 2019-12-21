@@ -1,13 +1,24 @@
 from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
+from pytest import raises
+
 from preacher.core.case import Case
 from preacher.core.description import Description
-from preacher.core.scenario import Scenario
+from preacher.core.scenario import Scenario, ScenarioTask, ScenarioResult
 from preacher.core.status import Status
 from preacher.core.verification import Verification
 
 PACKAGE = 'preacher.core.scenario'
+
+
+def test_not_implemented():
+    class _IncompleteScenario(ScenarioTask):
+        def result(self) -> ScenarioResult:
+            return super().result()
+
+    with raises(NotImplementedError):
+        _IncompleteScenario().result()
 
 
 def test_given_an_empty_scenario():
