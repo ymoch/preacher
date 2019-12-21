@@ -1,10 +1,11 @@
-FROM python:3.8-alpine
+FROM alpine:3.11
 
 WORKDIR /work
 
 COPY . /usr/src/preacher
-RUN apk --no-cache add libxml2 libxslt && \
+RUN apk --no-cache add python3 libxml2 libxslt && \
     apk --no-cache add --virtual .build-deps \
+        python3-dev \
         libc-dev \
         libxml2-dev \
         libxslt-dev \
@@ -15,10 +16,9 @@ RUN apk --no-cache add libxml2 libxslt && \
         automake \
         make \
         gcc \
-        curl \
         && \
     \
-    pip --no-cache-dir install /usr/src/preacher && \
+    pip3 --no-cache-dir install /usr/src/preacher && \
     rm -rf /usr/src/preacher $HOME/.cache && \
     \
     apk --no-cache del .build-deps && \
