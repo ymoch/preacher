@@ -1,22 +1,29 @@
 """Extraction."""
 
-from typing import Any, Callable, List, Optional, Union, TypeVar
+from abc import ABC, abstractmethod
+from typing import Any, Callable, List, Optional, TypeVar
 
 import pyjq as jq
 from lxml.etree import _Element as Element
 
 from .analysis import Analyzer
 
-
 T = TypeVar('T')
-Cast = Callable[[Optional[Any]], Optional[Any]]
+Cast = Callable[[object], Any]
 
 
 def _default_cast(value: T) -> T:
     return value
 
 
-class JqExtractor:
+class Extractor(ABC):
+
+    @abstractmethod
+    def extract(self, analyzer: Analyzer) -> object:
+        raise NotImplementedError()
+
+
+class JqExtractor(Extractor):
 
     def __init__(
         self,
@@ -31,7 +38,7 @@ class JqExtractor:
         compiled = jq.compile(self._query)
         self._jq = compiled.all
 
-    def extract(self, analyzer: Analyzer) -> Optional[Any]:
+    def extract(self, analyzer: Analyzer) -> object:
         values = (
             self._cast(value) if value is not None else value
             for value in analyzer.jq(self._jq)
@@ -42,7 +49,7 @@ class JqExtractor:
             return next(values, None)
 
 
-class XPathExtractor:
+class XPathExtractor(Extractor):
 
     def __init__(
         self,
@@ -54,24 +61,22 @@ class XPathExtractor:
         self._multiple = multiple
         self._cast = cast or _default_cast
 
-    def extract(self, analyzer: Analyzer) -> Optional[Any]:
-        elems = analyzer.xpath(self._extract)
-        if not elems:
+    def extract(self, analyzer: Analyzer) -> object:
+        elements = analyzer.xpath(self._extract)
+        if not elements:
             return None
 
-        values = (self._cast(self._convert(elem)) for elem in elems)
+        values = (self._cast(self._convert(element)) for element in elements)
         if self._multiple:
             return list(values)
         else:
             return next(values, None)
 
-    def _convert(self, elem: Element) -> str:
+    @staticmethod
+    def _convert(elem: Element) -> str:
         if isinstance(elem, Element):
             return elem.text
         return str(elem)
 
-    def _extract(self, elem: Element) -> List[Any]:
+    def _extract(self, elem: Element) -> List[Element]:
         return elem.xpath(self._query)
-
-
-Extractor = Union[JqExtractor, XPathExtractor]

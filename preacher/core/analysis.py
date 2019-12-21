@@ -1,13 +1,24 @@
 import json
-from typing import Any, Callable, TypeVar, Union
+from abc import ABC, abstractmethod
+from typing import Any, Callable, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, fromstring
-
 
 T = TypeVar('T')
 
 
-class JsonAnalyzer:
+class Analyzer(ABC):
+
+    @abstractmethod
+    def jq(self, extract: Callable[[object], T]) -> T:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def xpath(self, extract: Callable[[Element], T]) -> T:
+        raise NotImplementedError()
+
+
+class JsonAnalyzer(Analyzer):
 
     def __init__(self, json_body: Any):
         self._json_body = json_body
@@ -19,7 +30,7 @@ class JsonAnalyzer:
         raise NotImplementedError('XPath extraction is not allowed for JSON')
 
 
-class XmlAnalyzer:
+class XmlAnalyzer(Analyzer):
 
     def __init__(self, etree: Element):
         self._etree = etree
@@ -31,10 +42,6 @@ class XmlAnalyzer:
         return extract(self._etree)
 
 
-Analyzer = Union[JsonAnalyzer, XmlAnalyzer]
-Analysis = Callable[[str], Analyzer]
-
-
 def analyze_json_str(value: str) -> Analyzer:
     return JsonAnalyzer(json.loads(value))
 
@@ -42,3 +49,6 @@ def analyze_json_str(value: str) -> Analyzer:
 def analyze_xml_str(value: str) -> Analyzer:
     etree = fromstring(value, parser=XMLParser())
     return XmlAnalyzer(etree)
+
+
+Analysis = Callable[[str], Analyzer]
