@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock
 
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 
-from preacher.core.extraction import JqExtractor
-
+from preacher.core.extraction import JqExtractor, EvaluationError
 
 VALUE = {
     'foo': 'bar',
@@ -33,6 +32,13 @@ def analyzer():
     return MagicMock(
         jq=MagicMock(side_effect=lambda x: x(VALUE))
     )
+
+
+def test_extract_invalid(analyzer):
+    extractor = JqExtractor(query='xxx')
+    with raises(EvaluationError) as error_info:
+        extractor.extract(analyzer)
+    assert str(error_info.value).endswith(': xxx')
 
 
 @mark.parametrize('query, expected', (
