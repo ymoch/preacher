@@ -4,10 +4,7 @@ from pytest import fixture
 
 from preacher.core.case import Case, CaseListener
 from preacher.core.request import Request
-from preacher.core.response_description import (
-    ResponseDescription,
-    ResponseVerification,
-)
+from preacher.core.response import ResponseDescription, ResponseVerification
 from preacher.core.status import Status
 from preacher.core.verification import Verification
 

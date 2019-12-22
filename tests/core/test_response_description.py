@@ -6,7 +6,7 @@ from preacher.core.body_description import BodyDescription
 from preacher.core.description import Description
 from preacher.core.predicate import Predicate
 from preacher.core.request import Response
-from preacher.core.response_description import ResponseDescription
+from preacher.core.response import ResponseDescription
 from preacher.core.status import Status
 from preacher.core.verification import Verification
 
