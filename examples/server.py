@@ -23,13 +23,13 @@ def query_params(req, res) -> None:
 
 
 @api.route('/error/404')
-def not_found(req, res) -> None:
+def not_found(_req, res) -> None:
     res.status_code = api.status_codes.HTTP_404
     res.media = {'message': 'not found'}
 
 
 @api.route('/json')
-def json(req, res) -> None:
+def json(_req, res) -> None:
     res.media = {
         'foo': 'bar',
         'empty_string': '',
@@ -44,24 +44,24 @@ def json(req, res) -> None:
 
 
 @api.route('/xml')
-def xml(req, res) -> None:
+def xml(_req, res) -> None:
     res.headers['content-type'] = 'application/xml'
     res.content = api.template('sample.xml')
 
 
 @api.route('/later/{seconds}')
-def now(req, res, *, seconds) -> None:
+def now(_req, res, *, seconds) -> None:
     dt = datetime.now(timezone.utc) + timedelta(seconds=int(seconds))
     res.media = {'now': dt.isoformat()}
 
 
 @api.route('/text')
-def text(req, res) -> None:
+def text(_req, res) -> None:
     res.text = 'text'
 
 
 @api.route('/binary')
-def binary(req, res) -> None:
+def binary(_req, res) -> None:
     res.headers['content-type'] = 'application/octet-stream'
     res.content = zlib.compress(b'text')
 
