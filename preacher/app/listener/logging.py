@@ -8,7 +8,7 @@ import io
 from typing import Iterator
 
 from preacher.core.case import CaseResult
-from preacher.core.response_description import ResponseVerification
+from preacher.core.response import ResponseVerification
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
 from preacher.core.verification import Verification

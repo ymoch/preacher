@@ -1,3 +1,7 @@
+"""
+Response body analysis.
+"""
+
 import json
 from abc import ABC, abstractmethod
 from typing import Any, Callable, TypeVar
@@ -8,6 +12,9 @@ T = TypeVar('T')
 
 
 class Analyzer(ABC):
+    """
+    Interface to analyze body.
+    """
 
     @abstractmethod
     def jq(self, extract: Callable[[object], T]) -> T:

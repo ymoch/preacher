@@ -1,3 +1,7 @@
+"""
+Datetime interpretation.
+"""
+
 from datetime import datetime, timezone
 
 from preacher.core.datetime import now

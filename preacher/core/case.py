@@ -1,15 +1,15 @@
-"""Test case."""
+"""
+Test cases, which execute a given request and verify its response
+along the given descriptions.
+"""
 
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from .internal.retry import retry_while_false
+from .util.retry import retry_while_false
 from .request import Request, Response
-from .response_description import (
-    ResponseDescription,
-    ResponseVerification,
-)
+from .response import ResponseDescription, ResponseVerification
 from .status import Status, StatusedMixin, merge_statuses
 from .verification import Verification
 
@@ -26,6 +26,9 @@ class CaseListener:
 
 @dataclass(frozen=True)
 class CaseResult(StatusedMixin):
+    """
+    Results for the test cases.
+    """
     request: Verification = field(default_factory=Verification)
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
@@ -35,17 +38,21 @@ class CaseResult(StatusedMixin):
 
 
 class Case:
+    """
+    Test cases, which execute a given request and verify its response
+    along the given descriptions.
+    """
 
     def __init__(
         self,
         request: Request,
-        response_description: ResponseDescription,
+        response: ResponseDescription,
         label: Optional[str] = None,
         enabled: bool = True,
     ):
         self._label = label
         self._request = request
-        self._response_description = response_description
+        self._response = response
         self._enabled = enabled
 
     def run(
@@ -79,7 +86,7 @@ class Case:
         listener.on_response(response)
 
         request_verification = Verification.succeed()
-        response_verification = self._response_description.verify(
+        response_verification = self._response.verify(
             response,
             origin_datetime=response.request_datetime,
         )
@@ -107,5 +114,5 @@ class Case:
         return self._request
 
     @property
-    def response_description(self) -> ResponseDescription:
-        return self._response_description
+    def response(self) -> ResponseDescription:
+        return self._response

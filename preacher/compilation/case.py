@@ -8,7 +8,7 @@ from typing import Any, Optional
 from preacher.core.case import Case
 from .error import CompilationError, NamedNode
 from .request import RequestCompiler
-from .response_description import ResponseDescriptionCompiler
+from .response import ResponseDescriptionCompiler
 from .util import run_on_key
 
 
@@ -59,7 +59,7 @@ class CaseCompiler:
             self._request_compiler.compile,
             obj.get(_KEY_REQUEST, {}),
         )
-        response_description = run_on_key(
+        response = run_on_key(
             _KEY_RESPONSE,
             self._response_compiler.compile,
             obj.get(_KEY_RESPONSE, {}),
@@ -68,7 +68,7 @@ class CaseCompiler:
             label=label,
             enabled=enabled,
             request=request,
-            response_description=response_description,
+            response=response,
         )
 
     def of_default(self, obj: Mapping) -> CaseCompiler:

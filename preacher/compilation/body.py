@@ -5,7 +5,7 @@ from dataclasses import dataclass, replace
 from typing import Any, List, Optional
 
 from preacher.core.analysis import Analysis, analyze_json_str
-from preacher.core.body_description import BodyDescription
+from preacher.core.body import BodyDescription
 from preacher.core.description import Description
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler

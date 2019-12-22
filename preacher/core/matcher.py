@@ -1,18 +1,24 @@
+"""Matchers."""
+
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Generic, List, Optional, TypeVar
 
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
-from preacher.interpretation import identify
 from preacher.interpretation.value import Value
 from .status import Status
+from .util.functional import identify
 from .verification import Verification
 
 T = TypeVar('T')
 
 
 class Matcher(ABC):
+    """
+    Matcher interfaces.
+    Matchers are implemented as factories of Hamcrest matchers.
+    """
 
     @abstractmethod
     def to_hamcrest(self, **kwargs) -> HamcrestMatcher:

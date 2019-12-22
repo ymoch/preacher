@@ -1,4 +1,7 @@
-"""Description."""
+"""
+Descriptions, which extract a value from an analyzer and test
+along the given predicates.
+"""
 
 from typing import Any, List
 

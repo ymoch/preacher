@@ -1,4 +1,7 @@
-"""Response descriptions."""
+"""
+Response descriptions, which verify the status code, the headers
+and the body.
+"""
 
 from __future__ import annotations
 
@@ -7,7 +10,7 @@ from typing import Any, Callable, List, Mapping, Optional
 
 from preacher.core.request import Response
 from .analysis import Analyzer, JsonAnalyzer
-from .body_description import BodyDescription
+from .body import BodyDescription
 from .description import Description
 from .predicate import Predicate
 from .status import Status, merge_statuses
@@ -27,15 +30,15 @@ class ResponseDescription:
 
     def __init__(
         self,
-        status_code_predicates: Optional[List[Predicate]] = None,
-        headers_descriptions: Optional[List[Description]] = None,
-        body_description: Optional[BodyDescription] = None,
+        status_code: Optional[List[Predicate]] = None,
+        headers: Optional[List[Description]] = None,
+        body: Optional[BodyDescription] = None,
         analyze_headers:
             Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
     ):
-        self._status_code_predicates = status_code_predicates or []
-        self._headers_descriptions = headers_descriptions or []
-        self._body_description = body_description
+        self._status_code = status_code or []
+        self._headers = headers or []
+        self._body = body
         self._analyze_headers = analyze_headers
 
     def verify(
@@ -52,8 +55,8 @@ class ResponseDescription:
             headers = Verification.of_error(error)
 
         body = Verification.skipped()
-        if self._body_description:
-            body = self._body_description.verify(response.body, **kwargs)
+        if self._body:
+            body = self._body.verify(response.body, **kwargs)
 
         status = merge_statuses(
             status_code.status,
@@ -69,16 +72,16 @@ class ResponseDescription:
         )
 
     @property
-    def status_code_predicates(self) -> List[Predicate]:
-        return self._status_code_predicates
+    def status_code(self) -> List[Predicate]:
+        return self._status_code
 
     @property
-    def headers_descriptions(self) -> List[Description]:
-        return self._headers_descriptions
+    def headers(self) -> List[Description]:
+        return self._headers
 
     @property
-    def body_description(self) -> Optional[BodyDescription]:
-        return self._body_description
+    def body(self) -> Optional[BodyDescription]:
+        return self._body
 
     def _verify_status_code(
         self,
@@ -87,7 +90,7 @@ class ResponseDescription:
     ) -> Verification:
         return collect(
             predicate.verify(code, **kwargs)
-            for predicate in self._status_code_predicates
+            for predicate in self._status_code
         )
 
     def _verify_headers(
@@ -98,5 +101,5 @@ class ResponseDescription:
         analyzer = self._analyze_headers(headers)
         return collect(
             description.verify(analyzer, **kwargs)
-            for description in self._headers_descriptions
+            for description in self._headers
         )

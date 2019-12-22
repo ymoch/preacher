@@ -12,7 +12,7 @@ from preacher.core.matcher import (
     ValueMatcher,
     RecursiveMatcher,
 )
-from preacher.interpretation import identify
+from preacher.core.util.functional import identify
 from preacher.interpretation.datetime import interpret_datetime
 from preacher.interpretation.value import value_of
 from .error import CompilationError, NamedNode

@@ -3,16 +3,13 @@ from unittest.mock import MagicMock, call, sentinel
 from pytest import fixture, mark
 
 from preacher.compilation.analysis import AnalysisCompiler
-from preacher.compilation.body_description import (
-    BodyDescriptionCompiler,
-    Compiled,
-)
+from preacher.compilation.body import BodyDescriptionCompiler, Compiled
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
 
 
 @fixture
-def analysis_compiler() -> AnalysisCompiler:
+def analysis_compiler():
     return MagicMock(
         spec=AnalysisCompiler,
         compile=MagicMock(return_value=sentinel.analyze),
@@ -20,7 +17,7 @@ def analysis_compiler() -> AnalysisCompiler:
 
 
 @fixture
-def desc_compiler() -> DescriptionCompiler:
+def desc_compiler():
     return MagicMock(
         spec=DescriptionCompiler,
         compile=MagicMock(return_value=sentinel.desc),

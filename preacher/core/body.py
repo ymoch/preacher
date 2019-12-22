@@ -1,3 +1,7 @@
+"""
+Response body description.
+"""
+
 from typing import Any, List, Optional
 
 from .analysis import Analysis, analyze_json_str

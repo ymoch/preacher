@@ -1,3 +1,7 @@
+"""
+Retrying utilities.
+"""
+
 import time
 
 from typing import Callable, TypeVar

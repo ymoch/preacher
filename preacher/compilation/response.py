@@ -7,8 +7,8 @@ from dataclasses import dataclass, replace
 from typing import Any, Optional, List
 
 from preacher.core.description import Description, Predicate
-from preacher.core.response_description import ResponseDescription
-from .body_description import BodyDescriptionCompiler, Compiled as BodyCompiled
+from preacher.core.response import ResponseDescription
+from .body import BodyDescriptionCompiler, Compiled as BodyCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .predicate import PredicateCompiler
@@ -27,9 +27,9 @@ class Compiled:
 
     def convert(self) -> ResponseDescription:
         return ResponseDescription(
-            status_code_predicates=self.status_code,
-            headers_descriptions=self.headers,
-            body_description=self.body.convert() if self.body else None,
+            status_code=self.status_code,
+            headers=self.headers,
+            body=self.body.convert() if self.body else None,
         )
 
 
