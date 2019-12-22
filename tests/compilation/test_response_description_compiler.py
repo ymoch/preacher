@@ -2,14 +2,14 @@ from unittest.mock import MagicMock, call, sentinel
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.body_description import (
+from preacher.compilation.body import (
     BodyDescriptionCompiler,
     Compiled as BodyCompiled,
 )
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
-from preacher.compilation.response_description import (
+from preacher.compilation.response import (
     Compiled,
     ResponseDescriptionCompiler,
 )
@@ -44,7 +44,7 @@ def body_desc_compiler():
 
 
 @fixture
-def default():
+def default() -> Compiled:
     return Compiled(
         status_code=[sentinel.status_code],
         headers=[sentinel.headers],

@@ -7,7 +7,7 @@ from preacher.core.scenario import Scenario
 from .description import DescriptionCompiler
 from .error import CompilationError, NamedNode
 from .case import CaseCompiler
-from .response_description import ResponseDescriptionCompiler
+from .response import ResponseDescriptionCompiler
 from .util import map_on_key, run_on_key
 
 

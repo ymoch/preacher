@@ -8,7 +8,7 @@ from typing import Any, Optional
 from preacher.core.case import Case
 from .error import CompilationError, NamedNode
 from .request import RequestCompiler
-from .response_description import ResponseDescriptionCompiler
+from .response import ResponseDescriptionCompiler
 from .util import run_on_key
 
 

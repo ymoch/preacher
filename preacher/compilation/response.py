@@ -8,7 +8,7 @@ from typing import Any, Optional, List
 
 from preacher.core.description import Description, Predicate
 from preacher.core.response import ResponseDescription
-from .body_description import BodyDescriptionCompiler, Compiled as BodyCompiled
+from .body import BodyDescriptionCompiler, Compiled as BodyCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .predicate import PredicateCompiler

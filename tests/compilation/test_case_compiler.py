@@ -5,7 +5,7 @@ from pytest import fixture, mark, raises
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
-from preacher.compilation.response_description import (
+from preacher.compilation.response import (
     ResponseDescriptionCompiler,
 )
 
