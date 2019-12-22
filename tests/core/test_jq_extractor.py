@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from pytest import fixture, mark, raises
 
 from preacher.core.extraction import JqExtractor, EvaluationError
+from preacher.core.util.functional import identify
 
 VALUE = {
     'foo': 'bar',
@@ -52,12 +53,12 @@ def test_extract_default(query, expected, analyzer):
 
 
 @mark.parametrize('query, multiple, cast, expected', (
-    ('.xxx', False, None, None),
-    ('.foo', False, None, 'bar'),
-    ('.int_string', False, None, '10'),
-    ('.xxx', True, None, [None]),
-    ('.foo', True, None, ['bar']),
-    ('.list[].key', True, None, ['value1', 'value2', None, 'value3']),
+    ('.xxx', False, identify, None),
+    ('.foo', False, identify, 'bar'),
+    ('.int_string', False, identify, '10'),
+    ('.xxx', True, identify, [None]),
+    ('.foo', True, identify, ['bar']),
+    ('.list[].key', True, identify, ['value1', 'value2', None, 'value3']),
     ('.int_string', False, int, 10),
     ('.int_strings[].value', False, int, 1),
     ('.int_strings[].value', True, int, [1, None, 2]),

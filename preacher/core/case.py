@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from .internal.retry import retry_while_false
+from .util.retry import retry_while_false
 from .request import Request, Response
 from .response_description import (
     ResponseDescription,

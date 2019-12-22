@@ -1,19 +1,16 @@
 """Extraction."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, List, Optional, TypeVar
+from typing import Any, Callable, List, TypeVar
 
 import pyjq as jq
 from lxml.etree import _Element as Element, XPathEvalError
 
 from .analysis import Analyzer
+from .util.functional import identify
 
 T = TypeVar('T')
 Cast = Callable[[object], Any]
-
-
-def _default_cast(value: T) -> T:
-    return value
 
 
 class EvaluationError(RuntimeError):
@@ -37,11 +34,11 @@ class JqExtractor(Extractor):
         self,
         query: str,
         multiple: bool = False,
-        cast: Optional[Cast] = None,
+        cast: Cast = identify,
     ):
         self._query = query
         self._multiple = multiple
-        self._cast = cast or _default_cast
+        self._cast = cast
 
     def extract(self, analyzer: Analyzer) -> object:
         try:
@@ -61,15 +58,14 @@ class JqExtractor(Extractor):
 
 class XPathExtractor(Extractor):
 
-    def __init__(
-        self,
+    def __init__(self,
         query: str,
         multiple: bool = False,
-        cast: Optional[Cast] = None,
+        cast: Cast = identify,
     ):
         self._query = query
         self._multiple = multiple
-        self._cast = cast or _default_cast
+        self._cast = cast
 
     def extract(self, analyzer: Analyzer) -> object:
         elements = analyzer.xpath(self._extract)
@@ -83,7 +79,7 @@ class XPathExtractor(Extractor):
             return next(values, None)
 
     @staticmethod
-    def _convert(elem: Element) -> str:
+    def _convert(elem: object) -> str:
         if isinstance(elem, Element):
             return elem.text
         return str(elem)
