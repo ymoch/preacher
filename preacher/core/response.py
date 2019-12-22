@@ -1,4 +1,7 @@
-"""Response descriptions."""
+"""
+Response descriptions, which verify the status code, the headers
+and the body.
+"""
 
 from __future__ import annotations
 
@@ -7,7 +10,7 @@ from typing import Any, Callable, List, Mapping, Optional
 
 from preacher.core.request import Response
 from .analysis import Analyzer, JsonAnalyzer
-from .body_description import BodyDescription
+from .body import BodyDescription
 from .description import Description
 from .predicate import Predicate
 from .status import Status, merge_statuses

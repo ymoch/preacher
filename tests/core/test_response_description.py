@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, sentinel
 
 from pytest import mark
 
-from preacher.core.body_description import BodyDescription
+from preacher.core.body import BodyDescription
 from preacher.core.description import Description
 from preacher.core.predicate import Predicate
 from preacher.core.request import Response
