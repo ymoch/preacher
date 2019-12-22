@@ -1,3 +1,8 @@
+"""
+Timedelta interpretation.
+"""
+
+
 import re
 from datetime import timedelta
 

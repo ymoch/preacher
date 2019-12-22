@@ -1,4 +1,7 @@
-"""Test case."""
+"""
+Test cases, which execute a given request and verify its response
+along the given descriptions.
+"""
 
 from dataclasses import dataclass, field
 from functools import partial
@@ -26,6 +29,9 @@ class CaseListener:
 
 @dataclass(frozen=True)
 class CaseResult(StatusedMixin):
+    """
+    Results for the test cases.
+    """
     request: Verification = field(default_factory=Verification)
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
@@ -35,6 +41,10 @@ class CaseResult(StatusedMixin):
 
 
 class Case:
+    """
+    Test cases, which execute a given request and verify its response
+    along the given descriptions.
+    """
 
     def __init__(
         self,

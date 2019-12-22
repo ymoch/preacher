@@ -1,3 +1,7 @@
+"""
+Hamcrest custom matchers.
+"""
+
 from datetime import datetime
 from typing import Callable, Optional
 

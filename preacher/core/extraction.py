@@ -58,7 +58,8 @@ class JqExtractor(Extractor):
 
 class XPathExtractor(Extractor):
 
-    def __init__(self,
+    def __init__(
+        self,
         query: str,
         multiple: bool = False,
         cast: Cast = identify,

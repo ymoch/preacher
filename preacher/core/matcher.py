@@ -1,3 +1,5 @@
+"""Matchers."""
+
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Generic, List, Optional, TypeVar
 
@@ -13,6 +15,10 @@ T = TypeVar('T')
 
 
 class Matcher(ABC):
+    """
+    Matcher interfaces.
+    Matchers are implemented as factories of Hamcrest matchers.
+    """
 
     @abstractmethod
     def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
