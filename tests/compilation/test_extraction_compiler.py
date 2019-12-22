@@ -4,7 +4,7 @@ from pytest import mark, raises
 
 from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
-
+from preacher.core.util.functional import identify
 
 MODULE = 'preacher.compilation.extraction'
 
@@ -27,11 +27,11 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
 @mark.parametrize('value, expected_call', (
     (
         '.foo',
-        call('.foo', multiple=False, cast=None)
+        call('.foo', multiple=False, cast=identify)
     ),
     (
         {'jq': '.foo'},
-        call('.foo', multiple=False, cast=None),
+        call('.foo', multiple=False, cast=identify),
     ),
     (
         {'jq': '.bar', 'multiple': False, 'cast_to': 'int'},
@@ -52,11 +52,11 @@ def test_when_given_a_jq(value, expected_call):
 @mark.parametrize('value, expected_call', (
     (
         {'xpath': './foo'},
-        call('./foo', multiple=False, cast=None),
+        call('./foo', multiple=False, cast=identify),
     ),
     (
         {'xpath': './foo', 'multiple': False},
-        call('./foo', multiple=False, cast=None),
+        call('./foo', multiple=False, cast=identify),
     ),
     (
         {'xpath': './foo', 'multiple': True, 'cast_to': 'string'},
