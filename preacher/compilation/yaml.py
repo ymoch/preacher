@@ -29,7 +29,7 @@ class _Inclusion:
         return _load(path, yaml)
 
     @classmethod
-    def from_yaml(cls, constructor, node: Node) -> _Inclusion:
+    def from_yaml(cls, _constructor, node: Node) -> _Inclusion:
         return _Inclusion(node.value)
 
 
