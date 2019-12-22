@@ -8,9 +8,9 @@ from preacher.core.extraction import (
     JqExtractor,
     XPathExtractor,
 )
+from preacher.core.util.functional import identify
 from .error import CompilationError, NamedNode
 from .util import run_on_key
-
 
 _EXTRACTION_MAP = {
     'jq': JqExtractor,
@@ -54,18 +54,18 @@ class ExtractionCompiler:
                 path=[NamedNode(_KEY_MULTIPLE)],
             )
 
-        cast = None
+        cast: Cast = identify
         cast_obj = obj.get(_KEY_CAST_TO)
         if cast_obj is not None:
             cast = run_on_key(_KEY_CAST_TO, self._compile_cast, cast_obj)
 
-        return func(query, multiple=multiple, cast=cast)  # type: ignore
+        return func(query, multiple=multiple, cast=cast)
 
     def _compile_cast(self, obj) -> Cast:
         if not isinstance(obj, str):
             raise CompilationError('Must be a string')
 
-        cast = _CAST_FUNC_MAP.get(obj)  # type: ignore
+        cast = _CAST_FUNC_MAP.get(obj)
         if not cast:
             raise CompilationError(f'Invalid value: {obj}')
 
