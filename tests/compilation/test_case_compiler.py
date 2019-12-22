@@ -11,7 +11,7 @@ from preacher.compilation.response_description import (
 
 
 @fixture
-def request_compiler() -> RequestCompiler:
+def request_compiler():
     return MagicMock(
         spec=RequestCompiler,
         compile=MagicMock(return_value=sentinel.request),
@@ -19,9 +19,9 @@ def request_compiler() -> RequestCompiler:
 
 
 @fixture
-def response_compiler() -> ResponseDescriptionCompiler:
+def response_compiler():
     compiled = MagicMock()
-    compiled.convert.return_value = sentinel.response_description
+    compiled.convert.return_value = sentinel.response
 
     compiler = MagicMock(spec=ResponseDescriptionCompiler)
     compiler.compile.return_value = compiled
@@ -83,7 +83,7 @@ def test_given_an_empty_object(request_compiler, response_compiler):
     case = compiler.compile({})
     assert case.enabled
     assert case.request == sentinel.request
-    assert case.response_description == sentinel.response_description
+    assert case.response == sentinel.response
 
     request_compiler.compile.assert_called_once_with({})
     response_compiler.compile.assert_called_once_with({})
@@ -109,7 +109,7 @@ def test_creates_a_case(request_compiler, response_compiler):
     assert case.label == 'label'
     assert not case.enabled
     assert case.request == sentinel.request
-    assert case.response_description == sentinel.response_description
+    assert case.response == sentinel.response
 
     request_compiler.compile.assert_called_once_with({'path': '/path'})
     response_compiler.compile.assert_called_once_with({'key': 'value'})

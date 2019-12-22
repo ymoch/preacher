@@ -23,19 +23,19 @@ def test_case_listener():
 
 def test_when_disabled():
     request = MagicMock(Request)
-    response_description = MagicMock(ResponseDescription)
+    response = MagicMock(ResponseDescription)
     case = Case(
         label='Disabled',
         enabled=False,
         request=request,
-        response_description=response_description
+        response=response
     )
     actual = case.run()
     assert actual.label == 'Disabled'
     assert actual.status == Status.SKIPPED
 
     request.assert_not_called()
-    response_description.assert_not_called()
+    response.assert_not_called()
 
 
 def test_when_the_request_fails(retry_patch):
@@ -44,7 +44,7 @@ def test_when_the_request_fails(retry_patch):
     case = Case(
         label='Request fails',
         request=request,
-        response_description=response_description,
+        response=response_description,
     )
 
     listener = MagicMock(spec=CaseListener)
@@ -67,7 +67,7 @@ def test_when_the_request_fails(retry_patch):
 def test_when_given_an_invalid_response(retry_patch):
     sentinel.response.request_datetime = sentinel.request_datetime
     request = MagicMock(return_value=sentinel.response)
-    response_description = MagicMock(ResponseDescription, verify=MagicMock(
+    response = MagicMock(ResponseDescription, verify=MagicMock(
         return_value=ResponseVerification(
             response_id=sentinel.response_id,
             status=Status.UNSTABLE,
@@ -79,7 +79,7 @@ def test_when_given_an_invalid_response(retry_patch):
     case = Case(
         label='Response should be unstable',
         request=request,
-        response_description=response_description,
+        response=response,
     )
 
     listener = MagicMock(spec=CaseListener)
@@ -100,7 +100,7 @@ def test_when_given_an_invalid_response(retry_patch):
     assert result.response.body.status == Status.UNSTABLE
 
     request.assert_called_with('base-url', timeout=5.0)
-    response_description.verify.assert_called_with(
+    response.verify.assert_called_with(
         sentinel.response,
         origin_datetime=sentinel.request_datetime,
     )
@@ -113,7 +113,7 @@ def test_when_given_an_valid_response(retry_patch):
     case = Case(
         label='Response should be success',
         request=MagicMock(return_value=sentinel.response),
-        response_description=MagicMock(verify=MagicMock(
+        response=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
                 response_id=sentinel.response_id,
                 status=Status.SUCCESS,

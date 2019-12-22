@@ -30,14 +30,12 @@ def test_when_given_no_description():
 
 
 def test_when_header_verification_fails():
-    headers_descriptions = [
+    headers = [
         MagicMock(Description, verify=MagicMock(
             side_effect=RuntimeError('message')
         )),
     ]
-    description = ResponseDescription(
-        headers_descriptions=headers_descriptions
-    )
+    description = ResponseDescription(headers=headers)
 
     verification = description.verify(
         Response(
@@ -54,7 +52,7 @@ def test_when_header_verification_fails():
 
 
 def test_when_given_descriptions():
-    headers_descriptions = [
+    headers = [
         MagicMock(Description, verify=MagicMock(
             return_value=Verification(status=Status.UNSTABLE)
         )),
@@ -62,15 +60,15 @@ def test_when_given_descriptions():
             return_value=Verification.succeed()
         )),
     ]
-    body_description = MagicMock(
+    body = MagicMock(
         spec=BodyDescription,
         verify=MagicMock(return_value=Verification(status=Status.UNSTABLE)),
     )
     analyze_headers = MagicMock(return_value=sentinel.headers)
     description = ResponseDescription(
-        status_code_predicates=[],
-        headers_descriptions=headers_descriptions,
-        body_description=body_description,
+        status_code=[],
+        headers=headers,
+        body=body,
         analyze_headers=analyze_headers,
     )
     verification = description.verify(
@@ -90,9 +88,9 @@ def test_when_given_descriptions():
     assert verification.body.status == Status.UNSTABLE
 
     analyze_headers.assert_called_once_with({})
-    for description in headers_descriptions:
+    for description in headers:
         description.verify.assert_called_once_with(sentinel.headers, k='v')
-    body_description.verify.assert_called_once_with('{}', k='v')
+    body.verify.assert_called_once_with('{}', k='v')
 
 
 @mark.parametrize(
@@ -124,9 +122,9 @@ def test_merge_statuses(
         return_value=Verification(status=body_status)
     ))
     description = ResponseDescription(
-        status_code_predicates=status_code_predicates,
-        headers_descriptions=headers_descriptions,
-        body_description=body_description,
+        status_code=status_code_predicates,
+        headers=headers_descriptions,
+        body=body_description,
     )
     verification = description.verify(
         Response(

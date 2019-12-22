@@ -46,13 +46,13 @@ class Case:
     def __init__(
         self,
         request: Request,
-        response_description: ResponseDescription,
+        response: ResponseDescription,
         label: Optional[str] = None,
         enabled: bool = True,
     ):
         self._label = label
         self._request = request
-        self._response_description = response_description
+        self._response = response
         self._enabled = enabled
 
     def run(
@@ -86,7 +86,7 @@ class Case:
         listener.on_response(response)
 
         request_verification = Verification.succeed()
-        response_verification = self._response_description.verify(
+        response_verification = self._response.verify(
             response,
             origin_datetime=response.request_datetime,
         )
@@ -114,5 +114,5 @@ class Case:
         return self._request
 
     @property
-    def response_description(self) -> ResponseDescription:
-        return self._response_description
+    def response(self) -> ResponseDescription:
+        return self._response

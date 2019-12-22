@@ -16,7 +16,7 @@ from preacher.compilation.response_description import (
 
 
 @fixture
-def pred_compiler() -> PredicateCompiler:
+def pred_compiler():
     return MagicMock(
         spec=PredicateCompiler,
         compile=MagicMock(return_value=sentinel.predicate),
@@ -24,7 +24,7 @@ def pred_compiler() -> PredicateCompiler:
 
 
 @fixture
-def desc_compiler() -> DescriptionCompiler:
+def desc_compiler():
     return MagicMock(
         spec=DescriptionCompiler,
         compile=MagicMock(return_value=sentinel.description)
@@ -32,7 +32,7 @@ def desc_compiler() -> DescriptionCompiler:
 
 
 @fixture
-def body_desc_compiler() -> BodyDescriptionCompiler:
+def body_desc_compiler():
     compiled = MagicMock(spec=BodyCompiled)
     compiled.convert.return_value = sentinel.body_desc
 
@@ -44,7 +44,7 @@ def body_desc_compiler() -> BodyDescriptionCompiler:
 
 
 @fixture
-def default() -> Compiled:
+def default():
     return Compiled(
         status_code=[sentinel.status_code],
         headers=[sentinel.headers],
@@ -63,9 +63,9 @@ def test_given_an_empty_mapping(
         body_description_compiler=body_desc_compiler,
     )
     response_description = compiler.compile({}).convert()
-    assert response_description.status_code_predicates == []
-    assert response_description.headers_descriptions == []
-    assert response_description.body_description is None
+    assert response_description.status_code == []
+    assert response_description.headers == []
+    assert response_description.body is None
 
     pred_compiler.compile.assert_not_called()
     desc_compiler.compile.assert_not_called()
@@ -95,8 +95,8 @@ def test_given_simple_values(pred_compiler, desc_compiler, body_desc_compiler):
         'headers': {'k1': 'v1'},
         'body': sentinel.body,
     }).convert()
-    assert response_description.status_code_predicates == [sentinel.predicate]
-    assert response_description.body_description == sentinel.body_desc
+    assert response_description.status_code == [sentinel.predicate]
+    assert response_description.body == sentinel.body_desc
     pred_compiler.compile.assert_called_once_with(402)
     desc_compiler.compile.assert_called_once_with({'k1': 'v1'})
     body_desc_compiler.compile.assert_called_once_with(sentinel.body)
@@ -118,11 +118,11 @@ def test_given_filled_values(
         'headers': [{'k3': 'v3'}, {'k4': 'v4'}],
         'body': sentinel.body,
     }).convert()
-    assert response_description.status_code_predicates == [
+    assert response_description.status_code == [
         sentinel.predicate,
         sentinel.predicate,
     ]
-    assert response_description.body_description == sentinel.body_desc
+    assert response_description.body == sentinel.body_desc
     pred_compiler.compile.assert_has_calls([
         call({'k1': 'v1'}),
         call({'k2': 'v2'}),

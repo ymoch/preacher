@@ -27,9 +27,9 @@ class Compiled:
 
     def convert(self) -> ResponseDescription:
         return ResponseDescription(
-            status_code_predicates=self.status_code,
-            headers_descriptions=self.headers,
-            body_description=self.body.convert() if self.body else None,
+            status_code=self.status_code,
+            headers=self.headers,
+            body=self.body.convert() if self.body else None,
         )
 
 
