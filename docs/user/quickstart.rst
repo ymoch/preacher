@@ -6,38 +6,49 @@ Install
 
 ``pip install preacher``
 ^^^^^^^^^^^^^^^^^^^^^^^^
-Preacher is published to `PyPI`_ and can be installed by `pip`_.
+Preacher is written in Python, published to `PyPI`_
+and can be installed by `pip`_.
 This is the most basic way to install Preacher.
 
-If you have Python runtime environment,
+There are some requirements to install Preacher by `pip`_
+due to the dependent packages.
+If you feel annoyed, see :ref:`docker-run`.
+
+- Preacher supports only Python 3.7+.
+- Python C headers are required to build C extensions,
+  which are available by installing Python develop packages
+  or installing Python by source code build.
+- On Linux, ``libxml2`` and ``libxslt`` are required by `lxml`_,
+  as `official documentation <https://lxml.de/installation.html#requirements>`_ says.
+- `pyjq`_ requires ``autoconf``, ``automake``, ``libtool``, ``make``
+  and a C compiler such as ``gcc``.
+
+Unfortunately, **Preacher doesn't support Windows now**
+due to the dependent package `pyjq`_,
+which `cannot be built on Windows <https://github.com/doloopwhile/pyjq/issues/9>`_.
+
+If you have satisfied environment,
 let's install Preacher and see its version.
+If not, see :ref:`docker-run`.
 
 .. code-block:: sh
 
     $ pip install preacher
     $ preacher-cli --version
 
-.. note:: Preacher supports only Python 3.7+.
+.. _docker-run:
 
 Running on `Docker`_
 ^^^^^^^^^^^^^^^^^^^^
 We provide `Docker`_ images on `Docker Hub`_
-to avoid problems caused by environments.
+to avoid problems caused by environments and dependencies.
 By default, the container working directory is ``/work``,
 and the host directory may be mounted here as below.
 
 .. code-block:: sh
 
     $ docker pull ymoch/preacher
-    $ docker run -v $PWD:/work -t ymoch/preacher preacher-cli --version
-
-In several cases (such as below), Preacher will not work on your environment.
-Running on Docker will solve these problems.
-
-- You don't want to install Python.
-- Your Python is too older to run Preacher.
-- Your Python environment cannot accept `C extensions`_.
-  Preacher depends on `lxml`_ and `pyjq`_, which contain C extensions.
+    $ docker run -v $PWD:/work:rw -t ymoch/preacher preacher-cli --version
 
 Verify Your API
 ---------------
