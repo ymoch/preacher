@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import Mapping
 from functools import partial
-from typing import Any, Optional, Union
+from typing import Union
 
 from ruamel.yaml import YAML, Node
 from ruamel.yaml.constructor import ConstructorError
@@ -11,17 +11,16 @@ from ruamel.yaml.constructor import ConstructorError
 from .error import CompilationError
 from .util import map, run_on_key
 
-
 PathLike = Union[str, os.PathLike]
 
 
 class _Inclusion:
     yaml_tag = '!include'
 
-    def __init__(self, path: Optional[Any]):
+    def __init__(self, path: object):
         self._path = path
 
-    def resolve(self, origin: PathLike, yaml: YAML) -> Optional[Any]:
+    def resolve(self, origin: PathLike, yaml: YAML) -> object:
         if not isinstance(self._path, str):
             raise CompilationError('Must be a string')
 
@@ -33,7 +32,7 @@ class _Inclusion:
         return _Inclusion(node.value)
 
 
-def _resolve(obj: Any, origin: PathLike, yaml: YAML) -> Optional[Any]:
+def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
     resolve = partial(_resolve, origin=origin, yaml=yaml)
 
     if isinstance(obj, Mapping):
@@ -48,7 +47,7 @@ def _resolve(obj: Any, origin: PathLike, yaml: YAML) -> Optional[Any]:
     return obj
 
 
-def _load(path: PathLike, yaml: YAML) -> Optional[Any]:
+def _load(path: PathLike, yaml: YAML) -> object:
     with open(path) as f:
         try:
             obj = yaml.load(f)
@@ -58,7 +57,7 @@ def _load(path: PathLike, yaml: YAML) -> Optional[Any]:
         return _resolve(obj, path, yaml)
 
 
-def load(path: PathLike) -> Optional[Any]:
+def load(path: PathLike) -> object:
     yaml = YAML(typ='safe', pure=True)
     yaml.register_class(_Inclusion)
     return _load(path, yaml)
