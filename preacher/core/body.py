@@ -2,7 +2,7 @@
 Response body description.
 """
 
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from .analysis import Analysis, analyze_json_str
 from .description import Description
@@ -19,7 +19,7 @@ class BodyDescription:
         self._analyze = analyze
         self._descriptions = descriptions or []
 
-    def verify(self, body: str, **kwargs: Any) -> Verification:
+    def verify(self, body: str, **kwargs) -> Verification:
         try:
             analyzer = self._analyze(body)
         except Exception as error:
