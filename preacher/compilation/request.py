@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Mapping as MappingType, Optional
+from typing import Mapping as MappingType, Optional
 
 from preacher.core.request import Request
 from .error import CompilationError, NamedNode
 from .util import or_default
-
 
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
@@ -20,7 +19,7 @@ _KEY_PARAMS = 'params'
 class _Compiled:
     path: Optional[str] = None
     headers: Optional[MappingType[str, str]] = None
-    params: Optional[MappingType[str, Any]] = None
+    params: Optional[MappingType[str, object]] = None
 
     def updated(self, updater: _Compiled) -> _Compiled:
         return _Compiled(
@@ -37,7 +36,7 @@ class _Compiled:
         )
 
 
-def _compile(obj) -> _Compiled:
+def _compile(obj: object) -> _Compiled:
     """`obj` should be a mapping or a string."""
 
     if isinstance(obj, str):

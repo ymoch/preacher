@@ -30,7 +30,7 @@ class Request:
         self,
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
-        params: Optional[Mapping[str, Any]] = None,
+        params: Optional[Mapping[str, Any]] = None,  # TODO: check types.
     ):
         self._path = path
         self._headers = headers or {}

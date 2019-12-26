@@ -6,7 +6,7 @@ and the body.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, List, Mapping, Optional
+from typing import Callable, List, Mapping, Optional
 
 from preacher.core.request import Response
 from .analysis import Analyzer, JsonAnalyzer
@@ -41,11 +41,7 @@ class ResponseDescription:
         self._body = body
         self._analyze_headers = analyze_headers
 
-    def verify(
-        self,
-        response: Response,
-        **kwargs: Any,
-    ) -> ResponseVerification:
+    def verify(self, response: Response, **kwargs) -> ResponseVerification:
         """`**kwargs` will be delegated to descriptions."""
         status_code = self._verify_status_code(response.status_code, **kwargs)
 
@@ -83,11 +79,7 @@ class ResponseDescription:
     def body(self) -> Optional[BodyDescription]:
         return self._body
 
-    def _verify_status_code(
-        self,
-        code: int,
-        **kwargs: Any,
-    ) -> Verification:
+    def _verify_status_code(self, code: int, **kwargs) -> Verification:
         return collect(
             predicate.verify(code, **kwargs)
             for predicate in self._status_code
@@ -96,7 +88,7 @@ class ResponseDescription:
     def _verify_headers(
         self,
         headers: Mapping[str, str],
-        **kwargs: Any,
+        **kwargs
     ) -> Verification:
         analyzer = self._analyze_headers(headers)
         return collect(

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
-from typing import Any, Optional, List
+from typing import Optional, List
 
 from preacher.core.description import Description, Predicate
 from preacher.core.response import ResponseDescription
@@ -65,7 +65,7 @@ class ResponseDescriptionCompiler:
             ),
         )
 
-    def compile(self, obj: Any) -> Compiled:
+    def compile(self, obj: object) -> Compiled:
         """`obj` should be a mapping."""
 
         if not isinstance(obj, Mapping):
@@ -97,7 +97,7 @@ class ResponseDescriptionCompiler:
 
         return replace(self._default, **replacements)
 
-    def _compile_status_code(self, obj: Any) -> List[Predicate]:
+    def _compile_status_code(self, obj: object) -> List[Predicate]:
         if not isinstance(obj, list):
             obj = [obj]
         return list(map_on_key(
@@ -106,7 +106,7 @@ class ResponseDescriptionCompiler:
             obj,
         ))
 
-    def _compile_headers(self, obj: Any) -> List[Description]:
+    def _compile_headers(self, obj: object) -> List[Description]:
         if isinstance(obj, Mapping):
             obj = [obj]
         if not isinstance(obj, list):

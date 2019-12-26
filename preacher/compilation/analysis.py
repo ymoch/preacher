@@ -1,8 +1,5 @@
-from typing import Any
-
 from preacher.core.analysis import Analysis, analyze_json_str, analyze_xml_str
 from .error import CompilationError
-
 
 _ANALYSIS_MAP = {
     'json': analyze_json_str,
@@ -12,7 +9,7 @@ _ANALYSIS_MAP = {
 
 class AnalysisCompiler:
 
-    def compile(self, obj: Any) -> Analysis:
+    def compile(self, obj: object) -> Analysis:
         """`obj` should be a string."""
         if not isinstance(obj, str):
             raise CompilationError('Must be a string')
