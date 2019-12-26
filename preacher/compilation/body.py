@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from preacher.core.analysis import Analysis, analyze_json_str
 from preacher.core.body import BodyDescription
@@ -11,7 +11,6 @@ from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError
 from .util import map_on_key, or_default, run_on_key
-
 
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
@@ -53,7 +52,7 @@ class BodyDescriptionCompiler:
             description_compiler=self._description_compiler,
         )
 
-    def compile(self, obj: Any) -> Compiled:
+    def compile(self, obj: object) -> Compiled:
         """
         `obj` should be a mapping or a list.
         An empty list results in an empty description.
@@ -82,7 +81,7 @@ class BodyDescriptionCompiler:
 
         return replace(self._default, **replacements)
 
-    def _compile_descriptions(self, obj: Any) -> List[Description]:
+    def _compile_descriptions(self, obj: object) -> List[Description]:
         if not isinstance(obj, list):
             obj = [obj]
 
