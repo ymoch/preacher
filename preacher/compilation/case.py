@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Optional
+from typing import Optional
 
 from preacher.core.case import Case
 from .error import CompilationError, NamedNode
@@ -34,7 +34,7 @@ class CaseCompiler:
     def request_compiler(self) -> RequestCompiler:
         return self._request_compiler
 
-    def compile(self, obj: Any) -> Case:
+    def compile(self, obj: object) -> Case:
         """`obj` should be a mapping."""
 
         if not isinstance(obj, Mapping):
