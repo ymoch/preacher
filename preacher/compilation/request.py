@@ -10,7 +10,6 @@ from preacher.core.request import Request
 from .error import CompilationError, NamedNode
 from .util import or_default
 
-
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
 _KEY_PARAMS = 'params'

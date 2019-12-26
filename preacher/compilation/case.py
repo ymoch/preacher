@@ -11,7 +11,6 @@ from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
 from .util import run_on_key
 
-
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
 _KEY_REQUEST = 'request'

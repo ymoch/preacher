@@ -5,10 +5,9 @@ from typing import Any, Optional
 
 from preacher.core.description import Description
 from .error import CompilationError
-from .predicate import PredicateCompiler
 from .extraction import ExtractionCompiler
+from .predicate import PredicateCompiler
 from .util import run_on_key, map_on_key
-
 
 _KEY_DESCRIBE = 'describe'
 _KEY_SHOULD = 'should'
