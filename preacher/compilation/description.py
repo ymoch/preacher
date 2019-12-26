@@ -1,7 +1,7 @@
 """Description compilation."""
 
 from collections.abc import Mapping
-from typing import Any, Optional
+from typing import Optional
 
 from preacher.core.description import Description
 from .error import CompilationError
@@ -23,7 +23,7 @@ class DescriptionCompiler:
         self._extraction_compiler = extraction_compiler or ExtractionCompiler()
         self._predicate_compiler = predicate_compiler or PredicateCompiler()
 
-    def compile(self, obj: Any):
+    def compile(self, obj: object):
         """`obj` should be a mapping."""
 
         if not isinstance(obj, Mapping):
