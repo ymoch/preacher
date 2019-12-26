@@ -7,10 +7,10 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from .util.retry import retry_while_false
 from .request import Request, Response
 from .response import ResponseDescription, ResponseVerification
 from .status import Status, StatusedMixin, merge_statuses
+from .util.retry import retry_while_false
 from .verification import Verification
 
 
