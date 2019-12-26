@@ -28,7 +28,7 @@ _KEY_CAST_TO = 'cast_to'
 
 class ExtractionCompiler:
 
-    def compile(self, obj) -> Extractor:
+    def compile(self, obj: object) -> Extractor:
         """`obj` should be a mapping or a string."""
 
         if isinstance(obj, str):
@@ -61,7 +61,7 @@ class ExtractionCompiler:
 
         return func(query, multiple=multiple, cast=cast)
 
-    def _compile_cast(self, obj) -> Cast:
+    def _compile_cast(self, obj: object) -> Cast:
         if not isinstance(obj, str):
             raise CompilationError('Must be a string')
 
