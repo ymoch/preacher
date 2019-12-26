@@ -1,7 +1,6 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from typing import Any
 
 import hamcrest
 
@@ -72,7 +71,7 @@ _INTERPRETER_MAP = {
 }
 
 
-def _compile_taking_single_matcher(key: str, value: Any) -> Matcher:
+def _compile_taking_single_matcher(key: str, value: object) -> Matcher:
     hamcrest_factory = _SINGLE_MATCHER_HAMCREST_MAP[key]
 
     if isinstance(value, str) or isinstance(value, Mapping):
@@ -83,7 +82,7 @@ def _compile_taking_single_matcher(key: str, value: Any) -> Matcher:
     return RecursiveMatcher(hamcrest_factory, [inner])
 
 
-def _compile_taking_multi_matchers(key: str, value: Any) -> Matcher:
+def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
     hamcrest_factory = _MULTI_MATCHERS_HAMCREST_MAP[key]
 
     if not isinstance(value, list):
@@ -93,7 +92,7 @@ def _compile_taking_multi_matchers(key: str, value: Any) -> Matcher:
     return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 
-def compile(obj: Any) -> Matcher:
+def compile(obj: object) -> Matcher:
     if isinstance(obj, str):
         if obj in _STATIC_MATCHER_MAP:
             return _STATIC_MATCHER_MAP[obj]
