@@ -1,15 +1,14 @@
 """Scenario compilation."""
 
 from collections.abc import Mapping
-from typing import Any, Optional
+from typing import Optional
 
 from preacher.core.scenario import Scenario
+from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, NamedNode
-from .case import CaseCompiler
 from .response import ResponseDescriptionCompiler
 from .util import map_on_key, run_on_key
-
 
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
@@ -34,7 +33,7 @@ class ScenarioCompiler:
             ),
         )
 
-    def compile(self, obj: Any) -> Scenario:
+    def compile(self, obj: object) -> Scenario:
         """`obj` should be a mapping."""
 
         if not isinstance(obj, Mapping):
