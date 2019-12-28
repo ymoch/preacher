@@ -10,11 +10,12 @@ import requests
 
 from preacher import __version__ as _version
 from .datetime import now
+from .type import ScalarType
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
-ParameterValue = Union[None, str, List[str]]
-Parameters = Union[None, str, Mapping[str, ParameterValue]]
+ParameterValue = Union[None, ScalarType, List[Optional[ScalarType]]]
+Parameters = Union[None, ScalarType, Mapping[str, ParameterValue]]
 
 
 @dataclass(frozen=True)
