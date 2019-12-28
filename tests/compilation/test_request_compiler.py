@@ -1,6 +1,10 @@
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import (
+    CompilationError,
+    NamedNode,
+    IndexedNode,
+)
 from preacher.compilation.request import RequestCompiler
 
 
@@ -8,7 +12,15 @@ from preacher.compilation.request import RequestCompiler
     ([], []),
     ({'path': {'key': 'value'}}, [NamedNode('path')]),
     ({'headers': ''}, [NamedNode('headers')]),
-    ({'params': ''}, [NamedNode('params')]),
+    ({'params': 1}, [NamedNode('params')]),
+    ({'params': ['a', 'b']}, [NamedNode('params')]),
+    ({'params': {1: 2}}, [NamedNode('params')]),
+    ({'params': {'k': 1}}, [NamedNode('params'), NamedNode('k')]),
+    ({'params': {'k': {'kk': 'vv'}}}, [NamedNode('params'), NamedNode('k')]),
+    (
+        {'params': {'k': ['a', 0]}},
+        [NamedNode('params'), NamedNode('k'), IndexedNode(1)],
+    ),
 ))
 def test_given_invalid_values(value, expected_path):
     compiler = RequestCompiler()
@@ -30,6 +42,16 @@ def test_given_an_empty_mapping():
     assert request.params == {}
 
 
+@mark.parametrize('params', [
+    'str',
+    {'k1': None, 'k2': 'str', 'k3': [None, 'str']}
+])
+def test_given_valid_params(params):
+    compiler = RequestCompiler()
+    request = compiler.compile({'params': params})
+    assert request.params == params
+
+
 def test_given_a_string():
     compiler = RequestCompiler()
     request = compiler.compile('/path')
@@ -40,11 +62,11 @@ def test_given_a_string():
     compiler = compiler.of_default('/default-path')
     request = compiler.compile({
         'headers': {'k1': 'v1'},
-        'params': {'k': 'v'},
+        'params': 'str',
     })
     assert request.path == '/default-path'
     assert request.headers == {'k1': 'v1'}
-    assert request.params == {'k': 'v'}
+    assert request.params == 'str'
 
 
 def test_given_a_filled_mapping():

@@ -4,7 +4,7 @@ import uuid
 from copy import copy
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Mapping, Optional
+from typing import List, Mapping, Optional, Union
 
 import requests
 
@@ -12,6 +12,9 @@ from preacher import __version__ as _version
 from .datetime import now
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
+
+ParameterValue = Union[None, str, List[str]]
+Parameters = Union[None, str, Mapping[str, ParameterValue]]
 
 
 @dataclass(frozen=True)
@@ -30,7 +33,7 @@ class Request:
         self,
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
-        params: Optional[Mapping[str, Any]] = None,  # TODO: check types.
+        params: Parameters = None,
     ):
         self._path = path
         self._headers = headers or {}
@@ -48,7 +51,7 @@ class Request:
         res = requests.get(
             base_url + self._path,
             headers=headers,
-            params=self._params,
+            params=self._params,  # type: ignore
             timeout=timeout,
         )
 
@@ -74,5 +77,5 @@ class Request:
         return self._headers
 
     @property
-    def params(self) -> Mapping:
+    def params(self) -> Parameters:
         return self._params
