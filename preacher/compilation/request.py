@@ -4,22 +4,55 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping as MappingType, Optional
+from typing import List, Mapping as MappingType, Optional
 
-from preacher.core.request import Request
-from .error import CompilationError, NamedNode
-from .util import or_default
+from preacher.core.request import Request, Parameters
+from .error import CompilationError, Node, NamedNode, IndexedNode
+from .util import or_default, run_on_key
 
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
 _KEY_PARAMS = 'params'
 
 
+def _validate_params(params: object):
+    if params is None:
+        return
+    if isinstance(params, str):
+        return
+    if not isinstance(params, Mapping):
+        raise CompilationError('Must be a string or a mapping')
+
+    for key, value in params.items():
+        path: List[Node] = [NamedNode(key)]
+
+        if not isinstance(key, str):
+            raise CompilationError(
+                f'A parameter key must be a string, given {key}'
+            )
+
+        if value is None:
+            continue
+        if isinstance(value, str):
+            continue
+        if not isinstance(value, list):
+            raise CompilationError('Must be a string or a list', path)
+
+        for idx, item in enumerate(value):
+            if item is None:
+                continue
+            if not isinstance(item, str):
+                raise CompilationError(
+                    'Must be a string',
+                    path + [IndexedNode(idx)],
+                )
+
+
 @dataclass(frozen=True)
 class _Compiled:
     path: Optional[str] = None
     headers: Optional[MappingType[str, str]] = None
-    params: Optional[MappingType[str, object]] = None
+    params: Parameters = None
 
     def updated(self, updater: _Compiled) -> _Compiled:
         return _Compiled(
@@ -60,11 +93,7 @@ def _compile(obj: object) -> _Compiled:
         )
 
     params = obj.get(_KEY_PARAMS)
-    if params is not None and not isinstance(params, Mapping):
-        raise CompilationError(
-            message='Must be a mapping',
-            path=[NamedNode(_KEY_PARAMS)],
-        )
+    run_on_key(_KEY_PARAMS, _validate_params, params)
 
     return _Compiled(path=path, headers=headers, params=params)
 
