@@ -4,15 +4,30 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import List, Mapping as MappingType, Optional
+from typing import Mapping as MappingType, Optional
 
 from preacher.core.request import Request, Parameters
-from .error import CompilationError, Node, NamedNode, IndexedNode
+from .error import CompilationError, NamedNode, IndexedNode
 from .util import or_default, run_on_key
 
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
 _KEY_PARAMS = 'params'
+
+
+def _validate_param_value(value: object):
+    if value is None:
+        return
+    if isinstance(value, str):
+        return
+    if not isinstance(value, list):
+        raise CompilationError('Must be a string or a list')
+
+    for idx, item in enumerate(value):
+        if item is None:
+            continue
+        if not isinstance(item, str):
+            raise CompilationError('Must be a string', [IndexedNode(idx)])
 
 
 def _validate_params(params: object):
@@ -24,28 +39,11 @@ def _validate_params(params: object):
         raise CompilationError('Must be a string or a mapping')
 
     for key, value in params.items():
-        path: List[Node] = [NamedNode(key)]
-
         if not isinstance(key, str):
             raise CompilationError(
                 f'A parameter key must be a string, given {key}'
             )
-
-        if value is None:
-            continue
-        if isinstance(value, str):
-            continue
-        if not isinstance(value, list):
-            raise CompilationError('Must be a string or a list', path)
-
-        for idx, item in enumerate(value):
-            if item is None:
-                continue
-            if not isinstance(item, str):
-                raise CompilationError(
-                    'Must be a string',
-                    path + [IndexedNode(idx)],
-                )
+        run_on_key(key, _validate_param_value, value)
 
 
 @dataclass(frozen=True)
