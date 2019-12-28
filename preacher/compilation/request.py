@@ -58,7 +58,7 @@ class _Compiled:
         return _Compiled(
             path=or_default(updater.path, self.path),
             headers=or_default(updater.headers, self.headers),
-            params=or_default(updater.params, self.params),
+            params=or_default(updater.params, self.params),  # type: ignore
         )
 
     def to_request(self) -> Request:

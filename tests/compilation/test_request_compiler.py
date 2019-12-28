@@ -1,6 +1,10 @@
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import (
+    CompilationError,
+    NamedNode,
+    IndexedNode,
+)
 from preacher.compilation.request import RequestCompiler
 
 
@@ -13,6 +17,10 @@ from preacher.compilation.request import RequestCompiler
     ({'params': {1: 2}}, [NamedNode('params')]),
     ({'params': {'k': 1}}, [NamedNode('params'), NamedNode('k')]),
     ({'params': {'k': {'kk': 'vv'}}}, [NamedNode('params'), NamedNode('k')]),
+    (
+        {'params': {'k': ['a', 0]}},
+        [NamedNode('params'), NamedNode('k'), IndexedNode(1)],
+    ),
 ))
 def test_given_invalid_values(value, expected_path):
     compiler = RequestCompiler()
