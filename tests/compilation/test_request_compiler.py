@@ -13,12 +13,11 @@ from preacher.compilation.request import RequestCompiler
     ({'path': {'key': 'value'}}, [NamedNode('path')]),
     ({'headers': ''}, [NamedNode('headers')]),
     ({'params': 1}, [NamedNode('params')]),
-    ({'params': ['a', 'b']}, [NamedNode('params')]),
+    ({'params': ['a', 1]}, [NamedNode('params')]),
     ({'params': {1: 2}}, [NamedNode('params')]),
-    ({'params': {'k': 1}}, [NamedNode('params'), NamedNode('k')]),
     ({'params': {'k': {'kk': 'vv'}}}, [NamedNode('params'), NamedNode('k')]),
     (
-        {'params': {'k': ['a', 0]}},
+        {'params': {'k': ['a', {}]}},
         [NamedNode('params'), NamedNode('k'), IndexedNode(1)],
     ),
 ))

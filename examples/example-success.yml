@@ -52,6 +52,9 @@ cases:
         multi-key:
           - value1
           - value2
+        boolean-key: false
+        integer-key: 1
+        float-key: 1.2
     response:
       body:
         - describe: .key
@@ -60,6 +63,15 @@ cases:
         - describe: ."multi-key"
           should:
             equal: value2
+        - describe: ."boolean-key"
+          should:
+            equal: "False"
+        - describe: ."integer-key"
+          should:
+            equal: "1"
+        - describe: ."float-key"
+          should:
+            equal: "1.2"
 
   - label: Validates status codes
     request:

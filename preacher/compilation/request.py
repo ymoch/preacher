@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Mapping as MappingType, Optional
 
 from preacher.core.request import Request, Parameters
+from preacher.core.type import is_scalar
 from .error import CompilationError, NamedNode, IndexedNode
 from .util import or_default, run_on_key
 
@@ -18,16 +19,16 @@ _KEY_PARAMS = 'params'
 def _validate_param_value(value: object):
     if value is None:
         return
-    if isinstance(value, str):
+    if is_scalar(value):
         return
     if not isinstance(value, list):
-        raise CompilationError('Must be a string or a list')
+        raise CompilationError('Must be a scalar or a list')
 
     for idx, item in enumerate(value):
         if item is None:
             continue
-        if not isinstance(item, str):
-            raise CompilationError('Must be a string', [IndexedNode(idx)])
+        if not is_scalar(item):
+            raise CompilationError('Must be a scalar', [IndexedNode(idx)])
 
 
 def _validate_params(params: object):
