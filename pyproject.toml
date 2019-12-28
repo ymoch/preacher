@@ -38,8 +38,8 @@ pytest-xdist = "^1.29"
 responder = "^2.0"
 sphinx = "^2.2"
 sphinx-autobuild = "^0.7.1"
-toml = "^0.10.0"
 sphinx-intl = "^2.0"
+tomlkit = "^0.5.8"
 
 [build-system]
 requires = ["poetry>=1.0"]
