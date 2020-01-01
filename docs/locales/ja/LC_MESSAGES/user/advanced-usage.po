@@ -2,13 +2,11 @@
 # Copyright (C) 2019, Yu Mochizuki
 # This file is distributed under the same license as the Preacher package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-31 22:30+0900\n"
+"POT-Creation-Date: 2020-01-01 16:51+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,5 +156,5 @@ msgstr "``parameters`` フィールドを, キー-値のマッピングのリス
 
 #: ../../user/advanced-usage.rst:73
 #: 335f8760031248a08bd4c8db83cc88b3
-msgid "Set ``!Parameter`` tag and its key on parameterized fields."
-msgstr "``!Parameter`` タグとパラメータのキーを, パラメータ化されたフィールドに設定します."
+msgid "Set ``!argument`` tag and its key on parameterized fields."
+msgstr "``!argument`` タグとパラメータのキーを, パラメータ化されたフィールドに設定します."
