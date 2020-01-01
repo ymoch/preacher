@@ -17,14 +17,14 @@ PathLike = Union[str, os.PathLike]
 class _Inclusion:
     yaml_tag = '!include'
 
-    def __init__(self, path: object):
-        self._path = path
+    def __init__(self, obj: object):
+        self._obj = obj
 
     def resolve(self, origin: PathLike, yaml: YAML) -> object:
-        if not isinstance(self._path, str):
+        if not isinstance(self._obj, str):
             raise CompilationError('Must be a string')
 
-        path = os.path.join(os.path.dirname(origin), self._path)
+        path = os.path.join(os.path.dirname(origin), self._obj)
         return _load(path, yaml)
 
     @classmethod
