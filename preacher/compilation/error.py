@@ -34,12 +34,12 @@ class CompilationError(Exception):
     def __init__(
         self,
         message: str,
-        path: Path = [],
+        path: Optional[Path] = None,
         cause: Optional[Exception] = None,
     ):
         super().__init__(message)
         self._message = message
-        self._path = path
+        self._path = path or []
         self._cause = cause
 
     @property

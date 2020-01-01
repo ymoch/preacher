@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping
 from functools import partial
-from typing import Any, Callable, Iterable, Optional, TypeVar
+from typing import Any, Callable, Iterable, Iterator, Optional, TypeVar
 
 from .error import CompilationError, on_key, on_index
 
@@ -10,7 +10,7 @@ T = TypeVar('T')
 U = TypeVar('U')
 
 
-def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
+def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
     for idx, item in enumerate(items):
         with on_index(idx):
             yield func(item)
