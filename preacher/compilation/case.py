@@ -28,6 +28,7 @@ class CaseCompiler:
 
     @property
     def request_compiler(self) -> RequestCompiler:
+        # TODO: shouldn't be public.
         return self._request
 
     def compile(self, obj: object) -> Case:

@@ -16,6 +16,15 @@ from preacher.compilation.response import (
 
 
 @fixture
+def compiler(pred_compiler, desc_compiler, body_desc_compiler):
+    return ResponseDescriptionCompiler(
+        predicate_compiler=pred_compiler,
+        description_compiler=desc_compiler,
+        body_description_compiler=body_desc_compiler,
+    )
+
+
+@fixture
 def pred_compiler():
     return MagicMock(
         spec=PredicateCompiler,
@@ -53,15 +62,11 @@ def default() -> Compiled:
 
 
 def test_given_an_empty_mapping(
+    compiler,
     pred_compiler,
     desc_compiler,
     body_desc_compiler,
 ):
-    compiler = ResponseDescriptionCompiler(
-        predicate_compiler=pred_compiler,
-        description_compiler=desc_compiler,
-        body_description_compiler=body_desc_compiler,
-    )
     response_description = compiler.compile({}).convert()
     assert response_description.status_code == []
     assert response_description.headers == []
@@ -75,21 +80,19 @@ def test_given_an_empty_mapping(
 @mark.parametrize('obj, expected_path', (
     ('', []),
     ({'headers': 'str'}, [NamedNode('headers')]),
-    ({'body': 'str'}, [NamedNode('body')]),
 ))
-def test_given_an_invalid_value(obj, expected_path):
-    compiler = ResponseDescriptionCompiler()
+def test_given_an_invalid_value(obj, expected_path, compiler):
     with raises(CompilationError) as error_info:
         compiler.compile(obj)
     assert error_info.value.path == expected_path
 
 
-def test_given_simple_values(pred_compiler, desc_compiler, body_desc_compiler):
-    compiler = ResponseDescriptionCompiler(
-        predicate_compiler=pred_compiler,
-        description_compiler=desc_compiler,
-        body_description_compiler=body_desc_compiler,
-    )
+def test_given_simple_values(
+    compiler,
+    pred_compiler,
+    desc_compiler,
+    body_desc_compiler,
+):
     response_description = compiler.compile({
         'status_code': 402,
         'headers': {'k1': 'v1'},
@@ -103,16 +106,12 @@ def test_given_simple_values(pred_compiler, desc_compiler, body_desc_compiler):
 
 
 def test_given_filled_values(
+    compiler,
     pred_compiler,
     desc_compiler,
     body_desc_compiler,
     default,
 ):
-    compiler = ResponseDescriptionCompiler(
-        predicate_compiler=pred_compiler,
-        description_compiler=desc_compiler,
-        body_description_compiler=body_desc_compiler,
-    ).of_default(default)
     response_description = compiler.compile({
         'status_code': [{'k1': 'v1'}, {'k2': 'v2'}],
         'headers': [{'k3': 'v3'}, {'k4': 'v4'}],
@@ -135,16 +134,13 @@ def test_given_filled_values(
 
 
 def test_given_default(
+    compiler,
     pred_compiler,
     desc_compiler,
     body_desc_compiler,
     default,
 ):
-    compiler = ResponseDescriptionCompiler(
-        predicate_compiler=pred_compiler,
-        description_compiler=desc_compiler,
-        body_description_compiler=body_desc_compiler,
-    ).of_default(default)
+    compiler = compiler.of_default(default)
     compiled = compiler.compile({})
     assert compiled == default
 

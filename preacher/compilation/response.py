@@ -37,23 +37,15 @@ class ResponseDescriptionCompiler:
 
     def __init__(
         self,
+        predicate_compiler: PredicateCompiler,
+        description_compiler: DescriptionCompiler,
+        body_description_compiler: BodyDescriptionCompiler,
         default: Optional[Compiled] = None,
-        predicate_compiler: Optional[PredicateCompiler] = None,
-        description_compiler: Optional[DescriptionCompiler] = None,
-        body_description_compiler: Optional[BodyDescriptionCompiler] = None,
     ):
+        self._predicate_compiler = predicate_compiler
+        self._description_compiler = description_compiler
+        self._body_description_compiler = body_description_compiler
         self._default = default or Compiled()
-        self._predicate_compiler = predicate_compiler or PredicateCompiler()
-        self._description_compiler = (
-            description_compiler
-            or DescriptionCompiler(predicate_compiler=self._predicate_compiler)
-        )
-        self._body_description_compiler = (
-            body_description_compiler
-            or BodyDescriptionCompiler(
-                description_compiler=self._description_compiler
-            )
-        )
 
     def of_default(self, default: Compiled) -> ResponseDescriptionCompiler:
         return ResponseDescriptionCompiler(
