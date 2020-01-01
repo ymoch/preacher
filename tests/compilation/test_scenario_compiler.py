@@ -12,13 +12,32 @@ CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
 
 
 @fixture
-def description_compiler():
-    return MagicMock(spec=DescriptionCompiler)
+def description():
+    compiler = MagicMock(spec=DescriptionCompiler)
+    compiler.compile.return_value = sentinel.description
+    return compiler
 
 
 @fixture
-def case_compiler():
-    return MagicMock(spec=CaseCompiler)
+def case(case_of_default):
+    compiler = MagicMock(spec=CaseCompiler)
+    compiler.of_default.return_value = case_of_default
+    return compiler
+
+
+@fixture
+def case_of_default(sub_case):
+    compiler = MagicMock(spec=CaseCompiler)
+    compiler.compile.return_value = sentinel.case
+    compiler.of_default.return_value = sub_case
+    return compiler
+
+
+@fixture
+def sub_case():
+    compiler = MagicMock(spec=CaseCompiler)
+    compiler.compile.return_value = sentinel.sub_case
+    return compiler
 
 
 @mark.parametrize('value, expected_path', (
@@ -28,26 +47,16 @@ def case_compiler():
     ({'subscenarios': ''}, [NamedNode('subscenarios')]),
     ({'default': ''}, [NamedNode('default')]),
 ))
-def test_when_given_invalid_values(
-    value,
-    expected_path,
-    description_compiler,
-    case_compiler
-):
+def test_when_given_invalid_values(value, expected_path, description, case):
+    compiler = ScenarioCompiler(description=description, case=case)
     with raises(CompilationError) as error_info:
-        ScenarioCompiler(
-            description=description_compiler,
-            case=case_compiler,
-        ).compile(value)
+        compiler.compile(value)
     assert error_info.value.path == expected_path
 
 
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
-def test_given_an_empty_object(ctor, description_compiler, case_compiler):
-    compiler = ScenarioCompiler(
-        description=description_compiler,
-        case=case_compiler
-    )
+def test_given_an_empty_object(ctor, description, case):
+    compiler = ScenarioCompiler(description=description, case=case)
     scenario = compiler.compile({})
 
     assert scenario is sentinel.scenario
@@ -58,32 +67,18 @@ def test_given_an_empty_object(ctor, description_compiler, case_compiler):
         subscenarios=[],
     )
 
-    case_compiler.of_default.assert_called_once_with({})
+    case.of_default.assert_called_once_with({})
 
 
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
-def test_given_a_filled_object(ctor):
-    description_compiler = MagicMock(
-        spec=DescriptionCompiler,
-        compile=MagicMock(return_value=sentinel.desc),
-    )
-    sub_case_compiler = MagicMock(
-        spec=CaseCompiler,
-        compile=MagicMock(return_value=sentinel.sub_case),
-    )
-    default_case_compiler = MagicMock(
-        spec=CaseCompiler,
-        compile=MagicMock(return_value=sentinel.case),
-        of_default=MagicMock(return_value=sub_case_compiler),
-    )
-    case_compiler = MagicMock(
-        spec=CaseCompiler,
-        of_default=MagicMock(return_value=default_case_compiler),
-    )
-    compiler = ScenarioCompiler(
-        description=description_compiler,
-        case=case_compiler,
-    )
+def test_given_a_filled_object(
+    ctor,
+    description,
+    case,
+    case_of_default,
+    sub_case
+):
+    compiler = ScenarioCompiler(description=description, case=case)
     scenario = compiler.compile({
         'label': 'label',
         'default': {'a': 'b'},
@@ -107,18 +102,16 @@ def test_given_a_filled_object(ctor):
         ),
         call(
             label='label',
-            conditions=[sentinel.desc],
+            conditions=[sentinel.description],
             cases=[sentinel.case, sentinel.case],
             subscenarios=[sentinel.scenario],
         ),
     ])
 
-    case_compiler.of_default.assert_called_once_with({'a': 'b'})
-    default_case_compiler.compile.assert_has_calls([
+    case.of_default.assert_called_once_with({'a': 'b'})
+    case_of_default.compile.assert_has_calls([
         call({}),
         call({'k': 'v'})],
     )
-    default_case_compiler.of_default.assert_called_once_with({'c': 'd'})
-    sub_case_compiler.compile.assert_has_calls([
-        call({'sub_k': 'sub_v'}),
-    ])
+    case_of_default.of_default.assert_called_once_with({'c': 'd'})
+    sub_case.compile.assert_called_once_with({'sub_k': 'sub_v'})
