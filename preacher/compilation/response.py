@@ -12,7 +12,7 @@ from .body import BodyDescriptionCompiler, Compiled as BodyCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
-from .util import map_on_key
+from .util import map
 
 _KEY_STATUS_CODE = 'status_code'
 _KEY_HEADERS = 'headers'
@@ -96,11 +96,11 @@ class ResponseDescriptionCompiler:
     def _compile_status_code(self, obj: object) -> List[Predicate]:
         if not isinstance(obj, list):
             obj = [obj]
-        return list(map_on_key(
-            _KEY_STATUS_CODE,
-            self._predicate_compiler.compile,
-            obj,
-        ))
+        with on_key(_KEY_STATUS_CODE):
+            return list(map(
+                self._predicate_compiler.compile,
+                obj,
+            ))
 
     def _compile_headers(self, obj: object) -> List[Description]:
         if isinstance(obj, Mapping):
@@ -108,8 +108,8 @@ class ResponseDescriptionCompiler:
         if not isinstance(obj, list):
             message = 'Must be a list or a mapping'
             raise CompilationError(message=message)
-        return list(map_on_key(
-            _KEY_HEADERS,
-            self._description_compiler.compile,
-            obj,
-        ))
+        with on_key(_KEY_HEADERS):
+            return list(map(
+                self._description_compiler.compile,
+                obj,
+            ))

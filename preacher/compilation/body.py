@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from preacher.core.analysis import Analysis, analyze_json_str
 from preacher.core.body import BodyDescription
@@ -10,7 +10,7 @@ from preacher.core.description import Description
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
-from .util import map_on_key, or_default
+from .util import map, or_default
 
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
@@ -63,7 +63,7 @@ class BodyDescriptionCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping or a list')
 
-        replacements = {}
+        replacements: Dict[str, Any] = {}
 
         analyze_obj = obj.get(_KEY_ANALYSIS)
         if analyze_obj is not None:
@@ -75,7 +75,7 @@ class BodyDescriptionCompiler:
         descs_obj = obj.get(_KEY_DESCRIPTIONS)
         if descs_obj is not None:
             replacements['descriptions'] = (
-                self._compile_descriptions(descs_obj)  # type: ignore
+                self._compile_descriptions(descs_obj)
             )
 
         return replace(self._default, **replacements)
@@ -84,8 +84,5 @@ class BodyDescriptionCompiler:
         if not isinstance(obj, list):
             obj = [obj]
 
-        return list(map_on_key(
-            _KEY_DESCRIPTIONS,
-            self._description_compiler.compile,
-            obj,
-        ))
+        with on_key(_KEY_DESCRIPTIONS):
+            return list(map(self._description_compiler.compile, obj))
