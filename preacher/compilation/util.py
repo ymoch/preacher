@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from functools import partial
 from typing import Callable, Iterable, Iterator, Optional, TypeVar, Any
 
-from .error import CompilationError, IndexedNode, NamedNode, on_key
+from .error import CompilationError, NamedNode, on_key, on_index
 
 T = TypeVar('T')
 U = TypeVar('U')
@@ -11,10 +11,8 @@ U = TypeVar('U')
 
 def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
     for idx, item in enumerate(items):
-        try:
+        with on_index(idx):
             yield func(item)
-        except CompilationError as error:
-            raise error.of_parent([IndexedNode(idx)])
 
 
 def for_each(func: Callable[[T], Any], items: Iterable[T]) -> None:

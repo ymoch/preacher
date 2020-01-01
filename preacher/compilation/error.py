@@ -68,3 +68,11 @@ def on_key(key: str) -> Iterator:
         yield
     except CompilationError as error:
         raise error.of_parent([NamedNode(key)])
+
+
+@contextmanager
+def on_index(index: int) -> Iterator:
+    try:
+        yield
+    except CompilationError as error:
+        raise error.of_parent([IndexedNode(index)])
