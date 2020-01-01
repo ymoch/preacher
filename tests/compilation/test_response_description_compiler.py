@@ -117,7 +117,7 @@ def test_given_filled_values(compiler, predicate, description, body, default):
     body.compile.assert_called_once_with(sentinel.body)
 
 
-def test_given_default(compiler, predicate, description, body, default):
+def test_given_default(compiler, body, default):
     compiler = compiler.of_default(default)
     compiled = compiler.compile({})
     assert compiled == default
