@@ -10,6 +10,7 @@ from preacher.core.extraction import (
 )
 from preacher.core.util.functional import identify
 from .error import CompilationError, on_key
+from .util import compile_bool
 
 _EXTRACTION_MAP = {
     'jq': JqExtractor,
@@ -39,7 +40,7 @@ class ExtractionCompiler:
         keys = _EXTRACTION_KEYS.intersection(obj.keys())
         if len(keys) != 1:
             raise CompilationError(
-                f'Extraction must have only 1 valid key, but has {len(keys)}'
+                f'Must have only 1 valid key, but has {len(keys)}'
             )
         key = next(iter(keys))
 
@@ -48,7 +49,7 @@ class ExtractionCompiler:
 
         multiple_obj = obj.get(_KEY_MULTIPLE, False)
         with on_key(_KEY_MULTIPLE):
-            multiple = self._compile_multiple(multiple_obj)
+            multiple = compile_bool(multiple_obj)
 
         cast: Cast = identify
         cast_obj = obj.get(_KEY_CAST_TO)
@@ -57,14 +58,6 @@ class ExtractionCompiler:
                 cast = self._compile_cast(cast_obj)
 
         return func(query, multiple=multiple, cast=cast)
-
-    @staticmethod
-    def _compile_multiple(obj: object) -> bool:
-        """`obj` should be a boolean."""
-
-        if not isinstance(obj, bool):
-            raise CompilationError(f'Must be a boolean, given {type(obj)}')
-        return obj
 
     @staticmethod
     def _compile_cast(obj: object) -> Cast:

@@ -10,6 +10,22 @@ T = TypeVar('T')
 U = TypeVar('U')
 
 
+def compile_bool(obj: object) -> bool:
+    """
+    Compile the given boolean object.
+
+    Args:
+        obj: A compiled object, which should be a `bool` value.
+    Returns:
+        The compiled value.
+    Raises:
+        CompilationError: when compilation fails.
+    """
+    if not isinstance(obj, bool):
+        raise CompilationError(f'Must be a boolean, given {type(obj)}')
+    return obj
+
+
 def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
     for idx, item in enumerate(items):
         with on_index(idx):

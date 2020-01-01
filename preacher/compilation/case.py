@@ -9,6 +9,7 @@ from preacher.core.case import Case
 from .error import CompilationError, on_key
 from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
+from .util import compile_bool
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
@@ -44,7 +45,7 @@ class CaseCompiler:
 
         enabled_obj = obj.get(_KEY_ENABLED, True)
         with on_key(_KEY_ENABLED):
-            enabled = self._compile_enabled(enabled_obj)
+            enabled = compile_bool(enabled_obj)
 
         request_obj = obj.get(_KEY_REQUEST, {})
         with on_key(_KEY_REQUEST):
@@ -86,12 +87,4 @@ class CaseCompiler:
 
         if not isinstance(obj, str):
             raise CompilationError(f'must be a string, given {type(obj)}')
-        return obj
-
-    @staticmethod
-    def _compile_enabled(obj: object) -> bool:
-        """`obj` should be a boolean."""
-
-        if not isinstance(obj, bool):
-            raise CompilationError(f'must be a boolean, given {type(obj)}')
         return obj
