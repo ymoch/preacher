@@ -41,6 +41,11 @@ def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
             raise error.of_parent([IndexedNode(idx)])
 
 
+def for_each(func: Callable[[T], Any], items: Iterable[T]) -> None:
+    for _ in map(func, items):
+        pass
+
+
 def map_on_key(
     key: str,
     func: Callable[[T], U],
