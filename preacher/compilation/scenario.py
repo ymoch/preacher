@@ -1,14 +1,13 @@
 """Scenario compilation."""
 
 from collections.abc import Mapping
-from typing import List, Optional
+from typing import List
 
 from preacher.core.case import Case
 from preacher.core.scenario import Scenario
 from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
-from .response import ResponseDescriptionCompiler
 from .util import map_compile, compile_optional_str
 
 _KEY_LABEL = 'label'
@@ -20,19 +19,9 @@ _KEY_SUBSCENARIOS = 'subscenarios'
 
 class ScenarioCompiler:
 
-    def __init__(
-        self,
-        description_compiler: Optional[DescriptionCompiler] = None,
-        case_compiler: Optional[CaseCompiler] = None,
-    ):
-        self._description_compiler = (
-            description_compiler or DescriptionCompiler()
-        )
-        self._case_compiler = case_compiler or CaseCompiler(
-            response_compiler=ResponseDescriptionCompiler(
-                description_compiler=self._description_compiler,
-            ),
-        )
+    def __init__(self, description: DescriptionCompiler, case: CaseCompiler):
+        self._description = description
+        self._case = case
 
     def compile(self, obj: object) -> Scenario:
         """`obj` should be a mapping."""
@@ -75,12 +64,12 @@ class ScenarioCompiler:
 
         if not isinstance(obj, Mapping):
             raise CompilationError(f'Must be a mapping, given {type(obj)}')
-        return self._case_compiler.of_default(obj)
+        return self._case.of_default(obj)
 
     def _compile_conditions(self, obj: object):
         if not isinstance(obj, list):
             obj = [obj]
-        return list(map_compile(self._description_compiler.compile, obj))
+        return list(map_compile(self._description.compile, obj))
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
@@ -92,15 +81,12 @@ class ScenarioCompiler:
 
     def _compile_subscenarios(
         self,
-        case_compiler: CaseCompiler,
+        case: CaseCompiler,
         obj: object,
     ) -> List[Scenario]:
         """`obj` should be a list."""
 
         if not isinstance(obj, list):
             raise CompilationError(f'Must be a list, given {type(obj)}')
-        subscenario_compiler = ScenarioCompiler(
-            description_compiler=self._description_compiler,
-            case_compiler=case_compiler,
-        )
-        return list(map_compile(subscenario_compiler.compile, obj))
+        compiler = ScenarioCompiler(description=self._description, case=case)
+        return list(map_compile(compiler.compile, obj))

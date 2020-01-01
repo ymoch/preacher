@@ -75,9 +75,10 @@ class ResponseDescriptionCompiler:
 
         status_code_obj = obj.get(_KEY_STATUS_CODE)
         if status_code_obj is not None:
-            replacements['status_code'] = (
-                self._compile_status_code(status_code_obj)
-            )
+            with on_key(_KEY_STATUS_CODE):
+                replacements['status_code'] = (
+                    self._compile_status_code(status_code_obj)
+                )
 
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
@@ -87,8 +88,8 @@ class ResponseDescriptionCompiler:
         body_obj = obj.get(_KEY_BODY)
         if body_obj is not None:
             with on_key(_KEY_BODY):
-                replacements['body'] = self._body_description_compiler.compile(
-                    body_obj,
+                replacements['body'] = (
+                    self._body_description_compiler.compile(body_obj)
                 )
 
         return replace(self._default, **replacements)
@@ -96,20 +97,13 @@ class ResponseDescriptionCompiler:
     def _compile_status_code(self, obj: object) -> List[Predicate]:
         if not isinstance(obj, list):
             obj = [obj]
-        with on_key(_KEY_STATUS_CODE):
-            return list(map_compile(
-                self._predicate_compiler.compile,
-                obj,
-            ))
+        return list(map_compile(self._predicate_compiler.compile, obj))
 
     def _compile_headers(self, obj: object) -> List[Description]:
         if isinstance(obj, Mapping):
             obj = [obj]
         if not isinstance(obj, list):
-            message = 'Must be a list or a mapping'
-            raise CompilationError(message=message)
-        with on_key(_KEY_HEADERS):
-            return list(map_compile(
-                self._description_compiler.compile,
-                obj,
-            ))
+            message = f'Must be a list or a mapping, given {type(obj)}'
+            raise CompilationError(message)
+
+        return list(map_compile(self._description_compiler.compile, obj))
