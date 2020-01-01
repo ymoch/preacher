@@ -7,7 +7,6 @@ from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.scenario import ScenarioCompiler
 
-
 CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
 
 
@@ -111,10 +110,11 @@ def test_given_a_filled_object(
         ),
     ])
 
+    description.compile.assert_called_once_with({'c': 'd'})
     case.of_default.assert_called_once_with({'a': 'b'})
     case_of_default.compile.assert_has_calls([
         call({}),
-        call({'k': 'v'})],
-    )
+        call({'k': 'v'}),
+    ])
     case_of_default.of_default.assert_called_once_with({'c': 'd'})
     sub_case.compile.assert_called_once_with({'sub_k': 'sub_v'})
