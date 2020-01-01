@@ -9,7 +9,7 @@ from typing import Mapping as MappingType, Optional
 from preacher.core.request import Request, Parameters
 from preacher.core.type import is_scalar
 from .error import CompilationError, on_key
-from .util import or_default, for_each
+from .util import compile_optional_str, for_each, or_default
 
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
@@ -81,10 +81,9 @@ def _compile(obj: object) -> _Compiled:
     if not isinstance(obj, Mapping):
         raise CompilationError('Must be a mapping or a string')
 
-    path = obj.get(_KEY_PATH)
-    if path is not None and not isinstance(path, str):
-        with on_key(_KEY_PATH):
-            raise CompilationError(f'Must be a string, given {type(path)}')
+    path_obj = obj.get(_KEY_PATH)
+    with on_key(_KEY_PATH):
+        path = compile_optional_str(path_obj)
 
     headers = obj.get(_KEY_HEADERS)
     if headers is not None and not isinstance(headers, Mapping):
@@ -99,6 +98,7 @@ def _compile(obj: object) -> _Compiled:
 
 
 class RequestCompiler:
+
     def __init__(self, default: _Compiled = None):
         self._default = default or _Compiled()
 

@@ -9,7 +9,7 @@ from preacher.core.case import Case
 from .error import CompilationError, on_key
 from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
-from .util import compile_bool, compile_str
+from .util import compile_bool, compile_optional_str
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
@@ -41,7 +41,7 @@ class CaseCompiler:
 
         label_obj = obj.get(_KEY_LABEL)
         with on_key(_KEY_LABEL):
-            label = self._compile_label(label_obj)
+            label = compile_optional_str(label_obj)
 
         enabled_obj = obj.get(_KEY_ENABLED, True)
         with on_key(_KEY_ENABLED):
@@ -77,11 +77,3 @@ class CaseCompiler:
             request_compiler=request_compiler,
             response_compiler=res_compiler,
         )
-
-    @staticmethod
-    def _compile_label(obj: object) -> Optional[str]:
-        """`obj` should be a string or none."""
-
-        if obj is None:
-            return obj
-        return compile_str(obj)

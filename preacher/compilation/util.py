@@ -42,6 +42,22 @@ def compile_str(obj: object) -> str:
     return obj
 
 
+def compile_optional_str(obj: object) -> Optional[str]:
+    """
+    Compile the given optional string object.
+
+    Args:
+        obj: A compiled object, which should be a `string` value or `None`.
+    Returns:
+        The compiled value.
+    Raises:
+        CompilationError: when compilation fails.
+    """
+    if obj is None:
+        return None
+    return compile_str(obj)
+
+
 def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
     for idx, item in enumerate(items):
         with on_index(idx):

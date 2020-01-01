@@ -7,9 +7,9 @@ from preacher.core.case import Case
 from preacher.core.scenario import Scenario
 from .case import CaseCompiler
 from .description import DescriptionCompiler
-from .error import CompilationError, NamedNode, on_key
+from .error import CompilationError, on_key
 from .response import ResponseDescriptionCompiler
-from .util import map_compile
+from .util import map_compile, compile_optional_str
 
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
@@ -40,12 +40,9 @@ class ScenarioCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        label = obj.get(_KEY_LABEL)
-        if label is not None and not isinstance(label, str):
-            raise CompilationError(
-                message='Must be a string',
-                path=[NamedNode(_KEY_LABEL)],
-            )
+        label_obj = obj.get(_KEY_LABEL)
+        with on_key(_KEY_LABEL):
+            label = compile_optional_str(label_obj)
 
         default_obj = obj.get(_KEY_DEFAULT, {})
         with on_key(_KEY_DEFAULT):
