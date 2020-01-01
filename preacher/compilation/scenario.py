@@ -6,9 +6,9 @@ from typing import Optional
 from preacher.core.scenario import Scenario
 from .case import CaseCompiler
 from .description import DescriptionCompiler
-from .error import CompilationError, NamedNode
+from .error import CompilationError, NamedNode, on_key
 from .response import ResponseDescriptionCompiler
-from .util import map_on_key, run_on_key
+from .util import map_on_key
 
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
@@ -52,11 +52,10 @@ class ScenarioCompiler:
                 message='Must be a mapping',
                 path=[NamedNode(_KEY_DEFAULT)],
             )
-        case_compiler = run_on_key(
-            _KEY_DEFAULT,
-            self._case_compiler.of_default,
-            default,
-        )
+        with on_key(_KEY_DEFAULT):
+            case_compiler = self._case_compiler.of_default(
+                default,
+            )
 
         condition_objs = obj.get(_KEY_WHEN, [])
         if not isinstance(condition_objs, list):

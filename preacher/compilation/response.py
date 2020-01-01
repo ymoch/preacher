@@ -4,15 +4,15 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
-from typing import Optional, List
+from typing import Optional, List, Any, Dict
 
 from preacher.core.description import Description, Predicate
 from preacher.core.response import ResponseDescription
 from .body import BodyDescriptionCompiler, Compiled as BodyCompiled
 from .description import DescriptionCompiler
-from .error import CompilationError
+from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
-from .util import map_on_key, run_on_key
+from .util import map_on_key
 
 _KEY_STATUS_CODE = 'status_code'
 _KEY_HEADERS = 'headers'
@@ -71,7 +71,7 @@ class ResponseDescriptionCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        replacements = {}
+        replacements: Dict[str, Any] = {}
 
         status_code_obj = obj.get(_KEY_STATUS_CODE)
         if status_code_obj is not None:
@@ -81,19 +81,15 @@ class ResponseDescriptionCompiler:
 
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
-            replacements['headers'] = run_on_key(
-                _KEY_HEADERS,
-                self._compile_headers,  # type: ignore
-                headers_obj,
-            )
+            with on_key(_KEY_HEADERS):
+                replacements['headers'] = self._compile_headers(headers_obj)
 
         body_obj = obj.get(_KEY_BODY)
         if body_obj is not None:
-            replacements['body'] = run_on_key(
-                _KEY_BODY,
-                self._body_description_compiler.compile,  # type: ignore
-                body_obj,
-            )
+            with on_key(_KEY_BODY):
+                replacements['body'] = self._body_description_compiler.compile(
+                    body_obj,
+                )
 
         return replace(self._default, **replacements)
 

@@ -63,8 +63,8 @@ class CompilationError(Exception):
 
 
 @contextmanager
-def key(k: str) -> Iterator:
+def on_key(key: str) -> Iterator:
     try:
         yield
     except CompilationError as error:
-        raise error.of_parent([NamedNode(k)])
+        raise error.of_parent([NamedNode(key)])

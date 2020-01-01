@@ -4,10 +4,10 @@ from collections.abc import Mapping
 from typing import Optional
 
 from preacher.core.description import Description
-from .error import CompilationError
+from .error import CompilationError, on_key
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
-from .util import run_on_key, map_on_key
+from .util import map_on_key
 
 _KEY_DESCRIBE = 'describe'
 _KEY_SHOULD = 'should'
@@ -30,11 +30,8 @@ class DescriptionCompiler:
             raise CompilationError('Must be a mapping')
 
         extraction_obj = obj.get(_KEY_DESCRIBE)
-        extractor = run_on_key(
-            _KEY_DESCRIBE,
-            self._extraction_compiler.compile,
-            extraction_obj
-        )
+        with on_key(_KEY_DESCRIBE):
+            extractor = self._extraction_compiler.compile(extraction_obj)
 
         predicate_objs = obj.get(_KEY_SHOULD, [])
         if not isinstance(predicate_objs, list):

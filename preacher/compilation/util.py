@@ -3,32 +3,10 @@ from collections.abc import Mapping
 from functools import partial
 from typing import Callable, Iterable, Iterator, Optional, TypeVar, Any
 
-from .error import CompilationError, IndexedNode, NamedNode, key
+from .error import CompilationError, IndexedNode, NamedNode, on_key
 
 T = TypeVar('T')
 U = TypeVar('U')
-
-
-def run_on_key(
-    k: str,
-    func: Callable[[T], U],
-    arg: T,
-) -> U:
-    """
-    >>> def succeeding_func(arg):
-    ...     return arg
-    >>> run_on_key('key', succeeding_func, 1)
-    1
-
-    >>> def failing_func(arg):
-    ...     raise CompilationError(message='message', path=[NamedNode('path')])
-    >>> run_on_key('key', failing_func, 1)
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: message: .key.path
-    """
-    with key(k):
-        return func(arg)
 
 
 def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
@@ -83,10 +61,19 @@ def map_on_key(
 
 
 def run_recursively(func: Callable[[object], Any], obj) -> object:
-    _func = partial(run_recursively, func)
     if isinstance(obj, Mapping):
-        return {k: run_on_key(k, _func, v) for (k, v) in obj.items()}
+        def _func(key: object, value: object) -> object:
+            if not isinstance(key, str):
+                raise CompilationError(
+                    f'Key must be a string, given {type(key)}'
+                )
+            with on_key(key):
+                return run_recursively(func, value)
+
+        return {k: _func(k, v) for (k, v) in obj.items()}
+
     if isinstance(obj, list):
+        _func = partial(run_recursively, func)
         return list(map(_func, obj))
     return func(obj)
 

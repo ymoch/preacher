@@ -14,8 +14,8 @@ from preacher.core.matcher import (
 from preacher.core.util.functional import identify
 from preacher.interpretation.datetime import interpret_datetime
 from preacher.interpretation.value import value_of
-from .error import CompilationError, NamedNode
-from .util import map_on_key, run_on_key
+from .error import CompilationError, on_key
+from .util import map_on_key
 
 _STATIC_MATCHER_MAP = {
     # For objects.
@@ -75,7 +75,8 @@ def _compile_taking_single_matcher(key: str, value: object) -> Matcher:
     hamcrest_factory = _SINGLE_MATCHER_HAMCREST_MAP[key]
 
     if isinstance(value, str) or isinstance(value, Mapping):
-        inner = run_on_key(key, compile, value)
+        with on_key(key):
+            inner = compile(value)
     else:
         inner = ValueMatcher(hamcrest.equal_to, value_of(value))
 
@@ -86,7 +87,8 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
     hamcrest_factory = _MULTI_MATCHERS_HAMCREST_MAP[key]
 
     if not isinstance(value, list):
-        raise CompilationError('Must be a string', path=[NamedNode(key)])
+        with on_key(key):
+            raise CompilationError(f'Must be a list, given {type(value)}')
 
     inner_matchers = list(map_on_key(key, compile, value))
     return RecursiveMatcher(hamcrest_factory, inner_matchers)

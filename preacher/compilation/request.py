@@ -8,8 +8,8 @@ from typing import Mapping as MappingType, Optional
 
 from preacher.core.request import Request, Parameters
 from preacher.core.type import is_scalar
-from .error import CompilationError, NamedNode
-from .util import or_default, run_on_key, for_each
+from .error import CompilationError, NamedNode, on_key
+from .util import or_default, for_each
 
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
@@ -47,7 +47,8 @@ def _validate_params(params: object):
             raise CompilationError(
                 f'A parameter key must be a string, given {key}'
             )
-        run_on_key(key, _validate_param_value, value)
+        with on_key(key):
+            _validate_param_value(value)
 
 
 @dataclass(frozen=True)
@@ -95,7 +96,8 @@ def _compile(obj: object) -> _Compiled:
         )
 
     params = obj.get(_KEY_PARAMS)
-    run_on_key(_KEY_PARAMS, _validate_params, params)
+    with on_key(_KEY_PARAMS):
+        _validate_params(params)
 
     return _Compiled(path=path, headers=headers, params=params)
 
