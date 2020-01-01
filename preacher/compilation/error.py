@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import reduce
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Iterator
 
 
 @dataclass(frozen=True)
@@ -59,3 +60,11 @@ class CompilationError(Exception):
 
         path = reduce(lambda lhs, rhs: lhs + str(rhs), self._path, '')
         return f'{message}: {path}'
+
+
+@contextmanager
+def key(k: str) -> Iterator:
+    try:
+        yield
+    except CompilationError as error:
+        raise error.of_parent([NamedNode(k)])

@@ -3,14 +3,14 @@ from collections.abc import Mapping
 from functools import partial
 from typing import Callable, Iterable, Iterator, Optional, TypeVar, Any
 
-from .error import CompilationError, IndexedNode, NamedNode
+from .error import CompilationError, IndexedNode, NamedNode, key
 
 T = TypeVar('T')
 U = TypeVar('U')
 
 
 def run_on_key(
-    key: str,
+    k: str,
     func: Callable[[T], U],
     arg: T,
 ) -> U:
@@ -27,10 +27,8 @@ def run_on_key(
         ...
     preacher.compilation.error.CompilationError: message: .key.path
     """
-    try:
+    with key(k):
         return func(arg)
-    except CompilationError as error:
-        raise error.of_parent([NamedNode(key)])
 
 
 def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:

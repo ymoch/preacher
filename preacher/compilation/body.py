@@ -9,8 +9,8 @@ from preacher.core.body import BodyDescription
 from preacher.core.description import Description
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
-from .error import CompilationError
-from .util import map_on_key, or_default, run_on_key
+from .error import CompilationError, key
+from .util import map_on_key, or_default
 
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
@@ -67,11 +67,10 @@ class BodyDescriptionCompiler:
 
         analyze_obj = obj.get(_KEY_ANALYSIS)
         if analyze_obj is not None:
-            replacements['analyze'] = run_on_key(
-                _KEY_ANALYSIS,
-                self._analysis_compiler.compile,
-                analyze_obj,
-            )
+            with key(_KEY_ANALYSIS):
+                replacements['analyze'] = self._analysis_compiler.compile(
+                    analyze_obj
+                )
 
         descs_obj = obj.get(_KEY_DESCRIPTIONS)
         if descs_obj is not None:
