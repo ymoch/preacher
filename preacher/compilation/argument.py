@@ -16,7 +16,7 @@ class Argument:
 
     def apply_arguments(self, arguments: Optional[Arguments] = None) -> object:
         arguments = arguments or {}
-        return arguments.get(self._key, arguments or {})
+        return arguments.get(self._key)
 
 
 def _resolve_arguments(obj: object, arguments: Optional[Arguments]) -> object:
