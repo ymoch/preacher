@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock, call
 
-from pytest import raises
+from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
-from preacher.compilation.util import map_compile, for_each
+from preacher.compilation.util import map_compile, for_each, run_recursively
 from preacher.core.util.functional import identify
 
 
@@ -54,3 +54,14 @@ def test_for_each_for_failing_func():
         for_each(failing_func, [3, 4, 5])
     assert error_info.value.path == [IndexedNode(1), NamedNode('key')]
     failing_func.assert_has_calls([call(3), call(4)])
+
+
+@mark.parametrize('obj, expected', [
+    ([], []),
+    ([1, 2, [3, 4, {'k': 'v'}]], [2, 4, [6, 8, {'k': 'vv'}]]),
+    ({}, {}),
+    ({'k': 'v', 'foo': [1, [2, 3]]}, {'k': 'vv', 'foo': [2, [4, 6]]}),
+    (1, 2),
+])
+def test_run_recursively_with_valid_object(obj, expected):
+    assert run_recursively(lambda x: x * 2, obj) == expected
