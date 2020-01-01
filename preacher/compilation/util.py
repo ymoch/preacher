@@ -1,9 +1,9 @@
 """Utilities for compilations."""
-
-from typing import Callable, Iterable, Iterator, Optional, TypeVar
+from collections.abc import Mapping
+from functools import partial
+from typing import Callable, Iterable, Iterator, Optional, TypeVar, Any
 
 from .error import CompilationError, IndexedNode, NamedNode
-
 
 T = TypeVar('T')
 U = TypeVar('U')
@@ -77,6 +77,15 @@ def map_on_key(
         yield from map(func, items)
     except CompilationError as error:
         raise error.of_parent([NamedNode(key)])
+
+
+def run_recursively(func: Callable[[object], Any], obj) -> object:
+    _func = partial(run_recursively, func)
+    if isinstance(obj, Mapping):
+        return {k: run_on_key(k, _func, v) for (k, v) in obj.items()}
+    if isinstance(obj, list):
+        return list(map(_func, obj))
+    return func(obj)
 
 
 def or_default(value: Optional[T], default_value: T) -> T:

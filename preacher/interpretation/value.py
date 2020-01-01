@@ -26,14 +26,5 @@ class StaticValue(Value[T]):
         return self._value
 
 
-class ArgumentValue(Value[object]):
-
-    def __init__(self, key: str):
-        self._key = key
-
-    def apply_context(self, **kwargs) -> object:
-        return kwargs.get(_KEY_ARGUMENTS, {}).get(self._key)
-
-
 def value_of(obj: T) -> Value[T]:
     return StaticValue(obj)

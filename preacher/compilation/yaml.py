@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Mapping
-from functools import partial
 from typing import Union
 
 from ruamel.yaml import YAML, Node
 from ruamel.yaml.constructor import ConstructorError
 
-from preacher.interpretation.value import ArgumentValue
 from .error import CompilationError
-from .util import map, run_on_key
+from .util import run_recursively
+from .value import ArgumentValue
 
 PathLike = Union[str, os.PathLike]
 
@@ -48,14 +46,6 @@ class _Argument:
 
 
 def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
-    resolve = partial(_resolve, origin=origin, yaml=yaml)
-
-    if isinstance(obj, Mapping):
-        return {k: run_on_key(k, resolve, v) for (k, v) in obj.items()}
-
-    if isinstance(obj, list):
-        return list(map(resolve, obj))
-
     if isinstance(obj, _Inclusion):
         return obj.resolve(origin, yaml)
 
@@ -72,10 +62,11 @@ def _load(path: PathLike, yaml: YAML) -> object:
         except ConstructorError as error:
             raise CompilationError(message=str(error), cause=error)
 
-        return _resolve(obj, path, yaml)
+    return run_recursively(lambda o: _resolve(o, origin=path, yaml=yaml), obj)
 
 
 def load(path: PathLike) -> object:
     yaml = YAML(typ='safe', pure=True)
     yaml.register_class(_Inclusion)
+    yaml.register_class(_Argument)
     return _load(path, yaml)
