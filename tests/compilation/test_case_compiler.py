@@ -7,6 +7,7 @@ from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
 from preacher.compilation.response import (
     ResponseDescriptionCompiler,
+    Compiled as ResponseDescriptionCompiled,
 )
 
 
@@ -24,7 +25,7 @@ def req():
 
 @fixture
 def res():
-    compiled = MagicMock()
+    compiled = MagicMock(spec=ResponseDescriptionCompiled)
     compiled.convert.return_value = sentinel.response
 
     compiler = MagicMock(spec=ResponseDescriptionCompiler)
