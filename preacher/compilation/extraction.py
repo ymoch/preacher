@@ -9,7 +9,7 @@ from preacher.core.extraction import (
     XPathExtractor,
 )
 from preacher.core.util.functional import identify
-from .error import CompilationError, NamedNode, on_key
+from .error import CompilationError, on_key
 
 _EXTRACTION_MAP = {
     'jq': JqExtractor,
@@ -46,12 +46,9 @@ class ExtractionCompiler:
         func = _EXTRACTION_MAP[key]
         query = obj[key]
 
-        multiple = obj.get(_KEY_MULTIPLE, False)
-        if not isinstance(multiple, bool):
-            raise CompilationError(
-                message='Must be a boolean',
-                path=[NamedNode(_KEY_MULTIPLE)],
-            )
+        multiple_obj = obj.get(_KEY_MULTIPLE, False)
+        with on_key(_KEY_MULTIPLE):
+            multiple = self._compile_multiple(multiple_obj)
 
         cast: Cast = identify
         cast_obj = obj.get(_KEY_CAST_TO)
@@ -61,7 +58,18 @@ class ExtractionCompiler:
 
         return func(query, multiple=multiple, cast=cast)
 
-    def _compile_cast(self, obj: object) -> Cast:
+    @staticmethod
+    def _compile_multiple(obj: object) -> bool:
+        """`obj` should be a boolean."""
+
+        if not isinstance(obj, bool):
+            raise CompilationError(f'Must be a boolean, given {type(obj)}')
+        return obj
+
+    @staticmethod
+    def _compile_cast(obj: object) -> Cast:
+        """`obj` should be a string."""
+
         if not isinstance(obj, str):
             raise CompilationError('Must be a string')
 

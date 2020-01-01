@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from typing import Optional
 
 from preacher.core.case import Case
-from .error import CompilationError, NamedNode, on_key
+from .error import CompilationError, on_key
 from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
 
@@ -38,27 +38,21 @@ class CaseCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        label = obj.get(_KEY_LABEL)
-        if label is not None and not isinstance(label, str):
-            raise CompilationError(
-                message=f'must be a string',
-                path=[NamedNode(_KEY_LABEL)],
-            )
+        label_obj = obj.get(_KEY_LABEL)
+        with on_key(_KEY_LABEL):
+            label = self._compile_label(label_obj)
 
-        enabled = obj.get(_KEY_ENABLED, True)
-        if not isinstance(enabled, bool):
-            raise CompilationError(
-                message=f'must be a boolean',
-                path=[NamedNode(_KEY_ENABLED)]
-            )
+        enabled_obj = obj.get(_KEY_ENABLED, True)
+        with on_key(_KEY_ENABLED):
+            enabled = self._compile_enabled(enabled_obj)
 
+        request_obj = obj.get(_KEY_REQUEST, {})
         with on_key(_KEY_REQUEST):
-            request = self._request_compiler.compile(obj.get(_KEY_REQUEST, {}))
+            request = self._request_compiler.compile(request_obj)
 
+        response_obj = obj.get(_KEY_RESPONSE, {})
         with on_key(_KEY_RESPONSE):
-            response = self._response_compiler.compile(
-                obj.get(_KEY_RESPONSE, {})
-            ).convert()
+            response = self._response_compiler.compile(response_obj).convert()
 
         return Case(
             label=label,
@@ -82,3 +76,22 @@ class CaseCompiler:
             request_compiler=request_compiler,
             response_compiler=res_compiler,
         )
+
+    @staticmethod
+    def _compile_label(obj: object) -> Optional[str]:
+        """`obj` should be a string or none."""
+
+        if obj is None:
+            return obj
+
+        if not isinstance(obj, str):
+            raise CompilationError(f'must be a string, given {type(obj)}')
+        return obj
+
+    @staticmethod
+    def _compile_enabled(obj: object) -> bool:
+        """`obj` should be a boolean."""
+
+        if not isinstance(obj, bool):
+            raise CompilationError(f'must be a boolean, given {type(obj)}')
+        return obj

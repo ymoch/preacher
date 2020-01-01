@@ -74,6 +74,8 @@ class ScenarioCompiler:
         )
 
     def _compile_default(self, obj: object) -> CaseCompiler:
+        """`obj` should be a mapping."""
+
         if not isinstance(obj, Mapping):
             raise CompilationError(f'Must be a mapping, given {type(obj)}')
         return self._case_compiler.of_default(obj)
@@ -85,6 +87,8 @@ class ScenarioCompiler:
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
+        """`obj` should be a list."""
+
         if not isinstance(obj, list):
             raise CompilationError(f'Must be a list, given {type(obj)}')
         return list(map_compile(case_compiler.compile, obj))
@@ -94,6 +98,8 @@ class ScenarioCompiler:
         case_compiler: CaseCompiler,
         obj: object,
     ) -> List[Scenario]:
+        """`obj` should be a list."""
+
         if not isinstance(obj, list):
             raise CompilationError(f'Must be a list, given {type(obj)}')
         subscenario_compiler = ScenarioCompiler(
