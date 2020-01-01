@@ -28,57 +28,43 @@ def res():
     return compiler
 
 
+@fixture
+def compiler(req, res):
+    return CaseCompiler(req, res)
+
+
 @mark.parametrize('value, expected_path', (
     ('', []),
     ({'label': []}, [NamedNode('label')]),
     ({'enabled': []}, [NamedNode('enabled')]),
 ))
-def test_given_invalid_values(
-    value,
-    expected_path,
-    req,
-    res,
-):
-    compiler = CaseCompiler(req, res)
+def test_given_invalid_values(value, expected_path, compiler):
     with raises(CompilationError) as error_info:
         compiler.compile(value)
     assert error_info.value.path == expected_path
 
 
-def test_request_compilation_fails(res):
-    request_compiler = MagicMock(
-        spec=RequestCompiler,
-        compile=MagicMock(
-            side_effect=CompilationError(
-                message='message',
-                path=[NamedNode('foo')],
-            )
-        ),
+def test_request_compilation_fails(compiler, req):
+    req.compile.side_effect = CompilationError(
+        message='message',
+        path=[NamedNode('foo')],
     )
-    compiler = CaseCompiler(request_compiler, res)
     with raises(CompilationError) as error_info:
         compiler.compile({})
     assert error_info.value.path == [NamedNode('request'), NamedNode('foo')]
 
 
-def test_response_compilation_fails(req):
-    response_compiler = MagicMock(
-        spec=ResponseDescriptionCompiler,
-        compile=MagicMock(
-            side_effect=CompilationError(
-                message='message',
-                path=[NamedNode('bar')],
-            ),
-        ),
+def test_response_compilation_fails(compiler, res):
+    res.compile.side_effect = CompilationError(
+        message='message',
+        path=[NamedNode('bar')],
     )
-    compiler = CaseCompiler(req, response_compiler)
     with raises(CompilationError) as error_info:
         compiler.compile({'request': '/path'})
     assert error_info.value.path == [NamedNode('response'), NamedNode('bar')]
 
 
-def test_given_an_empty_object(req, res):
-    compiler = CaseCompiler(req, res)
+def test_given_an_empty_object(compiler, req, res):
     case = compiler.compile({})
     assert case.enabled
     assert case.request == sentinel.request
@@ -88,8 +74,7 @@ def test_given_an_empty_object(req, res):
     res.compile.assert_called_once_with({})
 
 
-def test_creates_only_a_request(req, res):
-    compiler = CaseCompiler(req, res)
+def test_creates_only_a_request(compiler, req):
     case = compiler.compile({'request': '/path'})
     assert case.label is None
     assert case.request == sentinel.request
@@ -97,8 +82,7 @@ def test_creates_only_a_request(req, res):
     req.compile.assert_called_once_with('/path')
 
 
-def test_creates_a_case(req, res):
-    compiler = CaseCompiler(req, res)
+def test_creates_a_case(compiler, req, res):
     case = compiler.compile({
         'label': 'label',
         'enabled': False,
