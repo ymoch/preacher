@@ -64,6 +64,8 @@ See :doc:`context` to find available context.
 
 Parameterized Test
 ------------------
+.. note:: This feature is under construction and not available now...
+
 Parameterized tests make it possible to run a test multiple times with different arguments,
 which can reduce test scenarios description and make them simpler and more declarative.
 

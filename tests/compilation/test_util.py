@@ -56,6 +56,22 @@ def test_for_each_for_failing_func():
     failing_func.assert_has_calls([call(3), call(4)])
 
 
+@mark.parametrize('obj, expected_path', [
+    ({1: 2}, []),
+    ({'key': {1: 2}}, [NamedNode('key')]),
+    ({'key': [1, '_error', 3]}, [NamedNode('key'), IndexedNode(1)]),
+    ([1, {'key': '_error'}, 3], [IndexedNode(1), NamedNode('key')])
+])
+def test_run_recursively_with_invalid_obj(obj, expected_path):
+    def _func(value):
+        if value == '_error':
+            raise CompilationError('message')
+
+    with raises(CompilationError) as error_info:
+        run_recursively(_func, obj)
+    assert error_info.value.path == expected_path
+
+
 @mark.parametrize('obj, expected', [
     ([], []),
     ([1, 2, [3, 4, {'k': 'v'}]], [2, 4, [6, 8, {'k': 'vv'}]]),
@@ -63,5 +79,5 @@ def test_for_each_for_failing_func():
     ({'k': 'v', 'foo': [1, [2, 3]]}, {'k': 'vv', 'foo': [2, [4, 6]]}),
     (1, 2),
 ])
-def test_run_recursively_with_valid_object(obj, expected):
+def test_run_recursively_with_valid_obj(obj, expected):
     assert run_recursively(lambda x: x * 2, obj) == expected
