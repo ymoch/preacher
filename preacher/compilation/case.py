@@ -28,6 +28,7 @@ class CaseCompiler:
 
     @property
     def request_compiler(self) -> RequestCompiler:
+        # TODO: shouldn't be public.
         return self._request
 
     def compile(self, obj: object) -> Case:
@@ -50,7 +51,7 @@ class CaseCompiler:
 
         response_obj = obj.get(_KEY_RESPONSE, {})
         with on_key(_KEY_RESPONSE):
-            response = self._response.compile(response_obj).convert()
+            response = self._response.compile(response_obj)
 
         return Case(
             label=label,

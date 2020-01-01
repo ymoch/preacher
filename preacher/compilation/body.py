@@ -1,58 +1,39 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, replace
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
-from preacher.core.analysis import Analysis, analyze_json_str
 from preacher.core.body import BodyDescription
 from preacher.core.description import Description
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
-from .util import map_compile, or_default
+from .util import map_compile
 
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
-
-
-@dataclass(frozen=True)
-class Compiled:
-    analyze: Optional[Analysis] = None
-    descriptions: Optional[List[Description]] = None
-
-    def convert(self) -> BodyDescription:
-        return BodyDescription(
-            analyze=or_default(self.analyze, analyze_json_str),
-            descriptions=self.descriptions,
-        )
 
 
 class BodyDescriptionCompiler:
 
     def __init__(
         self,
-        default: Optional[Compiled] = None,
-        analysis_compiler: Optional[AnalysisCompiler] = None,
-        description_compiler: Optional[DescriptionCompiler] = None,
+        analysis: AnalysisCompiler,
+        description: DescriptionCompiler,
+        default: Optional[BodyDescription] = None,
     ):
-        self._default = default or Compiled()
-        self._analysis_compiler = analysis_compiler or AnalysisCompiler()
-        self._description_compiler = (
-            description_compiler or DescriptionCompiler()
-        )
+        self._analysis = analysis
+        self._description = description
+        self._default = default or BodyDescription()
 
-    def of_default(
-        self,
-        default: Optional[Compiled],
-    ) -> BodyDescriptionCompiler:
+    def of_default(self, default: BodyDescription) -> BodyDescriptionCompiler:
         return BodyDescriptionCompiler(
+            analysis=self._analysis,
+            description=self._description,
             default=default,
-            analysis_compiler=self._analysis_compiler,
-            description_compiler=self._description_compiler,
         )
 
-    def compile(self, obj: object) -> Compiled:
+    def compile(self, obj: object) -> BodyDescription:
         """
         `obj` should be a mapping or a list.
         An empty list results in an empty description.
@@ -63,26 +44,22 @@ class BodyDescriptionCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping or a list')
 
-        replacements: Dict[str, Any] = {}
-
+        analyze = self._default.analyze
         analyze_obj = obj.get(_KEY_ANALYSIS)
         if analyze_obj is not None:
             with on_key(_KEY_ANALYSIS):
-                replacements['analyze'] = self._analysis_compiler.compile(
-                    analyze_obj
-                )
+                analyze = self._analysis.compile(analyze_obj)
 
-        descs_obj = obj.get(_KEY_DESCRIPTIONS)
-        if descs_obj is not None:
-            replacements['descriptions'] = (
-                self._compile_descriptions(descs_obj)
-            )
+        descriptions = self._default.descriptions
+        descriptions_obj = obj.get(_KEY_DESCRIPTIONS)
+        if descriptions_obj is not None:
+            descriptions = self._compile_descriptions(descriptions_obj)
 
-        return replace(self._default, **replacements)
+        return BodyDescription(analyze=analyze, descriptions=descriptions)
 
     def _compile_descriptions(self, obj: object) -> List[Description]:
         if not isinstance(obj, list):
             obj = [obj]
 
         with on_key(_KEY_DESCRIPTIONS):
-            return list(map_compile(self._description_compiler.compile, obj))
+            return list(map_compile(self._description.compile, obj))

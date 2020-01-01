@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, replace
-from typing import Optional, List, Any, Dict
+from typing import Optional, List
 
 from preacher.core.description import Description, Predicate
 from preacher.core.response import ResponseDescription
-from .body import BodyDescriptionCompiler, Compiled as BodyCompiled
+from .body import BodyDescriptionCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
@@ -19,85 +18,68 @@ _KEY_HEADERS = 'headers'
 _KEY_BODY = 'body'
 
 
-@dataclass(frozen=True)
-class Compiled:
-    status_code: Optional[List[Predicate]] = None
-    headers: Optional[List[Description]] = None
-    body: Optional[BodyCompiled] = None
-
-    def convert(self) -> ResponseDescription:
-        return ResponseDescription(
-            status_code=self.status_code,
-            headers=self.headers,
-            body=self.body.convert() if self.body else None,
-        )
-
-
 class ResponseDescriptionCompiler:
 
     def __init__(
         self,
-        default: Optional[Compiled] = None,
-        predicate_compiler: Optional[PredicateCompiler] = None,
-        description_compiler: Optional[DescriptionCompiler] = None,
-        body_description_compiler: Optional[BodyDescriptionCompiler] = None,
+        predicate: PredicateCompiler,
+        description: DescriptionCompiler,
+        body: BodyDescriptionCompiler,
+        default: Optional[ResponseDescription] = None,
     ):
-        self._default = default or Compiled()
-        self._predicate_compiler = predicate_compiler or PredicateCompiler()
-        self._description_compiler = (
-            description_compiler
-            or DescriptionCompiler(predicate_compiler=self._predicate_compiler)
-        )
-        self._body_description_compiler = (
-            body_description_compiler
-            or BodyDescriptionCompiler(
-                description_compiler=self._description_compiler
-            )
-        )
+        self._predicate = predicate
+        self._description = description
+        self._body = body
+        self._default = default or ResponseDescription()
 
-    def of_default(self, default: Compiled) -> ResponseDescriptionCompiler:
+    def of_default(
+        self,
+        default: ResponseDescription,
+    ) -> ResponseDescriptionCompiler:
+        body = self._body
+        if default.body:
+            body = body.of_default(default.body)
+
         return ResponseDescriptionCompiler(
+            predicate=self._predicate,
+            description=self._description,
+            body=body,
             default=default,
-            predicate_compiler=self._predicate_compiler,
-            description_compiler=self._description_compiler,
-            body_description_compiler=(
-                self._body_description_compiler.of_default(default.body)
-            ),
         )
 
-    def compile(self, obj: object) -> Compiled:
+    def compile(self, obj: object) -> ResponseDescription:
         """`obj` should be a mapping."""
 
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        replacements: Dict[str, Any] = {}
-
+        status_code = self._default.status_code
         status_code_obj = obj.get(_KEY_STATUS_CODE)
         if status_code_obj is not None:
             with on_key(_KEY_STATUS_CODE):
-                replacements['status_code'] = (
-                    self._compile_status_code(status_code_obj)
-                )
+                status_code = self._compile_status_code(status_code_obj)
 
+        headers = self._default.headers
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
             with on_key(_KEY_HEADERS):
-                replacements['headers'] = self._compile_headers(headers_obj)
+                headers = self._compile_headers(headers_obj)
 
+        body = self._default.body
         body_obj = obj.get(_KEY_BODY)
         if body_obj is not None:
-            with on_key(_KEY_BODY):
-                replacements['body'] = (
-                    self._body_description_compiler.compile(body_obj)
-                )
+            body = self._body.compile(body_obj)
 
-        return replace(self._default, **replacements)
+        return ResponseDescription(
+            status_code=status_code,
+            headers=headers,
+            body=body,
+        )
 
     def _compile_status_code(self, obj: object) -> List[Predicate]:
         if not isinstance(obj, list):
             obj = [obj]
-        return list(map_compile(self._predicate_compiler.compile, obj))
+        return list(map_compile(self._predicate.compile, obj))
 
     def _compile_headers(self, obj: object) -> List[Description]:
         if isinstance(obj, Mapping):
@@ -106,4 +88,4 @@ class ResponseDescriptionCompiler:
             message = f'Must be a list or a mapping, given {type(obj)}'
             raise CompilationError(message)
 
-        return list(map_compile(self._description_compiler.compile, obj))
+        return list(map_compile(self._description.compile, obj))

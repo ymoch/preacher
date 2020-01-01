@@ -99,7 +99,7 @@ def _compile(obj: object) -> _Compiled:
 
 class RequestCompiler:
 
-    def __init__(self, default: _Compiled = None):
+    def __init__(self, default: Optional[_Compiled] = None):
         self._default = default or _Compiled()
 
     def compile(self, obj) -> Request:
@@ -108,7 +108,8 @@ class RequestCompiler:
         compiled = _compile(obj)
         return self._default.updated(compiled).to_request()
 
-    def of_default(self, obj) -> RequestCompiler:
+    @staticmethod
+    def of_default(obj) -> RequestCompiler:
         """`obj` should be a mapping or a string."""
 
         compiled = _compile(obj)
