@@ -9,7 +9,7 @@ from preacher.core.case import Case
 from .error import CompilationError, on_key
 from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
-from .util import compile_bool
+from .util import compile_bool, compile_str
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
@@ -84,7 +84,4 @@ class CaseCompiler:
 
         if obj is None:
             return obj
-
-        if not isinstance(obj, str):
-            raise CompilationError(f'must be a string, given {type(obj)}')
-        return obj
+        return compile_str(obj)

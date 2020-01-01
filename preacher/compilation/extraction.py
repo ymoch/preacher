@@ -10,7 +10,7 @@ from preacher.core.extraction import (
 )
 from preacher.core.util.functional import identify
 from .error import CompilationError, on_key
-from .util import compile_bool
+from .util import compile_bool, compile_str
 
 _EXTRACTION_MAP = {
     'jq': JqExtractor,
@@ -63,11 +63,9 @@ class ExtractionCompiler:
     def _compile_cast(obj: object) -> Cast:
         """`obj` should be a string."""
 
-        if not isinstance(obj, str):
-            raise CompilationError('Must be a string')
-
-        cast = _CAST_FUNC_MAP.get(obj)
+        key = compile_str(obj)
+        cast = _CAST_FUNC_MAP.get(key)
         if not cast:
-            raise CompilationError(f'Invalid value: {obj}')
+            raise CompilationError(f'Invalid value: {key}')
 
         return cast

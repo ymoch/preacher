@@ -20,7 +20,7 @@ def interpret_timedelta(value: object) -> timedelta:
         InterpretationError: When interpretation fails.
     """
     if not isinstance(value, str):
-        raise InterpretationError('Must be a string')
+        raise InterpretationError(f'Must be a string, given {type(value)}')
 
     normalized = value.strip().lower()
 

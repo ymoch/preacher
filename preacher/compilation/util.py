@@ -26,6 +26,22 @@ def compile_bool(obj: object) -> bool:
     return obj
 
 
+def compile_str(obj: object) -> str:
+    """
+    Compile the given string object.
+
+    Args:
+        obj: A compiled object, which should be a `string` value.
+    Returns:
+        The compiled value.
+    Raises:
+        CompilationError: when compilation fails.
+    """
+    if not isinstance(obj, str):
+        raise CompilationError(f'must be a string, given {type(obj)}')
+    return obj
+
+
 def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
     for idx, item in enumerate(items):
         with on_index(idx):
