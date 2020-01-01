@@ -33,8 +33,8 @@ def create_compiler() -> ScenarioCompiler:
         response_compiler=response,
     )
     scenario_compiler = ScenarioCompiler(
-        description_compiler=description,
-        case_compiler=case,
+        description=description,
+        case=case,
     )
 
     return scenario_compiler

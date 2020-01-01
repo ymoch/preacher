@@ -36,8 +36,8 @@ def test_when_given_invalid_values(
 ):
     with raises(CompilationError) as error_info:
         ScenarioCompiler(
-            description_compiler=description_compiler,
-            case_compiler=case_compiler,
+            description=description_compiler,
+            case=case_compiler,
         ).compile(value)
     assert error_info.value.path == expected_path
 
@@ -45,8 +45,8 @@ def test_when_given_invalid_values(
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
 def test_given_an_empty_object(ctor, description_compiler, case_compiler):
     compiler = ScenarioCompiler(
-        description_compiler=description_compiler,
-        case_compiler=case_compiler
+        description=description_compiler,
+        case=case_compiler
     )
     scenario = compiler.compile({})
 
@@ -81,8 +81,8 @@ def test_given_a_filled_object(ctor):
         of_default=MagicMock(return_value=default_case_compiler),
     )
     compiler = ScenarioCompiler(
-        description_compiler=description_compiler,
-        case_compiler=case_compiler,
+        description=description_compiler,
+        case=case_compiler,
     )
     scenario = compiler.compile({
         'label': 'label',
