@@ -49,18 +49,21 @@ class ResponseDescriptionCompiler:
         self._default_status_code = default_status_code or []
         self._default_headers = default_headers or []
 
-    def of_default(self, default: Compiled) -> ResponseDescriptionCompiler:
+    def of_default(self, obj: object) -> ResponseDescriptionCompiler:
+        compiled = self._compile(obj)
         return ResponseDescriptionCompiler(
             predicate=self._predicate,
             description=self._description,
-            body=self._body.of_default(default.body),
-            default_status_code=default.status_code,
-            default_headers=default.headers,
+            body=self._body.of_default(compiled.body),
+            default_status_code=compiled.status_code,
+            default_headers=compiled.headers,
         )
 
-    def compile(self, obj: object) -> Compiled:
+    def compile(self, obj: object) -> ResponseDescription:
         """`obj` should be a mapping."""
+        return self._compile(obj).convert()
 
+    def _compile(self, obj: object) -> Compiled:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 

@@ -67,18 +67,6 @@ class ResponseDescription:
             body=body,
         )
 
-    @property
-    def status_code(self) -> List[Predicate]:
-        return self._status_code
-
-    @property
-    def headers(self) -> List[Description]:
-        return self._headers
-
-    @property
-    def body(self) -> Optional[BodyDescription]:
-        return self._body
-
     def _verify_status_code(self, code: int, **kwargs) -> Verification:
         return collect(
             predicate.verify(code, **kwargs)

@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call, sentinel
+from unittest.mock import MagicMock, call, sentinel, patch
 
 from pytest import fixture, mark, raises
 
@@ -9,9 +9,11 @@ from preacher.compilation.body import (
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
-from preacher.compilation.response import (
-    Compiled,
-    ResponseDescriptionCompiler,
+from preacher.compilation.response import ResponseDescriptionCompiler
+
+ctor_patch = patch(
+    'preacher.compilation.response.ResponseDescription',
+    return_value=sentinel.response,
 )
 
 
@@ -54,26 +56,24 @@ def body(body_of_default):
 
 @fixture
 def body_of_default():
+    compiled = MagicMock(spec=BodyCompiled)
+    compiled.convert.return_value = sentinel.sub_body_desc
+
     compiler = MagicMock(spec=BodyDescriptionCompiler)
-    compiler.compile.return_value = sentinel.sub_body
+    compiler.compile.return_value = compiled
     return compiler
 
 
-@fixture
-def default():
-    return Compiled(
-        status_code=[sentinel.status_code],
-        headers=[sentinel.headers],
-        body=sentinel.body,
+@ctor_patch
+def test_given_an_empty_mapping(ctor, compiler, predicate, description, body):
+    response = compiler.compile({})
+    assert response is sentinel.response
+
+    ctor.assert_called_once_with(
+        status_code=[],
+        headers=[],
+        body=sentinel.body_desc
     )
-
-
-def test_given_an_empty_mapping(compiler, predicate, description, body):
-    response_description = compiler.compile({}).convert()
-    assert response_description.status_code == []
-    assert response_description.headers == []
-    assert response_description.body is sentinel.body_desc
-
     predicate.compile.assert_not_called()
     description.compile.assert_not_called()
     body.compile.assert_called_once_with({})
@@ -89,30 +89,39 @@ def test_given_an_invalid_value(obj, expected_path, compiler):
     assert error_info.value.path == expected_path
 
 
-def test_given_simple_values(compiler, predicate, description, body):
-    response_description = compiler.compile({
+@ctor_patch
+def test_given_simple_values(ctor, compiler, predicate, description, body):
+    response = compiler.compile({
         'status_code': 402,
         'headers': {'k1': 'v1'},
         'body': sentinel.body,
-    }).convert()
-    assert response_description.status_code == [sentinel.predicate]
-    assert response_description.body == sentinel.body_desc
+    })
+    assert response is sentinel.response
+
+    ctor.assert_called_once_with(
+        status_code=[sentinel.predicate],
+        headers=[sentinel.description],
+        body=sentinel.body_desc,
+    )
     predicate.compile.assert_called_once_with(402)
     description.compile.assert_called_once_with({'k1': 'v1'})
     body.compile.assert_called_once_with(sentinel.body)
 
 
-def test_given_filled_values(compiler, predicate, description, body, default):
-    response_description = compiler.compile({
+@ctor_patch
+def test_given_filled_values(ctor, compiler, predicate, description, body):
+    response = compiler.compile({
         'status_code': [{'k1': 'v1'}, {'k2': 'v2'}],
         'headers': [{'k3': 'v3'}, {'k4': 'v4'}],
         'body': sentinel.body,
-    }).convert()
-    assert response_description.status_code == [
-        sentinel.predicate,
-        sentinel.predicate,
-    ]
-    assert response_description.body == sentinel.body_desc
+    })
+    assert response is sentinel.response
+
+    ctor.assert_called_once_with(
+        status_code=[sentinel.predicate, sentinel.predicate],
+        headers=[sentinel.description, sentinel.description],
+        body=sentinel.body_desc,
+    )
     predicate.compile.assert_has_calls([
         call({'k1': 'v1'}),
         call({'k2': 'v2'}),
@@ -124,11 +133,30 @@ def test_given_filled_values(compiler, predicate, description, body, default):
     body.compile.assert_called_once_with(sentinel.body)
 
 
-def test_given_default(compiler, body, default):
-    compiler = compiler.of_default(default)
-    compiled = compiler.compile({})
-    assert compiled.status_code == default.status_code
-    assert compiled.headers == default.headers
-    assert compiled.body == sentinel.sub_body
+@ctor_patch
+def test_given_default(
+    ctor,
+    compiler,
+    predicate,
+    description,
+    body,
+    body_of_default,
+):
+    compiler = compiler.of_default({
+        'status_code': 200,
+        'headers': {},
+        'body': sentinel.body,
+    })
+    response = compiler.compile({})
+    assert response is sentinel.response
 
-    body.of_default.assert_called_once_with(default.body)
+    ctor.assert_called_once_with(
+        status_code=[sentinel.predicate],
+        headers=[sentinel.description],
+        body=sentinel.sub_body_desc,
+    )
+    predicate.compile.assert_called_once_with(200)
+    description.compile.assert_called_once_with({})
+    body.compile.assert_called_once_with(sentinel.body)
+    body.of_default.assert_called_once()
+    body_of_default.compile.assert_called_once_with({})

@@ -5,10 +5,7 @@ from pytest import fixture, mark, raises
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
-from preacher.compilation.response import (
-    ResponseDescriptionCompiler,
-    Compiled as ResponseDescriptionCompiled,
-)
+from preacher.compilation.response import ResponseDescriptionCompiler
 
 
 @fixture
@@ -25,11 +22,8 @@ def req():
 
 @fixture
 def res():
-    compiled = MagicMock(spec=ResponseDescriptionCompiled)
-    compiled.convert.return_value = sentinel.response
-
     compiler = MagicMock(spec=ResponseDescriptionCompiler)
-    compiler.compile.return_value = compiled
+    compiler.compile.return_value = sentinel.response
 
     return compiler
 
