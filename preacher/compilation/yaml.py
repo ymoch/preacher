@@ -8,7 +8,7 @@ from ruamel.yaml.constructor import ConstructorError
 
 from .error import CompilationError
 from .util import run_recursively
-from .value import ArgumentValue
+from .argument import Argument
 
 PathLike = Union[str, os.PathLike]
 
@@ -38,11 +38,11 @@ class _Argument:
     def __init__(self, obj: object):
         self._obj = obj
 
-    def resolve(self) -> ArgumentValue:
+    def resolve(self) -> Argument:
         obj = self._obj
         if not isinstance(obj, str):
             raise CompilationError(f'Must be a key string, given {type(obj)}')
-        return ArgumentValue(obj)
+        return Argument(obj)
 
     @classmethod
     def from_yaml(cls, _constructor, node: Node) -> _Argument:

@@ -5,7 +5,7 @@ from preacher.compilation.util import run_recursively
 Arguments = MappingType[str, object]
 
 
-class ArgumentValue:
+class Argument:
 
     def __init__(self, key: str):
         self._key = key
@@ -20,7 +20,7 @@ class ArgumentValue:
 
 
 def _resolve_arguments(obj: object, arguments: Optional[Arguments]) -> object:
-    if isinstance(obj, ArgumentValue):
+    if isinstance(obj, Argument):
         return obj.apply_arguments(arguments)
     return obj
 
