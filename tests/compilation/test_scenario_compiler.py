@@ -12,6 +12,11 @@ CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
 
 
 @fixture
+def compiler(description, case):
+    return ScenarioCompiler(description, case)
+
+
+@fixture
 def description():
     compiler = MagicMock(spec=DescriptionCompiler)
     compiler.compile.return_value = sentinel.description
@@ -47,16 +52,14 @@ def sub_case():
     ({'subscenarios': ''}, [NamedNode('subscenarios')]),
     ({'default': ''}, [NamedNode('default')]),
 ))
-def test_when_given_invalid_values(value, expected_path, description, case):
-    compiler = ScenarioCompiler(description=description, case=case)
+def test_when_given_invalid_values(value, expected_path, compiler):
     with raises(CompilationError) as error_info:
         compiler.compile(value)
     assert error_info.value.path == expected_path
 
 
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
-def test_given_an_empty_object(ctor, description, case):
-    compiler = ScenarioCompiler(description=description, case=case)
+def test_given_an_empty_object(ctor, compiler, case):
     scenario = compiler.compile({})
 
     assert scenario is sentinel.scenario
@@ -73,12 +76,12 @@ def test_given_an_empty_object(ctor, description, case):
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
 def test_given_a_filled_object(
     ctor,
+    compiler,
     description,
     case,
     case_of_default,
     sub_case
 ):
-    compiler = ScenarioCompiler(description=description, case=case)
     scenario = compiler.compile({
         'label': 'label',
         'default': {'a': 'b'},

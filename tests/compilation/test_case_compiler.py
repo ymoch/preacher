@@ -11,6 +11,11 @@ from preacher.compilation.response import (
 
 
 @fixture
+def compiler(req, res):
+    return CaseCompiler(req, res)
+
+
+@fixture
 def req():
     compiler = MagicMock(spec=RequestCompiler)
     compiler.compile.return_value = sentinel.request
@@ -26,11 +31,6 @@ def res():
     compiler.compile.return_value = compiled
 
     return compiler
-
-
-@fixture
-def compiler(req, res):
-    return CaseCompiler(req, res)
 
 
 @mark.parametrize('value, expected_path', (
