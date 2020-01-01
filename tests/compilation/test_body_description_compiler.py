@@ -68,9 +68,10 @@ def test_given_a_list(ctor, compiler, analysis, description):
 
 @ctor_patch
 def test_given_a_single_value_mapping(ctor, compiler, analysis, description):
-    desc = compiler.compile(
-        {'analyze_as': 'html', 'descriptions': 'd1'}
-    )
+    desc = compiler.compile({
+        'analyze_as': 'html',
+        'descriptions': 'd1',
+    })
     assert desc is sentinel.body
 
     ctor.assert_called_once_with(
@@ -85,7 +86,7 @@ def test_given_a_single_value_mapping(ctor, compiler, analysis, description):
 def test_given_a_mapping(ctor, compiler, analysis, description):
     desc = compiler.compile({
         'analyze_as': 'text',
-        'descriptions': ['d1', 'd2']
+        'descriptions': ['d1', 'd2'],
     })
     assert desc is sentinel.body
 
