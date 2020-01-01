@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, replace
-from typing import Optional, List, Any, Dict
+from dataclasses import dataclass
+from typing import Optional, List
 
 from preacher.core.description import Description, Predicate
 from preacher.core.response import ResponseDescription
@@ -40,19 +40,22 @@ class ResponseDescriptionCompiler:
         predicate: PredicateCompiler,
         description: DescriptionCompiler,
         body: BodyDescriptionCompiler,
-        default: Optional[Compiled] = None,
+        default_status_code: Optional[List[Predicate]] = None,
+        default_headers: Optional[List[Description]] = None,
     ):
         self._predicate = predicate
         self._description = description
         self._body = body
-        self._default = default or Compiled()
+        self._default_status_code = default_status_code or []
+        self._default_headers = default_headers or []
 
     def of_default(self, default: Compiled) -> ResponseDescriptionCompiler:
         return ResponseDescriptionCompiler(
-            default=default,
             predicate=self._predicate,
             description=self._description,
             body=self._body.of_default(default.body),
+            default_status_code=default.status_code,
+            default_headers=default.headers,
         )
 
     def compile(self, obj: object) -> Compiled:
@@ -61,28 +64,22 @@ class ResponseDescriptionCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        replacements: Dict[str, Any] = {}
-
-        status_code_obj = obj.get(_KEY_STATUS_CODE)
-        if status_code_obj is not None:
+        status_code = self._default_status_code
+        if _KEY_STATUS_CODE in obj:
+            status_code_obj = obj.get(_KEY_STATUS_CODE)
             with on_key(_KEY_STATUS_CODE):
-                replacements['status_code'] = (
-                    self._compile_status_code(status_code_obj)
-                )
+                status_code = self._compile_status_code(status_code_obj)
 
-        headers_obj = obj.get(_KEY_HEADERS)
-        if headers_obj is not None:
+        headers = self._default_headers
+        if _KEY_HEADERS in obj:
+            headers_obj = obj.get(_KEY_HEADERS)
             with on_key(_KEY_HEADERS):
-                replacements['headers'] = self._compile_headers(headers_obj)
+                headers = self._compile_headers(headers_obj)
 
-        body_obj = obj.get(_KEY_BODY)
-        if body_obj is not None:
-            with on_key(_KEY_BODY):
-                replacements['body'] = (
-                    self._body.compile(body_obj)
-                )
+        body_obj = obj.get(_KEY_BODY, {})
+        body = self._body.compile(body_obj)
 
-        return replace(self._default, **replacements)
+        return Compiled(status_code=status_code, headers=headers, body=body)
 
     def _compile_status_code(self, obj: object) -> List[Predicate]:
         if not isinstance(obj, list):

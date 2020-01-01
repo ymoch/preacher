@@ -16,7 +16,7 @@ from preacher.compilation.response import (
 
 
 @fixture
-def compiler(predicate, description, body):
+def compiler(predicate, description, body) -> ResponseDescriptionCompiler:
     return ResponseDescriptionCompiler(
         predicate=predicate,
         description=description,
@@ -41,19 +41,26 @@ def description():
 
 
 @fixture
-def body():
+def body(body_of_default):
     compiled = MagicMock(spec=BodyCompiled)
     compiled.convert.return_value = sentinel.body_desc
 
     compiler = MagicMock(spec=BodyDescriptionCompiler)
     compiler.compile.return_value = compiled
-    compiler.of_default.return_value = compiler
+    compiler.of_default.return_value = body_of_default
 
     return compiler
 
 
 @fixture
-def default() -> Compiled:
+def body_of_default():
+    compiler = MagicMock(spec=BodyDescriptionCompiler)
+    compiler.compile.return_value = sentinel.sub_body
+    return compiler
+
+
+@fixture
+def default():
     return Compiled(
         status_code=[sentinel.status_code],
         headers=[sentinel.headers],
@@ -65,11 +72,11 @@ def test_given_an_empty_mapping(compiler, predicate, description, body):
     response_description = compiler.compile({}).convert()
     assert response_description.status_code == []
     assert response_description.headers == []
-    assert response_description.body is None
+    assert response_description.body is sentinel.body_desc
 
     predicate.compile.assert_not_called()
     description.compile.assert_not_called()
-    body.compile.assert_not_called()
+    body.compile.assert_called_once_with({})
 
 
 @mark.parametrize('obj, expected_path', (
@@ -120,6 +127,8 @@ def test_given_filled_values(compiler, predicate, description, body, default):
 def test_given_default(compiler, body, default):
     compiler = compiler.of_default(default)
     compiled = compiler.compile({})
-    assert compiled == default
+    assert compiled.status_code == default.status_code
+    assert compiled.headers == default.headers
+    assert compiled.body == sentinel.sub_body
 
     body.of_default.assert_called_once_with(default.body)
