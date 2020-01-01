@@ -10,6 +10,10 @@ class ArgumentValue:
     def __init__(self, key: str):
         self._key = key
 
+    @property
+    def key(self) -> str:
+        return self._key
+
     def apply_arguments(self, arguments: Optional[Arguments] = None) -> object:
         arguments = arguments or {}
         return arguments.get(self._key, arguments or {})

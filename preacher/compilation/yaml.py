@@ -44,6 +44,10 @@ class _Argument:
             raise CompilationError(f'Must be a key string, given {type(obj)}')
         return ArgumentValue(obj)
 
+    @classmethod
+    def from_yaml(cls, _constructor, node: Node) -> _Argument:
+        return _Argument(node.value)
+
 
 def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
     if isinstance(obj, _Inclusion):
