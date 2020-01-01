@@ -102,7 +102,7 @@ def test_given_simple_values(ctor, compiler, predicate, description, body):
 
 @ctor_patch
 def test_given_filled_values(ctor, compiler, predicate, description, body):
-    response = compiler.compile({
+    response = compiler.of_default(ResponseDescription()).compile({
         'status_code': [{'k1': 'v1'}, {'k2': 'v2'}],
         'headers': [{'k3': 'v3'}, {'k4': 'v4'}],
         'body': sentinel.body,

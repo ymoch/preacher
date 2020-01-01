@@ -84,7 +84,7 @@ def test_given_a_single_value_mapping(ctor, compiler, analysis, description):
 
 @ctor_patch
 def test_given_a_mapping(ctor, compiler, analysis, description):
-    desc = compiler.compile({
+    desc = compiler.of_default(BodyDescription()).compile({
         'analyze_as': 'text',
         'descriptions': ['d1', 'd2'],
     })
