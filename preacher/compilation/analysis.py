@@ -1,5 +1,6 @@
 from preacher.core.analysis import Analysis, analyze_json_str, analyze_xml_str
 from .error import CompilationError
+from .util import compile_str
 
 _ANALYSIS_MAP = {
     'json': analyze_json_str,
@@ -9,13 +10,13 @@ _ANALYSIS_MAP = {
 
 class AnalysisCompiler:
 
-    def compile(self, obj: object) -> Analysis:
+    @staticmethod
+    def compile(obj: object) -> Analysis:
         """`obj` should be a string."""
-        if not isinstance(obj, str):
-            raise CompilationError('Must be a string')
 
-        analysis = _ANALYSIS_MAP.get(obj)
+        key = compile_str(obj)
+        analysis = _ANALYSIS_MAP.get(key)
         if not analysis:
-            raise CompilationError(f'Invalid key: {obj}')
+            raise CompilationError(f'Invalid key: {key}')
 
         return analysis

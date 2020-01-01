@@ -9,7 +9,8 @@ from preacher.core.extraction import (
     XPathExtractor,
 )
 from preacher.core.util.functional import identify
-from .error import CompilationError, NamedNode, on_key
+from .error import CompilationError, on_key
+from .util import compile_bool, compile_str
 
 _EXTRACTION_MAP = {
     'jq': JqExtractor,
@@ -39,19 +40,16 @@ class ExtractionCompiler:
         keys = _EXTRACTION_KEYS.intersection(obj.keys())
         if len(keys) != 1:
             raise CompilationError(
-                f'Extraction must have only 1 valid key, but has {len(keys)}'
+                f'Must have only 1 valid key, but has {len(keys)}'
             )
         key = next(iter(keys))
 
         func = _EXTRACTION_MAP[key]
         query = obj[key]
 
-        multiple = obj.get(_KEY_MULTIPLE, False)
-        if not isinstance(multiple, bool):
-            raise CompilationError(
-                message='Must be a boolean',
-                path=[NamedNode(_KEY_MULTIPLE)],
-            )
+        multiple_obj = obj.get(_KEY_MULTIPLE, False)
+        with on_key(_KEY_MULTIPLE):
+            multiple = compile_bool(multiple_obj)
 
         cast: Cast = identify
         cast_obj = obj.get(_KEY_CAST_TO)
@@ -61,12 +59,13 @@ class ExtractionCompiler:
 
         return func(query, multiple=multiple, cast=cast)
 
-    def _compile_cast(self, obj: object) -> Cast:
-        if not isinstance(obj, str):
-            raise CompilationError('Must be a string')
+    @staticmethod
+    def _compile_cast(obj: object) -> Cast:
+        """`obj` should be a string."""
 
-        cast = _CAST_FUNC_MAP.get(obj)
+        key = compile_str(obj)
+        cast = _CAST_FUNC_MAP.get(key)
         if not cast:
-            raise CompilationError(f'Invalid value: {obj}')
+            raise CompilationError(f'Invalid value: {key}')
 
         return cast

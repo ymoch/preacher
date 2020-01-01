@@ -6,9 +6,10 @@ from collections.abc import Mapping
 from typing import Optional
 
 from preacher.core.case import Case
-from .error import CompilationError, NamedNode, on_key
+from .error import CompilationError, on_key
 from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
+from .util import compile_bool, compile_optional_str
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
@@ -38,27 +39,21 @@ class CaseCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        label = obj.get(_KEY_LABEL)
-        if label is not None and not isinstance(label, str):
-            raise CompilationError(
-                message=f'must be a string',
-                path=[NamedNode(_KEY_LABEL)],
-            )
+        label_obj = obj.get(_KEY_LABEL)
+        with on_key(_KEY_LABEL):
+            label = compile_optional_str(label_obj)
 
-        enabled = obj.get(_KEY_ENABLED, True)
-        if not isinstance(enabled, bool):
-            raise CompilationError(
-                message=f'must be a boolean',
-                path=[NamedNode(_KEY_ENABLED)]
-            )
+        enabled_obj = obj.get(_KEY_ENABLED, True)
+        with on_key(_KEY_ENABLED):
+            enabled = compile_bool(enabled_obj)
 
+        request_obj = obj.get(_KEY_REQUEST, {})
         with on_key(_KEY_REQUEST):
-            request = self._request_compiler.compile(obj.get(_KEY_REQUEST, {}))
+            request = self._request_compiler.compile(request_obj)
 
+        response_obj = obj.get(_KEY_RESPONSE, {})
         with on_key(_KEY_RESPONSE):
-            response = self._response_compiler.compile(
-                obj.get(_KEY_RESPONSE, {})
-            ).convert()
+            response = self._response_compiler.compile(response_obj).convert()
 
         return Case(
             label=label,
