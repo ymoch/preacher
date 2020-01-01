@@ -1,14 +1,13 @@
 """Scenario compilation."""
 
 from collections.abc import Mapping
-from typing import List, Optional
+from typing import List
 
 from preacher.core.case import Case
 from preacher.core.scenario import Scenario
 from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
-from .response import ResponseDescriptionCompiler
 from .util import map_compile, compile_optional_str
 
 _KEY_LABEL = 'label'
@@ -22,17 +21,11 @@ class ScenarioCompiler:
 
     def __init__(
         self,
-        description_compiler: Optional[DescriptionCompiler] = None,
-        case_compiler: Optional[CaseCompiler] = None,
+        description_compiler: DescriptionCompiler,
+        case_compiler: CaseCompiler,
     ):
-        self._description_compiler = (
-            description_compiler or DescriptionCompiler()
-        )
-        self._case_compiler = case_compiler or CaseCompiler(
-            response_compiler=ResponseDescriptionCompiler(
-                description_compiler=self._description_compiler,
-            ),
-        )
+        self._description_compiler = description_compiler
+        self._case_compiler = case_compiler
 
     def compile(self, obj: object) -> Scenario:
         """`obj` should be a mapping."""

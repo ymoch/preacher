@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, call, patch, sentinel
 
-from pytest import mark, raises
+from pytest import mark, raises, fixture
 
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
@@ -11,6 +11,16 @@ from preacher.compilation.scenario import ScenarioCompiler
 CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
 
 
+@fixture
+def description_compiler():
+    return MagicMock(spec=DescriptionCompiler)
+
+
+@fixture
+def case_compiler():
+    return MagicMock(spec=CaseCompiler)
+
+
 @mark.parametrize('value, expected_path', (
     ('', []),
     ({'label': []}, [NamedNode('label')]),
@@ -18,16 +28,26 @@ CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
     ({'subscenarios': ''}, [NamedNode('subscenarios')]),
     ({'default': ''}, [NamedNode('default')]),
 ))
-def test_when_given_invalid_values(value, expected_path):
+def test_when_given_invalid_values(
+    value,
+    expected_path,
+    description_compiler,
+    case_compiler
+):
     with raises(CompilationError) as error_info:
-        ScenarioCompiler().compile(value)
+        ScenarioCompiler(
+            description_compiler=description_compiler,
+            case_compiler=case_compiler,
+        ).compile(value)
     assert error_info.value.path == expected_path
 
 
 @patch(CONSTRUCTOR, return_value=sentinel.scenario)
-def test_given_an_empty_object(ctor):
-    case_compiler = MagicMock(CaseCompiler)
-    compiler = ScenarioCompiler(case_compiler=case_compiler)
+def test_given_an_empty_object(ctor, description_compiler, case_compiler):
+    compiler = ScenarioCompiler(
+        description_compiler=description_compiler,
+        case_compiler=case_compiler
+    )
     scenario = compiler.compile({})
 
     assert scenario is sentinel.scenario
