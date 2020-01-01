@@ -15,7 +15,7 @@ from preacher.core.util.functional import identify
 from preacher.interpretation.datetime import interpret_datetime
 from preacher.interpretation.value import value_of
 from .error import CompilationError, on_key
-from .util import map
+from .util import map_compile
 
 _STATIC_MATCHER_MAP = {
     # For objects.
@@ -91,7 +91,7 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
             raise CompilationError(f'Must be a list, given {type(value)}')
 
     with on_key(key):
-        inner_matchers = list(map(compile, value))
+        inner_matchers = list(map_compile(compile, value))
     return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 

@@ -10,14 +10,14 @@ T = TypeVar('T')
 U = TypeVar('U')
 
 
-def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
+def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
     for idx, item in enumerate(items):
         with on_index(idx):
             yield func(item)
 
 
 def for_each(func: Callable[[T], Any], items: Iterable[T]) -> None:
-    for _ in map(func, items):
+    for _ in map_compile(func, items):
         pass
 
 
@@ -35,7 +35,7 @@ def run_recursively(func: Callable[[object], Any], obj) -> object:
 
     if isinstance(obj, list):
         _func = partial(run_recursively, func)
-        return list(map(_func, obj))
+        return list(map_compile(_func, obj))
     return func(obj)
 
 

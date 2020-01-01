@@ -7,7 +7,7 @@ from preacher.core.description import Description
 from .error import CompilationError, on_key
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
-from .util import map
+from .util import map_compile
 
 _KEY_DESCRIBE = 'describe'
 _KEY_SHOULD = 'should'
@@ -37,7 +37,7 @@ class DescriptionCompiler:
         if not isinstance(predicate_objs, list):
             predicate_objs = [predicate_objs]
         with on_key(_KEY_SHOULD):
-            predicates = list(map(
+            predicates = list(map_compile(
                 self._predicate_compiler.compile,
                 predicate_objs,
             ))

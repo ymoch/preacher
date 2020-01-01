@@ -10,7 +10,7 @@ from preacher.core.description import Description
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
-from .util import map, or_default
+from .util import map_compile, or_default
 
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
@@ -85,4 +85,4 @@ class BodyDescriptionCompiler:
             obj = [obj]
 
         with on_key(_KEY_DESCRIPTIONS):
-            return list(map(self._description_compiler.compile, obj))
+            return list(map_compile(self._description_compiler.compile, obj))

@@ -8,7 +8,7 @@ from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, NamedNode, on_key
 from .response import ResponseDescriptionCompiler
-from .util import map
+from .util import map_compile
 
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
@@ -61,7 +61,7 @@ class ScenarioCompiler:
         if not isinstance(condition_objs, list):
             condition_objs = [condition_objs]
         with on_key(_KEY_WHEN):
-            conditions = list(map(
+            conditions = list(map_compile(
                 self._description_compiler.compile,
                 condition_objs,
             ))
@@ -73,7 +73,7 @@ class ScenarioCompiler:
                 path=[NamedNode(_KEY_CASES)],
             )
         with on_key(_KEY_CASES):
-            cases = list(map(case_compiler.compile, case_objs))
+            cases = list(map_compile(case_compiler.compile, case_objs))
 
         subscenario_objs = obj.get(_KEY_SUBSCENARIOS, [])
         if not isinstance(subscenario_objs, list):
@@ -83,7 +83,7 @@ class ScenarioCompiler:
             )
         subscenario_compiler = ScenarioCompiler(case_compiler=case_compiler)
         with on_key(_KEY_SUBSCENARIOS):
-            subscenarios = list(map(
+            subscenarios = list(map_compile(
                 subscenario_compiler.compile,
                 subscenario_objs,
             ))
