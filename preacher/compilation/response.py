@@ -20,7 +20,7 @@ _KEY_BODY = 'body'
 
 
 @dataclass(frozen=True)
-class Compiled:
+class _Compiled:
     status_code: Optional[List[Predicate]] = None
     headers: Optional[List[Description]] = None
     body: Optional[BodyCompiled] = None
@@ -63,7 +63,7 @@ class ResponseDescriptionCompiler:
         """`obj` should be a mapping."""
         return self._compile(obj).convert()
 
-    def _compile(self, obj: object) -> Compiled:
+    def _compile(self, obj: object) -> _Compiled:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
@@ -82,7 +82,7 @@ class ResponseDescriptionCompiler:
         body_obj = obj.get(_KEY_BODY, {})
         body = self._body.compile(body_obj)
 
-        return Compiled(status_code=status_code, headers=headers, body=body)
+        return _Compiled(status_code=status_code, headers=headers, body=body)
 
     def _compile_status_code(self, obj: object) -> List[Predicate]:
         if not isinstance(obj, list):
