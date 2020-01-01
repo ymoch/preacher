@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Optional
 
 from preacher.core.case import Case
 from .error import CompilationError, on_key
@@ -21,17 +20,15 @@ class CaseCompiler:
 
     def __init__(
         self,
-        request_compiler: Optional[RequestCompiler] = None,
-        response_compiler: Optional[ResponseDescriptionCompiler] = None
+        request: RequestCompiler,
+        response: ResponseDescriptionCompiler
     ):
-        self._request_compiler = request_compiler or RequestCompiler()
-        self._response_compiler = (
-            response_compiler or ResponseDescriptionCompiler()
-        )
+        self._request = request
+        self._response = response
 
     @property
     def request_compiler(self) -> RequestCompiler:
-        return self._request_compiler
+        return self._request
 
     def compile(self, obj: object) -> Case:
         """`obj` should be a mapping."""
@@ -49,11 +46,11 @@ class CaseCompiler:
 
         request_obj = obj.get(_KEY_REQUEST, {})
         with on_key(_KEY_REQUEST):
-            request = self._request_compiler.compile(request_obj)
+            request = self._request.compile(request_obj)
 
         response_obj = obj.get(_KEY_RESPONSE, {})
         with on_key(_KEY_RESPONSE):
-            response = self._response_compiler.compile(response_obj).convert()
+            response = self._response.compile(response_obj).convert()
 
         return Case(
             label=label,
@@ -64,16 +61,16 @@ class CaseCompiler:
 
     def of_default(self, obj: Mapping) -> CaseCompiler:
         with on_key(_KEY_REQUEST):
-            request_compiler = self._request_compiler.of_default(
+            request_compiler = self._request.of_default(
                 obj.get(_KEY_REQUEST, {})
             )
 
         with on_key(_KEY_RESPONSE):
-            res_compiled = self._response_compiler.compile(
+            res_compiled = self._response.compile(
                 obj.get(_KEY_RESPONSE, {}),
             )
-        res_compiler = self._response_compiler.of_default(res_compiled)
+        res_compiler = self._response.of_default(res_compiled)
         return CaseCompiler(
-            request_compiler=request_compiler,
-            response_compiler=res_compiler,
+            request=request_compiler,
+            response=res_compiler,
         )

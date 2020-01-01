@@ -29,8 +29,8 @@ def create_compiler() -> ScenarioCompiler:
         body_description_compiler=body_description,
     )
     case = CaseCompiler(
-        request_compiler=request,
-        response_compiler=response,
+        request=request,
+        response=response,
     )
     scenario_compiler = ScenarioCompiler(
         description=description,
