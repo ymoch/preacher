@@ -20,8 +20,8 @@ def create_compiler() -> ScenarioCompiler:
         predicate_compiler=predicate,
     )
     body_description = BodyDescriptionCompiler(
-        analysis_compiler=analysis,
-        description_compiler=description,
+        analysis=analysis,
+        description=description,
     )
     response = ResponseDescriptionCompiler(
         predicate=predicate,

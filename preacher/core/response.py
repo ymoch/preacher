@@ -8,11 +8,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, List, Mapping, Optional
 
-from preacher.core.request import Response
 from .analysis import Analyzer, JsonAnalyzer
 from .body import BodyDescription
 from .description import Description
 from .predicate import Predicate
+from .request import Response
 from .status import Status, merge_statuses
 from .verification import Verification, collect
 
@@ -40,6 +40,18 @@ class ResponseDescription:
         self._headers = headers or []
         self._body = body
         self._analyze_headers = analyze_headers
+
+    @property
+    def status_code(self) -> List[Predicate]:
+        return self._status_code
+
+    @property
+    def headers(self) -> List[Description]:
+        return self._headers
+
+    @property
+    def body(self) -> Optional[BodyDescription]:
+        return self._body
 
     def verify(self, response: Response, **kwargs) -> ResponseVerification:
         """`**kwargs` will be delegated to descriptions."""
