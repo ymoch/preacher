@@ -6,10 +6,9 @@ from collections.abc import Mapping
 from typing import Optional
 
 from preacher.core.case import Case
-from .error import CompilationError, NamedNode
+from .error import CompilationError, NamedNode, on_key
 from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
-from .util import run_on_key
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
@@ -53,16 +52,14 @@ class CaseCompiler:
                 path=[NamedNode(_KEY_ENABLED)]
             )
 
-        request = run_on_key(
-            _KEY_REQUEST,
-            self._request_compiler.compile,
-            obj.get(_KEY_REQUEST, {}),
-        )
-        response = run_on_key(
-            _KEY_RESPONSE,
-            self._response_compiler.compile,
-            obj.get(_KEY_RESPONSE, {}),
-        ).convert()
+        with on_key(_KEY_REQUEST):
+            request = self._request_compiler.compile(obj.get(_KEY_REQUEST, {}))
+
+        with on_key(_KEY_RESPONSE):
+            response = self._response_compiler.compile(
+                obj.get(_KEY_RESPONSE, {})
+            ).convert()
+
         return Case(
             label=label,
             enabled=enabled,
@@ -71,17 +68,15 @@ class CaseCompiler:
         )
 
     def of_default(self, obj: Mapping) -> CaseCompiler:
-        request_compiler = run_on_key(
-            _KEY_REQUEST,
-            self._request_compiler.of_default,
-            obj.get(_KEY_REQUEST, {}),
-        )
+        with on_key(_KEY_REQUEST):
+            request_compiler = self._request_compiler.of_default(
+                obj.get(_KEY_REQUEST, {})
+            )
 
-        res_compiled = run_on_key(
-            _KEY_RESPONSE,
-            self._response_compiler.compile,
-            obj.get(_KEY_RESPONSE, {}),
-        )
+        with on_key(_KEY_RESPONSE):
+            res_compiled = self._response_compiler.compile(
+                obj.get(_KEY_RESPONSE, {}),
+            )
         res_compiler = self._response_compiler.of_default(res_compiled)
         return CaseCompiler(
             request_compiler=request_compiler,

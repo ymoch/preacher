@@ -7,6 +7,8 @@ from typing import TypeVar, Generic
 
 T = TypeVar('T')
 
+_KEY_ARGUMENTS = "arguments"
+
 
 class Value(ABC, Generic[T]):
 

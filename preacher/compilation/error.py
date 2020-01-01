@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import reduce
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Iterator
 
 
 @dataclass(frozen=True)
@@ -33,12 +34,12 @@ class CompilationError(Exception):
     def __init__(
         self,
         message: str,
-        path: Path = [],
+        path: Optional[Path] = None,
         cause: Optional[Exception] = None,
     ):
         super().__init__(message)
         self._message = message
-        self._path = path
+        self._path = path or []
         self._cause = cause
 
     @property
@@ -59,3 +60,19 @@ class CompilationError(Exception):
 
         path = reduce(lambda lhs, rhs: lhs + str(rhs), self._path, '')
         return f'{message}: {path}'
+
+
+@contextmanager
+def on_key(key: str) -> Iterator:
+    try:
+        yield
+    except CompilationError as error:
+        raise error.of_parent([NamedNode(key)])
+
+
+@contextmanager
+def on_index(index: int) -> Iterator:
+    try:
+        yield
+    except CompilationError as error:
+        raise error.of_parent([IndexedNode(index)])

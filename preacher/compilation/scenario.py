@@ -6,9 +6,9 @@ from typing import Optional
 from preacher.core.scenario import Scenario
 from .case import CaseCompiler
 from .description import DescriptionCompiler
-from .error import CompilationError, NamedNode
+from .error import CompilationError, NamedNode, on_key
 from .response import ResponseDescriptionCompiler
-from .util import map_on_key, run_on_key
+from .util import map_compile
 
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
@@ -52,20 +52,19 @@ class ScenarioCompiler:
                 message='Must be a mapping',
                 path=[NamedNode(_KEY_DEFAULT)],
             )
-        case_compiler = run_on_key(
-            _KEY_DEFAULT,
-            self._case_compiler.of_default,
-            default,
-        )
+        with on_key(_KEY_DEFAULT):
+            case_compiler = self._case_compiler.of_default(
+                default,
+            )
 
         condition_objs = obj.get(_KEY_WHEN, [])
         if not isinstance(condition_objs, list):
             condition_objs = [condition_objs]
-        conditions = list(map_on_key(
-            _KEY_WHEN,
-            self._description_compiler.compile,
-            condition_objs,
-        ))
+        with on_key(_KEY_WHEN):
+            conditions = list(map_compile(
+                self._description_compiler.compile,
+                condition_objs,
+            ))
 
         case_objs = obj.get(_KEY_CASES, [])
         if not isinstance(case_objs, list):
@@ -73,7 +72,8 @@ class ScenarioCompiler:
                 message='Must be a list',
                 path=[NamedNode(_KEY_CASES)],
             )
-        cases = list(map_on_key(_KEY_CASES, case_compiler.compile, case_objs))
+        with on_key(_KEY_CASES):
+            cases = list(map_compile(case_compiler.compile, case_objs))
 
         subscenario_objs = obj.get(_KEY_SUBSCENARIOS, [])
         if not isinstance(subscenario_objs, list):
@@ -82,11 +82,11 @@ class ScenarioCompiler:
                 path=[NamedNode(_KEY_SUBSCENARIOS)],
             )
         subscenario_compiler = ScenarioCompiler(case_compiler=case_compiler)
-        subscenarios = list(map_on_key(
-            _KEY_SUBSCENARIOS,
-            subscenario_compiler.compile,
-            subscenario_objs,
-        ))
+        with on_key(_KEY_SUBSCENARIOS):
+            subscenarios = list(map_compile(
+                subscenario_compiler.compile,
+                subscenario_objs,
+            ))
 
         return Scenario(
             label=label,

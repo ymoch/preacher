@@ -1,82 +1,42 @@
 """Utilities for compilations."""
 
-from typing import Callable, Iterable, Iterator, Optional, TypeVar
+from collections.abc import Mapping
+from functools import partial
+from typing import Any, Callable, Iterable, Iterator, Optional, TypeVar
 
-from .error import CompilationError, IndexedNode, NamedNode
-
+from .error import CompilationError, on_key, on_index
 
 T = TypeVar('T')
 U = TypeVar('U')
 
 
-def run_on_key(
-    key: str,
-    func: Callable[[T], U],
-    arg: T,
-) -> U:
-    """
-    >>> def succeeding_func(arg):
-    ...     return arg
-    >>> run_on_key('key', succeeding_func, 1)
-    1
-
-    >>> def failing_func(arg):
-    ...     raise CompilationError(message='message', path=[NamedNode('path')])
-    >>> run_on_key('key', failing_func, 1)
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: message: .key.path
-    """
-    try:
-        return func(arg)
-    except CompilationError as error:
-        raise error.of_parent([NamedNode(key)])
-
-
-def map(func: Callable[[T], U], items: Iterable[T]) -> Iterable[U]:
+def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
     for idx, item in enumerate(items):
-        try:
+        with on_index(idx):
             yield func(item)
-        except CompilationError as error:
-            raise error.of_parent([IndexedNode(idx)])
 
 
-def map_on_key(
-    key: str,
-    func: Callable[[T], U],
-    items: Iterable[T],
-) -> Iterator[U]:
-    """
-    >>> def succeeding_func(arg):
-    ...     return arg
-    >>> results = map_on_key('key', succeeding_func, [1, 2, 3])
-    >>> next(results)
-    1
-    >>> next(results)
-    2
-    >>> next(results)
-    3
+def for_each(func: Callable[[T], Any], items: Iterable[T]) -> None:
+    for _ in map_compile(func, items):
+        pass
 
-    >>> def failing_func(arg):
-    ...     if arg == 2:
-    ...         raise CompilationError('message', path=[NamedNode('path')])
-    ...     return arg
-    >>> results = map_on_key('key', failing_func, [1, 2, 3])
-    >>> next(results)
-    1
-    >>> next(results)
-    Traceback (most recent call last):
-        ...
-    preacher.compilation.error.CompilationError: message: .key[1].path
-    >>> next(results)
-    Traceback (most recent call last):
-        ...
-    StopIteration
-    """
-    try:
-        yield from map(func, items)
-    except CompilationError as error:
-        raise error.of_parent([NamedNode(key)])
+
+def run_recursively(func: Callable[[object], Any], obj) -> object:
+    if isinstance(obj, Mapping):
+        def _func(key: object, value: object) -> object:
+            if not isinstance(key, str):
+                raise CompilationError(
+                    f'Key must be a string, given {type(key)}'
+                )
+            with on_key(key):
+                return run_recursively(func, value)
+
+        return {k: _func(k, v) for (k, v) in obj.items()}
+
+    if isinstance(obj, list):
+        _func = partial(run_recursively, func)
+        return list(map_compile(_func, obj))
+    return func(obj)
 
 
 def or_default(value: Optional[T], default_value: T) -> T:

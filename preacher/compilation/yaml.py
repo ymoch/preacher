@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Mapping
-from functools import partial
 from typing import Union
 
 from ruamel.yaml import YAML, Node
 from ruamel.yaml.constructor import ConstructorError
 
 from .error import CompilationError
-from .util import map, run_on_key
+from .util import run_recursively
+from .argument import ArgumentValue
 
 PathLike = Union[str, os.PathLike]
 
@@ -17,14 +16,15 @@ PathLike = Union[str, os.PathLike]
 class _Inclusion:
     yaml_tag = '!include'
 
-    def __init__(self, path: object):
-        self._path = path
+    def __init__(self, obj: object):
+        self._obj = obj
 
     def resolve(self, origin: PathLike, yaml: YAML) -> object:
-        if not isinstance(self._path, str):
-            raise CompilationError('Must be a string')
+        obj = self._obj
+        if not isinstance(obj, str):
+            raise CompilationError(f'Must be a string, given {type(obj)}')
 
-        path = os.path.join(os.path.dirname(origin), self._path)
+        path = os.path.join(os.path.dirname(origin), obj)
         return _load(path, yaml)
 
     @classmethod
@@ -32,17 +32,29 @@ class _Inclusion:
         return _Inclusion(node.value)
 
 
+class _ArgumentValue:
+    yaml_tag = '!argument'
+
+    def __init__(self, obj: object):
+        self._obj = obj
+
+    def resolve(self) -> ArgumentValue:
+        obj = self._obj
+        if not isinstance(obj, str):
+            raise CompilationError(f'Must be a key string, given {type(obj)}')
+        return ArgumentValue(obj)
+
+    @classmethod
+    def from_yaml(cls, _constructor, node: Node) -> _ArgumentValue:
+        return _ArgumentValue(node.value)
+
+
 def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
-    resolve = partial(_resolve, origin=origin, yaml=yaml)
-
-    if isinstance(obj, Mapping):
-        return {k: run_on_key(k, resolve, v) for (k, v) in obj.items()}
-
-    if isinstance(obj, list):
-        return list(map(resolve, obj))
-
     if isinstance(obj, _Inclusion):
         return obj.resolve(origin, yaml)
+
+    if isinstance(obj, _ArgumentValue):
+        return obj.resolve()
 
     return obj
 
@@ -54,10 +66,11 @@ def _load(path: PathLike, yaml: YAML) -> object:
         except ConstructorError as error:
             raise CompilationError(message=str(error), cause=error)
 
-        return _resolve(obj, path, yaml)
+    return run_recursively(lambda o: _resolve(o, origin=path, yaml=yaml), obj)
 
 
 def load(path: PathLike) -> object:
     yaml = YAML(typ='safe', pure=True)
     yaml.register_class(_Inclusion)
+    yaml.register_class(_ArgumentValue)
     return _load(path, yaml)

@@ -62,5 +62,35 @@ A ``Context`` object, which stands for *context*, is a JSON-like value,
 which can be descripted by `jq`_.
 See :doc:`context` to find available context.
 
+Parameterized Test
+------------------
+.. note:: This feature is under construction and not available now...
+
+Parameterized tests make it possible to run a test multiple times with different arguments,
+which can reduce test scenarios description and make them simpler and more declarative.
+
+To make tests parameterized:
+
+- Define ``parameters`` as a list of key-value mapping.
+- Set ``!argument`` tag and its key on parameterized fields.
+
+.. code-block:: yaml
+
+    label: Parameterized test example.
+    parameters:
+      - foo: a string
+        bar: 1.23
+      - foo: another string
+        bar: 4.56
+    cases:
+      - request:
+          path: /path/to/an/api
+          params:
+            - foo: !argument foo
+        response:
+          body:
+            - describe: .bar
+              should:
+                equal_to: !Parameter bar
 
 .. _jq: https://stedolan.github.io/jq/
