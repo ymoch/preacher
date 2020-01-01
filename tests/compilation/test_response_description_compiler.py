@@ -16,16 +16,16 @@ from preacher.compilation.response import (
 
 
 @fixture
-def compiler(pred_compiler, desc_compiler, body_desc_compiler):
+def compiler(predicate, description, body):
     return ResponseDescriptionCompiler(
-        predicate_compiler=pred_compiler,
-        description_compiler=desc_compiler,
-        body_description_compiler=body_desc_compiler,
+        predicate=predicate,
+        description=description,
+        body=body,
     )
 
 
 @fixture
-def pred_compiler():
+def predicate():
     return MagicMock(
         spec=PredicateCompiler,
         compile=MagicMock(return_value=sentinel.predicate),
@@ -33,7 +33,7 @@ def pred_compiler():
 
 
 @fixture
-def desc_compiler():
+def description():
     return MagicMock(
         spec=DescriptionCompiler,
         compile=MagicMock(return_value=sentinel.description)
@@ -41,7 +41,7 @@ def desc_compiler():
 
 
 @fixture
-def body_desc_compiler():
+def body():
     compiled = MagicMock(spec=BodyCompiled)
     compiled.convert.return_value = sentinel.body_desc
 
@@ -61,20 +61,15 @@ def default() -> Compiled:
     )
 
 
-def test_given_an_empty_mapping(
-    compiler,
-    pred_compiler,
-    desc_compiler,
-    body_desc_compiler,
-):
+def test_given_an_empty_mapping(compiler, predicate, description, body):
     response_description = compiler.compile({}).convert()
     assert response_description.status_code == []
     assert response_description.headers == []
     assert response_description.body is None
 
-    pred_compiler.compile.assert_not_called()
-    desc_compiler.compile.assert_not_called()
-    body_desc_compiler.compile.assert_not_called()
+    predicate.compile.assert_not_called()
+    description.compile.assert_not_called()
+    body.compile.assert_not_called()
 
 
 @mark.parametrize('obj, expected_path', (
@@ -87,12 +82,7 @@ def test_given_an_invalid_value(obj, expected_path, compiler):
     assert error_info.value.path == expected_path
 
 
-def test_given_simple_values(
-    compiler,
-    pred_compiler,
-    desc_compiler,
-    body_desc_compiler,
-):
+def test_given_simple_values(compiler, predicate, description, body):
     response_description = compiler.compile({
         'status_code': 402,
         'headers': {'k1': 'v1'},
@@ -100,18 +90,12 @@ def test_given_simple_values(
     }).convert()
     assert response_description.status_code == [sentinel.predicate]
     assert response_description.body == sentinel.body_desc
-    pred_compiler.compile.assert_called_once_with(402)
-    desc_compiler.compile.assert_called_once_with({'k1': 'v1'})
-    body_desc_compiler.compile.assert_called_once_with(sentinel.body)
+    predicate.compile.assert_called_once_with(402)
+    description.compile.assert_called_once_with({'k1': 'v1'})
+    body.compile.assert_called_once_with(sentinel.body)
 
 
-def test_given_filled_values(
-    compiler,
-    pred_compiler,
-    desc_compiler,
-    body_desc_compiler,
-    default,
-):
+def test_given_filled_values(compiler, predicate, description, body, default):
     response_description = compiler.compile({
         'status_code': [{'k1': 'v1'}, {'k2': 'v2'}],
         'headers': [{'k3': 'v3'}, {'k4': 'v4'}],
@@ -122,26 +106,20 @@ def test_given_filled_values(
         sentinel.predicate,
     ]
     assert response_description.body == sentinel.body_desc
-    pred_compiler.compile.assert_has_calls([
+    predicate.compile.assert_has_calls([
         call({'k1': 'v1'}),
         call({'k2': 'v2'}),
     ])
-    desc_compiler.compile.assert_has_calls([
+    description.compile.assert_has_calls([
         call({'k3': 'v3'}),
         call({'k4': 'v4'}),
     ])
-    body_desc_compiler.compile.assert_called_once_with(sentinel.body)
+    body.compile.assert_called_once_with(sentinel.body)
 
 
-def test_given_default(
-    compiler,
-    pred_compiler,
-    desc_compiler,
-    body_desc_compiler,
-    default,
-):
+def test_given_default(compiler, predicate, description, body, default):
     compiler = compiler.of_default(default)
     compiled = compiler.compile({})
     assert compiled == default
 
-    body_desc_compiler.of_default.assert_called_once_with(default.body)
+    body.of_default.assert_called_once_with(default.body)

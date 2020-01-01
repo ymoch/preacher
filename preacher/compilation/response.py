@@ -37,24 +37,22 @@ class ResponseDescriptionCompiler:
 
     def __init__(
         self,
-        predicate_compiler: PredicateCompiler,
-        description_compiler: DescriptionCompiler,
-        body_description_compiler: BodyDescriptionCompiler,
+        predicate: PredicateCompiler,
+        description: DescriptionCompiler,
+        body: BodyDescriptionCompiler,
         default: Optional[Compiled] = None,
     ):
-        self._predicate_compiler = predicate_compiler
-        self._description_compiler = description_compiler
-        self._body_description_compiler = body_description_compiler
+        self._predicate = predicate
+        self._description = description
+        self._body = body
         self._default = default or Compiled()
 
     def of_default(self, default: Compiled) -> ResponseDescriptionCompiler:
         return ResponseDescriptionCompiler(
             default=default,
-            predicate_compiler=self._predicate_compiler,
-            description_compiler=self._description_compiler,
-            body_description_compiler=(
-                self._body_description_compiler.of_default(default.body)
-            ),
+            predicate=self._predicate,
+            description=self._description,
+            body=self._body.of_default(default.body),
         )
 
     def compile(self, obj: object) -> Compiled:
@@ -81,7 +79,7 @@ class ResponseDescriptionCompiler:
         if body_obj is not None:
             with on_key(_KEY_BODY):
                 replacements['body'] = (
-                    self._body_description_compiler.compile(body_obj)
+                    self._body.compile(body_obj)
                 )
 
         return replace(self._default, **replacements)
@@ -89,7 +87,7 @@ class ResponseDescriptionCompiler:
     def _compile_status_code(self, obj: object) -> List[Predicate]:
         if not isinstance(obj, list):
             obj = [obj]
-        return list(map_compile(self._predicate_compiler.compile, obj))
+        return list(map_compile(self._predicate.compile, obj))
 
     def _compile_headers(self, obj: object) -> List[Description]:
         if isinstance(obj, Mapping):
@@ -98,4 +96,4 @@ class ResponseDescriptionCompiler:
             message = f'Must be a list or a mapping, given {type(obj)}'
             raise CompilationError(message)
 
-        return list(map_compile(self._description_compiler.compile, obj))
+        return list(map_compile(self._description.compile, obj))
