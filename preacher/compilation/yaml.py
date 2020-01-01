@@ -8,7 +8,7 @@ from ruamel.yaml.constructor import ConstructorError
 
 from .error import CompilationError
 from .util import run_recursively
-from .argument import Argument
+from .argument import ArgumentValue
 
 PathLike = Union[str, os.PathLike]
 
@@ -32,28 +32,28 @@ class _Inclusion:
         return _Inclusion(node.value)
 
 
-class _Argument:
+class _ArgumentValue:
     yaml_tag = '!argument'
 
     def __init__(self, obj: object):
         self._obj = obj
 
-    def resolve(self) -> Argument:
+    def resolve(self) -> ArgumentValue:
         obj = self._obj
         if not isinstance(obj, str):
             raise CompilationError(f'Must be a key string, given {type(obj)}')
-        return Argument(obj)
+        return ArgumentValue(obj)
 
     @classmethod
-    def from_yaml(cls, _constructor, node: Node) -> _Argument:
-        return _Argument(node.value)
+    def from_yaml(cls, _constructor, node: Node) -> _ArgumentValue:
+        return _ArgumentValue(node.value)
 
 
 def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
     if isinstance(obj, _Inclusion):
         return obj.resolve(origin, yaml)
 
-    if isinstance(obj, _Argument):
+    if isinstance(obj, _ArgumentValue):
         return obj.resolve()
 
     return obj
@@ -72,5 +72,5 @@ def _load(path: PathLike, yaml: YAML) -> object:
 def load(path: PathLike) -> object:
     yaml = YAML(typ='safe', pure=True)
     yaml.register_class(_Inclusion)
-    yaml.register_class(_Argument)
+    yaml.register_class(_ArgumentValue)
     return _load(path, yaml)
