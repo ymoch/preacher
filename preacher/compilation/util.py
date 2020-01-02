@@ -86,11 +86,6 @@ def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
             yield func(item)
 
 
-def for_each(func: Callable[[T], Any], items: Iterable[T]) -> None:
-    for _ in map_compile(func, items):
-        pass
-
-
 def run_recursively(func: Callable[[object], Any], obj) -> object:
     if isinstance(obj, Mapping):
         def _func(key: object, value: object) -> object:
