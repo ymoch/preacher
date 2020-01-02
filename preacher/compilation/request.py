@@ -3,48 +3,52 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import Optional
 
-from preacher.core.request import Request
-from preacher.core.type import is_scalar
+from preacher.core.request import Request, Parameters, ParameterValue
+from preacher.core.type import is_scalar, ScalarType
 from .error import CompilationError, on_key
-from .util import compile_str, compile_mapping, for_each
+from .util import compile_str, compile_mapping, map_compile
 
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
 _KEY_PARAMS = 'params'
 
 
-def _validate_param_value_item(item: object):
+def _compile_param_value_item(item: object) -> Optional[ScalarType]:
     if item is None:
-        return
-    if not is_scalar(item):
-        raise CompilationError('Must be a scalar')
+        return item
+    if is_scalar(item):
+        return item  # type: ignore
+    raise CompilationError('Must be a scalar')
 
 
-def _validate_param_value(value: object):
+def _compile_param_value(value: object) -> ParameterValue:
     if value is None:
-        return
+        return value
     if is_scalar(value):
-        return
+        return value  # type: ignore
 
     if not isinstance(value, list):
         raise CompilationError('Must be a scalar or a list')
-    for_each(_validate_param_value_item, value)
+    return list(map_compile(_compile_param_value_item, value))
 
 
-def _validate_params(params: object):
+def _compile_params(params: object) -> Parameters:
     if isinstance(params, str):
-        return
+        return params
+
     if not isinstance(params, Mapping):
         raise CompilationError('Must be a string or a mapping')
-
+    compiled = {}
     for key, value in params.items():
         if not isinstance(key, str):
             raise CompilationError(
                 f'A parameter key must be a string, given {key}'
             )
         with on_key(key):
-            _validate_param_value(value)
+            compiled[key] = _compile_param_value(value)
+    return compiled
 
 
 class RequestCompiler:
@@ -75,7 +79,7 @@ class RequestCompiler:
         params_obj = obj.get(_KEY_PARAMS)
         if params_obj is not None:
             with on_key(_KEY_PARAMS):
-                _validate_params(params_obj)
+                _compile_params(params_obj)
                 params = params_obj
 
         return Request(path=path, headers=headers, params=params)
