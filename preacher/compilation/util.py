@@ -107,9 +107,3 @@ def run_recursively(func: Callable[[object], Any], obj) -> object:
         _func = partial(run_recursively, func)
         return list(map_compile(_func, obj))
     return func(obj)
-
-
-def or_default(value: Optional[T], default_value: T) -> T:
-    if value is None:
-        return default_value
-    return value

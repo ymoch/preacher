@@ -26,11 +26,6 @@ class CaseCompiler:
         self._request = request
         self._response = response
 
-    @property
-    def request_compiler(self) -> RequestCompiler:
-        # TODO: shouldn't be public.
-        return self._request
-
     def compile(self, obj: object) -> Case:
         """`obj` should be a mapping."""
 
