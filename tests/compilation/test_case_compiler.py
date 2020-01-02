@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, sentinel
+from unittest.mock import MagicMock, sentinel, patch
 
 from pytest import fixture, mark, raises
 
@@ -17,6 +17,7 @@ def compiler(req, res):
 def req():
     compiler = MagicMock(spec=RequestCompiler)
     compiler.compile.return_value = sentinel.request
+    compiler.of_default.return_value = sentinel.default_req_compiler
     return compiler
 
 
@@ -24,7 +25,7 @@ def req():
 def res():
     compiler = MagicMock(spec=ResponseDescriptionCompiler)
     compiler.compile.return_value = sentinel.response
-
+    compiler.of_default.return_value = sentinel.default_res_compiler
     return compiler
 
 
@@ -93,11 +94,19 @@ def test_creates_a_case(compiler, req, res):
     res.compile.assert_called_once_with({'key': 'value'})
 
 
-def test_accepts_default_values(res):
-    request_compiler = MagicMock(
-        RequestCompiler,
-        of_default=MagicMock(return_value=sentinel.foo),
-    )
-    compiler = CaseCompiler(request_compiler, res)
+@patch(
+    target='preacher.compilation.case.CaseCompiler',
+    return_value=sentinel.default_compiler,
+)
+def test_accepts_default_values(ctor, compiler, req, res):
     default_compiler = compiler.of_default({})
-    assert default_compiler.request_compiler == sentinel.foo
+    assert default_compiler is sentinel.default_compiler
+
+    ctor.assert_called_once_with(
+        request=sentinel.default_req_compiler,
+        response=sentinel.default_res_compiler,
+    )
+    req.compile.assert_called_once_with({})
+    req.of_default.assert_called_once_with(sentinel.request)
+    res.compile.assert_called_once_with({})
+    res.of_default.assert_called_once_with(sentinel.response)

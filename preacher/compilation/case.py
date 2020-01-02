@@ -62,16 +62,14 @@ class CaseCompiler:
 
     def of_default(self, obj: Mapping) -> CaseCompiler:
         with on_key(_KEY_REQUEST):
-            request_compiler = self._request.of_default(
+            default_request = self._request.compile(
                 obj.get(_KEY_REQUEST, {})
             )
-
         with on_key(_KEY_RESPONSE):
-            res_compiled = self._response.compile(
+            default_response = self._response.compile(
                 obj.get(_KEY_RESPONSE, {}),
             )
-        res_compiler = self._response.of_default(res_compiled)
         return CaseCompiler(
-            request=request_compiler,
-            response=res_compiler,
+            request=self._request.of_default(default_request),
+            response=self._response.of_default(default_response),
         )
