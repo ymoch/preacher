@@ -58,6 +58,28 @@ def compile_optional_str(obj: object) -> Optional[str]:
     return compile_str(obj)
 
 
+def compile_list(obj: object) -> list:
+    if not isinstance(obj, list):
+        raise CompilationError(f'Must be a list, given {type(obj)}')
+    return obj
+
+
+def compile_mapping(obj: object) -> Mapping:
+    """
+    Compile the given mapping object.
+
+    Args:
+        obj: A compiled object, which should be a mapping.
+    Returns:
+        The compile result.
+    Raises:
+        CompilationError: when compilation fails.
+    """
+    if not isinstance(obj, Mapping):
+        raise CompilationError(f'Must be a mapping, given {type(obj)}')
+    return obj
+
+
 def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
     for idx, item in enumerate(items):
         with on_index(idx):

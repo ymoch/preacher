@@ -9,12 +9,18 @@ from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
-from .util import map_compile, compile_optional_str
+from .util import (
+    map_compile,
+    compile_optional_str,
+    compile_list,
+    compile_mapping,
+)
 
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
 _KEY_DEFAULT = 'default'
 _KEY_CASES = 'cases'
+_KEY_PARAMETERS = 'parameters'
 _KEY_SUBSCENARIOS = 'subscenarios'
 
 
@@ -79,10 +85,8 @@ class ScenarioCompiler:
 
     def _compile_default(self, obj: object) -> CaseCompiler:
         """`obj` should be a mapping."""
-
-        if not isinstance(obj, Mapping):
-            raise CompilationError(f'Must be a mapping, given {type(obj)}')
-        return self._case.of_default(obj)
+        obj = compile_mapping(obj)
+        return self._case.of_default(compile_mapping(obj))
 
     def _compile_conditions(self, obj: object):
         if not isinstance(obj, list):
@@ -92,10 +96,7 @@ class ScenarioCompiler:
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
         """`obj` should be a list."""
-
-        if not isinstance(obj, list):
-            raise CompilationError(f'Must be a list, given {type(obj)}')
-        return list(map_compile(case_compiler.compile, obj))
+        return list(map_compile(case_compiler.compile, compile_list(obj)))
 
     def _compile_subscenarios(
         self,
@@ -103,8 +104,5 @@ class ScenarioCompiler:
         obj: object,
     ) -> List[Scenario]:
         """`obj` should be a list."""
-
-        if not isinstance(obj, list):
-            raise CompilationError(f'Must be a list, given {type(obj)}')
         compiler = ScenarioCompiler(description=self._description, case=case)
-        return list(map_compile(compiler.compile, obj))
+        return list(map_compile(compiler.compile, compile_list(obj)))
