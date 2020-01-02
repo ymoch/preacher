@@ -47,34 +47,6 @@ def _validate_params(params: object):
             _validate_param_value(value)
 
 
-def _compile(obj: object, default: Request) -> Request:
-    if isinstance(obj, str):
-        return _compile({_KEY_PATH: obj}, default)
-
-    obj = compile_mapping(obj)
-
-    path = default.path
-    path_obj = obj.get(_KEY_PATH)
-    if path_obj is not None:
-        with on_key(_KEY_PATH):
-            path = compile_str(path_obj)
-
-    headers = default.headers
-    headers_obj = obj.get(_KEY_HEADERS)
-    if headers_obj is not None:
-        with on_key(_KEY_HEADERS):
-            headers = compile_mapping(headers_obj)
-
-    params = default.params
-    params_obj = obj.get(_KEY_PARAMS)
-    if params_obj is not None:
-        with on_key(_KEY_PARAMS):
-            _validate_params(params_obj)
-            params = params_obj
-
-    return Request(path=path, headers=headers, params=params)
-
-
 class RequestCompiler:
 
     def __init__(self, default: Request = None):
@@ -82,7 +54,31 @@ class RequestCompiler:
 
     def compile(self, obj) -> Request:
         """`obj` should be a mapping or a string."""
-        return _compile(obj, self._default)
+        if isinstance(obj, str):
+            return self.compile({_KEY_PATH: obj})
+
+        obj = compile_mapping(obj)
+
+        path = self._default.path
+        path_obj = obj.get(_KEY_PATH)
+        if path_obj is not None:
+            with on_key(_KEY_PATH):
+                path = compile_str(path_obj)
+
+        headers = self._default.headers
+        headers_obj = obj.get(_KEY_HEADERS)
+        if headers_obj is not None:
+            with on_key(_KEY_HEADERS):
+                headers = compile_mapping(headers_obj)
+
+        params = self._default.params
+        params_obj = obj.get(_KEY_PARAMS)
+        if params_obj is not None:
+            with on_key(_KEY_PARAMS):
+                _validate_params(params_obj)
+                params = params_obj
+
+        return Request(path=path, headers=headers, params=params)
 
     @staticmethod
     def of_default(default: Request) -> RequestCompiler:
