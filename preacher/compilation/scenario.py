@@ -1,6 +1,5 @@
 """Scenario compilation."""
 
-from collections.abc import Mapping
 from typing import List, Optional
 
 from preacher.core.case import Case
@@ -8,7 +7,7 @@ from preacher.core.scenario import Scenario
 from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
 from .description import DescriptionCompiler
-from .error import CompilationError, on_key
+from .error import on_key
 from .util import (
     map_compile,
     compile_optional_str,
@@ -47,25 +46,37 @@ class ScenarioCompiler:
             CompilationError: when the compilation fails.
         """
 
+        obj = compile_mapping(obj)
         arguments = arguments or {}
-        obj = inject_arguments(obj, arguments)
 
-        if not isinstance(obj, Mapping):
-            raise CompilationError('Must be a mapping')
-
-        label_obj = obj.get(_KEY_LABEL)
+        label_obj = inject_arguments(obj.get(_KEY_LABEL), arguments)
         with on_key(_KEY_LABEL):
             label = compile_optional_str(label_obj)
 
-        default_obj = obj.get(_KEY_DEFAULT, {})
+        parameters_obj = obj.get(_KEY_PARAMETERS)
+        if parameters_obj is not None:
+            # TODO define parameter object and use labels of it.
+            parameters = compile_list(parameters_obj)
+            template = {
+                k: v for (k, v) in obj.items()
+                if k not in (_KEY_LABEL, _KEY_PARAMETERS)
+            }
+            subscenarios = [
+                # TODO inherit arguments.
+                self.compile(template, arguments=compile_mapping(parameter))
+                for parameter in parameters
+            ]
+            return Scenario(label=label, subscenarios=subscenarios)
+
+        default_obj = inject_arguments(obj.get(_KEY_DEFAULT, {}), arguments)
         with on_key(_KEY_DEFAULT):
             case_compiler = self._compile_default(default_obj)
 
-        condition_obj = obj.get(_KEY_WHEN, [])
+        condition_obj = inject_arguments(obj.get(_KEY_WHEN, []), arguments)
         with on_key(_KEY_WHEN):
             conditions = self._compile_conditions(condition_obj)
 
-        case_obj = obj.get(_KEY_CASES, [])
+        case_obj = inject_arguments(obj.get(_KEY_CASES, []), arguments)
         with on_key(_KEY_CASES):
             cases = self._compile_cases(case_compiler, case_obj)
 
@@ -74,6 +85,7 @@ class ScenarioCompiler:
             subscenarios = self._compile_subscenarios(
                 case_compiler,
                 subscenario_obj,
+                arguments,
             )
 
         return Scenario(
@@ -102,7 +114,11 @@ class ScenarioCompiler:
         self,
         case: CaseCompiler,
         obj: object,
+        arguments: Arguments,
     ) -> List[Scenario]:
         """`obj` should be a list."""
         compiler = ScenarioCompiler(description=self._description, case=case)
-        return list(map_compile(compiler.compile, compile_list(obj)))
+        return list(map_compile(
+            lambda sub_obj: compiler.compile(sub_obj, arguments=arguments),
+            compile_list(obj),
+        ))
