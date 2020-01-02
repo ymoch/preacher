@@ -1,10 +1,11 @@
 """Scenario compilation."""
 
 from collections.abc import Mapping
-from typing import List
+from typing import List, Optional
 
 from preacher.core.case import Case
 from preacher.core.scenario import Scenario
+from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
@@ -23,8 +24,25 @@ class ScenarioCompiler:
         self._description = description
         self._case = case
 
-    def compile(self, obj: object) -> Scenario:
-        """`obj` should be a mapping."""
+    def compile(
+        self,
+        obj: object,
+        arguments: Optional[Arguments] = None,
+    ) -> Scenario:
+        """
+        Compile the given object into a scenario.
+
+        Args:
+            obj: A compiled object, which should be a mapping.
+            arguments: Arguments to inject.
+        Returns:
+            The scenario as the result of compilation.
+        Raises:
+            CompilationError: when the compilation fails.
+        """
+
+        arguments = arguments or {}
+        obj = inject_arguments(obj, arguments)
 
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
