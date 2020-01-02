@@ -6,6 +6,7 @@ from preacher.compilation.error import (
     IndexedNode,
 )
 from preacher.compilation.request import RequestCompiler
+from preacher.core.request import Request
 
 
 @mark.parametrize('value, expected_path', (
@@ -26,10 +27,6 @@ def test_given_invalid_values(value, expected_path):
 
     with raises(CompilationError) as error_info:
         compiler.compile(value)
-    assert error_info.value.path == expected_path
-
-    with raises(CompilationError) as error_info:
-        compiler.of_default(value)
     assert error_info.value.path == expected_path
 
 
@@ -58,7 +55,7 @@ def test_given_a_string():
     assert request.headers == {}
     assert request.params == {}
 
-    compiler = compiler.of_default('/default-path')
+    compiler = compiler.of_default(Request(path='/default-path'))
     request = compiler.compile({
         'headers': {'k1': 'v1'},
         'params': 'str',
@@ -79,11 +76,11 @@ def test_given_a_filled_mapping():
     assert request.headers == {'key1': 'value1'}
     assert request.params == {'key': 'value'}
 
-    compiler = compiler.of_default({
-        'path': '/default-path',
-        'headers': {'k1': 'v1'},
-        'params': {'k': 'v'},
-    })
+    compiler = compiler.of_default(Request(
+        path='/default-path',
+        headers={'k1': 'v1'},
+        params={'k': 'v'},
+    ))
 
     request = compiler.compile({})
     assert request.path == '/default-path'

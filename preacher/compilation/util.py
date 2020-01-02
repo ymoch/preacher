@@ -58,15 +58,32 @@ def compile_optional_str(obj: object) -> Optional[str]:
     return compile_str(obj)
 
 
+def compile_list(obj: object) -> list:
+    if not isinstance(obj, list):
+        raise CompilationError(f'Must be a list, given {type(obj)}')
+    return obj
+
+
+def compile_mapping(obj: object) -> Mapping:
+    """
+    Compile the given mapping object.
+
+    Args:
+        obj: A compiled object, which should be a mapping.
+    Returns:
+        The compile result.
+    Raises:
+        CompilationError: when compilation fails.
+    """
+    if not isinstance(obj, Mapping):
+        raise CompilationError(f'Must be a mapping, given {type(obj)}')
+    return obj
+
+
 def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
     for idx, item in enumerate(items):
         with on_index(idx):
             yield func(item)
-
-
-def for_each(func: Callable[[T], Any], items: Iterable[T]) -> None:
-    for _ in map_compile(func, items):
-        pass
 
 
 def run_recursively(func: Callable[[object], Any], obj) -> object:
@@ -85,9 +102,3 @@ def run_recursively(func: Callable[[object], Any], obj) -> object:
         _func = partial(run_recursively, func)
         return list(map_compile(_func, obj))
     return func(obj)
-
-
-def or_default(value: Optional[T], default_value: T) -> T:
-    if value is None:
-        return default_value
-    return value

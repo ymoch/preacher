@@ -19,14 +19,14 @@ class ArgumentValue:
         return arguments.get(self._key)
 
 
-def _resolve_arguments(obj: object, arguments: Optional[Arguments]) -> object:
+def _inject_arguments(obj: object, arguments: Optional[Arguments]) -> object:
     if isinstance(obj, ArgumentValue):
         return obj.apply_arguments(arguments)
     return obj
 
 
-def resolve_arguments(
+def inject_arguments(
     obj: object,
     arguments: Optional[Arguments] = None,
 ) -> object:
-    return run_recursively(lambda o: _resolve_arguments(o, arguments), obj)
+    return run_recursively(lambda o: _inject_arguments(o, arguments), obj)
