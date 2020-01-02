@@ -2,12 +2,16 @@ from unittest.mock import MagicMock, call, patch, sentinel
 
 from pytest import mark, raises, fixture
 
+from preacher.compilation.argument import ArgumentValue
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.scenario import ScenarioCompiler
 
-CONSTRUCTOR = 'preacher.compilation.scenario.Scenario'
+ctor_patch = patch(
+    'preacher.compilation.scenario.Scenario',
+    return_value=sentinel.scenario,
+)
 
 
 @fixture
@@ -57,7 +61,7 @@ def test_when_given_invalid_values(value, expected_path, compiler):
     assert error_info.value.path == expected_path
 
 
-@patch(CONSTRUCTOR, return_value=sentinel.scenario)
+@ctor_patch
 def test_given_an_empty_object(ctor, compiler, case):
     scenario = compiler.compile({})
 
@@ -72,7 +76,7 @@ def test_given_an_empty_object(ctor, compiler, case):
     case.of_default.assert_called_once_with({})
 
 
-@patch(CONSTRUCTOR, return_value=sentinel.scenario)
+@ctor_patch
 def test_given_a_filled_object(
     ctor,
     compiler,
@@ -81,40 +85,43 @@ def test_given_a_filled_object(
     case_of_default,
     sub_case
 ):
-    scenario = compiler.compile({
-        'label': 'label',
-        'default': {'a': 'b'},
-        'when': {'c': 'd'},
-        'cases': [{}, {'k': 'v'}],
-        'subscenarios': [
-            {
-                'label': 'sublabel',
-                'default': {'c': 'd'},
-                'cases': [{'sub_k': 'sub_v'}]
-            },
-        ],
-    })
+    scenario = compiler.compile(
+        obj={
+            'label': ArgumentValue('arg1'),
+            'default': {'a': ArgumentValue('arg2')},
+            'when': {'b': ArgumentValue('arg3')},
+            'cases': [{}, {'c': ArgumentValue('arg4')}],
+            'subscenarios': [
+                {
+                    'label': ArgumentValue('arg5'),
+                    'default': {'d': ArgumentValue('arg6')},
+                    'cases': [{'e': ArgumentValue('arg7')}]
+                },
+            ],
+        },
+        arguments={f'arg{i}': f'v{i}' for i in range(1, 8)},
+    )
     assert scenario is sentinel.scenario
     ctor.assert_has_calls([
         call(
-            label='sublabel',
+            label='v5',
             conditions=[],
             cases=[sentinel.sub_case],
             subscenarios=[],
         ),
         call(
-            label='label',
+            label='v1',
             conditions=[sentinel.description],
             cases=[sentinel.case, sentinel.case],
             subscenarios=[sentinel.scenario],
         ),
     ])
 
-    description.compile.assert_called_once_with({'c': 'd'})
-    case.of_default.assert_called_once_with({'a': 'b'})
+    description.compile.assert_called_once_with({'b': 'v3'})
+    case.of_default.assert_called_once_with({'a': 'v2'})
     case_of_default.compile.assert_has_calls([
         call({}),
-        call({'k': 'v'}),
+        call({'c': 'v4'}),
     ])
-    case_of_default.of_default.assert_called_once_with({'c': 'd'})
-    sub_case.compile.assert_called_once_with({'sub_k': 'sub_v'})
+    case_of_default.of_default.assert_called_once_with({'d': 'v6'})
+    sub_case.compile.assert_called_once_with({'e': 'v7'})
