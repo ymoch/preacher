@@ -1,8 +1,9 @@
-from typing import Mapping as MappingType, Optional
+from collections.abc import Mapping
+from typing import Optional
 
 from preacher.compilation.util import run_recursively
 
-Arguments = MappingType[str, object]
+Arguments = Mapping
 
 
 class ArgumentValue:

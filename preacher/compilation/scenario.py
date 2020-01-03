@@ -1,6 +1,6 @@
 """Scenario compilation."""
 
-from typing import List, Optional
+from typing import List, Optional, Mapping
 
 from preacher.core.case import Case
 from preacher.core.scenario import Scenario
@@ -8,6 +8,7 @@ from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .error import on_key
+from .parameter import Parameter, compile as compile_parameter
 from .util import (
     map_compile,
     compile_optional_str,
@@ -55,16 +56,14 @@ class ScenarioCompiler:
 
         parameters_obj = obj.get(_KEY_PARAMETERS)
         if parameters_obj is not None:
-            # TODO define parameter object and use labels of it.
-            parameters = compile_list(parameters_obj)
-            template = {
-                k: v for (k, v) in obj.items()
-                if k not in (_KEY_LABEL, _KEY_PARAMETERS)
-            }
+            parameters_obj = compile_list(parameters_obj)
             subscenarios = [
-                # TODO inherit arguments.
-                self.compile(template, arguments=compile_mapping(parameter))
-                for parameter in parameters
+                self._compile_parameterized(
+                    obj,
+                    arguments=arguments,
+                    parameter=compile_parameter(parameter_obj),
+                )
+                for parameter_obj in parameters_obj
             ]
             return Scenario(label=label, subscenarios=subscenarios)
 
@@ -96,7 +95,6 @@ class ScenarioCompiler:
         )
 
     def _compile_default(self, obj: object) -> CaseCompiler:
-        """`obj` should be a mapping."""
         obj = compile_mapping(obj)
         return self._case.of_default(compile_mapping(obj))
 
@@ -107,7 +105,6 @@ class ScenarioCompiler:
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
-        """`obj` should be a list."""
         return list(map_compile(case_compiler.compile, compile_list(obj)))
 
     def _compile_subscenarios(
@@ -116,9 +113,24 @@ class ScenarioCompiler:
         obj: object,
         arguments: Arguments,
     ) -> List[Scenario]:
-        """`obj` should be a list."""
         compiler = ScenarioCompiler(description=self._description, case=case)
         return list(map_compile(
             lambda sub_obj: compiler.compile(sub_obj, arguments=arguments),
             compile_list(obj),
         ))
+
+    def _compile_parameterized(
+        self,
+        obj: Mapping,
+        arguments: Arguments,
+        parameter: Parameter,
+    ) -> Scenario:
+        template = {
+            k: v for (k, v) in obj.items()
+            if k not in (_KEY_LABEL, _KEY_PARAMETERS)
+        }
+        template['label'] = parameter.label
+
+        arguments = dict(arguments)
+        arguments.update(parameter.arguments)
+        return self.compile(template, arguments)
