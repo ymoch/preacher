@@ -5,13 +5,13 @@ from pytest import mark, raises, fixture
 from preacher.compilation.argument import ArgumentValue
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
+from preacher.compilation.parameter import Parameter
 from preacher.compilation.scenario import ScenarioCompiler
 
-ctor_patch = patch(
-    'preacher.compilation.scenario.Scenario',
-    return_value=sentinel.scenario,
-)
+PACKAGE = 'preacher.compilation.scenario'
+ctor_patch = patch(f'{PACKAGE}.Scenario', return_value=sentinel.scenario)
+compile_parameter_patch = patch(f'{PACKAGE}.compile_parameter')
 
 
 @fixture
@@ -51,6 +51,8 @@ def sub_case():
 @mark.parametrize('value, expected_path', (
     ('', []),
     ({'label': []}, [NamedNode('label')]),
+    ({'parameters': ''}, [NamedNode('parameters')]),
+    ({'parameters': {}}, [NamedNode('parameters')]),
     ({'cases': ''}, [NamedNode('cases')]),
     ({'subscenarios': ''}, [NamedNode('subscenarios')]),
     ({'default': ''}, [NamedNode('default')]),
@@ -102,6 +104,7 @@ def test_given_a_filled_object(
         arguments={f'arg{i}': f'v{i}' for i in range(1, 8)},
     )
     assert scenario is sentinel.scenario
+
     ctor.assert_has_calls([
         call(
             label='v5',
@@ -116,7 +119,6 @@ def test_given_a_filled_object(
             subscenarios=[sentinel.scenario],
         ),
     ])
-
     description.compile.assert_called_once_with({'b': 'v3'})
     case.of_default.assert_called_once_with({'a': 'v2'})
     case_of_default.compile.assert_has_calls([
@@ -125,3 +127,84 @@ def test_given_a_filled_object(
     ])
     case_of_default.of_default.assert_called_once_with({'d': 'v6'})
     sub_case.compile.assert_called_once_with({'e': 'v7'})
+
+
+@compile_parameter_patch
+@ctor_patch
+def test_given_empty_parameter(ctor, compile_parameter, compiler):
+    scenario = compiler.compile({'parameters': []})
+    assert scenario is sentinel.scenario
+
+    ctor.assert_called_once_with(label=None, subscenarios=[])
+    compile_parameter.assert_not_called()
+
+
+@compile_parameter_patch
+def test_when_parameter_compilation_fails(compile_parameter, compiler):
+    compile_parameter.side_effect = CompilationError('message')
+    with raises(CompilationError) as error_info:
+        compiler.compile({'parameters': [sentinel.param_obj]})
+    assert error_info.value.path == [NamedNode('parameters'), IndexedNode(0)]
+
+    compile_parameter.assert_called_once_with(sentinel.param_obj)
+
+
+@compile_parameter_patch
+@ctor_patch
+def test_given_filled_parameters(
+    ctor,
+    compile_parameter,
+    compiler,
+    description,
+    case,
+):
+    compile_parameter.side_effect = [
+        Parameter(label='param1', arguments={'foo': 'bar'}),
+        Parameter(label='param2', arguments={'foo': 'baz', 'spam': 'eggs'}),
+    ]
+    scenario = compiler.compile(
+        obj={
+            'label': ArgumentValue('original_label'),
+            'parameters': [sentinel.param_obj1, sentinel.param_obj2],
+            'default': {'foo': ArgumentValue('foo')},
+            'when': [{'foo': ArgumentValue('foo')}],
+            'cases': [{'spam': ArgumentValue('spam')}],
+            'subscenarios': [{'label': ArgumentValue('spam')}]
+        },
+        arguments={'original_label': 'original', 'spam': 'ham'},
+    )
+    assert scenario is sentinel.scenario
+
+    ctor.assert_has_calls([
+        call(label='ham', conditions=[], cases=[], subscenarios=[]),
+        call(
+            label='param1',
+            conditions=[sentinel.description],
+            cases=[sentinel.case],
+            subscenarios=[sentinel.scenario],
+        ),
+        call(label='eggs', conditions=[], cases=[], subscenarios=[]),
+        call(
+            label='param2',
+            conditions=[sentinel.description],
+            cases=[sentinel.case],
+            subscenarios=[sentinel.scenario],
+        ),
+        call(label='original', subscenarios=[sentinel.scenario] * 2)
+    ])
+    compile_parameter.assert_has_calls([
+        call(sentinel.param_obj1),
+        call(sentinel.param_obj2),
+    ])
+    description.compile.assert_has_calls([
+        call({'foo': 'bar'}),
+        call({'foo': 'baz'}),
+    ])
+    case.of_default.assert_has_calls([
+        call({'foo': 'bar'}),
+        call().compile({'spam': 'ham'}),
+        call().of_default({}),
+        call({'foo': 'baz'}),
+        call().compile({'spam': 'eggs'}),
+        call().of_default({}),
+    ])
