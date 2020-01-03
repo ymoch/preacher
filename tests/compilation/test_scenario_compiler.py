@@ -8,10 +8,8 @@ from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.scenario import ScenarioCompiler
 
-ctor_patch = patch(
-    'preacher.compilation.scenario.Scenario',
-    return_value=sentinel.scenario,
-)
+PACKAGE = 'preacher.compilation.scenario'
+ctor_patch = patch(f'{PACKAGE}.Scenario', return_value=sentinel.scenario)
 
 
 @fixture
@@ -51,6 +49,8 @@ def sub_case():
 @mark.parametrize('value, expected_path', (
     ('', []),
     ({'label': []}, [NamedNode('label')]),
+    ({'parameters': ''}, [NamedNode('parameters')]),
+    ({'parameters': {}}, [NamedNode('parameters')]),
     ({'cases': ''}, [NamedNode('cases')]),
     ({'subscenarios': ''}, [NamedNode('subscenarios')]),
     ({'default': ''}, [NamedNode('default')]),

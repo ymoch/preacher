@@ -57,6 +57,7 @@ class ScenarioCompiler:
         parameters_obj = obj.get(_KEY_PARAMETERS)
         if parameters_obj is not None:
             with on_key(_KEY_PARAMETERS):
+                parameters_obj = compile_list(parameters_obj)
                 parameters = list(
                     map_compile(compile_parameter, parameters_obj)
                 )
