@@ -6,6 +6,7 @@ from preacher.compilation.argument import ArgumentValue
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
+from preacher.compilation.parameter import Parameter
 from preacher.compilation.scenario import ScenarioCompiler
 
 PACKAGE = 'preacher.compilation.scenario'
@@ -146,3 +147,30 @@ def test_when_parameter_compilation_fails(compile_parameter, compiler):
     assert error_info.value.path == [NamedNode('parameters'), IndexedNode(0)]
 
     compile_parameter.assert_called_once_with(sentinel.param_obj)
+
+
+@compile_parameter_patch
+@ctor_patch
+def test_given_filled_parameters(ctor, compile_parameter, compiler):
+    compile_parameter.side_effect = [
+        Parameter(label='param1', arguments={'foo': 'bar'}),
+        Parameter(label='param2', arguments={'foo': 'baz'}),
+    ]
+    scenario = compiler.compile(
+        obj={
+            'label': ArgumentValue('original_label'),
+            'parameters': [sentinel.param_obj1, sentinel.param_obj2],
+        },
+        arguments={'original_label': 'original'},
+    )
+    assert scenario is sentinel.scenario
+
+    ctor.assert_has_calls([
+        call(label='param1', conditions=[], cases=[], subscenarios=[]),
+        call(label='param2', conditions=[], cases=[], subscenarios=[]),
+        call(label='original', subscenarios=[sentinel.scenario] * 2)
+    ])
+    compile_parameter.assert_has_calls([
+        call(sentinel.param_obj1),
+        call(sentinel.param_obj2),
+    ])
