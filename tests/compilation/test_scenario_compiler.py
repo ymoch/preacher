@@ -168,24 +168,27 @@ def test_given_filled_parameters(
             'parameters': [sentinel.param_obj1, sentinel.param_obj2],
             'default': {'foo': ArgumentValue('foo')},
             'when': [{'foo': ArgumentValue('foo')}],
-            'cases': [{'spam': ArgumentValue('spam')}]
+            'cases': [{'spam': ArgumentValue('spam')}],
+            'subscenarios': [{'label': ArgumentValue('spam')}]
         },
         arguments={'original_label': 'original', 'spam': 'ham'},
     )
     assert scenario is sentinel.scenario
 
     ctor.assert_has_calls([
+        call(label='ham', conditions=[], cases=[], subscenarios=[]),
         call(
             label='param1',
             conditions=[sentinel.description],
             cases=[sentinel.case],
-            subscenarios=[],
+            subscenarios=[sentinel.scenario],
         ),
+        call(label='eggs', conditions=[], cases=[], subscenarios=[]),
         call(
             label='param2',
             conditions=[sentinel.description],
             cases=[sentinel.case],
-            subscenarios=[],
+            subscenarios=[sentinel.scenario],
         ),
         call(label='original', subscenarios=[sentinel.scenario] * 2)
     ])
@@ -200,6 +203,8 @@ def test_given_filled_parameters(
     case.of_default.assert_has_calls([
         call({'foo': 'bar'}),
         call().compile({'spam': 'ham'}),
+        call().of_default({}),
         call({'foo': 'baz'}),
         call().compile({'spam': 'eggs'}),
+        call().of_default({}),
     ])
