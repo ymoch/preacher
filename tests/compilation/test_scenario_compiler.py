@@ -10,6 +10,7 @@ from preacher.compilation.scenario import ScenarioCompiler
 
 PACKAGE = 'preacher.compilation.scenario'
 ctor_patch = patch(f'{PACKAGE}.Scenario', return_value=sentinel.scenario)
+compile_parameter_patch = patch(f'{PACKAGE}.compile_parameter')
 
 
 @fixture
@@ -102,6 +103,7 @@ def test_given_a_filled_object(
         arguments={f'arg{i}': f'v{i}' for i in range(1, 8)},
     )
     assert scenario is sentinel.scenario
+
     ctor.assert_has_calls([
         call(
             label='v5',
@@ -116,7 +118,6 @@ def test_given_a_filled_object(
             subscenarios=[sentinel.scenario],
         ),
     ])
-
     description.compile.assert_called_once_with({'b': 'v3'})
     case.of_default.assert_called_once_with({'a': 'v2'})
     case_of_default.compile.assert_has_calls([
@@ -125,3 +126,13 @@ def test_given_a_filled_object(
     ])
     case_of_default.of_default.assert_called_once_with({'d': 'v6'})
     sub_case.compile.assert_called_once_with({'e': 'v7'})
+
+
+@compile_parameter_patch
+@ctor_patch
+def test_given_empty_parameter(ctor, compile_parameter, compiler):
+    scenario = compiler.compile({'parameters': []})
+    assert scenario is sentinel.scenario
+
+    ctor.assert_called_once_with(label=None, subscenarios=[])
+    compile_parameter.assert_not_called()
