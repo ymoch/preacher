@@ -5,7 +5,7 @@ from pytest import mark, raises, fixture
 from preacher.compilation.argument import ArgumentValue
 from preacher.compilation.case import CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.scenario import ScenarioCompiler
 
 PACKAGE = 'preacher.compilation.scenario'
@@ -136,3 +136,13 @@ def test_given_empty_parameter(ctor, compile_parameter, compiler):
 
     ctor.assert_called_once_with(label=None, subscenarios=[])
     compile_parameter.assert_not_called()
+
+
+@compile_parameter_patch
+def test_when_parameter_compilation_fails(compile_parameter, compiler):
+    compile_parameter.side_effect = CompilationError('message')
+    with raises(CompilationError) as error_info:
+        compiler.compile({'parameters': [sentinel.param_obj]})
+    assert error_info.value.path == [NamedNode('parameters'), IndexedNode(0)]
+
+    compile_parameter.assert_called_once_with(sentinel.param_obj)
