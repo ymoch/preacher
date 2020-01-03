@@ -151,26 +151,46 @@ def test_when_parameter_compilation_fails(compile_parameter, compiler):
 
 @compile_parameter_patch
 @ctor_patch
-def test_given_filled_parameters(ctor, compile_parameter, compiler):
+def test_given_filled_parameters(
+    ctor,
+    compile_parameter,
+    compiler,
+    description
+):
     compile_parameter.side_effect = [
         Parameter(label='param1', arguments={'foo': 'bar'}),
-        Parameter(label='param2', arguments={'foo': 'baz'}),
+        Parameter(label='param2', arguments={'foo': 'baz', 'spam': 'eggs'}),
     ]
     scenario = compiler.compile(
         obj={
             'label': ArgumentValue('original_label'),
             'parameters': [sentinel.param_obj1, sentinel.param_obj2],
+            'when': [{'cond': ArgumentValue('foo')}],
         },
-        arguments={'original_label': 'original'},
+        arguments={'original_label': 'original', 'spam': 'ham'},
     )
     assert scenario is sentinel.scenario
 
     ctor.assert_has_calls([
-        call(label='param1', conditions=[], cases=[], subscenarios=[]),
-        call(label='param2', conditions=[], cases=[], subscenarios=[]),
+        call(
+            label='param1',
+            conditions=[sentinel.description],
+            cases=[],
+            subscenarios=[],
+        ),
+        call(
+            label='param2',
+            conditions=[sentinel.description],
+            cases=[],
+            subscenarios=[],
+        ),
         call(label='original', subscenarios=[sentinel.scenario] * 2)
     ])
     compile_parameter.assert_has_calls([
         call(sentinel.param_obj1),
         call(sentinel.param_obj2),
+    ])
+    description.compile.assert_has_calls([
+        call({'cond': 'bar'}),
+        call({'cond': 'baz'}),
     ])
