@@ -156,7 +156,7 @@ def test_given_filled_parameters(
     compile_parameter,
     compiler,
     description,
-    case_of_default,
+    case,
 ):
     compile_parameter.side_effect = [
         Parameter(label='param1', arguments={'foo': 'bar'}),
@@ -166,6 +166,7 @@ def test_given_filled_parameters(
         obj={
             'label': ArgumentValue('original_label'),
             'parameters': [sentinel.param_obj1, sentinel.param_obj2],
+            'default': {'foo': ArgumentValue('foo')},
             'when': [{'foo': ArgumentValue('foo')}],
             'cases': [{'spam': ArgumentValue('spam')}]
         },
@@ -196,7 +197,9 @@ def test_given_filled_parameters(
         call({'foo': 'bar'}),
         call({'foo': 'baz'}),
     ])
-    case_of_default.compile.assert_has_calls([
-        call({'spam': 'ham'}),
-        call({'spam': 'eggs'}),
+    case.of_default.assert_has_calls([
+        call({'foo': 'bar'}),
+        call().compile({'spam': 'ham'}),
+        call({'foo': 'baz'}),
+        call().compile({'spam': 'eggs'}),
     ])
