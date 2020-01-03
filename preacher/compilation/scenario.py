@@ -56,14 +56,13 @@ class ScenarioCompiler:
 
         parameters_obj = obj.get(_KEY_PARAMETERS)
         if parameters_obj is not None:
-            parameters_obj = compile_list(parameters_obj)
-            subscenarios = [
-                self._compile_parameterized(
-                    obj,
-                    arguments=arguments,
-                    parameter=compile_parameter(parameter_obj),
+            with on_key(_KEY_PARAMETERS):
+                parameters = list(
+                    map_compile(compile_parameter, parameters_obj)
                 )
-                for parameter_obj in parameters_obj
+            subscenarios = [
+                self._compile_parameterized(obj, arguments, parameter)
+                for parameter in parameters
             ]
             return Scenario(label=label, subscenarios=subscenarios)
 

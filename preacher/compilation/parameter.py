@@ -25,7 +25,6 @@ def compile(obj: object) -> Parameter:
     Raises:
         CompilationError: when the compilation fails.
     """
-
     obj = compile_mapping(obj)
     label = compile_optional_str(obj.get(_KEY_LABEL))
     arguments = compile_mapping(obj.get(_KEY_ARGUMENTS, {}))
