@@ -155,7 +155,8 @@ def test_given_filled_parameters(
     ctor,
     compile_parameter,
     compiler,
-    description
+    description,
+    case_of_default,
 ):
     compile_parameter.side_effect = [
         Parameter(label='param1', arguments={'foo': 'bar'}),
@@ -165,7 +166,8 @@ def test_given_filled_parameters(
         obj={
             'label': ArgumentValue('original_label'),
             'parameters': [sentinel.param_obj1, sentinel.param_obj2],
-            'when': [{'cond': ArgumentValue('foo')}],
+            'when': [{'foo': ArgumentValue('foo')}],
+            'cases': [{'spam': ArgumentValue('spam')}]
         },
         arguments={'original_label': 'original', 'spam': 'ham'},
     )
@@ -175,13 +177,13 @@ def test_given_filled_parameters(
         call(
             label='param1',
             conditions=[sentinel.description],
-            cases=[],
+            cases=[sentinel.case],
             subscenarios=[],
         ),
         call(
             label='param2',
             conditions=[sentinel.description],
-            cases=[],
+            cases=[sentinel.case],
             subscenarios=[],
         ),
         call(label='original', subscenarios=[sentinel.scenario] * 2)
@@ -191,6 +193,10 @@ def test_given_filled_parameters(
         call(sentinel.param_obj2),
     ])
     description.compile.assert_has_calls([
-        call({'cond': 'bar'}),
-        call({'cond': 'baz'}),
+        call({'foo': 'bar'}),
+        call({'foo': 'baz'}),
+    ])
+    case_of_default.compile.assert_has_calls([
+        call({'spam': 'ham'}),
+        call({'spam': 'eggs'}),
     ])
