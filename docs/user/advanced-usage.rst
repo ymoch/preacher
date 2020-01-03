@@ -64,8 +64,6 @@ See :doc:`context` to find available context.
 
 Parameterized Test
 ------------------
-.. note:: This feature is under construction and not available now...
-
 Parameterized tests make it possible to run a test multiple times with different arguments,
 which can reduce test scenarios description and make them simpler and more declarative.
 
@@ -78,10 +76,14 @@ To make tests parameterized:
 
     label: Parameterized test example.
     parameters:
-      - foo: a string
-        bar: 1.23
-      - foo: another string
-        bar: 4.56
+      - label: parameter 1
+        args:
+          foo: a string
+          bar: 1.23
+      - label: Parameter 2
+        args:
+          foo: another string
+          bar: 4.56
     cases:
       - request:
           path: /path/to/an/api
