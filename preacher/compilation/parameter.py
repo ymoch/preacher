@@ -6,7 +6,7 @@ from .error import on_key
 from .util import compile_mapping, compile_optional_str
 
 _KEY_LABEL = 'label'
-_KEY_ARGUMENTS = 'arguments'
+_KEY_ARGUMENTS = 'args'
 
 
 @dataclass(frozen=True)

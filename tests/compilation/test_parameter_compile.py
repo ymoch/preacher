@@ -8,8 +8,8 @@ from preacher.compilation.parameter import compile
     ('', []),
     ({'label': []}, [NamedNode('label')]),
     ({'label': {}}, [NamedNode('label')]),
-    ({'arguments': ''}, [NamedNode('arguments')]),
-    ({'arguments': []}, [NamedNode('arguments')]),
+    ({'args': ''}, [NamedNode('args')]),
+    ({'args': []}, [NamedNode('args')]),
 ])
 def test_given_invalid_obj(obj, expected_path):
     with raises(CompilationError) as error_info:
@@ -24,6 +24,6 @@ def test_given_empty_mapping():
 
 
 def test_given_filled_mapping():
-    parameter = compile({'label': 'foo', 'arguments': {'k': 'v'}})
+    parameter = compile({'label': 'foo', 'args': {'k': 'v'}})
     assert parameter.label == 'foo'
     assert parameter.arguments == {'k': 'v'}

@@ -256,11 +256,11 @@ subscenarios:
   - label: Parameterized tests succeeds.
     parameters:
       - label: Spam Ham
-        arguments:
+        args:
           foo: bar
           spam: ham
       - label: Spam Eggs
-        arguments:
+        args:
           foo: baz
           spam: eggs
     default:
