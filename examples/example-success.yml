@@ -253,3 +253,31 @@ subscenarios:
             describe: ."content-type"
             should:
               start_with: 'text/plain'
+  - label: Parameterized tests succeeds.
+    parameters:
+      - label: Spam Ham
+        arguments:
+          foo: bar
+          spam: ham
+      - label: Spam Eggs
+        arguments:
+          foo: baz
+          spam: eggs
+    default:
+      request: /params
+      response:
+        status_code: 200
+    cases:
+      - label: Parameterized
+        request:
+          params:
+            foo: !argument foo
+            spam: !argument spam
+        response:
+          body:
+            - describe: .foo
+              should:
+                equal: !argument foo
+            - describe: .spam
+              should:
+                equal: !argument spam
