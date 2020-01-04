@@ -69,7 +69,7 @@ class ScenarioCompiler:
 
         default_obj = inject_arguments(obj.get(_KEY_DEFAULT, {}), arguments)
         with on_key(_KEY_DEFAULT):
-            case_compiler = self._compile_default(default_obj)
+            case_compiler = self._case.compile_default(default_obj)
 
         condition_obj = inject_arguments(obj.get(_KEY_WHEN, []), arguments)
         with on_key(_KEY_WHEN):
@@ -94,10 +94,6 @@ class ScenarioCompiler:
             subscenarios=subscenarios,
         )
 
-    def _compile_default(self, obj: object) -> CaseCompiler:
-        default = self._case.compile(obj)
-        return self._case.of_default(default)
-
     def _compile_conditions(self, obj: object):
         if not isinstance(obj, list):
             obj = [obj]
@@ -105,11 +101,9 @@ class ScenarioCompiler:
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
-        obj = compile_list(obj)
-        return [
-            compiled.fix()
-            for compiled in map_compile(case_compiler.compile, obj)
-        ]
+        return list(
+            map_compile(case_compiler.compile_fixed, compile_list(obj))
+        )
 
     def _compile_subscenarios(
         self,

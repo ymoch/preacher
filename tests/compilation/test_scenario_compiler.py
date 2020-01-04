@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, call, patch, sentinel
 from pytest import mark, raises, fixture
 
 from preacher.compilation.argument import ArgumentValue
-from preacher.compilation.case import CaseCompiler, CaseCompiled
+from preacher.compilation.case import CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
@@ -15,52 +15,37 @@ compile_parameter_patch = patch(f'{PACKAGE}.compile_parameter')
 
 
 @fixture
-def compiler(description, case):
+def compiler(description, case) -> ScenarioCompiler:
     return ScenarioCompiler(description, case)
 
 
 @fixture
 def description():
     compiler = MagicMock(spec=DescriptionCompiler)
-    compiler.compile.return_value = sentinel.description
+    compiler.compile = MagicMock(return_value=sentinel.description)
     return compiler
 
 
 @fixture
 def case(case_of_default):
     compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile.return_value = sentinel.default
-    compiler.of_default.return_value = case_of_default
+    compiler.compile_default = MagicMock(return_value=case_of_default)
     return compiler
 
 
 @fixture
-def case_of_default(case_compiled, sub_case):
+def case_of_default(sub_case):
     compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile.return_value = case_compiled
-    compiler.of_default.return_value = sub_case
+    compiler.compile_fixed.return_value = sentinel.case
+    compiler.compile_default.return_value = sub_case
     return compiler
 
 
 @fixture
-def case_compiled():
-    compiled = MagicMock(spec=CaseCompiled)
-    compiled.fix.return_value = sentinel.case
-    return compiled
-
-
-@fixture
-def sub_case(sub_case_compiled):
+def sub_case():
     compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile.return_value = sub_case_compiled
+    compiler.compile_fixed = MagicMock(return_value=sentinel.sub_case)
     return compiler
-
-
-@fixture
-def sub_case_compiled():
-    compiled = MagicMock(spec=CaseCompiled)
-    compiled.fix.return_value = sentinel.sub_case
-    return compiled
 
 
 @mark.parametrize('value, expected_path', (
@@ -94,9 +79,8 @@ def test_given_an_empty_object(
         subscenarios=[],
     )
 
-    case.compile.assert_called_once_with({})
-    case.of_default.assert_called_once_with(sentinel.default)
-    case_of_default.compile.assert_not_called()
+    case.compile_default.assert_called_once_with({})
+    case_of_default.compile_fixed.assert_not_called()
 
 
 @ctor_patch
@@ -106,9 +90,7 @@ def test_given_a_filled_object(
     description,
     case,
     case_of_default,
-    case_compiled,
     sub_case,
-    sub_case_compiled,
 ):
     scenario = compiler.compile(
         obj={
@@ -143,18 +125,13 @@ def test_given_a_filled_object(
         ),
     ])
     description.compile.assert_called_once_with({'b': 'v3'})
-    case.compile.assert_called_once_with({'a': 'v2'})
-    case.of_default.assert_called_once_with(sentinel.default)
-    case_of_default.compile.assert_has_calls([
+    case.compile_default.assert_called_once_with({'a': 'v2'})
+    case_of_default.compile_fixed.assert_has_calls([
         call({}),
-        call().fix(),
         call({'c': 'v4'}),
-        call().fix(),
-        call({'d': 'v6'}),
     ])
-    case_of_default.of_default.assert_called_once_with(case_compiled)
-    sub_case.compile.assert_called_once_with({'e': 'v7'})
-    sub_case_compiled.fix.assert_called_once_with()
+    case_of_default.compile_default.assert_called_once_with({'d': 'v6'})
+    sub_case.compile_fixed.assert_called_once_with({'e': 'v7'})
 
 
 @compile_parameter_patch
@@ -185,7 +162,7 @@ def test_given_filled_parameters(
     compiler,
     description,
     case,
-    case_compiled
+    case_of_default,
 ):
     compile_parameter.side_effect = [
         Parameter(label='param1', arguments={'foo': 'bar'}),
@@ -229,19 +206,15 @@ def test_given_filled_parameters(
         call({'foo': 'bar'}),
         call({'foo': 'baz'}),
     ])
-    case.compile.assert_has_calls([
+    case.compile_default.assert_has_calls([
         call({'foo': 'bar'}),
         call({'foo': 'baz'}),
     ])
-    case.of_default.assert_has_calls([
-        call(sentinel.default),
-        call().compile({'spam': 'ham'}),
-        call().compile().fix(),
-        call().compile({}),
-        call().of_default(case_compiled),
-        call(sentinel.default),
-        call().compile({'spam': 'eggs'}),
-        call().compile().fix(),
-        call().compile({}),
-        call().of_default(case_compiled),
+    case_of_default.compile_fixed.assert_has_calls([
+        call({'spam': 'ham'}),
+        call({'spam': 'eggs'}),
+    ])
+    case_of_default.compile_default.assert_has_calls([
+        call().compile_default({}),
+        call().compile_default({}),
     ])

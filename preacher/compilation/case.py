@@ -54,6 +54,33 @@ class CaseCompiler:
         self._response = response
         self._default = default or CaseCompiled()
 
+    def compile_fixed(self, obj: object) -> Case:
+        """
+        Compile a given case object into a fixed case.
+
+        Args:
+            obj: A compiled object.
+        Returns:
+            The result of compilation.
+        Raises:
+            CompilationError: when compilation fails.
+        """
+        return self.compile(obj).fix()
+
+    def compile_default(self, obj: object) -> CaseCompiler:
+        """
+        Compile a given case object and replace the default value with it.
+
+        Args:
+            obj: A compiled object.
+        Returns:
+            The replaced compiler.
+        Raises:
+            CompilationError: when compilation fails.
+        """
+        default = self.compile(obj)
+        return self.of_default(default)
+
     def compile(self, obj: object) -> CaseCompiled:
         """`obj` should be a mapping."""
 
