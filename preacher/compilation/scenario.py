@@ -95,8 +95,8 @@ class ScenarioCompiler:
         )
 
     def _compile_default(self, obj: object) -> CaseCompiler:
-        obj = compile_mapping(obj)
-        return self._case.of_default(obj)
+        default = self._case.compile(obj)
+        return self._case.of_default(default)
 
     def _compile_conditions(self, obj: object):
         if not isinstance(obj, list):

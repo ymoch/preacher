@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import Optional
 
 from preacher.core.case import Case
 from .error import CompilationError, on_key
@@ -21,10 +22,12 @@ class CaseCompiler:
     def __init__(
         self,
         request: RequestCompiler,
-        response: ResponseDescriptionCompiler
+        response: ResponseDescriptionCompiler,
+        default: Optional[Case] = None,
     ):
         self._request = request
         self._response = response
+        self._default = default
 
     def compile(self, obj: object) -> Case:
         """`obj` should be a mapping."""
@@ -55,16 +58,9 @@ class CaseCompiler:
             response=response,
         )
 
-    def of_default(self, obj: Mapping) -> CaseCompiler:
-        with on_key(_KEY_REQUEST):
-            default_request = self._request.compile(
-                obj.get(_KEY_REQUEST, {})
-            )
-        with on_key(_KEY_RESPONSE):
-            default_response = self._response.compile(
-                obj.get(_KEY_RESPONSE, {}),
-            )
+    def of_default(self, default: Case) -> CaseCompiler:
         return CaseCompiler(
-            request=self._request.of_default(default_request),
-            response=self._response.of_default(default_response),
+            request=self._request.of_default(default.request),
+            response=self._response.of_default(default.response),
+            default=default,
         )

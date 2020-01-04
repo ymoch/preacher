@@ -6,6 +6,7 @@ from preacher.compilation.case import CaseCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
 from preacher.compilation.response import ResponseDescriptionCompiler
+from preacher.core.case import Case
 
 
 @fixture
@@ -99,14 +100,17 @@ def test_creates_a_case(compiler, req, res):
     return_value=sentinel.default_compiler,
 )
 def test_accepts_default_values(ctor, compiler, req, res):
-    default_compiler = compiler.of_default({})
+    default = MagicMock(spec=Case)
+    default.request = sentinel.request
+    default.response = sentinel.response
+
+    default_compiler = compiler.of_default(default)
     assert default_compiler is sentinel.default_compiler
 
     ctor.assert_called_once_with(
         request=sentinel.default_req_compiler,
         response=sentinel.default_res_compiler,
+        default=default,
     )
-    req.compile.assert_called_once_with({})
     req.of_default.assert_called_once_with(sentinel.request)
-    res.compile.assert_called_once_with({})
     res.of_default.assert_called_once_with(sentinel.response)
