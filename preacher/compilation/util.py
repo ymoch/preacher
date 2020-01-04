@@ -60,7 +60,7 @@ def compile_optional_str(obj: object) -> Optional[str]:
 
 def compile_list(obj: object) -> list:
     if not isinstance(obj, list):
-        raise CompilationError(f'Must be a list, given {type(obj)}')
+        return [obj]
     return obj
 
 

@@ -51,10 +51,8 @@ def sub_case():
 @mark.parametrize('value, expected_path', (
     ('', []),
     ({'label': []}, [NamedNode('label')]),
-    ({'parameters': ''}, [NamedNode('parameters')]),
-    ({'parameters': {}}, [NamedNode('parameters')]),
-    ({'cases': ''}, [NamedNode('cases')]),
-    ({'subscenarios': ''}, [NamedNode('subscenarios')]),
+    ({'parameters': ''}, [NamedNode('parameters'), IndexedNode(0)]),
+    ({'subscenarios': ''}, [NamedNode('subscenarios'), IndexedNode(0)]),
 ))
 def test_when_given_invalid_values(value, expected_path, compiler):
     with raises(CompilationError) as error_info:

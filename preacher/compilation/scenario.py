@@ -95,9 +95,7 @@ class ScenarioCompiler:
         )
 
     def _compile_conditions(self, obj: object):
-        if not isinstance(obj, list):
-            obj = [obj]
-        return list(map_compile(self._description.compile, obj))
+        return list(map_compile(self._description.compile, compile_list(obj)))
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
