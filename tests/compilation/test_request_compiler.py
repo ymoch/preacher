@@ -1,4 +1,4 @@
-from unittest.mock import ANY, patch, sentinel, MagicMock
+from unittest.mock import patch, sentinel, MagicMock
 
 from pytest import mark, raises, fixture
 
@@ -55,7 +55,7 @@ def test_given_valid_params(compiler, params):
 
 def test_given_a_string(compiler):
     compiled = compiler.compile('/path')
-    assert compiled.path == 'path'
+    assert compiled.path == '/path'
     assert compiled.headers is None
     assert compiled.params is None
 
