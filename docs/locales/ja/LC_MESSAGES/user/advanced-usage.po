@@ -32,7 +32,7 @@ msgid ""
 "Default test make it possible to run similar tests, which fills the "
 "missing values with default values."
 msgstr ""
-"デフォルトテストは, 値がないところをデフォルト値で穴埋めすることによって,"
+"デフォルトテストを用いると, 値がないところをデフォルト値で穴埋めすることによって,"
 " 似たテストを実行することができます."
 
 #: ../../user/advanced-usage.rst:56

@@ -62,7 +62,7 @@ To make tests parameterized:
 .. code-block:: yaml
 
     label: Parameterized test example.
-    parameters:
+    params:
       - label: parameter 1
         args:
           foo: a string

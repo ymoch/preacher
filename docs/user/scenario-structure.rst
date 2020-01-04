@@ -28,7 +28,7 @@ Here is a configuration example.
             - describe: .foo
               should:
                 equal: bar
-      - label: A Little Complecated
+      - label: A Little Complicated
         enabled: true
         request:
           path: /path/to/foo
@@ -78,6 +78,7 @@ A ``Scenario`` is written in `YAML`_.
       - :ref:`case`
       - ``{}``
       - Default of this scenario.
+        See :ref:`default-test` for more information.
     * - when
       - List[Description]
       - ``[]``
@@ -113,7 +114,7 @@ Parameter
       - String
       - ``null``
       - Label of this parameter.
-    * - arguments
+    * - args
       - Mapping
       - ``{}``
       - An argument mapping of argument names to their values.
