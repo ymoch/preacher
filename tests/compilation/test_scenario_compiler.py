@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, call, patch, sentinel
 from pytest import mark, raises, fixture
 
 from preacher.compilation.argument import ArgumentValue
-from preacher.compilation.case import CaseCompiler
+from preacher.compilation.case import CaseCompiler, CaseCompiled
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
@@ -35,18 +35,32 @@ def case(case_of_default):
 
 
 @fixture
-def case_of_default(sub_case):
+def case_of_default(case_compiled, sub_case):
     compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile.return_value = sentinel.case
+    compiler.compile.return_value = case_compiled
     compiler.of_default.return_value = sub_case
     return compiler
 
 
 @fixture
-def sub_case():
+def case_compiled():
+    compiled = MagicMock(spec=CaseCompiled)
+    compiled.fix.return_value = sentinel.case
+    return compiled
+
+
+@fixture
+def sub_case(sub_case_compiled):
     compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile.return_value = sentinel.sub_case
+    compiler.compile.return_value = sub_case_compiled
     return compiler
+
+
+@fixture
+def sub_case_compiled():
+    compiled = MagicMock(spec=CaseCompiled)
+    compiled.fix.return_value = sentinel.sub_case
+    return compiled
 
 
 @mark.parametrize('value, expected_path', (
@@ -64,7 +78,12 @@ def test_when_given_invalid_values(value, expected_path, compiler):
 
 
 @ctor_patch
-def test_given_an_empty_object(ctor, compiler, case):
+def test_given_an_empty_object(
+    ctor,
+    compiler,
+    case,
+    case_of_default,
+):
     scenario = compiler.compile({})
 
     assert scenario is sentinel.scenario
@@ -77,6 +96,7 @@ def test_given_an_empty_object(ctor, compiler, case):
 
     case.compile.assert_called_once_with({})
     case.of_default.assert_called_once_with(sentinel.default)
+    case_of_default.compile.assert_not_called()
 
 
 @ctor_patch
@@ -86,7 +106,9 @@ def test_given_a_filled_object(
     description,
     case,
     case_of_default,
-    sub_case
+    case_compiled,
+    sub_case,
+    sub_case_compiled,
 ):
     scenario = compiler.compile(
         obj={
@@ -125,11 +147,14 @@ def test_given_a_filled_object(
     case.of_default.assert_called_once_with(sentinel.default)
     case_of_default.compile.assert_has_calls([
         call({}),
+        call().fix(),
         call({'c': 'v4'}),
+        call().fix(),
         call({'d': 'v6'}),
     ])
-    case_of_default.of_default.assert_called_once_with(sentinel.case)
+    case_of_default.of_default.assert_called_once_with(case_compiled)
     sub_case.compile.assert_called_once_with({'e': 'v7'})
+    sub_case_compiled.fix.assert_called_once_with()
 
 
 @compile_parameter_patch
@@ -160,6 +185,7 @@ def test_given_filled_parameters(
     compiler,
     description,
     case,
+    case_compiled
 ):
     compile_parameter.side_effect = [
         Parameter(label='param1', arguments={'foo': 'bar'}),
@@ -210,10 +236,12 @@ def test_given_filled_parameters(
     case.of_default.assert_has_calls([
         call(sentinel.default),
         call().compile({'spam': 'ham'}),
+        call().compile().fix(),
         call().compile({}),
-        call().of_default(sentinel.case),
+        call().of_default(case_compiled),
         call(sentinel.default),
         call().compile({'spam': 'eggs'}),
+        call().compile().fix(),
         call().compile({}),
-        call().of_default(sentinel.case),
+        call().of_default(case_compiled),
     ])

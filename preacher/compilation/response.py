@@ -3,19 +3,48 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import dataclass, replace
 from typing import Optional, List
 
 from preacher.core.description import Description, Predicate
 from preacher.core.response import ResponseDescription
-from .body import BodyDescriptionCompiler
+from .body import BodyDescriptionCompiler, BodyDescriptionCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
-from .util import map_compile
+from .util import map_compile, or_else
 
 _KEY_STATUS_CODE = 'status_code'
 _KEY_HEADERS = 'headers'
 _KEY_BODY = 'body'
+
+
+@dataclass(frozen=True)
+class ResponseDescriptionCompiled:
+    status_code: Optional[List[Predicate]] = None
+    headers: Optional[List[Description]] = None
+    body: Optional[BodyDescriptionCompiled] = None
+
+    def replace(
+        self,
+        other: ResponseDescriptionCompiled,
+    ) -> ResponseDescriptionCompiled:
+        return ResponseDescriptionCompiled(
+            status_code=or_else(other.status_code, self.status_code),
+            headers=or_else(other.headers, self.headers),
+            body=or_else(other.body, self.body),
+        )
+
+    def fix(self) -> ResponseDescription:
+        body = None
+        if self.body:
+            body = self.body.fix()
+
+        return ResponseDescription(
+            status_code=self.status_code,
+            headers=self.headers,
+            body=body,
+        )
 
 
 class ResponseDescriptionCompiler:
@@ -25,16 +54,44 @@ class ResponseDescriptionCompiler:
         predicate: PredicateCompiler,
         description: DescriptionCompiler,
         body: BodyDescriptionCompiler,
-        default: Optional[ResponseDescription] = None,
+        default: Optional[ResponseDescriptionCompiled] = None,
     ):
         self._predicate = predicate
         self._description = description
         self._body = body
-        self._default = default or ResponseDescription()
+        self._default = default or ResponseDescriptionCompiled()
+
+    def compile(self, obj: object) -> ResponseDescriptionCompiled:
+        """`obj` should be a mapping."""
+
+        if not isinstance(obj, Mapping):
+            raise CompilationError('Must be a mapping')
+
+        compiled = self._default
+
+        status_code_obj = obj.get(_KEY_STATUS_CODE)
+        if status_code_obj is not None:
+            with on_key(_KEY_STATUS_CODE):
+                status_code = self._compile_status_code(status_code_obj)
+            compiled = replace(compiled, status_code=status_code)
+
+        headers_obj = obj.get(_KEY_HEADERS)
+        if headers_obj is not None:
+            with on_key(_KEY_HEADERS):
+                headers = self._compile_headers(headers_obj)
+            compiled = replace(compiled, headers=headers)
+
+        body_obj = obj.get(_KEY_BODY)
+        if body_obj is not None:
+            with on_key(_KEY_BODY):
+                body = self._body.compile(body_obj)
+            compiled = replace(compiled, body=body)
+
+        return compiled
 
     def of_default(
         self,
-        default: ResponseDescription,
+        default: ResponseDescriptionCompiled,
     ) -> ResponseDescriptionCompiler:
         body = self._body
         if default.body:
@@ -44,36 +101,7 @@ class ResponseDescriptionCompiler:
             predicate=self._predicate,
             description=self._description,
             body=body,
-            default=default,
-        )
-
-    def compile(self, obj: object) -> ResponseDescription:
-        """`obj` should be a mapping."""
-
-        if not isinstance(obj, Mapping):
-            raise CompilationError('Must be a mapping')
-
-        status_code = self._default.status_code
-        status_code_obj = obj.get(_KEY_STATUS_CODE)
-        if status_code_obj is not None:
-            with on_key(_KEY_STATUS_CODE):
-                status_code = self._compile_status_code(status_code_obj)
-
-        headers = self._default.headers
-        headers_obj = obj.get(_KEY_HEADERS)
-        if headers_obj is not None:
-            with on_key(_KEY_HEADERS):
-                headers = self._compile_headers(headers_obj)
-
-        body = self._default.body
-        body_obj = obj.get(_KEY_BODY)
-        if body_obj is not None:
-            body = self._body.compile(body_obj)
-
-        return ResponseDescription(
-            status_code=status_code,
-            headers=headers,
-            body=body,
+            default=self._default.replace(default),
         )
 
     def _compile_status_code(self, obj: object) -> List[Predicate]:

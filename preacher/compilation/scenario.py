@@ -105,7 +105,11 @@ class ScenarioCompiler:
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
-        return list(map_compile(case_compiler.compile, compile_list(obj)))
+        obj = compile_list(obj)
+        return [
+            compiled.fix()
+            for compiled in map_compile(case_compiler.compile, obj)
+        ]
 
     def _compile_subscenarios(
         self,

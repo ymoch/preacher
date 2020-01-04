@@ -1,4 +1,4 @@
-from unittest.mock import ANY, MagicMock, patch, sentinel
+from unittest.mock import patch, sentinel, MagicMock
 
 from pytest import mark, raises, fixture
 
@@ -7,22 +7,14 @@ from preacher.compilation.error import (
     NamedNode,
     IndexedNode,
 )
-from preacher.compilation.request import RequestCompiler
-from preacher.core.request import Request
-
+from preacher.compilation.request import RequestCompiler, RequestCompiled
 
 PACKAGE = 'preacher.compilation.request'
-ctor_patch = patch(f'{PACKAGE}.Request', return_value=sentinel.request)
 
 
 @fixture
-def compiler():
-    default = MagicMock(Request)
-    default.path = sentinel.default_path
-    default.headers = sentinel.default_headers
-    default.params = sentinel.default_params
-
-    return RequestCompiler(default=default)
+def compiler() -> RequestCompiler:
+    return RequestCompiler()
 
 
 @mark.parametrize('value, expected_path', (
@@ -44,61 +36,50 @@ def test_given_invalid_values(compiler, value, expected_path):
     assert error_info.value.path == expected_path
 
 
-@ctor_patch
-def test_given_an_empty_mapping(ctor, compiler):
-    request = compiler.compile({})
-    assert request is sentinel.request
-
-    ctor.assert_called_once_with(
-        path=sentinel.default_path,
-        headers=sentinel.default_headers,
-        params=sentinel.default_params,
-    )
+def test_given_an_empty_mapping(compiler):
+    compiled = compiler.compile({})
+    assert compiled.path is None
+    assert compiled.headers is None
+    assert compiled.params is None
 
 
 @mark.parametrize('params', [
     'str',
     {'k1': None, 'k2': 'str', 'k3': [None, 'str']}
 ])
-@ctor_patch
-def test_given_valid_params(ctor, compiler, params):
-    request = compiler.compile({'params': params})
-    assert request is sentinel.request
-
-    ctor.assert_called_once_with(path=ANY, headers=ANY, params=params)
+def test_given_valid_params(compiler, params):
+    compiled = compiler.compile({'params': params})
+    assert compiled.params == params
 
 
-@ctor_patch
-def test_given_a_string(ctor, compiler):
-    request = compiler.compile('/path')
-    assert request is sentinel.request
-
-    ctor.assert_called_once_with(
-        path='/path',
-        headers=sentinel.default_headers,
-        params=sentinel.default_params
-    )
+def test_given_a_string(compiler):
+    compiled = compiler.compile('/path')
+    assert compiled.path == '/path'
+    assert compiled.headers is None
+    assert compiled.params is None
 
 
-@ctor_patch
-def test_given_a_filled_mapping(ctor, compiler):
-    request = compiler.compile({
+def test_given_a_filled_mapping(compiler):
+    compiled = compiler.compile({
         'path': '/path',
         'headers': {'key1': 'value1'},
         'params': {'key': 'value'},
     })
-    assert request is sentinel.request
-
-    ctor.assert_called_once_with(
-        path='/path',
-        headers={'key1': 'value1'},
-        params={'key': 'value'},
-    )
+    assert compiled.path == '/path'
+    assert compiled.headers == {'key1': 'value1'}
+    assert compiled.params == {'key': 'value'}
 
 
 @patch(f'{PACKAGE}.RequestCompiler', return_value=sentinel.compiler_of_default)
-def test_of_default(compiler_ctor, compiler):
-    actual = compiler.of_default(sentinel.default)
-    assert actual is sentinel.compiler_of_default
+def test_of_default(compiler_ctor):
+    initial_default = MagicMock(RequestCompiled)
+    initial_default.replace.return_value = sentinel.new_default
 
-    compiler_ctor.assert_called_once_with(default=sentinel.default)
+    compiler = RequestCompiler(initial_default)
+    compiler_of_default = compiler.of_default(sentinel.default)
+    assert compiler_of_default is sentinel.compiler_of_default
+
+    initial_default.replace.assert_called_once_with(sentinel.default)
+
+    default = compiler_ctor.call_args[1]['default']
+    assert default is sentinel.new_default
