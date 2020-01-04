@@ -10,7 +10,6 @@ from preacher.compilation.error import (
 from preacher.compilation.request import RequestCompiler, RequestCompiled
 
 PACKAGE = 'preacher.compilation.request'
-ctor_patch = patch(f'{PACKAGE}.Request', return_value=sentinel.request)
 
 
 @fixture
@@ -72,11 +71,11 @@ def test_given_a_filled_mapping(compiler):
 
 
 @patch(f'{PACKAGE}.RequestCompiler', return_value=sentinel.compiler_of_default)
-def test_of_default(compiler_ctor, compiler):
+def test_of_default(compiler_ctor):
     initial_default = MagicMock(RequestCompiled)
     initial_default.replace.return_value = sentinel.new_default
 
-    compiler = RequestCompiler(default=initial_default)
+    compiler = RequestCompiler(initial_default)
     compiler_of_default = compiler.of_default(sentinel.default)
     assert compiler_of_default is sentinel.compiler_of_default
 
