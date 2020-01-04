@@ -64,32 +64,79 @@ Scenario
 A ``Scenario`` is written in `YAML`_.
 A ``Scenario`` is a mapping that consists of below:
 
-- label: ``String`` (Recommended)
-    - A label of this scenario.
-    - This field is actually optional but recommended to tell this scenario from another.
-- default: ``Default`` (Optional)
-    - Default of this scenario.
-- when: ``Description`` or ``List<Description>`` (Optional)
-    - Run this scenario only when the context satisfies these description.
-    - See: :doc:`Application Running Context<context>`
-- cases: ``List<Case>`` (Optional)
-    - Test cases.
-- subscenarios: ``List<Scenario>`` (Optional)
-    - Nested scenarios.
+.. list-table:: The Definition of ``Scenario`` Object
+    :header-rows: 1
+    :widths: 10 30 15 15 30
+
+    * - Key
+      - Type
+      - Required?
+      - Default
+      - Description
+    * - label
+      - String
+      - No
+      - ``null``
+      - A label of this scenario.
+    * - default
+      - :ref:`case`
+      - No
+      - ``{}``
+      - Default of this scenario.
+    * - when
+      - List[Description]
+      - No
+      - ``[]``
+      - | Run this scenario only when the context satisfies these description.
+        | See: :doc:`Application Running Context<context>`
+    * - cases
+      - List[:ref:`Case`]
+      - No
+      - ``[]``
+      - Test cases.
+    * - subscenarios
+      - List[Scenario]
+      - No
+      - ``[]``
+      - Nested scenarios.
+
+.. _case:
 
 Case
 ^^^^
 A ``Case`` is a mapping that consists of below:
 
-- label: ``String`` (Recommended)
-    - A label of this case.
-    - This field is actually optional but recommended to tell this case from another.
-- enabled: ``Boolean`` (Optional)
-    - Whether this case is enabled. The default value is ``true``.
-- request: ``Request`` (Optional)
-    - A request.
-- response: ``ResponseDescription`` (Optional)
-    - A response description.
+.. list-table:: The Definition of ``Case`` Object
+    :header-rows: 1
+    :widths: 10 30 15 15 30
+
+    * - Key
+      - Type
+      - Required?
+      - Default
+      - Description
+    * - label
+      - String
+      - No
+      - ``null``
+      - A label of this case.
+    * - enabled
+      - Boolean
+      - No
+      - ``true``
+      - Whether this case is enabled.
+    * - request
+      - :ref:`request`
+      - No
+      - The default request
+      - The request of this case.
+    * - response
+      - :ref:`response-description`
+      - No
+      - The default response description.
+      - The response description of this case.
+
+.. _request:
 
 Request
 ^^^^^^^
@@ -106,7 +153,9 @@ A mapping for ``Request`` has items below:
 
 When given a string, that is equivalent to ``{"path": it}``.
 
-Response Decription
+.. _response-description:
+
+ResponseDescription
 ^^^^^^^^^^^^^^^^^^^
 A ``ResponseDescription`` is a mapping that consists of below:
 
