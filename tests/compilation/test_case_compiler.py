@@ -17,12 +17,12 @@ ctor_patch = patch(
 
 @fixture
 def compiler(req, res):
-    default = Case(
-        label=sentinel.default_label,
-        enabled=sentinel.default_enabled,
-        request=sentinel.default_request,
-        response=sentinel.default_response,
-    )
+    default = MagicMock(Case)
+    default.label = sentinel.default_label
+    default.enabled = sentinel.default_enabled
+    default.request = sentinel.default_request
+    default.response = sentinel.default_response
+
     return CaseCompiler(req, res, default)
 
 
