@@ -9,6 +9,9 @@ from preacher.core.status import Status
 from preacher.core.verification import Verification
 
 
+PACKAGE = 'preacher.core.case'
+
+
 @fixture
 def retry_patch():
     return patch(
@@ -19,6 +22,19 @@ def retry_patch():
 
 def test_case_listener():
     CaseListener().on_response(sentinel.response)
+
+
+@patch(f'{PACKAGE}.Request', return_value=sentinel.request)
+@patch(f'{PACKAGE}.ResponseDescription', return_value=sentinel.response)
+def test_default_construction(response_ctor, request_ctor):
+    case = Case()
+    assert case.label is None
+    assert case.enabled
+    assert case.request is sentinel.request
+    assert case.response is sentinel.response
+
+    request_ctor.assert_called_once_with()
+    response_ctor.assert_called_once_with()
 
 
 def test_when_disabled():

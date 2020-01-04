@@ -29,6 +29,7 @@ def description():
 @fixture
 def case(case_of_default):
     compiler = MagicMock(spec=CaseCompiler)
+    compiler.compile.return_value = sentinel.default
     compiler.of_default.return_value = case_of_default
     return compiler
 
@@ -55,7 +56,6 @@ def sub_case():
     ({'parameters': {}}, [NamedNode('parameters')]),
     ({'cases': ''}, [NamedNode('cases')]),
     ({'subscenarios': ''}, [NamedNode('subscenarios')]),
-    ({'default': ''}, [NamedNode('default')]),
 ))
 def test_when_given_invalid_values(value, expected_path, compiler):
     with raises(CompilationError) as error_info:
@@ -75,7 +75,8 @@ def test_given_an_empty_object(ctor, compiler, case):
         subscenarios=[],
     )
 
-    case.of_default.assert_called_once_with({})
+    case.compile.assert_called_once_with({})
+    case.of_default.assert_called_once_with(sentinel.default)
 
 
 @ctor_patch
@@ -120,12 +121,14 @@ def test_given_a_filled_object(
         ),
     ])
     description.compile.assert_called_once_with({'b': 'v3'})
-    case.of_default.assert_called_once_with({'a': 'v2'})
+    case.compile.assert_called_once_with({'a': 'v2'})
+    case.of_default.assert_called_once_with(sentinel.default)
     case_of_default.compile.assert_has_calls([
         call({}),
         call({'c': 'v4'}),
+        call({'d': 'v6'}),
     ])
-    case_of_default.of_default.assert_called_once_with({'d': 'v6'})
+    case_of_default.of_default.assert_called_once_with(sentinel.case)
     sub_case.compile.assert_called_once_with({'e': 'v7'})
 
 
@@ -200,11 +203,17 @@ def test_given_filled_parameters(
         call({'foo': 'bar'}),
         call({'foo': 'baz'}),
     ])
-    case.of_default.assert_has_calls([
+    case.compile.assert_has_calls([
         call({'foo': 'bar'}),
-        call().compile({'spam': 'ham'}),
-        call().of_default({}),
         call({'foo': 'baz'}),
+    ])
+    case.of_default.assert_has_calls([
+        call(sentinel.default),
+        call().compile({'spam': 'ham'}),
+        call().compile({}),
+        call().of_default(sentinel.case),
+        call(sentinel.default),
         call().compile({'spam': 'eggs'}),
-        call().of_default({}),
+        call().compile({}),
+        call().of_default(sentinel.case),
     ])

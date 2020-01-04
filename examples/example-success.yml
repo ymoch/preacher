@@ -244,15 +244,12 @@ subscenarios:
   - !include ./example-skipped.yml
   - label: Subscenario succeeds
     default:
-      path: /error/404
+      request:
+        path: /error/404
     cases:
       - label: Default value is inherited and can be overwritten
         response:
           status_code: 404
-          headers:
-            describe: ."content-type"
-            should:
-              start_with: 'text/plain'
   - label: Parameterized tests succeeds.
     parameters:
       - label: Spam Ham
