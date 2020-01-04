@@ -63,7 +63,7 @@ Scenario
 ^^^^^^^^
 A ``Scenario`` is written in `YAML`_.
 
-.. list-table:: The Definition of ``Scenario`` Object
+.. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
 
@@ -97,7 +97,7 @@ A ``Scenario`` is written in `YAML`_.
 
 Case
 ^^^^
-.. list-table:: The Definition of ``Case`` Object
+.. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
 
@@ -126,7 +126,7 @@ Case
 
 Request
 ^^^^^^^
-.. list-table:: The Definition of ``Request`` Object
+.. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
 
@@ -153,7 +153,7 @@ When given a string as a ``Request``, that is equivalent to ``{path: it}``.
 
 ResponseDescription
 ^^^^^^^^^^^^^^^^^^^
-.. list-table:: The Definition of ``ResponseDescription`` Object
+.. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
 
@@ -186,54 +186,62 @@ When given a number, that is equivalent to ``{"equal": it}``.
 
 Headers
 """""""
-
 Response headers are converted to be a JSON
 that is a mapping of names to values
-and can be descripted as a JSON (e.g. ``."content-type"``).
+and can be described as a JSON (e.g. ``."content-type"``).
 *Note that Names are lower-cased* to normalize.
 
 .. _body-description:
 
 BodyDescription
 ^^^^^^^^^^^^^^^
-A ``BodyDescription`` is a mapping or a list.
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-A mapping for ``BodyDescription`` has items below.
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - analyze_as
+      - String
+      - ``json``
+      - The method to analyze the body.
+        Allowed values are ``json`` and ``xml``.
+    * - descriptions
+      - List[:ref:`description`]
+      - ``[]``
+      - Descriptions that describe the response body.
 
-- analyzed_as: ``String`` (Optional)
-    - The method to analyze the body. The default value is ``json``.
-    - When given ``json``, the body is analyzed as a JSON.
-    - When given ``xml``, the body is analyzed as an XML.
-- descriptions: ``Description`` or ``List<Description>``
-    - Descriptions that descript the response body.
-
-When given a list, that is equivalent to ``{"descritptions": it}``.
+When given a list as a ``BodyDescription``,
+that is equivalent to ``{"descritptions": it}``.
 
 .. _description:
 
 Description
 ^^^^^^^^^^^
-A ``Description`` is a mapping that consists of below:
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-- describe: :doc:`Extraction<extraction>`
-    - An extraction process.
-- should: ``Predicate``, or ``List<Predicate>>`` (Optional)
-    - Predicates that match the descripted value.
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - describe
+      - :doc:`Extraction<extraction>`
+      - **Required**
+      - An extraction to get the described value.
+    * - should
+      - List[:ref:`predicate`]
+      - ``{}``
+      - Predicates that match the described value.
 
 .. _predicate:
 
 Predicate
 ^^^^^^^^^
 A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the future).
-
-Default
-^^^^^^^
-A ``Default`` is a mapping that consists of below:
-
-- request: ``Request`` (Optional)
-    - A request to overwrite the default request values.
-- response: ``ResponseDescription`` (Optional)
-    - A response description to overwrite the default response description values.
 
 Inclusion
 ---------
