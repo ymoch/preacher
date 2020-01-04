@@ -12,10 +12,6 @@ from preacher.compilation.predicate import PredicateCompiler
 from preacher.compilation.response import ResponseDescriptionCompiler
 
 PACKAGE = 'preacher.compilation.response'
-ctor_patch = patch(
-    f'{PACKAGE}.ResponseDescription',
-    return_value=sentinel.response,
-)
 
 
 @fixture

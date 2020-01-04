@@ -95,7 +95,8 @@ class ScenarioCompiler:
         )
 
     def _compile_default(self, obj: object) -> CaseCompiler:
-        return self._case.of_default(obj)
+        default = self._case.compile(obj)
+        return self._case.of_default(default)
 
     def _compile_conditions(self, obj: object):
         if not isinstance(obj, list):
@@ -104,7 +105,11 @@ class ScenarioCompiler:
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
-        return list(map_compile(case_compiler.compile, compile_list(obj)))
+        obj = compile_list(obj)
+        return [
+            compiled.fix()
+            for compiled in map_compile(case_compiler.compile, obj)
+        ]
 
     def _compile_subscenarios(
         self,

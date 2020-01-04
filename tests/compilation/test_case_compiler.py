@@ -1,13 +1,11 @@
-from unittest.mock import MagicMock, sentinel, patch
+from unittest.mock import ANY, MagicMock, sentinel, patch
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.case import CaseCompiler
+from preacher.compilation.case import CaseCompiled, CaseCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
 from preacher.compilation.response import ResponseDescriptionCompiler
-from preacher.core.case import Case
-
 
 ctor_patch = patch(
     target='preacher.compilation.case.Case',
@@ -17,13 +15,7 @@ ctor_patch = patch(
 
 @fixture
 def compiler(req, res):
-    default = MagicMock(Case)
-    default.label = sentinel.default_label
-    default.enabled = sentinel.default_enabled
-    default.request = sentinel.default_request
-    default.response = sentinel.default_response
-
-    return CaseCompiler(req, res, default)
+    return CaseCompiler(req, res)
 
 
 @fixture
@@ -77,57 +69,83 @@ def test_response_compilation_fails(compiler, res):
     res.compile.assert_called_once_with('res')
 
 
-@ctor_patch
-def test_given_an_empty_object(ctor, compiler, req, res):
-    case = compiler.compile({})
-    assert case is sentinel.case
+def test_given_an_empty_object(compiler, req, res):
+    compiled = compiler.compile({})
+    assert compiled.label is None
+    assert compiled.enabled is None
+    assert compiled.request is None
+    assert compiled.response is None
 
-    ctor.assert_called_once_with(
-        label=sentinel.default_label,
-        enabled=sentinel.default_enabled,
-        request=sentinel.default_request,
-        response=sentinel.default_response,
-    )
     req.compile.assert_not_called()
     res.compile.assert_not_called()
 
 
-@ctor_patch
-def test_creates_a_case(ctor, compiler, req, res):
-    case = compiler.compile({
+def test_creates_a_case(compiler, req, res):
+    compiled = compiler.compile({
         'label': 'label',
         'enabled': False,
         'request': {'path': '/path'},
         'response': {'key': 'value'},
     })
-    assert case is sentinel.case
+    assert compiled.label == 'label'
+    assert not compiled.enabled
+    assert compiled.request is sentinel.request
+    assert compiled.response is sentinel.response
 
-    ctor.assert_called_once_with(
-        label='label',
-        enabled=False,
-        request=sentinel.request,
-        response=sentinel.response
-    )
     req.compile.assert_called_once_with({'path': '/path'})
     res.compile.assert_called_once_with({'key': 'value'})
+
+
+@fixture
+def initial_default():
+    initial_default = MagicMock(CaseCompiled)
+    initial_default.replace.return_value = sentinel.new_default
+    return initial_default
 
 
 @patch(
     target='preacher.compilation.case.CaseCompiler',
     return_value=sentinel.default_compiler,
 )
-def test_accepts_default_values(compiler_ctor, compiler, req, res):
-    default = MagicMock(spec=Case)
-    default.request = sentinel.request
-    default.response = sentinel.response
+def test_given_hollow_default(compiler_ctor, req, res, initial_default):
+    compiler = CaseCompiler(req, res, initial_default)
 
-    default_compiler = compiler.of_default(default)
-    assert default_compiler is sentinel.default_compiler
+    default = MagicMock(CaseCompiled, request=None, response=None)
+    compiler_of_default = compiler.of_default(default)
+    assert compiler_of_default is sentinel.default_compiler
 
+    req.of_default.assert_not_called()
+    res.of_default.assert_not_called()
+    compiler_ctor.assert_called_once_with(
+        request=req,
+        response=res,
+        default=ANY,
+    )
+    default = compiler_ctor.call_args[1]['default']
+    assert default is sentinel.new_default
+
+
+@patch(
+    target='preacher.compilation.case.CaseCompiler',
+    return_value=sentinel.default_compiler,
+)
+def test_given_filled_default(compiler_ctor, req, res, initial_default):
+    compiler = CaseCompiler(req, res, initial_default)
+
+    default = MagicMock(
+        spec=CaseCompiled,
+        request=sentinel.default_req,
+        response=sentinel.default_res,
+    )
+    compiler_of_default = compiler.of_default(default)
+    assert compiler_of_default is sentinel.default_compiler
+
+    req.of_default.assert_called_once_with(sentinel.default_req)
+    res.of_default.assert_called_once_with(sentinel.default_res)
     compiler_ctor.assert_called_once_with(
         request=sentinel.default_req_compiler,
         response=sentinel.default_res_compiler,
-        default=default,
+        default=ANY,
     )
-    req.of_default.assert_called_once_with(sentinel.request)
-    res.of_default.assert_called_once_with(sentinel.response)
+    default = compiler_ctor.call_args[1]['default']
+    assert default is sentinel.new_default
