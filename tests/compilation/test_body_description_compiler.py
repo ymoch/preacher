@@ -9,7 +9,6 @@ from preacher.compilation.body import (
 )
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
-from preacher.core.body import BodyDescription
 
 PACKAGE = 'preacher.compilation.body'
 
@@ -90,22 +89,6 @@ def test_given_a_mapping(compiler, analysis, description):
 
     analysis.compile.assert_called_once_with('text')
     description.compile.assert_has_calls([call('d1'), call('d2')])
-
-
-def test_given_default(ctor, compiler, analysis, description):
-    compiler = compiler.of_default(BodyDescription(
-        analyze=sentinel.default_analyze,
-        descriptions=[sentinel.default_description],
-    ))
-    desc = compiler.compile({})
-    assert desc is sentinel.body
-
-    ctor.assert_called_once_with(
-        analyze=sentinel.default_analyze,
-        descriptions=[sentinel.default_description],
-    )
-    analysis.compile.assert_not_called()
-    description.compile.assert_not_called()
 
 
 @patch(

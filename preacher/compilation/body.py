@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import List, Optional
 
-from preacher.core.analysis import Analysis
+from preacher.core.analysis import Analysis, analyze_json_str
 from preacher.core.body import BodyDescription
 from preacher.core.description import Description
 from .analysis import AnalysisCompiler
@@ -32,7 +32,7 @@ class BodyDescriptionCompiled:
 
     def fix(self) -> BodyDescription:
         return BodyDescription(
-            analyze=self.analyze,
+            analyze=self.analyze or analyze_json_str,
             descriptions=self.descriptions,
         )
 
@@ -49,7 +49,7 @@ class BodyDescriptionCompiler:
         self._description = description
         self._default = default or BodyDescriptionCompiled()
 
-    def compile(self, obj: object) -> BodyDescription:
+    def compile(self, obj: object) -> BodyDescriptionCompiled:
         """
         `obj` should be a mapping or a list.
         An empty list results in an empty description.

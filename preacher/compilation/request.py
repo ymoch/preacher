@@ -26,7 +26,7 @@ class RequestCompiled:
         return RequestCompiled(
             path=or_else(other.path, self.path),
             headers=or_else(other.headers, self.headers),
-            params=or_else(other.params, self.params),
+            params=or_else(other.params, self.params),  # type: ignore
         )
 
     def fix(self) -> Request:
