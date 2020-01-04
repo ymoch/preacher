@@ -2,7 +2,7 @@ from unittest.mock import patch, sentinel
 
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import CompilationError
 from preacher.compilation.matcher import compile
 from preacher.core.hamcrest import after, before
 from preacher.core.matcher import match
@@ -23,12 +23,6 @@ FAILURE = Status.FAILURE
 def test_invalid_mapping(obj):
     with raises(CompilationError):
         compile(obj)
-
-
-def test_given_not_a_list_for_multiple_matchers():
-    with raises(CompilationError) as error_info:
-        compile({'contain': 1})
-    assert error_info.value.path == [NamedNode('contain')]
 
 
 @mark.parametrize('compiled, verified, expected_status', [
@@ -97,6 +91,10 @@ def test_given_not_a_list_for_multiple_matchers():
     ({'have_item': {'equal': 1}}, [], UNSTABLE),
     ({'have_item': {'equal': 1}}, [0, 'A'], UNSTABLE),
     ({'have_item': {'equal': 1}}, [0, 1, 2], SUCCESS),
+    ({'contain': 1}, [], UNSTABLE),
+    ({'contain': 1}, [1], SUCCESS),
+    ({'contain': 1}, [1, 2], UNSTABLE),
+    ({'contain': 1}, [2, 3], UNSTABLE),
     ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
      [], UNSTABLE),
     ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
