@@ -62,41 +62,34 @@ Components
 Scenario
 ^^^^^^^^
 A ``Scenario`` is written in `YAML`_.
-A ``Scenario`` is a mapping that consists of below:
 
 .. list-table:: The Definition of ``Scenario`` Object
     :header-rows: 1
-    :widths: 10 30 15 15 30
+    :widths: 10 15 15 60
 
     * - Key
       - Type
-      - Required?
       - Default
       - Description
     * - label
       - String
-      - No
       - ``null``
       - A label of this scenario.
     * - default
       - :ref:`case`
-      - No
       - ``{}``
       - Default of this scenario.
     * - when
       - List[Description]
-      - No
       - ``[]``
       - | Run this scenario only when the context satisfies these description.
         | See: :doc:`Application Running Context<context>`
     * - cases
       - List[:ref:`Case`]
-      - No
       - ``[]``
       - Test cases.
     * - subscenarios
       - List[Scenario]
-      - No
       - ``[]``
       - Nested scenarios.
 
@@ -104,35 +97,28 @@ A ``Scenario`` is a mapping that consists of below:
 
 Case
 ^^^^
-A ``Case`` is a mapping that consists of below:
-
 .. list-table:: The Definition of ``Case`` Object
     :header-rows: 1
-    :widths: 10 30 15 15 30
+    :widths: 10 15 15 60
 
     * - Key
       - Type
-      - Required?
       - Default
       - Description
     * - label
       - String
-      - No
       - ``null``
       - A label of this case.
     * - enabled
       - Boolean
-      - No
       - ``true``
       - Whether this case is enabled.
     * - request
       - :ref:`request`
-      - No
       - The default request
       - The request of this case.
     * - response
       - :ref:`response-description`
-      - No
       - The default response description.
       - The response description of this case.
 
@@ -140,39 +126,76 @@ A ``Case`` is a mapping that consists of below:
 
 Request
 ^^^^^^^
-A ``Request`` is a mapping or a string.
+.. list-table:: The Definition of ``Request`` Object
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-A mapping for ``Request`` has items below:
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - path
+      - String
+      - ``''``
+      - A request path
+    * - headers
+      - Mapping[String, String]
+      - ``{}``
+      - The headers as a mapping of names to values.
+    * - params
+      - Mapping
+      - ``{}``
+      - Query parameters as a mapping of keys to values.
 
-- path: ``String`` (Optional)
-    - A request path. The default value is ``''``.
-- Headers: ``Mapping<String, String>`` (Optional)
-    - Request headers as a mapping of names to values.
-- params: ``Mapping<String, String>`` (Optional)
-    - Query parameters as a mapping of keys to values.
-
-When given a string, that is equivalent to ``{"path": it}``.
+When given a string as a ``Request``, that is equivalent to ``{path: it}``.
 
 .. _response-description:
 
 ResponseDescription
 ^^^^^^^^^^^^^^^^^^^
-A ``ResponseDescription`` is a mapping that consists of below:
+.. list-table:: The Definition of ``ResponseDescription`` Object
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-- status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)
-    - Predicates that match a status code as an integer value.
-    - When given a number, that is equivalent to ``{"equal": it}``.
-- headers:
-    - Descriptions that descript the response headers.
-    - Response headers are converted to be a JSON
-      that is a mapping of names to values
-      and can be descripted as a JSON (e.g. ``."content-type"``).
-      *Note that Names are lower-cased* to normalize.
-- body: ``BodyDescription`` (Optional)
-    - A description that descript the response body.
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - status_code
+      - List[:ref:`predicate`]
+      - ``[]``
+      - Predicates that match a status code as an integer value.
+        See :ref:`status-code` for more information.
+    * - headers
+      - List[:ref:`description`]
+      - ``{}``
+      - Descriptions that describe the response headers.
+        See :ref:`headers` for more information.
+    * - body
+      - :ref:`body-description`
+      - ``null``
+      - A description that describe the response body.
 
-Body Description
-^^^^^^^^^^^^^^^^
+.. _status-code:
+
+Status code
+"""""""""""
+When given a number, that is equivalent to ``{"equal": it}``.
+
+.. _headers:
+
+Headers
+"""""""
+
+Response headers are converted to be a JSON
+that is a mapping of names to values
+and can be descripted as a JSON (e.g. ``."content-type"``).
+*Note that Names are lower-cased* to normalize.
+
+.. _body-description:
+
+BodyDescription
+^^^^^^^^^^^^^^^
 A ``BodyDescription`` is a mapping or a list.
 
 A mapping for ``BodyDescription`` has items below.
@@ -186,6 +209,8 @@ A mapping for ``BodyDescription`` has items below.
 
 When given a list, that is equivalent to ``{"descritptions": it}``.
 
+.. _description:
+
 Description
 ^^^^^^^^^^^
 A ``Description`` is a mapping that consists of below:
@@ -194,6 +219,8 @@ A ``Description`` is a mapping that consists of below:
     - An extraction process.
 - should: ``Predicate``, or ``List<Predicate>>`` (Optional)
     - Predicates that match the descripted value.
+
+.. _predicate:
 
 Predicate
 ^^^^^^^^^
