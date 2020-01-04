@@ -15,7 +15,7 @@ compile_parameter_patch = patch(f'{PACKAGE}.compile_parameter')
 
 
 @fixture
-def compiler(description, case):
+def compiler(description, case) -> ScenarioCompiler:
     return ScenarioCompiler(description, case)
 
 
