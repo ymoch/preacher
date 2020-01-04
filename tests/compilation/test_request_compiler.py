@@ -11,10 +11,8 @@ from preacher.compilation.request import RequestCompiler
 from preacher.core.request import Request
 
 
-ctor_patch = patch(
-    target='preacher.compilation.request.Request',
-    return_value=sentinel.request,
-)
+PACKAGE = 'preacher.compilation.request'
+ctor_patch = patch(f'{PACKAGE}.Request', return_value=sentinel.request)
 
 
 @fixture
@@ -97,41 +95,10 @@ def test_given_a_filled_mapping(ctor, compiler):
         params={'key': 'value'},
     )
 
-    ctor.reset_mock()
-    compiler = compiler.of_default(Request(
-        path='/default-path',
-        headers={'k1': 'v1'},
-        params={'k': 'v'},
-    ))
-    request = compiler.compile({})
-    assert request is sentinel.request
 
-    ctor.assert_called_once_with(
-        path='/default-path',
-        headers={'k1': 'v1'},
-        params={'k': 'v'},
-    )
+@patch(f'{PACKAGE}.RequestCompiler', return_value=sentinel.compiler_of_default)
+def test_of_default(compiler_ctor, compiler):
+    actual = compiler.of_default(sentinel.default)
+    assert actual is sentinel.compiler_of_default
 
-    ctor.reset_mock()
-    request = compiler.compile('/path')
-    assert request is sentinel.request
-
-    ctor.assert_called_once_with(
-        path='/path',
-        headers={'k1': 'v1'},
-        params={'k': 'v'},
-    )
-
-    ctor.reset_mock()
-    request = compiler.compile({
-        'path': '/path',
-        'headers': {'key1': 'value1'},
-        'params': {'key': 'value'},
-    })
-    assert request is sentinel.request
-
-    ctor.assert_called_once_with(
-        path='/path',
-        headers={'key1': 'value1'},
-        params={'key': 'value'},
-    )
+    compiler_ctor.assert_called_once_with(default=sentinel.default)
