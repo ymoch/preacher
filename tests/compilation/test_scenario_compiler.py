@@ -22,14 +22,14 @@ def compiler(description, case):
 @fixture
 def description():
     compiler = MagicMock(spec=DescriptionCompiler)
-    compiler.compile.return_value = sentinel.description
+    compiler.compile = MagicMock(return_value=sentinel.description)
     return compiler
 
 
 @fixture
 def case(case_of_default):
     compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile_default.return_value = case_of_default
+    compiler.compile_default = MagicMock(return_value=case_of_default)
     return compiler
 
 
@@ -44,7 +44,7 @@ def case_of_default(sub_case):
 @fixture
 def sub_case():
     compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile_fixed.return_value = sentinel.sub_case
+    compiler.compile_fixed = MagicMock(return_value=sentinel.sub_case)
     return compiler
 
 
@@ -162,6 +162,7 @@ def test_given_filled_parameters(
     compiler,
     description,
     case,
+    case_of_default,
 ):
     compile_parameter.side_effect = [
         Parameter(label='param1', arguments={'foo': 'bar'}),
@@ -207,9 +208,13 @@ def test_given_filled_parameters(
     ])
     case.compile_default.assert_has_calls([
         call({'foo': 'bar'}),
-        call().compile_fixed({'spam': 'ham'}),
-        call().compile_default({}),
         call({'foo': 'baz'}),
-        call().compile_fixed({'spam': 'eggs'}),
+    ])
+    case_of_default.compile_fixed.assert_has_calls([
+        call({'spam': 'ham'}),
+        call({'spam': 'eggs'}),
+    ])
+    case_of_default.compile_default.assert_has_calls([
+        call().compile_default({}),
         call().compile_default({}),
     ])
