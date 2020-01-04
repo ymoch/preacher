@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Optional
 
 from preacher.core.case import Case
 from .error import CompilationError, on_key
 from .request import RequestCompiler
 from .response import ResponseDescriptionCompiler
-from .util import compile_bool, compile_str
+from .util import compile_bool, compile_optional_str
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
@@ -23,11 +22,9 @@ class CaseCompiler:
         self,
         request: RequestCompiler,
         response: ResponseDescriptionCompiler,
-        default: Optional[Case] = None,
     ):
         self._request = request
         self._response = response
-        self._default = default or Case()
 
     def compile(self, obj: object) -> Case:
         """`obj` should be a mapping."""
@@ -35,29 +32,21 @@ class CaseCompiler:
         if not isinstance(obj, Mapping):
             raise CompilationError('Must be a mapping')
 
-        label = self._default.label
         label_obj = obj.get(_KEY_LABEL)
-        if label_obj is not None:
-            with on_key(_KEY_LABEL):
-                label = compile_str(label_obj)
+        with on_key(_KEY_LABEL):
+            label = compile_optional_str(label_obj)
 
-        enabled = self._default.enabled
-        enabled_obj = obj.get(_KEY_ENABLED)
-        if enabled_obj is not None:
-            with on_key(_KEY_ENABLED):
-                enabled = compile_bool(enabled_obj)
+        enabled_obj = obj.get(_KEY_ENABLED, True)
+        with on_key(_KEY_ENABLED):
+            enabled = compile_bool(enabled_obj)
 
-        request = self._default.request
-        request_obj = obj.get(_KEY_REQUEST)
-        if request_obj is not None:
-            with on_key(_KEY_REQUEST):
-                request = self._request.compile(request_obj)
+        request_obj = obj.get(_KEY_REQUEST, {})
+        with on_key(_KEY_REQUEST):
+            request = self._request.compile(request_obj).to_request()
 
-        response = self._default.response
         response_obj = obj.get(_KEY_RESPONSE)
-        if response_obj is not None:
-            with on_key(_KEY_RESPONSE):
-                response = self._response.compile(response_obj)
+        with on_key(_KEY_RESPONSE):
+            response = self._response.compile(response_obj)
 
         return Case(
             label=label,
@@ -66,9 +55,10 @@ class CaseCompiler:
             response=response,
         )
 
-    def of_default(self, default: Case) -> CaseCompiler:
+    def of_default(self, obj: object) -> CaseCompiler:
+        request_compiled = self._request.compile(obj)
+        response_compiled = self._response.compile(obj)
         return CaseCompiler(
-            request=self._request.of_default(default.request),
-            response=self._response.of_default(default.response),
-            default=default,
+            request=self._request.of_default(request_compiled),
+            response=self._response.of_default(response_compiled),
         )
