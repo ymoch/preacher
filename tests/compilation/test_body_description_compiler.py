@@ -112,7 +112,7 @@ def test_given_default(ctor, compiler, analysis, description):
     target=f'{PACKAGE}.BodyDescriptionCompiler',
     return_value=sentinel.compiler_of_default,
 )
-def test_of_default(compiler_ctor, compiler, analysis, description):
+def test_of_default(compiler_ctor, analysis, description):
     initial_default = MagicMock(BodyDescriptionCompiled)
     initial_default.replace.return_value = sentinel.new_default
 
