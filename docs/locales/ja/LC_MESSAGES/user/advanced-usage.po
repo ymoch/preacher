@@ -6,14 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-01 16:51+0900\n"
+"POT-Creation-Date: 2020-01-05 00:25+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 # a66396d358974012976c700f464d83cb
 #: ../../user/advanced-usage.rst:2
@@ -21,14 +21,86 @@ msgstr ""
 msgid "Advanced Usage"
 msgstr "発展的な使い方"
 
+#: ../../user/advanced-usage.rst:7
+#: acfdbc60aa8244b8873a6e110e0a7467
+msgid "Default Test"
+msgstr "デフォルトテスト"
+
+#: ../../user/advanced-usage.rst:8
+#: c6d158aab6134040b0c3102de70e5671
+msgid ""
+"Default test make it possible to run similar tests, which fills the "
+"missing values with default values."
+msgstr ""
+"デフォルトテストを用いると, 値がないところをデフォルト値で穴埋めすることによって,"
+" 似たテストを実行することができます."
+
+#: ../../user/advanced-usage.rst:56
+#: acfdbc60aa8244b8873a6e110e0a7467
+msgid "Parameterized Test"
+msgstr "パラメータ化されたテスト"
+
+#: ../../user/advanced-usage.rst:57
+#: 25af539f9f2349c9b2a5540f41abf6b2
+msgid ""
+"Parameterized tests make it possible to run a test multiple times with "
+"different arguments, which can reduce test scenarios description and make"
+" them simpler and more declarative."
+msgstr ""
+"パラメータ化されたテストを用いると, あるテストを別の引数で複数回実行することができます. これによってテストの記述を少なくし, "
+"よりシンプルで宣言的にできることがあります."
+
+#: ../../user/advanced-usage.rst:60
+#: 756dc05c31f645988597bd8a7affdd30
+msgid "To make tests parameterized:"
+msgstr "テストをパラメータ化するには:"
+
+#: ../../user/advanced-usage.rst:62
+#: 335f8760031248a08bd4c8db83cc88b3
+msgid "Define ``parameters`` as a list of key-value mapping."
+msgstr "``parameters`` フィールドを, キー-値のマッピングのリストとして定義します."
+
+#: ../../user/advanced-usage.rst:63
+#: 335f8760031248a08bd4c8db83cc88b3
+msgid "Set ``!argument`` tag and its key on parameterized fields."
+msgstr "``!argument`` タグとパラメータのキーを, パラメータ化されたフィールドに設定します."
+
+# c7946552237c437c9c905d85f53dbe4e
+#: ../../user/advanced-usage.rst:89
+#: c7946552237c437c9c905d85f53dbe4e
+msgid "Conditional Scenario"
+msgstr "条件に応じて実行するシナリオ"
+
+# 993027b0dbef4117a9af5bfb73df3e47
+#: ../../user/advanced-usage.rst:90
+#: 993027b0dbef4117a9af5bfb73df3e47
+msgid ""
+"Using ``when`` properties, you can run scenarios conditionally. Scenarios"
+" are run only when the *context* satisfied the descriptions in ``when`` "
+"properties."
+msgstr ""
+"``when`` プロパティを用いることで, 条件を満たしたときだけシナリオを実行することができます.  シナリオは *コンテキスト* が "
+"``when`` プロパティの記述を満たしたときだけ実行されます."
+
+# ac5ec679db4b429b9eb93f9340a67283
+#: ../../user/advanced-usage.rst:104
+#: ac5ec679db4b429b9eb93f9340a67283
+msgid ""
+"A ``Context`` object, which stands for *context*, is a JSON-like value, "
+"which can be described by `jq`_. See :doc:`context` to find available "
+"context."
+msgstr ""
+"*コンテキスト* を表す ``Context`` オブジェクトは JSON-like な値で, `jq`_ によって記述することができます. "
+":doc:`context` で利用可能なコンテキストを閲覧できます."
+
 # dc8d1a6a728441d9b4fb1b375063028b
-#: ../../user/advanced-usage.rst:5
+#: ../../user/advanced-usage.rst:109
 #: dc8d1a6a728441d9b4fb1b375063028b
 msgid "Allowing Random Errors"
 msgstr "ランダムなエラーの許容"
 
 # a38e12d938e64ccb824b11f840094f98
-#: ../../user/advanced-usage.rst:6
+#: ../../user/advanced-usage.rst:110
 #: a38e12d938e64ccb824b11f840094f98
 msgid ""
 "Web API cannot always responds due to communication errors and so on. To "
@@ -40,7 +112,7 @@ msgstr ""
 " ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
 
 # 3b47ff03344b4e3dbf773d739ba1780f
-#: ../../user/advanced-usage.rst:11
+#: ../../user/advanced-usage.rst:115
 #: 3b47ff03344b4e3dbf773d739ba1780f
 msgid ""
 "Preacher retries while not only request fails but also a validation "
@@ -48,7 +120,7 @@ msgid ""
 msgstr "Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
 
 # 282fd99674fa427786a5bb87ff884896
-#: ../../user/advanced-usage.rst:13
+#: ../../user/advanced-usage.rst:117
 #: 282fd99674fa427786a5bb87ff884896
 msgid ""
 "Extreme response delaying can affect the testing process. You can set the"
@@ -59,7 +131,7 @@ msgstr ""
 "オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
 
 # d27c47106c004884b2c888a9c88e313a
-#: ../../user/advanced-usage.rst:17
+#: ../../user/advanced-usage.rst:121
 #: d27c47106c004884b2c888a9c88e313a
 msgid ""
 "Retrying should have intervals to avoid overloading. You can set the "
@@ -70,13 +142,13 @@ msgstr ""
 "オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
 
 # 889d898ebfbf4d7591b777aca497f7e4
-#: ../../user/advanced-usage.rst:23
+#: ../../user/advanced-usage.rst:127
 #: 889d898ebfbf4d7591b777aca497f7e4
 msgid "Control Outputs"
 msgstr "出力制御"
 
 # 38f65f102ccd4d08830df16b14174e1c
-#: ../../user/advanced-usage.rst:24
+#: ../../user/advanced-usage.rst:128
 #: 38f65f102ccd4d08830df16b14174e1c
 msgid ""
 "By default, not ``SKIPPED`` test results are shown. It is useful for "
@@ -88,73 +160,15 @@ msgstr ""
 "テストが巨大になるにつれ煩わしくなります. 出力レベルの制御は重要なエラーを見つけるために有用です."
 
 # fac7a37ce24c4bc8b0c7473fb795e3ab
-#: ../../user/advanced-usage.rst:34
+#: ../../user/advanced-usage.rst:138
 #: fac7a37ce24c4bc8b0c7473fb795e3ab
 msgid "Ignore cases"
 msgstr "テストケースを無視する"
 
 # feeab0fd48a14b1ab5872d8bc8b430e7
-#: ../../user/advanced-usage.rst:35
+#: ../../user/advanced-usage.rst:139
 #: feeab0fd48a14b1ab5872d8bc8b430e7
 msgid ""
 "To skip some cases temporarily for some reason, add ``enabled: false`` to"
 " that cases."
 msgstr "何らかの理由で一時的にテストを実行したくない場合, そのケースに ``enabled: false`` を付与します."
-
-# c7946552237c437c9c905d85f53dbe4e
-#: ../../user/advanced-usage.rst:46
-#: c7946552237c437c9c905d85f53dbe4e
-msgid "Conditional Scenario"
-msgstr "条件に応じて実行するシナリオ"
-
-# 993027b0dbef4117a9af5bfb73df3e47
-#: ../../user/advanced-usage.rst:47
-#: 993027b0dbef4117a9af5bfb73df3e47
-msgid ""
-"Using ``when`` properties, you can run scenarios conditionally. Scenarios"
-" are run only when the *context* satisfied the descriptions in ``when`` "
-"properties."
-msgstr ""
-"``when`` プロパティを用いることで, 条件を満たしたときだけシナリオを実行することができます.  シナリオは *コンテキスト* が "
-"``when`` プロパティの記述を満たしたときだけ実行されます."
-
-# ac5ec679db4b429b9eb93f9340a67283
-#: ../../user/advanced-usage.rst:61
-#: ac5ec679db4b429b9eb93f9340a67283
-msgid ""
-"A ``Context`` object, which stands for *context*, is a JSON-like value, "
-"which can be descripted by `jq`_. See :doc:`context` to find available "
-"context."
-msgstr ""
-"*コンテキスト* を表す ``Context`` オブジェクトは JSON-like な値で, `jq`_ によって記述することができます. "
-":doc:`context` で利用可能なコンテキストを閲覧できます."
-
-#: ../../user/advanced-usage.rst:66
-#: acfdbc60aa8244b8873a6e110e0a7467
-msgid "Parameterized Test"
-msgstr "パラメータ化されたテスト"
-
-#: ../../user/advanced-usage.rst:67
-#: 25af539f9f2349c9b2a5540f41abf6b2
-msgid ""
-"Parameterized tests make it possible to run a test multiple times with "
-"different arguments, which can reduce test scenarios description and make"
-" them simpler and more declarative."
-msgstr ""
-"パラメータ化されたテストを用いると, あるテストを別の引数で複数回実行することができます. これによってテストの記述を少なくし, "
-"よりシンプルで宣言的にできることがあります."
-
-#: ../../user/advanced-usage.rst:70
-#: 756dc05c31f645988597bd8a7affdd30
-msgid "To make tests parameterized:"
-msgstr "テストをパラメータ化するには:"
-
-#: ../../user/advanced-usage.rst:72
-#: 335f8760031248a08bd4c8db83cc88b3
-msgid "Define ``parameters`` as a list of key-value mapping."
-msgstr "``parameters`` フィールドを, キー-値のマッピングのリストとして定義します."
-
-#: ../../user/advanced-usage.rst:73
-#: 335f8760031248a08bd4c8db83cc88b3
-msgid "Set ``!argument`` tag and its key on parameterized fields."
-msgstr "``!argument`` タグとパラメータのキーを, パラメータ化されたフィールドに設定します."

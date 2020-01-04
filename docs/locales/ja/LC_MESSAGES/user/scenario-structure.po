@@ -2,339 +2,745 @@
 # Copyright (C) 2019, Yu Mochizuki
 # This file is distributed under the same license as the Preacher package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-27 23:55+0900\n"
+"POT-Creation-Date: 2020-01-04 23:48+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: ../../user/scenario-structure.rst:2
+#: 8d3e996c9f70441e9cfb50c07992bea5
 msgid "Scenario Structure"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:3
+#: 4cfbfd90ccbc457ba6a44d07a06c5f54
 msgid "In Preacher, a \"scenario\" is the basic unit of verification."
 msgstr ""
 
 #: ../../user/scenario-structure.rst:6
+#: 9c95c0e565404febb5ee4744ea3107e6
 msgid "Example"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:7
+#: 215ee69b915e4709b040d64681d8be61
 msgid "Here is a configuration example."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:60
+#: ../../user/scenario-structure.rst:59
+#: 29b3a350226b41f39130fbe6cb5d452a
 msgid "Components"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:63
+#: ../../user/scenario-structure.rst:62
+#: 4cd55d75327c4fe4bab969ff96a6bb77
 msgid "Scenario"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:64
-msgid ""
-"A ``Scenario`` is written in `YAML`_. A ``Scenario`` is a mapping that "
-"consists of below:"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:68 ../../user/scenario-structure.rst:85
-msgid "label: ``String`` (Recommended)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:68
-msgid "A label of this scenario."
+#: ../../user/scenario-structure.rst:63
+#: e522455729a745c98e06f80917a64b7f
+msgid "A ``Scenario`` is written in `YAML`_."
 msgstr ""
 
 #: ../../user/scenario-structure.rst:69
-msgid ""
-"This field is actually optional but recommended to tell this scenario "
-"from another."
+#: ../../user/scenario-structure.rst:108
+#: ../../user/scenario-structure.rst:131
+#: ../../user/scenario-structure.rst:160
+#: ../../user/scenario-structure.rst:187
+#: ../../user/scenario-structure.rst:229
+#: ../../user/scenario-structure.rst:254
+#: 129a0bc94b4a41eaa39b06b49162dcd8 31e367b822e34335bd1b8c637856c748
+#: 4ffdc445bacf4e65bc88716b4454271d accf03c6d73742358481a5dcbbead43c
+#: df12db73f43440eb9d62cbbe3afbc63e e179ac9d01a44ddabf8e6e7061c9cf71
+#: e5df8954bd824ba4b8e48dcaa1a0358b
+msgid "Key"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:70
-msgid "default: ``Default`` (Optional)"
+#: ../../user/scenario-structure.rst:109
+#: ../../user/scenario-structure.rst:132
+#: ../../user/scenario-structure.rst:161
+#: ../../user/scenario-structure.rst:188
+#: ../../user/scenario-structure.rst:230
+#: ../../user/scenario-structure.rst:255
+#: 320ba7ec706b4fa19eaf8aea58d5055e 3b483486eac24ac88b7eb421dae74d8f
+#: 4c4406eb447f4a4da03a955e9587eaed 61d2addb5f6148b58a3ac4d766b64668
+#: 696d7718411143a38ecbf99bbc42df0e dc9863bb2afa413f930c02851c62a1f2
+#: ed90648b1bfd4238b9de61a13550d934
+msgid "Type"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:71
-msgid "Default of this scenario."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:73
-msgid "when: ``Description`` or ``List<Description>`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:73
-msgid "Run this scenario only when the context satisfies these description."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:74
-msgid "See: :doc:`Application Running Context<context>`"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:75
-msgid "cases: ``List<Case>`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:76
-msgid "Test cases."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:78
-msgid "subscenarios: ``List<Scenario>`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:78
-msgid "Nested scenarios."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:81
-msgid "Case"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:82
-msgid "A ``Case`` is a mapping that consists of below:"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:85
-msgid "A label of this case."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:86
-msgid ""
-"This field is actually optional but recommended to tell this case from "
-"another."
-msgstr ""
-
-# 8b970692dd9443d3811c3f169f06dc13
-#: ../../user/scenario-structure.rst:87
-msgid "enabled: ``Boolean`` (Optional)"
-msgstr ""
-
-# 126b21595a394c89b7acc698c6a5a11e
-#: ../../user/scenario-structure.rst:88
-msgid "Whether this case is enabled. The default value is ``true``."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:89 ../../user/scenario-structure.rst:157
-msgid "request: ``Request`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:90
-msgid "A request."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:92 ../../user/scenario-structure.rst:160
-msgid "response: ``ResponseDescription`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:92
-msgid "A response description."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:95
-msgid "Request"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:96
-msgid "A ``Request`` is a mapping or a string."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:98
-msgid "A mapping for ``Request`` has items below:"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:100
-msgid "path: ``String`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:101
-msgid "A request path. The default value is ``''``."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:102
-msgid "Headers: ``Mapping<String, String>`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:103
-msgid "Request headers as a mapping of names to values."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:105
-msgid "params: ``Mapping<String, String>`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:105
-msgid "Query parameters as a mapping of keys to values."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:107
-msgid "When given a string, that is equivalent to ``{\"path\": it}``."
-msgstr ""
-
 #: ../../user/scenario-structure.rst:110
-msgid "Response Decription"
+#: ../../user/scenario-structure.rst:133
+#: ../../user/scenario-structure.rst:162
+#: ../../user/scenario-structure.rst:189
+#: ../../user/scenario-structure.rst:231
+#: ../../user/scenario-structure.rst:256
+#: 9a0740519915423d80f055a13357bd10
+msgid "Default"
 msgstr ""
 
+#: ../../user/scenario-structure.rst:72
 #: ../../user/scenario-structure.rst:111
-msgid "A ``ResponseDescription`` is a mapping that consists of below:"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:114
-msgid "status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:114
-msgid "Predicates that match a status code as an integer value."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:115
-msgid "When given a number, that is equivalent to ``{\"equal\": it}``."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:120
-msgid "headers:"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:117
-msgid "Descriptions that descript the response headers."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:118
-msgid ""
-"Response headers are converted to be a JSON that is a mapping of names to"
-" values and can be descripted as a JSON (e.g. ``.\"content-type\"``). "
-"*Note that Names are lower-cased* to normalize."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:123
-msgid "body: ``BodyDescription`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:123
-msgid "A description that descript the response body."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:126
-msgid "Body Description"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:127
-msgid "A ``BodyDescription`` is a mapping or a list."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:129
-msgid "A mapping for ``BodyDescription`` has items below."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:133
-msgid "analyzed_as: ``String`` (Optional)"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:132
-msgid "The method to analyze the body. The default value is ``json``."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:133
-msgid "When given ``json``, the body is analyzed as a JSON."
-msgstr ""
-
 #: ../../user/scenario-structure.rst:134
-msgid "When given ``xml``, the body is analyzed as an XML."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:136
-msgid "descriptions: ``Description`` or ``List<Description>``"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:136
-msgid "Descriptions that descript the response body."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:138
-msgid "When given a list, that is equivalent to ``{\"descritptions\": it}``."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:141
+#: ../../user/scenario-structure.rst:163
+#: ../../user/scenario-structure.rst:190
+#: ../../user/scenario-structure.rst:232
+#: ../../user/scenario-structure.rst:249
+#: ../../user/scenario-structure.rst:257
+#: 1906727484c848dfb18c5b5ce53578a2
 msgid "Description"
 msgstr ""
 
+#: ../../user/scenario-structure.rst:73
+#: ../../user/scenario-structure.rst:112
+#: ../../user/scenario-structure.rst:135
+#: 818a3b43f4c244e1ac8da9be94f42874 bd132fc379a54ac193867f5c0750455d
+#: c33dd11d5fa14fe086a97df337a86b7e
+msgid "label"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:74
+#: ../../user/scenario-structure.rst:113
+#: ../../user/scenario-structure.rst:136
+#: ../../user/scenario-structure.rst:165
+#: ../../user/scenario-structure.rst:234
+#: 0d6f616d94914df99e6a2485125dd9b5 33e5b289c8434a2f8091707725fe6a21
+#: 57055ec6eed5489aa68380825f127029 70a94d207cd04146bb31dff825954709
+#: ed81e833f03b423eb296b92987976cc6
+msgid "String"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:75
+#: ../../user/scenario-structure.rst:96
+#: ../../user/scenario-structure.rst:114
+#: ../../user/scenario-structure.rst:137
+#: ../../user/scenario-structure.rst:203
+#: 5363520ac5a24b6b9e3b6d2395567d75 61742d7e02b84cfcbdf07eefcc4a80c4
+#: 99eac0c6279945a584217a1cfcf92247 a1244ad2b3244aa4a256d031ee91bd42
+#: c662775114294fc6b97b0a756146bb9f
+msgid "``null``"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:76
+#: 2dd4ccf26461429ebc0a5c865f13110a
+msgid "A label of this scenario."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:77
+#: 9a0740519915423d80f055a13357bd10
+msgid "default"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:78
+#: a2fc768cd3a34b28916382b1d2bbcdd0
+msgid ":ref:`case`"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:79
+#: ../../user/scenario-structure.rst:118
+#: ../../user/scenario-structure.rst:170
+#: ../../user/scenario-structure.rst:174
+#: ../../user/scenario-structure.rst:198
+#: ../../user/scenario-structure.rst:264
+#: 10bcfc3266c8446291ec43e34562bcd2 117eb5194a1543b5aa3dafd3e357066c
+#: 2b8009c5ef9b4ca7a6439132bd92d1b3 54cae27e59914a178302eb0dfd5dbbc7
+#: b4c5a617fdb6408a99488c40a9916de7 e8d1a61860d54dfe90b92ef17f1cecbc
+msgid "``{}``"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:80
+#: 9e774c99af774ee8a4dd2429eef58b08
+msgid "Default of this scenario."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:81
+#: ce83cc5dca704e9fad9030f9ee0fb7af
+msgid "when"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:82
+#: 1ae565138a3c4d9ba60a807f456bb6b6
+msgid "List[Description]"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:83
+#: ../../user/scenario-structure.rst:88
+#: ../../user/scenario-structure.rst:92
+#: ../../user/scenario-structure.rst:193
+#: ../../user/scenario-structure.rst:240
+#: 003b68404ec24da490b74467f25a945b 08fa981a21694d0a9c86db4bd1a9081b
+#: 7402bde4e7a04497b77c69943054efc3 a6710d3a149b47669f2b13aa0d539450
+#: cf0f262f5f79477ea1eec0c705802887
+msgid "``[]``"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:84
+#: 8a714c27ee1a4a9eba29a5691dfee70f
+msgid ""
+"Run this scenario only when the context satisfies these description. See "
+":doc:`Application Running Context<context>` for more information."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:86
+#: fbea408edd2940d09a23657d3dfb9d37
+msgid "cases"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:87
+#: a66e53b5d0ed49aaad4261e0e4b995ca
+msgid "List[:ref:`case`]"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:89
+#: a2fc768cd3a34b28916382b1d2bbcdd0
+msgid "Test cases."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:90
+#: 45390653dbb949f696bcf5fd9cef02a8
+msgid "subscenarios"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:91
+#: 45390653dbb949f696bcf5fd9cef02a8
+msgid "List[Scenario]"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:93
+#: 45390653dbb949f696bcf5fd9cef02a8
+msgid "Nested scenarios."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:94
+#: ../../user/scenario-structure.rst:172
+#: 069c57f6e8374f329e23b199dc11d55c ed869e9ae20744c980297bc1ff67f295
+msgid "params"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:95
+#: 254b846b7ff94aa7b278a0e8d8ed780f
+msgid "List[:ref:`parameter`]"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:97
+#: 7326a82140f94d31bd100ddf388f3298
+msgid ""
+"Parameters to make parameterized test. See :ref:`parameterized-test` for "
+"more information."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:103
+#: 68a1402a099549ec9649cb1bc934c89a
+msgid "Parameter"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:115
+#: 1ba84810a6b54b6b81a5aa6fae619415
+msgid "Label of this parameter."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:116
+#: 330937d3537844bdbe24c26b59ebbf31
+msgid "arguments"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:117
+#: ../../user/scenario-structure.rst:173
+#: 359bcf1c672c492e8e4149a1e8b4c7d4 6f2002039155456db44e3a6484c4b991
+msgid "Mapping"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:119
+#: 504419cd993649d580207771577c3f82
+msgid "An argument mapping of argument names to their values."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:121
+#: 63df3dda90ed46e59124f2ae9e8cf6ef
+msgid "See :ref:`parameterized-test` to check examples."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:126
+#: fbea408edd2940d09a23657d3dfb9d37
+msgid "Case"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:138
+#: 1ba84810a6b54b6b81a5aa6fae619415
+msgid "A label of this case."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:139
+#: 4a4b57df0f6643ceb2213d38e8283481
+msgid "enabled"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:140
+#: f441ebed520d47dba55afd94e320b9b5
+msgid "Boolean"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:141
+#: bc7398653df44535a2cb255e5f72f75b
+msgid "``true``"
+msgstr ""
+
 #: ../../user/scenario-structure.rst:142
-msgid "A ``Description`` is a mapping that consists of below:"
+#: 126b21595a394c89b7acc698c6a5a11e
+msgid "Whether this case is enabled."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:143
+#: c89abf8370bb4b95835a86e35e9bd504
+msgid "request"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:144
-msgid "describe: :doc:`Extraction<extraction>`"
+#: 4d000b60540a452a9b918feec592f52d
+msgid ":ref:`request`"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:145
-msgid "An extraction process."
+#: 530d0ef03af44e44a78cea936c580c1d
+msgid "The default request"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:146
+#: 1ba84810a6b54b6b81a5aa6fae619415
+msgid "The request of this case."
 msgstr ""
 
 #: ../../user/scenario-structure.rst:147
-msgid "should: ``Predicate``, or ``List<Predicate>>`` (Optional)"
+#: 9c6ea325e6b74050a3cccf57d01cdc3d
+msgid "response"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:147
-msgid "Predicates that match the descripted value."
+#: ../../user/scenario-structure.rst:148
+#: e73baab7c38749f1bea51891fbff676c
+msgid ":ref:`response-description`"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:149
+#: e73baab7c38749f1bea51891fbff676c
+msgid "The default response description."
 msgstr ""
 
 #: ../../user/scenario-structure.rst:150
+#: 31667fafb7244bc791f8a8c4eb131b71
+msgid "The response description of this case."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:155
+#: c89abf8370bb4b95835a86e35e9bd504
+msgid "Request"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:164
+#: c83716bc89874fc1b199278c8f7622bf
+msgid "path"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:166
+#: 378b006940d7438bb68f4efb00f4b076
+msgid "``''``"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:167
+#: bb631603aa384a39a1ec73092ef1c27f
+msgid "A request path"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:168
+#: ../../user/scenario-structure.rst:196
+#: 0b5825f7580843bca9f7d8497088e49c
+msgid "headers"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:169
+#: 02c5891baa1b42e6baf6d80942b83f17
+msgid "Mapping[String, String]"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:171
+#: 8a700d61536e41928317b244debe618d
+msgid "The headers as a mapping of names to values."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:175
+#: de18e7600a4e4639bdb6977dffb74652
+msgid "Query parameters as a mapping of keys to values."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:177
+#: cf9e4d60445d4bac99c209be7f5d10ec
+msgid ""
+"When given a string as a ``Request``, that is equivalent to ``{path: "
+"it}``."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:182
+#: 9c6ea325e6b74050a3cccf57d01cdc3d
+msgid "ResponseDescription"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:191
+#: dfd87283024f4f8ab7e4d67823390f26
+msgid "status_code"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:192
+#: ../../user/scenario-structure.rst:263
+#: 75b76f5684ae4d428ee6247416c663c7 847c02b99fa94b699f6c0f81d0e23320
+msgid "List[:ref:`predicate`]"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:194
+#: 227675d910064c4dae982603aa0dd4e4
+msgid ""
+"Predicates that match a status code as an integer value. See :ref"
+":`status-code` for more information."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:197
+#: ../../user/scenario-structure.rst:239
+#: e73baab7c38749f1bea51891fbff676c
+msgid "List[:ref:`description`]"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:199
+#: c009666d6fb74ddca4998eeaf770280b
+msgid ""
+"Descriptions that describe the response headers. See :ref:`headers` for "
+"more information."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:201
+#: ebf6d861d4a94fd5affe879faeebec82
+msgid "body"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:202
+#: e73baab7c38749f1bea51891fbff676c
+msgid ":ref:`body-description`"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:204
+#: f606dd5dd3db49b494e656f90c523a9f
+msgid "A description that describe the response body."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:209
+#: e1c2a9ce6f194e84ae853a35fa1aa2ec
+msgid "Status code"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:210
+#: a5d951f4709a45f194e8d6fd33e8ce6d
+msgid "When given a number, that is equivalent to ``{\"equal\": it}``."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:215
+#: 0b5825f7580843bca9f7d8497088e49c
+msgid "Headers"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:216
+#: c9d93270248a4a7e99f72699c7a51039
+msgid ""
+"Response headers are converted to be a JSON that is a mapping of names to"
+" values and can be described as a JSON (e.g. ``.\"content-type\"``). "
+"*Note that Names are lower-cased* to normalize."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:224
+#: 1ae565138a3c4d9ba60a807f456bb6b6
+msgid "BodyDescription"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:233
+#: b38a01f536614c58a5198aaf40b936eb
+msgid "analyze_as"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:235
+#: 8ea9a61dd30c4498b3c162e27fd7c7ab
+msgid "``json``"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:236
+#: 126b21595a394c89b7acc698c6a5a11e
+msgid "The method to analyze the body. Allowed values are ``json`` and ``xml``."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:238
+#: 1906727484c848dfb18c5b5ce53578a2
+msgid "descriptions"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:241
+#: 5a6a466f3a5c4f43a05229a78f1c2d88
+msgid "Descriptions that describe the response body."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:243
+#: 86af9c37e5384842bd916c24a8318e60
+msgid ""
+"When given a list as a ``BodyDescription``, that is equivalent to "
+"``{\"descritptions\": it}``."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:258
+#: 1906727484c848dfb18c5b5ce53578a2
+msgid "describe"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:259
+#: f8c4dd2619e94d0c9a9d60312e3c39b6
+msgid ":doc:`Extraction<extraction>`"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:260
+#: 22010b7c3b104243add3d3272b41687e
+msgid "**Required**"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:261
+#: a1aa820681284b9b8d08943d7af12cd0
+msgid "An extraction to get the described value."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:262
+#: 92aaf92c743e4172907a92b766a4f89e
+msgid "should"
+msgstr ""
+
+#: ../../user/scenario-structure.rst:265
+#: a1aa820681284b9b8d08943d7af12cd0
+msgid "Predicates that match the described value."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:270
+#: db2dd8b958304431a845cb392d5ca14a
 msgid "Predicate"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:151
+#: ../../user/scenario-structure.rst:271
+#: 8c7a7c6926f94a3994ba3b0039c1102d
 msgid ""
 "A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the "
 "future)."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:154
-msgid "Default"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:155
-msgid "A ``Default`` is a mapping that consists of below:"
-msgstr ""
-
-#: ../../user/scenario-structure.rst:158
-msgid "A request to overwrite the default request values."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:160
-msgid ""
-"A response description to overwrite the default response description "
-"values."
-msgstr ""
-
-#: ../../user/scenario-structure.rst:163
+#: ../../user/scenario-structure.rst:274
+#: 348e07db10484fa5a4be296bc2f8967b
 msgid "Inclusion"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:164
+#: ../../user/scenario-structure.rst:275
+#: ee93fac19bfd4519b3465a582c7128f9
 msgid ""
 "Using ``!include`` tag, you can include other YAML files. This macro is "
 "available anywhere in your scenario."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:171
+#: ../../user/scenario-structure.rst:282
+#: 2470aef3133d4210ab3ff04bbf48519b
 msgid ""
 "A good practice of this feature is locating subscenarios on "
 "subdirectories."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:180
+#: ../../user/scenario-structure.rst:291
+#: 24e921b03b63435ca59f7ba3025a46bc
 msgid ""
 "Anchors in a including YAML are not available in included YAMLs, because "
 "the included YAMLs are parsed after the including YAML is parsed."
 msgstr ""
+
+#~ msgid ""
+#~ "A ``Scenario`` is written in `YAML`_."
+#~ " A ``Scenario`` is a mapping that "
+#~ "consists of below:"
+#~ msgstr ""
+
+#~ msgid "label: ``String`` (Recommended)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This field is actually optional but "
+#~ "recommended to tell this scenario from"
+#~ " another."
+#~ msgstr ""
+
+#~ msgid "default: ``Default`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "when: ``Description`` or ``List<Description>`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "Run this scenario only when the context satisfies these description."
+#~ msgstr ""
+
+#~ msgid "See: :doc:`Application Running Context<context>`"
+#~ msgstr ""
+
+#~ msgid "cases: ``List<Case>`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "subscenarios: ``List<Scenario>`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "A ``Case`` is a mapping that consists of below:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This field is actually optional but "
+#~ "recommended to tell this case from "
+#~ "another."
+#~ msgstr ""
+
+# 8b970692dd9443d3811c3f169f06dc13
+#~ msgid "enabled: ``Boolean`` (Optional)"
+#~ msgstr ""
+
+# 126b21595a394c89b7acc698c6a5a11e
+#~ msgid "Whether this case is enabled. The default value is ``true``."
+#~ msgstr ""
+
+#~ msgid "request: ``Request`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "A request."
+#~ msgstr ""
+
+#~ msgid "response: ``ResponseDescription`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "A response description."
+#~ msgstr ""
+
+#~ msgid "A ``Request`` is a mapping or a string."
+#~ msgstr ""
+
+#~ msgid "A mapping for ``Request`` has items below:"
+#~ msgstr ""
+
+#~ msgid "path: ``String`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "A request path. The default value is ``''``."
+#~ msgstr ""
+
+#~ msgid "Headers: ``Mapping<String, String>`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "Request headers as a mapping of names to values."
+#~ msgstr ""
+
+#~ msgid "params: ``Mapping<String, String>`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "When given a string, that is equivalent to ``{\"path\": it}``."
+#~ msgstr ""
+
+#~ msgid "Response Decription"
+#~ msgstr ""
+
+#~ msgid "A ``ResponseDescription`` is a mapping that consists of below:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "status_code: ``Integer``, ``Predicate`` or "
+#~ "``List<Predicate>`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "Predicates that match a status code as an integer value."
+#~ msgstr ""
+
+#~ msgid "headers:"
+#~ msgstr ""
+
+#~ msgid "Descriptions that descript the response headers."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Response headers are converted to be "
+#~ "a JSON that is a mapping of "
+#~ "names to values and can be "
+#~ "descripted as a JSON (e.g. "
+#~ "``.\"content-type\"``). *Note that Names "
+#~ "are lower-cased* to normalize."
+#~ msgstr ""
+
+#~ msgid "body: ``BodyDescription`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "A description that descript the response body."
+#~ msgstr ""
+
+#~ msgid "Body Description"
+#~ msgstr ""
+
+#~ msgid "A ``BodyDescription`` is a mapping or a list."
+#~ msgstr ""
+
+#~ msgid "A mapping for ``BodyDescription`` has items below."
+#~ msgstr ""
+
+#~ msgid "analyzed_as: ``String`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "The method to analyze the body. The default value is ``json``."
+#~ msgstr ""
+
+#~ msgid "When given ``json``, the body is analyzed as a JSON."
+#~ msgstr ""
+
+#~ msgid "When given ``xml``, the body is analyzed as an XML."
+#~ msgstr ""
+
+#~ msgid "descriptions: ``Description`` or ``List<Description>``"
+#~ msgstr ""
+
+#~ msgid "Descriptions that descript the response body."
+#~ msgstr ""
+
+#~ msgid "When given a list, that is equivalent to ``{\"descritptions\": it}``."
+#~ msgstr ""
+
+#~ msgid "A ``Description`` is a mapping that consists of below:"
+#~ msgstr ""
+
+#~ msgid "describe: :doc:`Extraction<extraction>`"
+#~ msgstr ""
+
+#~ msgid "An extraction process."
+#~ msgstr ""
+
+#~ msgid "should: ``Predicate``, or ``List<Predicate>>`` (Optional)"
+#~ msgstr ""
+
+#~ msgid "Predicates that match the descripted value."
+#~ msgstr ""
+
+#~ msgid "A ``Default`` is a mapping that consists of below:"
+#~ msgstr ""
+
+#~ msgid "A request to overwrite the default request values."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "A response description to overwrite the"
+#~ " default response description values."
+#~ msgstr ""
 
