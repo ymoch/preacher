@@ -1,6 +1,52 @@
 Advanced Usage
 ==============
 
+.. _default-test:
+
+Default Test
+------------
+Default test make it possible to run similar tests,
+which fills the missing values with default values.
+
+.. code-block:: yaml
+
+    label: Default test examples.
+    default:
+      request:
+        path: /default/path
+      response:
+        status_code: 200
+    cases:
+      - label: Request /default/path?foo=bar and test the status is 200.
+        request:
+          # path: /default/path
+          params:
+            foo: bar
+        # response
+        #   status_code: 200
+      - label: Request /path and test the status is 404.
+        request:
+          path: /path  # overwrites the default value.
+        response:
+          status_code: 404
+    subscenarios:
+      - label: A subscenario of a default test.
+        default:
+          # Overwrites the default value.
+          request:
+            params:
+              spam: ham
+          response:
+            status_code: 400
+        cases:
+          - label: Request /default/path?spam=ham and test the status is 400.
+            # requests:
+            #   path: /default/path
+            #   params:
+            #     spam: ham
+            # response:
+            #   status_code: 400
+
 .. _parameterized-test:
 
 Parameterized Test
