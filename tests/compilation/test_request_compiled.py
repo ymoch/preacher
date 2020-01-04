@@ -8,7 +8,7 @@ ctor_patch = patch(
 )
 
 
-def test_update():
+def test_replace():
     initial = RequestCompiled(
         path=sentinel.initial_path,
         headers=sentinel.initial_headers,
@@ -33,7 +33,7 @@ def test_update():
 
 
 @ctor_patch
-def test_hollow(ctor):
+def test_fix_hollow(ctor):
     compiled = RequestCompiled()
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
@@ -42,17 +42,17 @@ def test_hollow(ctor):
 
 
 @ctor_patch
-def test_filled(ctor):
+def test_fix_filled(ctor):
     compiled = RequestCompiled(
-        path='/path',
-        headers={'header-name': 'header-value'},
-        params={'param-name': 'header-value'},
+        path=sentinel.path,
+        headers=sentinel.headers,
+        params=sentinel.params,
     )
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
 
     ctor.assert_called_once_with(
-        path='/path',
-        headers={'header-name': 'header-value'},
-        params={'param-name': 'header-value'},
+        path=sentinel.path,
+        headers=sentinel.headers,
+        params=sentinel.params,
     )
