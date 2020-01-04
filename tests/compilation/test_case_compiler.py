@@ -149,3 +149,32 @@ def test_given_filled_default(compiler_ctor, req, res, initial_default):
     )
     default = compiler_ctor.call_args[1]['default']
     assert default is sentinel.new_default
+
+
+def test_compile_fixed(compiler):
+    compiled = MagicMock(spec=CaseCompiled)
+    compiled.fix.return_value = sentinel.fixed
+
+    with patch.object(compiler, 'compile', return_value=compiled) as comp:
+        fixed = compiler.compile_fixed(sentinel.obj)
+    assert fixed is sentinel.fixed
+
+    comp.assert_called_once_with(sentinel.obj)
+    compiled.fix.assert_called_once_with()
+
+
+def test_compile_default(compiler):
+    with patch.object(
+        target=compiler,
+        attribute='compile',
+        return_value=sentinel.compiled,
+    ) as comp, patch.object(
+        target=compiler,
+        attribute='of_default',
+        return_value=sentinel.compiler_of_default,
+    ) as of_default:
+        compiler_of_default = compiler.compile_default(sentinel.obj)
+    assert compiler_of_default is sentinel.compiler_of_default
+
+    comp.assert_called_once_with(sentinel.obj)
+    of_default.assert_called_once_with(sentinel.compiled)
