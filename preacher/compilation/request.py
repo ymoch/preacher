@@ -29,7 +29,7 @@ class RequestCompiled:
             params=or_else(other.params, self.params),
         )
 
-    def to_request(self) -> Request:
+    def fix(self) -> Request:
         return Request(
             path=or_else(self.path, ''),
             headers=self.headers,

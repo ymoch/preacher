@@ -42,11 +42,11 @@ class CaseCompiler:
 
         request_obj = obj.get(_KEY_REQUEST, {})
         with on_key(_KEY_REQUEST):
-            request = self._request.compile(request_obj).to_request()
+            request = self._request.compile(request_obj).fix()
 
         response_obj = obj.get(_KEY_RESPONSE)
         with on_key(_KEY_RESPONSE):
-            response = self._response.compile(response_obj)
+            response = self._response.compile(response_obj).fix()
 
         return Case(
             label=label,
