@@ -41,18 +41,6 @@ class ResponseDescription:
         self._body = body
         self._analyze_headers = analyze_headers
 
-    @property
-    def status_code(self) -> List[Predicate]:
-        return self._status_code
-
-    @property
-    def headers(self) -> List[Description]:
-        return self._headers
-
-    @property
-    def body(self) -> Optional[BodyDescription]:
-        return self._body
-
     def verify(self, response: Response, **kwargs) -> ResponseVerification:
         """`**kwargs` will be delegated to descriptions."""
         status_code = self._verify_status_code(response.status_code, **kwargs)

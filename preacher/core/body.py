@@ -29,11 +29,3 @@ class BodyDescription:
             description.verify(analyzer, **kwargs)
             for description in self._descriptions
         )
-
-    @property
-    def analyze(self) -> Analysis:
-        return self._analyze
-
-    @property
-    def descriptions(self) -> List[Description]:
-        return self._descriptions
