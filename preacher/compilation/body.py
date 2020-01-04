@@ -26,13 +26,6 @@ class BodyDescriptionCompiler:
         self._description = description
         self._default = default or BodyDescription()
 
-    def of_default(self, default: BodyDescription) -> BodyDescriptionCompiler:
-        return BodyDescriptionCompiler(
-            analysis=self._analysis,
-            description=self._description,
-            default=default,
-        )
-
     def compile(self, obj: object) -> BodyDescription:
         """
         `obj` should be a mapping or a list.
@@ -56,6 +49,13 @@ class BodyDescriptionCompiler:
             descriptions = self._compile_descriptions(descriptions_obj)
 
         return BodyDescription(analyze=analyze, descriptions=descriptions)
+
+    def of_default(self, default: BodyDescription) -> BodyDescriptionCompiler:
+        return BodyDescriptionCompiler(
+            analysis=self._analysis,
+            description=self._description,
+            default=default,
+        )
 
     def _compile_descriptions(self, obj: object) -> List[Description]:
         if not isinstance(obj, list):
