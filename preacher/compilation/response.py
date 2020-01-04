@@ -32,21 +32,6 @@ class ResponseDescriptionCompiler:
         self._body = body
         self._default = default or ResponseDescription()
 
-    def of_default(
-        self,
-        default: ResponseDescription,
-    ) -> ResponseDescriptionCompiler:
-        body = self._body
-        if default.body:
-            body = body.of_default(default.body)
-
-        return ResponseDescriptionCompiler(
-            predicate=self._predicate,
-            description=self._description,
-            body=body,
-            default=default,
-        )
-
     def compile(self, obj: object) -> ResponseDescription:
         """`obj` should be a mapping."""
 
@@ -74,6 +59,21 @@ class ResponseDescriptionCompiler:
             status_code=status_code,
             headers=headers,
             body=body,
+        )
+
+    def of_default(
+        self,
+        default: ResponseDescription,
+    ) -> ResponseDescriptionCompiler:
+        body = self._body
+        if default.body:
+            body = body.of_default(default.body)
+
+        return ResponseDescriptionCompiler(
+            predicate=self._predicate,
+            description=self._description,
+            body=body,
+            default=default,
         )
 
     def _compile_status_code(self, obj: object) -> List[Predicate]:
