@@ -45,15 +45,15 @@ class Case:
 
     def __init__(
         self,
-        request: Request,
-        response: ResponseDescription,
         label: Optional[str] = None,
         enabled: bool = True,
+        request: Optional[Request] = None,
+        response: Optional[ResponseDescription] = None,
     ):
         self._label = label
-        self._request = request
-        self._response = response
         self._enabled = enabled
+        self._request = request or Request()
+        self._response = response or ResponseDescription()
 
     def run(
         self,
