@@ -55,7 +55,6 @@ Here is a configuration example.
                   - start_with: x
                   - end_with: y
 
-
 Components
 ----------
 
@@ -82,16 +81,44 @@ A ``Scenario`` is written in `YAML`_.
     * - when
       - List[Description]
       - ``[]``
-      - | Run this scenario only when the context satisfies these description.
-        | See: :doc:`Application Running Context<context>`
+      - Run this scenario only when the context satisfies these description.
+        See :doc:`Application Running Context<context>` for more information.
     * - cases
-      - List[:ref:`Case`]
+      - List[:ref:`case`]
       - ``[]``
       - Test cases.
     * - subscenarios
       - List[Scenario]
       - ``[]``
       - Nested scenarios.
+    * - params
+      - List[:ref:`parameter`]
+      - ``null``
+      - Parameters to make parameterized test.
+        See :ref:`parameterized-test` for more information.
+
+.. _parameter:
+
+Parameter
+^^^^^^^^^
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - label
+      - String
+      - ``null``
+      - Label of this parameter.
+    * - arguments
+      - Mapping
+      - ``{}``
+      - An argument mapping of argument names to their values.
+
+See :ref:`parameterized-test` to check examples.
 
 .. _case:
 
