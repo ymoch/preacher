@@ -62,6 +62,8 @@ A ``Context`` object, which stands for *context*, is a JSON-like value,
 which can be descripted by `jq`_.
 See :doc:`context` to find available context.
 
+.. _parameterized-test:
+
 Parameterized Test
 ------------------
 Parameterized tests make it possible to run a test multiple times with different arguments,

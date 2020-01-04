@@ -55,109 +55,220 @@ Here is a configuration example.
                   - start_with: x
                   - end_with: y
 
-
 Components
 ----------
 
 Scenario
 ^^^^^^^^
 A ``Scenario`` is written in `YAML`_.
-A ``Scenario`` is a mapping that consists of below:
 
-- label: ``String`` (Recommended)
-    - A label of this scenario.
-    - This field is actually optional but recommended to tell this scenario from another.
-- default: ``Default`` (Optional)
-    - Default of this scenario.
-- when: ``Description`` or ``List<Description>`` (Optional)
-    - Run this scenario only when the context satisfies these description.
-    - See: :doc:`Application Running Context<context>`
-- cases: ``List<Case>`` (Optional)
-    - Test cases.
-- subscenarios: ``List<Scenario>`` (Optional)
-    - Nested scenarios.
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - label
+      - String
+      - ``null``
+      - A label of this scenario.
+    * - default
+      - :ref:`case`
+      - ``{}``
+      - Default of this scenario.
+    * - when
+      - List[Description]
+      - ``[]``
+      - Run this scenario only when the context satisfies these description.
+        See :doc:`Application Running Context<context>` for more information.
+    * - cases
+      - List[:ref:`case`]
+      - ``[]``
+      - Test cases.
+    * - subscenarios
+      - List[Scenario]
+      - ``[]``
+      - Nested scenarios.
+    * - params
+      - List[:ref:`parameter`]
+      - ``null``
+      - Parameters to make parameterized test.
+        See :ref:`parameterized-test` for more information.
+
+.. _parameter:
+
+Parameter
+^^^^^^^^^
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - label
+      - String
+      - ``null``
+      - Label of this parameter.
+    * - arguments
+      - Mapping
+      - ``{}``
+      - An argument mapping of argument names to their values.
+
+See :ref:`parameterized-test` to check examples.
+
+.. _case:
 
 Case
 ^^^^
-A ``Case`` is a mapping that consists of below:
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-- label: ``String`` (Recommended)
-    - A label of this case.
-    - This field is actually optional but recommended to tell this case from another.
-- enabled: ``Boolean`` (Optional)
-    - Whether this case is enabled. The default value is ``true``.
-- request: ``Request`` (Optional)
-    - A request.
-- response: ``ResponseDescription`` (Optional)
-    - A response description.
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - label
+      - String
+      - ``null``
+      - A label of this case.
+    * - enabled
+      - Boolean
+      - ``true``
+      - Whether this case is enabled.
+    * - request
+      - :ref:`request`
+      - The default request
+      - The request of this case.
+    * - response
+      - :ref:`response-description`
+      - The default response description.
+      - The response description of this case.
+
+.. _request:
 
 Request
 ^^^^^^^
-A ``Request`` is a mapping or a string.
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-A mapping for ``Request`` has items below:
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - path
+      - String
+      - ``''``
+      - A request path
+    * - headers
+      - Mapping[String, String]
+      - ``{}``
+      - The headers as a mapping of names to values.
+    * - params
+      - Mapping
+      - ``{}``
+      - Query parameters as a mapping of keys to values.
 
-- path: ``String`` (Optional)
-    - A request path. The default value is ``''``.
-- Headers: ``Mapping<String, String>`` (Optional)
-    - Request headers as a mapping of names to values.
-- params: ``Mapping<String, String>`` (Optional)
-    - Query parameters as a mapping of keys to values.
+When given a string as a ``Request``, that is equivalent to ``{path: it}``.
 
-When given a string, that is equivalent to ``{"path": it}``.
+.. _response-description:
 
-Response Decription
+ResponseDescription
 ^^^^^^^^^^^^^^^^^^^
-A ``ResponseDescription`` is a mapping that consists of below:
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-- status_code: ``Integer``, ``Predicate`` or ``List<Predicate>`` (Optional)
-    - Predicates that match a status code as an integer value.
-    - When given a number, that is equivalent to ``{"equal": it}``.
-- headers:
-    - Descriptions that descript the response headers.
-    - Response headers are converted to be a JSON
-      that is a mapping of names to values
-      and can be descripted as a JSON (e.g. ``."content-type"``).
-      *Note that Names are lower-cased* to normalize.
-- body: ``BodyDescription`` (Optional)
-    - A description that descript the response body.
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - status_code
+      - List[:ref:`predicate`]
+      - ``[]``
+      - Predicates that match a status code as an integer value.
+        See :ref:`status-code` for more information.
+    * - headers
+      - List[:ref:`description`]
+      - ``{}``
+      - Descriptions that describe the response headers.
+        See :ref:`headers` for more information.
+    * - body
+      - :ref:`body-description`
+      - ``null``
+      - A description that describe the response body.
 
-Body Description
-^^^^^^^^^^^^^^^^
-A ``BodyDescription`` is a mapping or a list.
+.. _status-code:
 
-A mapping for ``BodyDescription`` has items below.
+Status code
+"""""""""""
+When given a number, that is equivalent to ``{"equal": it}``.
 
-- analyzed_as: ``String`` (Optional)
-    - The method to analyze the body. The default value is ``json``.
-    - When given ``json``, the body is analyzed as a JSON.
-    - When given ``xml``, the body is analyzed as an XML.
-- descriptions: ``Description`` or ``List<Description>``
-    - Descriptions that descript the response body.
+.. _headers:
 
-When given a list, that is equivalent to ``{"descritptions": it}``.
+Headers
+"""""""
+Response headers are converted to be a JSON
+that is a mapping of names to values
+and can be described as a JSON (e.g. ``."content-type"``).
+*Note that Names are lower-cased* to normalize.
+
+.. _body-description:
+
+BodyDescription
+^^^^^^^^^^^^^^^
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - analyze_as
+      - String
+      - ``json``
+      - The method to analyze the body.
+        Allowed values are ``json`` and ``xml``.
+    * - descriptions
+      - List[:ref:`description`]
+      - ``[]``
+      - Descriptions that describe the response body.
+
+When given a list as a ``BodyDescription``,
+that is equivalent to ``{"descritptions": it}``.
+
+.. _description:
 
 Description
 ^^^^^^^^^^^
-A ``Description`` is a mapping that consists of below:
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
 
-- describe: :doc:`Extraction<extraction>`
-    - An extraction process.
-- should: ``Predicate``, or ``List<Predicate>>`` (Optional)
-    - Predicates that match the descripted value.
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - describe
+      - :doc:`Extraction<extraction>`
+      - **Required**
+      - An extraction to get the described value.
+    * - should
+      - List[:ref:`predicate`]
+      - ``{}``
+      - Predicates that match the described value.
+
+.. _predicate:
 
 Predicate
 ^^^^^^^^^
 A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the future).
-
-Default
-^^^^^^^
-A ``Default`` is a mapping that consists of below:
-
-- request: ``Request`` (Optional)
-    - A request to overwrite the default request values.
-- response: ``ResponseDescription`` (Optional)
-    - A response description to overwrite the default response description values.
 
 Inclusion
 ---------
