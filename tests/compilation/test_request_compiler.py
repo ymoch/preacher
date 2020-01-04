@@ -80,19 +80,6 @@ def test_given_a_string(ctor, compiler):
         headers=sentinel.default_headers,
         params=sentinel.default_params
     )
-    ctor.reset_mock()
-
-    compiler = compiler.of_default(Request(path='/default-path'))
-    request = compiler.compile({
-        'headers': {'k1': 'v1'},
-        'params': 'str',
-    })
-    assert request is sentinel.request
-    ctor.assert_called_once_with(
-        path='/default-path',
-        headers={'k1': 'v1'},
-        params='str',
-    )
 
 
 @ctor_patch
