@@ -30,8 +30,7 @@ Options
      - ``--url url``
      - string
      - Set the base URL.
-     - http://localhost:5042
-       (As the sample server)
+     - ``''``
    * - ``-l level``
      - ``--level level``
      - :ref:`level`
