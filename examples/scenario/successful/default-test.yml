@@ -1,0 +1,31 @@
+label: Default test examples
+
+default:
+  request:
+    path: /json
+  response:
+    status_code: 200
+    headers:
+      - describe: ."content-type"
+        should:
+          equal: application/json
+
+cases:
+  - label: Default values are available
+
+  - label: Default values can be overwritten
+    request: /error/404
+    response:
+      status_code: 404
+
+subscenarios:
+  label: Default values are inherited and can be overwritten
+
+  default:
+    request:
+      path: /error/404
+
+  cases:
+    label: Overwritten default values are available
+    response:
+      status_code: 404

@@ -1,0 +1,8 @@
+label: Description examples
+
+cases:
+  - label: No description doesn't fail
+    request: /json
+    response:
+      body:
+        describe: .foo
