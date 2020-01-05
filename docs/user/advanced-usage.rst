@@ -80,7 +80,7 @@ To make tests parameterized:
           body:
             - describe: .bar
               should:
-                equal_to: !Parameter bar
+                equal_to: !argument bar
 
 Conditional Scenario
 --------------------
