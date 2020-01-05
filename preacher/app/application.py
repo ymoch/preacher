@@ -6,7 +6,7 @@ from preacher.compilation.factory import create_compiler
 from preacher.compilation.yaml import load
 from preacher.core.scenario import ScenarioResult
 from preacher.core.status import Status
-from .listener import Listener
+from preacher.listener import Listener
 
 
 class Application:

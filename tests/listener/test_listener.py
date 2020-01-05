@@ -1,6 +1,6 @@
 from unittest.mock import sentinel
 
-from preacher.app.listener import Listener
+from preacher.listener import Listener
 
 
 def test_listener():
