@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 workflows:
   version: 2
@@ -17,9 +17,7 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - run:
-          name: Set up
-          command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+      - install-poetry
       - run:
           name: Run with no dev package
           command: |
@@ -45,9 +43,7 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - run:
-          name: Set up
-          command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+      - install-poetry
       - run:
           name: Run with no dev package
           command: |
@@ -80,12 +76,16 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - run:
-          name: Set up
-          command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+      - install-poetry
       - run:
           name: Build
           command: poetry build
       #- run:
       #    name: Publish
       #    command: Poetry publish
+
+commands:
+  install-poetry:
+    description: Install Poetry
+    steps:
+      - run: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
