@@ -4,8 +4,14 @@ workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - test-38
-      - test-37
+      - test-38:
+          filters:
+            tags:
+              only: /.*/
+      - test-37:
+          filters:
+            tags:
+              only: /.*/
       - deploy:
           filters:
             branches:
@@ -80,7 +86,7 @@ jobs:
           command: poetry build
       - run:
           name: Publish
-          command: Poetry publish
+          command: poetry publish
 
 commands:
   install-poetry:
