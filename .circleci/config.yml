@@ -86,7 +86,7 @@ jobs:
           command: poetry build
       - run:
           name: Publish
-          command: Poetry publish
+          command: poetry publish
 
 commands:
   install-poetry:
