@@ -31,7 +31,7 @@ _ENV_CONCURRENCY = f'{_ENV_PREFIX}CONCURRENCY'
 _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
 
 _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
-    _ENV_BASE_URL: 'http://localhost:5042',
+    _ENV_BASE_URL: '',
     _ENV_LEVEL: 'success',
     _ENV_RETRY: '0',
     _ENV_DELAY: '0.1',
