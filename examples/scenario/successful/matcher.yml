@@ -1,0 +1,99 @@
+label: Matcher examples
+
+cases:
+  - label: Matches objects
+    request: /json
+    response:
+      body:
+        - describe: .not_existing_key
+          should: be_null
+        - describe: .empty_string
+          should: be_empty
+        - describe: .empty_list
+          should: be_empty
+        - describe: .foo
+          should:
+            - not_be_null
+            - equal: bar
+            - have_length: 3
+
+  - label: Matches comparable objects
+    request: /json
+    response:
+      body:
+        - describe: .foo
+          should:
+            - all_of:
+                - be_greater_than: baqz
+                - be_less_than: bb
+
+  - label: Matches strings
+    request: /json
+    response:
+      body:
+        - describe: .foo
+          should:
+            - contain_string: a
+            - start_with: ba
+            - end_with: ar
+            - match_regexp: ^b.r$
+
+  - label: Matches datetime
+    request: /later/1
+    response:
+      status_code: 200
+      body:
+        - describe: .now
+          should:
+            - be_before: 1 minute
+            - be_after: -2 minutes
+            - be_after: 1 second  # Must be processed after 1 seconds.
+
+  - label: Matches sequences
+    request: /json
+    response:
+      body:
+        - describe: .list
+          should:
+            - not:
+                have_item: ''
+            - have_item: 1
+        - describe:
+            jq: .items[].x
+            multiple: true
+          should:
+            equal: ['1', null, '2']
+        - describe:
+            jq: .items[].x
+            multiple: true
+            cast_to: int
+          should:
+            - contain: [1, null, 2]
+            - contain_in_any_order: [1, 2, be_null]
+            - have_items: [1, 2]
+
+  - label: Matches logically
+    request: /json
+    response:
+      body:
+        - describe: .foo
+          should:
+            - anything
+            - not: be_empty
+            - be: bar
+            - be:
+                not: baz
+            - be:
+                not:
+                  contain_string: x
+        - describe:
+            jq: .items[].x
+            multiple: true
+            cast_to: int
+          should:
+            - all_of:
+                - have_item: 1
+                - have_item: 2
+            - any_of:
+                - have_item: 100
+                - have_item: be_null

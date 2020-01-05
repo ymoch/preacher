@@ -1,0 +1,58 @@
+label: Request examples
+
+cases:
+  - label: Sends headers
+    request:
+      path: /header
+      headers:
+        header-string: xxx
+        Header-String: yyy
+        user-agent: custom
+    response:
+      status_code: 200
+      headers:
+        - describe: ."content-type"
+          should:
+            equal: application/json
+        - describe:
+            jq: ."content-length"
+            cast_to: int
+          should:
+            be_greater_than: 100
+      body:
+        - describe: ."header-string"
+          should:
+            equal: yyy
+        - describe: ."user-agent"
+          should:
+            equal: custom
+
+  - label: Sends params
+    request:
+      path: /params
+      params:
+        key: value
+        multi-key:
+          - value1
+          - value2
+        boolean-key: false
+        integer-key: 1
+        float-key: 1.2
+    response:
+      status_code: 200
+      body:
+        - describe: .key
+          should:
+            equal: value
+        - describe: ."multi-key"
+          should:
+            equal: value2
+        - describe: ."boolean-key"
+          should:
+            equal: "False"
+        - describe: ."integer-key"
+          should:
+            equal: "1"
+        - describe: ."float-key"
+          should:
+            equal: "1.2"

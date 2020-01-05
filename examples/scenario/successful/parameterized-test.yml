@@ -1,0 +1,27 @@
+label: Parameterized tests succeeds.
+
+parameters:
+  - label: Spam Ham
+    args:
+      foo: bar
+      spam: ham
+  - label: Spam Eggs
+    args:
+      foo: baz
+      spam: eggs
+
+cases:
+  label: Parameterized
+  request:
+    path: /params
+    params:
+      foo: !argument foo
+      spam: !argument spam
+  response:
+    body:
+      - describe: .foo
+        should:
+          equal: !argument foo
+      - describe: .spam
+        should:
+          equal: !argument spam

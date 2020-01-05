@@ -1,0 +1,9 @@
+label: Case examples
+
+cases:
+  - label: Disabled failing test is not executed
+    enabled: false
+    request: /invalid
+    response:
+      status_code: 200
+

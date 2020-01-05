@@ -1,0 +1,15 @@
+label: Conditional test examples
+
+when:
+  - describe: .base_url
+    should:
+      contain_string: localhost
+  - describe: .starts
+    should:
+      be_after: 2019-12-07T00:00:00Z
+
+cases:
+  - label: Request succeeds
+    request: /json
+    response:
+      status_code: 200

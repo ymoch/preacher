@@ -1,0 +1,12 @@
+label: Successful test examples
+
+subscenarios:
+  - !include successful/request.yml
+  - !include successful/description.yml
+  - !include successful/response-description.yml
+  - !include successful/body-description.yml
+  - !include successful/matcher.yml
+  - !include successful/default-test.yml
+  - !include successful/parameterized-test.yml
+  - !include successful/conditional-test.yml
+  - !include successful/disabled-test.yml

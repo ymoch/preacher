@@ -1,0 +1,32 @@
+label: Response description examples
+
+cases:
+  - label: Validates status codes
+    request:
+      path: /error/404
+    response:
+      status_code:
+        - equal: 404
+        - be_greater_than: 399
+        - be_greater_than_or_equal_to: 400
+        - be_less_than_or_equal_to: 499
+        - be_less_than: 500
+
+  - label: No validations for plain texts doesn't fail
+    request:
+      path: /text
+    response:
+      headers:
+        describe: ."content-type"
+        should:
+          equal: text/plain
+
+  - label: No analysis for binary data doesn't fail
+    request: /binary
+    response:
+      headers:
+        describe:
+          jq: ."content-length"
+          cast_to: int
+        should:
+          be_greater_than: 0
