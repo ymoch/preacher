@@ -1,26 +1,24 @@
-import logging
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock, patch, sentinel
 
-from pytest import fixture
+from preacher.app.listener.log import LoggingListener
+from preacher.report.log import LoggingReporter
 
-from preacher.app.listener.logging import LoggingListener
-from preacher.core.scenario import ScenarioResult
-from preacher.core.status import Status
+PACKAGE = 'preacher.app.listener.log'
 
 
-@fixture
-def listener(logger):
-    return LoggingListener(logger)
+def test_on_scenario():
+    reporter = MagicMock(LoggingReporter)
+    listener = LoggingListener(reporter)
+    listener.on_scenario(sentinel.result)
+
+    reporter.show_scenario_result.assert_called_once_with(sentinel.result)
 
 
-@fixture
-def logger():
-    return MagicMock(logging.Logger)
+@patch(f'{PACKAGE}.LoggingListener', return_value=sentinel.listener)
+@patch(f'{PACKAGE}.LoggingReporter', return_value=sentinel.reporter)
+def test_from_logger(reporter_ctor, listener_ctor):
+    listener = LoggingListener.from_logger(sentinel.logger)
+    assert listener is sentinel.listener
 
-
-def test_given_empty_scenario(listener, logger):
-    listener.on_scenario(ScenarioResult())
-    logger.log.assert_has_calls([
-        call(logging.DEBUG, '%s: %s', 'Not labeled scenario', Status.SKIPPED),
-        call(logging.DEBUG, ''),
-    ])
+    reporter_ctor.assert_called_once_with(sentinel.logger)
+    listener_ctor.assert_called_once_with(sentinel.reporter)
