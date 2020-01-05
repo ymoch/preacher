@@ -1,10 +1,12 @@
 version: 2
+
 workflows:
   version: 2
-  test:
+  test-and-deploy:
     jobs:
       - test-3.8
       - test-3.7
+      - deploy
 
 jobs:
   test-3.8:  # Primary build.
@@ -14,7 +16,7 @@ jobs:
       - checkout
       - run:
           name: Set up
-          command: sudo pip install poetry
+          command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
       - run:
           name: Run with no dev package
           command: |
@@ -41,7 +43,7 @@ jobs:
       - checkout
       - run:
           name: Set up
-          command: sudo pip install poetry
+          command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
       - run:
           name: Run with no dev package
           command: |
@@ -52,3 +54,26 @@ jobs:
           command: |
             poetry install
             poetry run pytest
+
+  deploy:
+    requires:
+      - test-3.8
+      - test-3.7
+    filters:
+      #branches:
+      #  ignore: /.*/
+      #tags:
+      #  only: /[0-9]+(\.[0-9]+)*/
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Set up
+          command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+      - run:
+          name: Build
+          command: poetry build
+      #- run:
+      #    name: Publish
+      #    command: Poetry publish
