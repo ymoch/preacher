@@ -7,6 +7,10 @@ from preacher.interpretation.datetime import interpret_timedelta
 
 
 @mark.parametrize('value', (
+    None,
+    1,
+    [],
+    {},
     'invalid',
     'now +1 day',
 ))

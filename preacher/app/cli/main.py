@@ -8,10 +8,9 @@ from concurrent.futures import ThreadPoolExecutor
 from preacher.app.application import Application
 from preacher.app.cli.logging import ColoredFormatter
 from preacher.app.cli.option import parse_args
-from preacher.app.listener.logging import LoggingListener
-from preacher.app.listener.merging import MergingListener
-from preacher.app.listener.report import ReportingListener
-
+from preacher.listener.log import LoggingListener
+from preacher.listener.merging import MergingListener
+from preacher.listener.report import ReportingListener
 
 FORMATTER = ColoredFormatter()
 HANDLER = logging.StreamHandler()
@@ -29,9 +28,9 @@ def main() -> None:
     LOGGER.setLevel(level)
 
     listener = MergingListener()
-    listener.append(LoggingListener(LOGGER))
+    listener.append(LoggingListener.from_logger(LOGGER))
     if args.report:
-        listener.append(ReportingListener(args.report))
+        listener.append(ReportingListener.from_path(args.report))
 
     with ThreadPoolExecutor(args.concurrency) as executor:
         app = Application(
