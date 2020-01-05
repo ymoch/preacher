@@ -1,13 +1,13 @@
 from unittest.mock import MagicMock, patch, sentinel
 
 from preacher.app.listener.log import LoggingListener
-from preacher.report.log import LoggingReporter
+from preacher.presentation.log import Logger
 
 PACKAGE = 'preacher.app.listener.log'
 
 
 def test_on_scenario():
-    reporter = MagicMock(LoggingReporter)
+    reporter = MagicMock(Logger)
     listener = LoggingListener(reporter)
     listener.on_scenario(sentinel.result)
 
@@ -15,10 +15,10 @@ def test_on_scenario():
 
 
 @patch(f'{PACKAGE}.LoggingListener', return_value=sentinel.listener)
-@patch(f'{PACKAGE}.LoggingReporter', return_value=sentinel.reporter)
-def test_from_logger(reporter_ctor, listener_ctor):
-    listener = LoggingListener.from_logger(sentinel.logger)
+@patch(f'{PACKAGE}.Logger', return_value=sentinel.logger)
+def test_from_logger(logger_ctor, listener_ctor):
+    listener = LoggingListener.from_logger(sentinel.py_logger)
     assert listener is sentinel.listener
 
-    reporter_ctor.assert_called_once_with(sentinel.logger)
-    listener_ctor.assert_called_once_with(sentinel.reporter)
+    logger_ctor.assert_called_once_with(sentinel.py_logger)
+    listener_ctor.assert_called_once_with(sentinel.logger)

@@ -17,7 +17,7 @@ _LEVEL_MAP = {
 }
 
 
-class LoggingReporter:
+class Logger:
 
     def __init__(self, logger: logging.Logger):
         self._logger = logger

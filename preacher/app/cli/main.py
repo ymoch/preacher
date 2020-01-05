@@ -31,7 +31,7 @@ def main() -> None:
     listener = MergingListener()
     listener.append(LoggingListener.from_logger(LOGGER))
     if args.report:
-        listener.append(ReportingListener(args.report))
+        listener.append(ReportingListener.from_path(args.report))
 
     with ThreadPoolExecutor(args.concurrency) as executor:
         app = Application(

@@ -3,13 +3,13 @@ from __future__ import annotations
 import logging
 
 from preacher.core.scenario import ScenarioResult
-from preacher.report.log import LoggingReporter
+from preacher.presentation.log import Logger
 from . import Listener
 
 
 class LoggingListener(Listener):
 
-    def __init__(self, reporter: LoggingReporter):
+    def __init__(self, reporter: Logger):
         self._reporter = reporter
 
     def on_scenario(self, result: ScenarioResult) -> None:
@@ -17,5 +17,5 @@ class LoggingListener(Listener):
 
     @staticmethod
     def from_logger(logger: logging.Logger) -> LoggingListener:
-        reporter = LoggingReporter(logger)
+        reporter = Logger(logger)
         return LoggingListener(reporter)

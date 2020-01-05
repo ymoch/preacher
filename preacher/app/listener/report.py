@@ -4,14 +4,14 @@ from typing import List
 
 from preacher.core.request import Response
 from preacher.core.scenario import ScenarioResult
-from preacher.report.html import HtmlReporter
+from preacher.presentation.report import Reporter
 from . import Listener
 
 
 class ReportingListener(Listener):
 
-    def __init__(self, path):
-        self._reporter = HtmlReporter(path)
+    def __init__(self, reporter: Reporter):
+        self._reporter = reporter
         self._results: List[ScenarioResult] = []
 
     def on_response(self, response: Response) -> None:
@@ -22,3 +22,8 @@ class ReportingListener(Listener):
 
     def on_end(self) -> None:
         self._reporter.export_results(self._results)
+
+    @staticmethod
+    def from_path(path: str) -> ReportingListener:
+        reporter = Reporter(path)
+        return ReportingListener(reporter)
