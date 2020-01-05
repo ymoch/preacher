@@ -10,9 +10,36 @@ workflows:
             - test
 
 jobs:
-  test:
+  test-3.8:  # Primary
     docker:
       - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: Set up
+          command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+      - run:
+          name: Run with no dev package
+          command: |
+            poetry install --no-dev
+            poetry run preacher-cli --version
+            poetry run preacher-cli --help
+      - run:
+          name: Run unit tests
+          command: |
+            poetry install
+            poetry run pytest
+      - run:
+          name: Build documents
+          command: poetry run make html
+      - run:
+          name: Send the test coverage report
+          command: |
+            sudo pip install codecov
+            codecov
+
+  test-3.7:  # Secondary
+    docker:
       - image: circleci/python:3.7
     steps:
       - checkout
