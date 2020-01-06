@@ -49,6 +49,7 @@ cases:
         multi-key:
           - value1
           - value2
+          - null  # should be ignored.
         boolean-key: false
         integer-key: 1
         float-key: 1.2

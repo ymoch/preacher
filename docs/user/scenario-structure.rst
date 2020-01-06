@@ -115,9 +115,9 @@ Parameter
       - ``null``
       - Label of this parameter.
     * - args
-      - Mapping
+      - Map
       - ``{}``
-      - An argument mapping of argument names to their values.
+      - An argument map of argument names to their values.
 
 See :ref:`parameterized-test` to check examples.
 
@@ -167,15 +167,45 @@ Request
       - ``''``
       - A request path
     * - headers
-      - Mapping[String, String]
+      - Map[String, String]
       - ``{}``
-      - The headers as a mapping of names to values.
+      - The headers as a map of names to values.
     * - params
-      - Mapping
+      - :ref:`request-parameter`
       - ``{}``
-      - Query parameters as a mapping of keys to values.
+      - Parameters for the query string.
 
 When given a string as a ``Request``, that is equivalent to ``{path: it}``.
+
+.. _request-parameter:
+
+QueryParameter
+""""""""""""""
+When given a string, then it is regarded as a raw query string.
+
+.. code-block:: yaml
+
+    # Requests /path?foo=bar&foo=baz&spam=ham%26eggs
+    request:
+      path: /path
+      params: foo=bar&foo=baz&spam=ham%26eggs
+
+When given a map, then it is regarded as a map of keys to values
+and the query string is built with it.
+
+.. code-block:: yaml
+
+    # Requests /path?foo=bar&foo=baz&spam=ham%26eggs
+    request:
+      path: /path
+      params:
+        foo:  # value list is available.
+          - bar
+          - baz
+          - null  # null is ignored
+        spam: ham&eggs
+
+.. note:: Allowed types for the parameter values are integer, float, string and null (ignored).
 
 .. _response-description:
 
@@ -215,7 +245,7 @@ When given a number, that is equivalent to ``{"equal": it}``.
 Headers
 """""""
 Response headers are converted to be a JSON
-that is a mapping of names to values
+that is a map of names to values
 and can be described as a JSON (e.g. ``."content-type"``).
 *Note that Names are lower-cased* to normalize.
 
