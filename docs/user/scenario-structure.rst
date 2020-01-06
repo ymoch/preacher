@@ -199,10 +199,10 @@ and the query string is built with it.
     request:
       path: /path
       params:
-        foo:  # value list is available.
+        foo:  # a value list is available.
           - bar
           - baz
-          - null  # null is ignored
+          - null  # `null` is ignored
         spam: ham&eggs
 
 .. note:: Allowed types for the parameter values are integer, float, string and null (ignored).
