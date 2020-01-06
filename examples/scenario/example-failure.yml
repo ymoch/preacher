@@ -1,20 +1,5 @@
 label: Scenario fails
 
-cases:
-  - label: Plain text analysis fails
-    request: /text
-    response:
-      body: {}
-
-  - label: Binary data analysis fails
-    request: /binary
-    response:
-      body: {}
-
-  - label: Datetime parse error
-    request: /json
-    response:
-      body:
-        - describe: .foo
-          should:
-            be_after: now
+subscenarios:
+  - !include failing/analysis.yml
+  - !include failing/matcher.yml

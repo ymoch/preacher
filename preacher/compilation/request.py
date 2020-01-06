@@ -44,6 +44,7 @@ class RequestCompiler:
 
     def compile(self, obj) -> RequestCompiled:
         """`obj` should be a mapping or a string."""
+
         if isinstance(obj, str):
             return self.compile({_KEY_PATH: obj})
 
@@ -98,7 +99,7 @@ def _compile_params(params: object) -> Parameters:
         return params
 
     if not isinstance(params, Mapping):
-        raise CompilationError('Must be a string or a mapping')
+        raise CompilationError('Must be a string or a map')
     compiled = {}
     for key, value in params.items():
         if not isinstance(key, str):

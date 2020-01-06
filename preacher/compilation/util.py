@@ -76,7 +76,7 @@ def compile_mapping(obj: object) -> Mapping:
         CompilationError: when compilation fails.
     """
     if not isinstance(obj, Mapping):
-        raise CompilationError(f'Must be a mapping, given {type(obj)}')
+        raise CompilationError(f'Must be a map, given {type(obj)}')
     return obj
 
 

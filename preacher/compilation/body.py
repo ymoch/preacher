@@ -58,7 +58,8 @@ class BodyDescriptionCompiler:
         if isinstance(obj, list):
             return self.compile({_KEY_DESCRIPTIONS: obj})
         if not isinstance(obj, Mapping):
-            raise CompilationError('Must be a mapping or a list')
+            message = f'Must be a map or a list, given {type(obj)}'
+            raise CompilationError(message)
 
         compiled = self._default
 
