@@ -6,6 +6,8 @@ from enum import Enum
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from typing import List, Mapping, Optional, Tuple
 
+import ruamel.yaml
+
 from preacher import __version__ as _version
 
 
@@ -81,7 +83,9 @@ def argument(value: str) -> Tuple[str, str]:
     match = re.match(r'^([^=]+)=(.*)$', value)
     if not match:
         raise ArgumentTypeError(f'Invalid format argument: {value}')
-    return match.group(1), match.group(2)
+    key = match.group(1)
+    value = ruamel.yaml.safe_load(match.group(2))
+    return key, value
 
 
 def parse_args(

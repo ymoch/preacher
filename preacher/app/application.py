@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
-from typing import Callable, Iterable, Optional
+from typing import Callable, Iterable, Optional, Tuple
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.error import CompilationError
@@ -14,14 +14,14 @@ class Application:
     def __init__(
         self,
         base_url: str,
-        arguments: Optional[Arguments] = None,
+        arguments: Tuple[str, str] = None,
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
         listener: Optional[Listener] = None,
     ):
         self._base_url = base_url
-        self._arguments = arguments or {}
+        self._arguments = arguments or []
         self._retry = retry
         self._delay = delay
         self._timeout = timeout
