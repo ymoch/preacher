@@ -1,0 +1,10 @@
+label: Matcher failure examples
+
+cases:
+  - label: Datetime parse error
+    request: /json
+    response:
+      body:
+        - describe: .foo
+          should:
+            be_after: now
