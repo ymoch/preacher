@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional
 
 from preacher.core.case import Case
-from .error import CompilationError, on_key
+from .error import on_key
 from .request import RequestCompiler, RequestCompiled
 from .response import ResponseDescriptionCompiled, ResponseDescriptionCompiler
-from .util import compile_bool, compile_optional_str, or_else
+from .util import compile_bool, compile_optional_str, or_else, compile_mapping
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
@@ -84,9 +83,7 @@ class CaseCompiler:
     def compile(self, obj: object) -> CaseCompiled:
         """`obj` should be a mapping."""
 
-        if not isinstance(obj, Mapping):
-            raise CompilationError('Must be a mapping')
-
+        obj = compile_mapping(obj)
         compiled = self._default
 
         label_obj = obj.get(_KEY_LABEL)

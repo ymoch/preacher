@@ -12,7 +12,7 @@ from .body import BodyDescriptionCompiler, BodyDescriptionCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
-from .util import map_compile, or_else
+from .util import compile_mapping, map_compile, or_else
 
 _KEY_STATUS_CODE = 'status_code'
 _KEY_HEADERS = 'headers'
@@ -64,9 +64,7 @@ class ResponseDescriptionCompiler:
     def compile(self, obj: object) -> ResponseDescriptionCompiled:
         """`obj` should be a mapping."""
 
-        if not isinstance(obj, Mapping):
-            raise CompilationError('Must be a mapping')
-
+        obj = compile_mapping(obj)
         compiled = self._default
 
         status_code_obj = obj.get(_KEY_STATUS_CODE)
@@ -113,7 +111,7 @@ class ResponseDescriptionCompiler:
         if isinstance(obj, Mapping):
             obj = [obj]
         if not isinstance(obj, list):
-            message = f'Must be a list or a mapping, given {type(obj)}'
+            message = f'Must be a list or a map, given {type(obj)}'
             raise CompilationError(message)
 
         return list(map_compile(self._description.compile, obj))

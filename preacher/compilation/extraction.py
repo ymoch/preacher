@@ -35,7 +35,8 @@ class ExtractionCompiler:
             return self.compile({'jq': obj})
 
         if not isinstance(obj, Mapping):
-            raise CompilationError('Must be a mapping or a string')
+            message = f'Must be a map or a string, given {type(obj)}'
+            raise CompilationError(message)
 
         keys = _EXTRACTION_KEYS.intersection(obj.keys())
         if len(keys) != 1:

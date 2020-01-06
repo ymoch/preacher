@@ -1,13 +1,12 @@
 """Description compilation."""
 
-from collections.abc import Mapping
 from typing import Optional
 
 from preacher.core.description import Description
-from .error import CompilationError, on_key
+from .error import on_key
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
-from .util import map_compile
+from .util import compile_mapping, map_compile
 
 _KEY_DESCRIBE = 'describe'
 _KEY_SHOULD = 'should'
@@ -26,8 +25,7 @@ class DescriptionCompiler:
     def compile(self, obj: object):
         """`obj` should be a mapping."""
 
-        if not isinstance(obj, Mapping):
-            raise CompilationError('Must be a mapping')
+        obj = compile_mapping(obj)
 
         extraction_obj = obj.get(_KEY_DESCRIBE)
         with on_key(_KEY_DESCRIBE):
