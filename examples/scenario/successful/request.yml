@@ -27,7 +27,21 @@ cases:
           should:
             equal: custom
 
-  - label: Sends params
+  - label: Sends params as a string
+    request:
+      path: /params
+      params: key=value&spam=ham%26eggs
+    response:
+      status_code: 200
+      body:
+        - describe: .key
+          should:
+            equal: value
+        - describe: .spam
+          should:
+            equal: ham&eggs
+
+  - label: Sends params as a mapping
     request:
       path: /params
       params:
