@@ -1,9 +1,10 @@
 """CLI Options."""
 
 import logging
+import re
 from enum import Enum
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
-from typing import List, Mapping, Optional
+from typing import List, Mapping, Optional, Tuple
 
 from preacher import __version__ as _version
 
@@ -76,6 +77,13 @@ def level(value: str) -> Level:
     return result
 
 
+def argument(value: str) -> Tuple[str, str]:
+    match = re.match(r'^([^=]+)=(.*)$')
+    if not match:
+        raise ArgumentTypeError(f'Invalid format argument: {value}')
+    return match.group(1), match.group(2)
+
+
 def parse_args(
     argv: Optional[List[str]] = None,
     environ: Optional[Mapping[str, str]] = None,
@@ -102,6 +110,13 @@ def parse_args(
         metavar='url',
         help='specify the base URL',
         default=defaults[_ENV_BASE_URL],
+    )
+    parser.add_argument(
+        '-a', '--argument',
+        type=argument,
+        metavar='arg',
+        nargs='*',
+        help='scenario arguments in format "NAME=VALUE"',
     )
     parser.add_argument(
         '-l', '--level',
@@ -147,5 +162,6 @@ def parse_args(
 
     args = parser.parse_args(argv)
     args.level = args.level.value
+    args.argument = dict(args.argument) if args.argument else {}
 
     return args

@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Iterable, Optional
 
+from preacher.compilation.argument import Arguments
 from preacher.compilation.error import CompilationError
 from preacher.compilation.factory import create_compiler
 from preacher.compilation.yaml import load
@@ -13,12 +14,14 @@ class Application:
     def __init__(
         self,
         base_url: str,
+        arguments: Optional[Arguments] = None,
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
         listener: Optional[Listener] = None,
     ):
         self._base_url = base_url
+        self._arguments = arguments or {}
         self._retry = retry
         self._delay = delay
         self._timeout = timeout
@@ -51,7 +54,7 @@ class Application:
         compiler = create_compiler()
         try:
             scenario_obj = load(config_path)
-            scenario = compiler.compile(scenario_obj)
+            scenario = compiler.compile(scenario_obj, self._arguments)
         except CompilationError as error:
             result = ScenarioResult(
                 label=f'Compilation Error ({config_path})',

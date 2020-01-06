@@ -35,6 +35,7 @@ def main() -> None:
     with ThreadPoolExecutor(args.concurrency) as executor:
         app = Application(
             base_url=args.url,
+            arguments=args.argument,
             retry=args.retry,
             delay=args.delay,
             timeout=args.timeout,
