@@ -79,7 +79,7 @@ def level(value: str) -> Level:
     return result
 
 
-def argument(value: str) -> Tuple[str, str]:
+def argument(value: str) -> Tuple[str, object]:
     match = re.match(r'^([^=]+)=(.*)$', value)
     if not match:
         raise ArgumentTypeError(f'Invalid format argument: {value}')

@@ -19,6 +19,8 @@ def test_show_and_exit(argv):
 
 @mark.parametrize('argv', [
     [],
+    ['-a', '', 'scenario.yml'],
+    ['--argument', 'foo', 'scenario.yml'],
     ['-l', 'foo', 'scenario.yml'],
     ['--level', 'bar', 'scenario.yml'],
     ['-r', 'foo', 'scenario.yml'],
@@ -63,6 +65,8 @@ def test_invalid_environ(environ):
 ])
 def test_default(environ):
     args = parse_args(argv=['scenario.yml'], environ=environ)
+    assert args.url == ''
+    assert args.argument == {}
     assert args.level == logging.INFO
     assert args.retry == 0
     assert args.delay == 0.1
@@ -76,6 +80,7 @@ def test_valid_argv():
     args = parse_args(
         argv=[
             '--url', 'https://your-domain.com/api',
+            '--argument', 'foo=', 'bar=1', 'baz=1.2', 'spam=[ham,eggs]',
             '--level', 'unstable',
             '--retry', '5',
             '--delay', '2.5',
@@ -94,6 +99,12 @@ def test_valid_argv():
         },
     )
     assert args.url == 'https://your-domain.com/api'
+    assert args.argument == {
+        'foo': None,
+        'bar': 1,
+        'baz': 1.2,
+        'spam': ['ham', 'eggs'],
+    }
     assert args.level == logging.WARNING
     assert args.retry == 5
     assert args.delay == 2.5
@@ -117,6 +128,7 @@ def test_valid_environ():
         },
     )
     assert args.url == 'https://my-domain.com/api'
+    assert args.argument == {}
     assert args.level == logging.ERROR
     assert args.retry == 10
     assert args.delay == 1.2
