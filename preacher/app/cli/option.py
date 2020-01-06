@@ -78,7 +78,7 @@ def level(value: str) -> Level:
 
 
 def argument(value: str) -> Tuple[str, str]:
-    match = re.match(r'^([^=]+)=(.*)$')
+    match = re.match(r'^([^=]+)=(.*)$', value)
     if not match:
         raise ArgumentTypeError(f'Invalid format argument: {value}')
     return match.group(1), match.group(2)
