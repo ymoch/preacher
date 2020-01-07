@@ -1,5 +1,6 @@
 from io import StringIO
 from unittest.mock import patch
+
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode

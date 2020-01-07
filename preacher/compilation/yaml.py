@@ -4,11 +4,11 @@ import os
 from typing import Union
 
 from ruamel.yaml import YAML, Node
-from ruamel.yaml.constructor import ConstructorError
+from ruamel.yaml.error import MarkedYAMLError
 
+from .argument import ArgumentValue
 from .error import CompilationError
 from .util import run_recursively
-from .argument import ArgumentValue
 
 PathLike = Union[str, os.PathLike]
 
@@ -63,7 +63,7 @@ def _load(path: PathLike, yaml: YAML) -> object:
     with open(path) as f:
         try:
             obj = yaml.load(f)
-        except ConstructorError as error:
+        except MarkedYAMLError as error:
             raise CompilationError(message=str(error), cause=error)
 
     return run_recursively(lambda o: _resolve(o, origin=path, yaml=yaml), obj)

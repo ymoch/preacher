@@ -2,11 +2,13 @@
 
 import logging
 import re
-from enum import Enum
+import shlex
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
+from enum import Enum
 from typing import List, Mapping, Optional, Tuple
 
-import ruamel.yaml
+from ruamel.yaml import safe_load
+from ruamel.yaml.error import MarkedYAMLError
 
 from preacher import __version__ as _version
 
@@ -26,6 +28,7 @@ _LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
 
 _ENV_PREFIX = 'PREACHER_CLI_'
 _ENV_BASE_URL = f'{_ENV_PREFIX}BASE_URL'
+_ENV_ARGUMENT = f'{_ENV_PREFIX}ARGUMENT'
 _ENV_LEVEL = f'{_ENV_PREFIX}LEVEL'
 _ENV_RETRY = f'{_ENV_PREFIX}RETRY'
 _ENV_DELAY = f'{_ENV_PREFIX}DELAY'
@@ -35,6 +38,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
 
 _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
     _ENV_BASE_URL: '',
+    _ENV_ARGUMENT: '',
     _ENV_LEVEL: 'success',
     _ENV_RETRY: '0',
     _ENV_DELAY: '0.1',
@@ -83,8 +87,13 @@ def argument(value: str) -> Tuple[str, object]:
     match = re.match(r'^([^=]+)=(.*)$', value)
     if not match:
         raise ArgumentTypeError(f'Invalid format argument: {value}')
+
     key = match.group(1)
-    value = ruamel.yaml.safe_load(match.group(2))
+    try:
+        value = safe_load(match.group(2))
+    except MarkedYAMLError as error:
+        raise ArgumentTypeError(f'Invalid YAML format. {error}')
+
     return key, value
 
 
@@ -166,6 +175,16 @@ def parse_args(
 
     args = parser.parse_args(argv)
     args.level = args.level.value
-    args.argument = dict(args.argument) if args.argument else {}
+
+    arguments = args.argument
+    if arguments is None:
+        try:
+            arguments = [
+                argument(arg)
+                for arg in shlex.split(defaults[_ENV_ARGUMENT] or '')
+            ]
+        except ValueError as error:
+            raise RuntimeError(f'Failed to parse {_ENV_ARGUMENT}: {error}')
+    args.argument = dict(arguments)
 
     return args
