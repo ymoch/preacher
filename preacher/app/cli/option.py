@@ -7,7 +7,7 @@ from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from enum import Enum
 from typing import List, Mapping, Optional, Tuple
 
-import ruamel.yaml
+from ruamel.yaml import safe_load
 from ruamel.yaml.error import MarkedYAMLError
 
 from preacher import __version__ as _version
@@ -90,7 +90,7 @@ def argument(value: str) -> Tuple[str, object]:
 
     key = match.group(1)
     try:
-        value = ruamel.yaml.safe_load(match.group(2))
+        value = safe_load(match.group(2))
     except MarkedYAMLError as error:
         raise ArgumentTypeError(f'Invalid YAML format. {error}')
 
