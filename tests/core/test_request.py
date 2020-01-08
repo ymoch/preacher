@@ -2,16 +2,16 @@ import datetime
 import uuid
 from unittest.mock import MagicMock, patch, sentinel
 
-from requests import Response
+import requests
 
 from preacher.core.request import Request
 
 PACKAGE = 'preacher.core.request'
 
 
-def res() -> Response:
+def requests_response():
     return MagicMock(
-        spec=Response,
+        spec=requests.Response,
         elapsed=datetime.timedelta(seconds=1.23),
         status_code=402,
         headers={'Header-Name': 'Header-Value'},
@@ -25,7 +25,7 @@ def res() -> Response:
     __str__=MagicMock(return_value='uuid')
 ))
 @patch(f'{PACKAGE}.now', return_value=sentinel.now)
-@patch('requests.get', return_value=res())
+@patch('requests.get', return_value=requests_response())
 def test_request(requests_get, now, uuid4):
     request = Request(path='/path', headers={'k1': 'v1'}, params={'k2': 'v2'})
     assert request.path == '/path'
@@ -52,7 +52,7 @@ def test_request(requests_get, now, uuid4):
     assert kwargs['timeout'] == 5.0
 
 
-@patch('requests.get', return_value=res())
+@patch('requests.get', return_value=requests_response())
 def test_request_overwrites_default_headers(requests_get):
     Request(headers={'User-Agent': 'custom-user-agent'})('base-url')
     kwargs = requests_get.call_args[1]
