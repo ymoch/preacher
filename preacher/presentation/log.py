@@ -3,11 +3,11 @@ import io
 import logging
 from typing import Iterator
 
-from preacher.core.case import CaseResult
-from preacher.core.response import ResponseVerification
 from preacher.core.scenario import ScenarioResult
-from preacher.core.status import Status
-from preacher.core.verification import Verification
+from preacher.core.scenario.case import CaseResult
+from preacher.core.scenario.response import ResponseVerification
+from preacher.core.scenario.status import Status
+from preacher.core.scenario.verification import Verification
 
 _LEVEL_MAP = {
     Status.SKIPPED: logging.DEBUG,

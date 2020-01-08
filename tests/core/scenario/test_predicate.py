@@ -3,10 +3,10 @@ from unittest.mock import patch, sentinel
 
 from pytest import raises
 
-from preacher.core.predicate import MatcherPredicate, Predicate
-from preacher.core.verification import Verification
+from preacher.core.scenario.predicate import MatcherPredicate, Predicate
+from preacher.core.scenario.verification import Verification
 
-PACKAGE = 'preacher.core.predicate'
+PACKAGE = 'preacher.core.scenario.predicate'
 
 
 def test_predicate():

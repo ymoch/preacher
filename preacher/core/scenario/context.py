@@ -2,8 +2,8 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Optional
 
+from preacher.core.datetime import now
 from .analysis import Analyzer, JsonAnalyzer
-from .datetime import now
 
 
 @dataclass(frozen=True)

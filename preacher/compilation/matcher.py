@@ -4,14 +4,14 @@ from collections.abc import Mapping
 
 import hamcrest
 
-from preacher.core.hamcrest import after, before
-from preacher.core.matcher import (
+from preacher.core.scenario.hamcrest import after, before
+from preacher.core.scenario.matcher import (
     Matcher,
     StaticMatcher,
     ValueMatcher,
     RecursiveMatcher,
 )
-from preacher.core.util.functional import identify
+from preacher.core.scenario.util.functional import identify
 from preacher.interpretation.datetime import interpret_datetime
 from preacher.interpretation.value import value_of
 from .error import CompilationError, on_key

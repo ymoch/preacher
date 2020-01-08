@@ -3,7 +3,7 @@ from typing import Iterable
 
 import jinja2
 
-from preacher.core.request import Response
+from preacher.core.response import Response
 from preacher.core.scenario import ScenarioResult
 
 

@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 from pytest import fixture, mark, raises
 
-from preacher.core.extraction import JqExtractor, EvaluationError
-from preacher.core.util.functional import identify
+from preacher.core.scenario.extraction import JqExtractor, EvaluationError
+from preacher.core.scenario.util.functional import identify
 
 VALUE = {
     'foo': 'bar',

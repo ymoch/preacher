@@ -2,13 +2,13 @@ from unittest.mock import MagicMock, sentinel
 
 from pytest import mark, fixture
 
-from preacher.core.body import BodyDescription
-from preacher.core.description import Description
-from preacher.core.predicate import Predicate
-from preacher.core.request import Response
-from preacher.core.response import ResponseDescription
-from preacher.core.status import Status
-from preacher.core.verification import Verification
+from preacher.core.response import Response
+from preacher.core.scenario.body import BodyDescription
+from preacher.core.scenario.description import Description
+from preacher.core.scenario.predicate import Predicate
+from preacher.core.scenario.response import ResponseDescription
+from preacher.core.scenario.status import Status
+from preacher.core.scenario.verification import Verification
 
 
 @fixture

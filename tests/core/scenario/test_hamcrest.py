@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from hamcrest.core.string_description import StringDescription
 from pytest import mark, raises
 
-from preacher.core.hamcrest import after, before
+from preacher.core.scenario.hamcrest import after, before
 
 ORIGIN = datetime(2019, 12, 15, 12, 34, 56, tzinfo=timezone.utc)
 

@@ -6,8 +6,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from preacher.core.request import Request, Parameters, ParameterValue
-from preacher.core.type import is_scalar, ScalarType
+from preacher.core.scenario.request import Request, Parameters, ParameterValue
+from preacher.core.scenario.type import is_scalar, ScalarType
 from .error import CompilationError, on_key
 from .util import compile_str, compile_mapping, map_compile, or_else
 

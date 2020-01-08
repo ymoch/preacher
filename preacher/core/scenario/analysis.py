@@ -8,7 +8,7 @@ from typing import Any, Callable, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, fromstring
 
-from preacher.core.request import ResponseBody
+from preacher.core.response import ResponseBody
 
 T = TypeVar('T')
 

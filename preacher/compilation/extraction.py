@@ -2,13 +2,13 @@
 
 from collections.abc import Mapping
 
-from preacher.core.extraction import (
+from preacher.core.scenario.extraction import (
     Cast,
     Extractor,
     JqExtractor,
     XPathExtractor,
 )
-from preacher.core.util.functional import identify
+from preacher.core.scenario.util.functional import identify
 from .error import CompilationError, on_key
 from .util import compile_bool, compile_str
 

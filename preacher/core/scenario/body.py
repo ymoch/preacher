@@ -4,9 +4,9 @@ Response body description.
 
 from typing import List, Optional
 
+from preacher.core.response import ResponseBody
 from .analysis import Analysis, analyze_json_str
 from .description import Description
-from .request import ResponseBody
 from .verification import Verification, collect
 
 

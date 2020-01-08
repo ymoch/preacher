@@ -4,9 +4,9 @@ from unittest.mock import MagicMock, patch, sentinel
 
 import requests
 
-from preacher.core.request import Request
+from preacher.core.scenario.request import Request
 
-PACKAGE = 'preacher.core.request'
+PACKAGE = 'preacher.core.scenario.request'
 
 
 def requests_response():
