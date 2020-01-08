@@ -8,6 +8,7 @@ from typing import List, Mapping, Optional, Union
 import requests
 
 from preacher import __version__ as _version
+from preacher.core.response import Response, ResponseBody
 from .datetime import now
 from .type import ScalarType
 
@@ -17,7 +18,7 @@ ParameterValue = Union[None, ScalarType, List[Optional[ScalarType]]]
 Parameters = Union[None, ScalarType, Mapping[str, ParameterValue]]
 
 
-class ResponseBody:
+class ResponseBodyWrapper(ResponseBody):
 
     def __init__(self, res: requests.Response):
         self._res = res
@@ -31,13 +32,13 @@ class ResponseBody:
         return self._res.content
 
 
-class Response:
+class ResponseWrapper(Response):
 
     def __init__(self, id: str, starts: datetime, res: requests.Response):
         self._id = id
         self._starts = starts
         self._res = res
-        self._body = ResponseBody(self._res)
+        self._body = ResponseBodyWrapper(self._res)
 
     @property
     def id(self) -> str:
@@ -95,7 +96,7 @@ class Request:
             params=self._params,  # type: ignore
             timeout=timeout,
         )
-        return Response(id=str(uuid.uuid4()), starts=starts, res=res)
+        return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)
 
     @property
     def path(self) -> str:

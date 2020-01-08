@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-from preacher.core.scenario.request import Response
+from preacher.core.response import Response
 from preacher.core.scenario import ScenarioResult
 from . import Listener
 

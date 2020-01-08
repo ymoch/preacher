@@ -3,8 +3,8 @@ from typing import Iterable
 
 import jinja2
 
+from preacher.core.response import Response
 from preacher.core.scenario import ScenarioResult
-from preacher.core.scenario.request import Response
 
 
 class Reporter:

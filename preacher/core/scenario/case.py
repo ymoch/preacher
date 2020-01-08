@@ -7,7 +7,8 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from .request import Request, Response
+from preacher.core.response import Response
+from .request import Request
 from .response import ResponseDescription, ResponseVerification
 from .status import Status, StatusedMixin, merge_statuses
 from .util.retry import retry_while_false
