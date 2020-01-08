@@ -8,6 +8,8 @@ from typing import Any, Callable, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, fromstring
 
+from preacher.core.request import ResponseBody
+
 T = TypeVar('T')
 
 
@@ -49,13 +51,13 @@ class XmlAnalyzer(Analyzer):
         return extract(self._etree)
 
 
-def analyze_json_str(value: str) -> Analyzer:
-    return JsonAnalyzer(json.loads(value))
+def analyze_json_str(value: ResponseBody) -> Analyzer:
+    return JsonAnalyzer(json.loads(value.text))
 
 
-def analyze_xml_str(value: str) -> Analyzer:
-    etree = fromstring(value, parser=XMLParser())
+def analyze_xml_str(value: ResponseBody) -> Analyzer:
+    etree = fromstring(value.content, parser=XMLParser())
     return XmlAnalyzer(etree)
 
 
-Analysis = Callable[[str], Analyzer]
+Analysis = Callable[[ResponseBody], Analyzer]

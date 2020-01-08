@@ -6,6 +6,7 @@ from typing import List, Optional
 
 from .analysis import Analysis, analyze_json_str
 from .description import Description
+from .request import ResponseBody
 from .verification import Verification, collect
 
 
@@ -19,7 +20,7 @@ class BodyDescription:
         self._analyze = analyze
         self._descriptions = descriptions or []
 
-    def verify(self, body: str, **kwargs) -> Verification:
+    def verify(self, body: ResponseBody, **kwargs) -> Verification:
         try:
             analyzer = self._analyze(body)
         except Exception as error:

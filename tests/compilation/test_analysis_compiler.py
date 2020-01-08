@@ -1,7 +1,10 @@
+from unittest.mock import MagicMock
+
 from pytest import mark, raises
 
 from preacher.compilation.analysis import AnalysisCompiler
 from preacher.compilation.error import CompilationError
+from preacher.core.request import ResponseBody
 
 
 @mark.parametrize('value, expected_suffix', (
@@ -24,4 +27,6 @@ def test_given_invalid_keys(value, expected_suffix):
 def test_given_valid_keys(value, text):
     compiler = AnalysisCompiler()
     analyze = compiler.compile(value)
-    analyze(text)
+
+    body = MagicMock(ResponseBody, text=text, content=text.encode('utf-8'))
+    analyze(body)
