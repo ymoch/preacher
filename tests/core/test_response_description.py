@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, sentinel
 
-from pytest import mark
+from pytest import mark, fixture
 
 from preacher.core.body import BodyDescription
 from preacher.core.description import Description
@@ -11,25 +11,29 @@ from preacher.core.status import Status
 from preacher.core.verification import Verification
 
 
-def test_when_given_no_description():
-    description = ResponseDescription()
-    verification = description.verify(
-        Response(
-            id=sentinel.response_id,
-            elapsed=sentinel.elapsed,
-            status_code=200,
-            headers={},
-            body='xxx',
-            request_datetime=sentinel.request_datetime
-        ),
+@fixture
+def response():
+    return MagicMock(
+        spec=Response,
+        id=sentinel.response_id,
+        elapsed=sentinel.elapsed,
+        status_code=200,
+        headers={},
+        body=sentinel.body,
+        request_datetime=sentinel.starts,
     )
+
+
+def test_when_given_no_description(response):
+    description = ResponseDescription()
+    verification = description.verify(response)
     assert verification.response_id == sentinel.response_id
     assert verification.status_code.status == Status.SKIPPED
     assert verification.body.status == Status.SKIPPED
     assert verification.status == Status.SKIPPED
 
 
-def test_when_header_verification_fails():
+def test_when_header_verification_fails(response):
     headers = [
         MagicMock(Description, verify=MagicMock(
             side_effect=RuntimeError('message')
@@ -37,21 +41,12 @@ def test_when_header_verification_fails():
     ]
     description = ResponseDescription(headers=headers)
 
-    verification = description.verify(
-        Response(
-            id=sentinel.response_id,
-            elapsed=sentinel.elapsed,
-            status_code=200,
-            headers={},
-            body='xxx',
-            request_datetime=sentinel.request_datetime
-        ),
-    )
+    verification = description.verify(response)
     assert verification.response_id == sentinel.response_id
     assert verification.headers.status == Status.FAILURE
 
 
-def test_when_given_descriptions():
+def test_when_given_descriptions(response):
     headers = [
         MagicMock(Description, verify=MagicMock(
             return_value=Verification(status=Status.UNSTABLE)
@@ -71,17 +66,7 @@ def test_when_given_descriptions():
         body=body,
         analyze_headers=analyze_headers,
     )
-    verification = description.verify(
-        Response(
-            id=sentinel.response_id,
-            elapsed=sentinel.elapsed,
-            status_code=200,
-            headers={},
-            body='{}',
-            request_datetime=sentinel.request_datetime
-        ),
-        k='v',
-    )
+    verification = description.verify(response, k='v')
     assert verification.response_id == sentinel.response_id
     assert verification.status == Status.UNSTABLE
     assert verification.status_code.status == Status.SKIPPED
@@ -90,7 +75,7 @@ def test_when_given_descriptions():
     analyze_headers.assert_called_once_with({})
     for description in headers:
         description.verify.assert_called_once_with(sentinel.headers, k='v')
-    body.verify.assert_called_once_with('{}', k='v')
+    body.verify.assert_called_once_with(sentinel.body, k='v')
 
 
 @mark.parametrize(
@@ -107,6 +92,7 @@ def test_merge_statuses(
     headers_status: Status,
     body_status: Status,
     expected: Status,
+    response,
 ):
     status_code_predicates = [
         MagicMock(Predicate, verify=MagicMock(
@@ -126,14 +112,5 @@ def test_merge_statuses(
         headers=headers_descriptions,
         body=body_description,
     )
-    verification = description.verify(
-        Response(
-            id=sentinel.response_id,
-            elapsed=sentinel.elapsed,
-            status_code=200,
-            headers={},
-            body='xxx',
-            request_datetime=sentinel.request_datetime
-        ),
-    )
+    verification = description.verify(response)
     assert verification.status == expected
