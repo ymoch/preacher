@@ -9,7 +9,7 @@ import hamcrest
 from hamcrest.core.base_matcher import BaseMatcher
 from hamcrest.core.matcher import Matcher
 
-from preacher.core.scenario.datetime import parse_datetime
+from preacher.core.datetime import parse_datetime
 
 
 class _ConvertingMatcher(BaseMatcher):

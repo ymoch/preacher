@@ -3,7 +3,7 @@
 from typing import List, Optional, Mapping
 
 from preacher.core.scenario.case import Case
-from preacher.core.scenario import Scenario
+from preacher.core.scenario.scenario import Scenario
 from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
 from .description import DescriptionCompiler

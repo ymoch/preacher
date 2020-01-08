@@ -8,8 +8,8 @@ from typing import List, Mapping, Optional, Union
 import requests
 
 from preacher import __version__ as _version
+from preacher.core.datetime import now
 from preacher.core.response import Response, ResponseBody
-from .datetime import now
 from .type import ScalarType
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
