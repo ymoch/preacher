@@ -81,7 +81,7 @@ def test_when_the_request_fails(retry_patch):
 
 
 def test_when_given_an_invalid_response(retry_patch):
-    sentinel.response.request_datetime = sentinel.request_datetime
+    sentinel.response.starts = sentinel.starts
     request = MagicMock(return_value=sentinel.response)
     response = MagicMock(ResponseDescription, verify=MagicMock(
         return_value=ResponseVerification(
@@ -118,14 +118,14 @@ def test_when_given_an_invalid_response(retry_patch):
     request.assert_called_with('base-url', timeout=5.0)
     response.verify.assert_called_with(
         sentinel.response,
-        origin_datetime=sentinel.request_datetime,
+        origin_datetime=sentinel.starts,
     )
     retry.assert_called_once_with(ANY, attempts=4, delay=1.0)
     listener.on_response.assert_called_once_with(sentinel.response)
 
 
 def test_when_given_an_valid_response(retry_patch):
-    sentinel.response.request_datetime = sentinel.request_datetime
+    sentinel.response.starts = sentinel.starts
     case = Case(
         label='Response should be success',
         request=MagicMock(return_value=sentinel.response),

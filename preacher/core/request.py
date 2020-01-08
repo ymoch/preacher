@@ -33,14 +33,9 @@ class ResponseBody:
 
 class Response:
 
-    def __init__(
-        self,
-        id: str,
-        request_datetime: datetime,
-        res: requests.Response,
-    ):
+    def __init__(self, id: str, starts: datetime, res: requests.Response):
         self._id = id
-        self._request_datetime = request_datetime
+        self._starts = starts
         self._res = res
         self._body = ResponseBody(self._res)
 
@@ -49,8 +44,8 @@ class Response:
         return self._id
 
     @property
-    def request_datetime(self) -> datetime:
-        return self._request_datetime
+    def starts(self) -> datetime:
+        return self._starts
 
     @property
     def elapsed(self) -> float:
@@ -92,7 +87,7 @@ class Request:
     ) -> Response:
         headers = copy(_DEFAULT_HEADERS)
         headers.update(self._headers)
-        request_datetime = now()
+        starts = now()
 
         res = requests.get(
             base_url + self._path,
@@ -100,12 +95,7 @@ class Request:
             params=self._params,  # type: ignore
             timeout=timeout,
         )
-
-        return Response(
-            id=str(uuid.uuid4()),
-            request_datetime=request_datetime,
-            res=res,
-        )
+        return Response(id=str(uuid.uuid4()), starts=starts, res=res)
 
     @property
     def path(self) -> str:

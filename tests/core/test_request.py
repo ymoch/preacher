@@ -39,7 +39,7 @@ def test_request(requests_get, now, uuid4):
     assert response.headers == {'header-name': 'Header-Value'}
     assert response.body.text == sentinel.text
     assert response.body.content == sentinel.content
-    assert response.request_datetime == sentinel.now
+    assert response.starts == sentinel.now
 
     uuid4.assert_called()
     now.assert_called()
