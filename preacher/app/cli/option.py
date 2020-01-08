@@ -129,7 +129,7 @@ def parse_args(
         type=argument,
         metavar='arg',
         nargs='*',
-        help='scenario arguments in format "NAME=VALUE"',
+        help='scenario arguments in format "NAME=VALUE" (experimental)',
     )
     parser.add_argument(
         '-l', '--level',
@@ -169,7 +169,7 @@ def parse_args(
     parser.add_argument(
         '-R', '--report',
         metavar='dir',
-        help='report directory (experimental)',
+        help='report directory',
         default=defaults[_ENV_REPORT],
     )
 
