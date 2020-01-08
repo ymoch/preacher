@@ -3,13 +3,13 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import raises
 
-from preacher.core.case import Case
-from preacher.core.description import Description
+from preacher.core.scenario.case import Case
+from preacher.core.scenario.description import Description
 from preacher.core.scenario import Scenario, ScenarioTask, ScenarioResult
-from preacher.core.status import Status
-from preacher.core.verification import Verification
+from preacher.core.scenario.status import Status
+from preacher.core.scenario.verification import Verification
 
-PACKAGE = 'preacher.core.scenario'
+PACKAGE = 'preacher.core.scenario.scenario'
 
 
 def test_not_implemented():

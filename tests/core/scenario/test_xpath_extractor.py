@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark, raises
 
-from preacher.core.extraction import XPathExtractor, EvaluationError
-from preacher.core.util.functional import identify
+from preacher.core.scenario.extraction import XPathExtractor, EvaluationError
+from preacher.core.scenario.util.functional import identify
 
 VALUE = '''
 <root>

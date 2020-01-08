@@ -2,9 +2,9 @@ from unittest.mock import MagicMock
 
 from pytest import fixture, raises
 
-from preacher.core.analysis import analyze_xml_str
-from preacher.core.extraction import Extractor
-from preacher.core.request import ResponseBody
+from preacher.core.scenario.analysis import analyze_xml_str
+from preacher.core.scenario.extraction import Extractor
+from preacher.core.scenario.request import ResponseBody
 
 XML_VALUE = '''<?xml version="1.0" encoding="utf-8"?>
 <foo>

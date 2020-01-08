@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock, sentinel
 
-from preacher.core.body import BodyDescription
-from preacher.core.description import Description
-from preacher.core.status import Status
-from preacher.core.verification import Verification
+from preacher.core.scenario.body import BodyDescription
+from preacher.core.scenario.description import Description
+from preacher.core.scenario.status import Status
+from preacher.core.scenario.verification import Verification
 
 
 def test_given_invalid_body():

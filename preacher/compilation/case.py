@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from preacher.core.case import Case
+from preacher.core.scenario.case import Case
 from .error import on_key
 from .request import RequestCompiler, RequestCompiled
 from .response import ResponseDescriptionCompiled, ResponseDescriptionCompiler

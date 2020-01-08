@@ -1,4 +1,8 @@
-from preacher.core.analysis import Analysis, analyze_json_str, analyze_xml_str
+from preacher.core.scenario.analysis import (
+    Analysis,
+    analyze_json_str,
+    analyze_xml_str,
+)
 from .error import CompilationError
 from .util import compile_str
 

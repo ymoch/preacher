@@ -2,10 +2,10 @@ from unittest.mock import MagicMock, sentinel
 
 from pytest import fixture
 
-from preacher.core.description import Description
-from preacher.core.predicate import Predicate
-from preacher.core.status import Status
-from preacher.core.verification import Verification
+from preacher.core.scenario.description import Description
+from preacher.core.scenario.predicate import Predicate
+from preacher.core.scenario.status import Status
+from preacher.core.scenario.verification import Verification
 
 
 @fixture

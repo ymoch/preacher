@@ -2,20 +2,23 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import fixture
 
-from preacher.core.case import Case, CaseListener
-from preacher.core.request import Request
-from preacher.core.response import ResponseDescription, ResponseVerification
-from preacher.core.status import Status
-from preacher.core.verification import Verification
+from preacher.core.scenario.case import Case, CaseListener
+from preacher.core.scenario.request import Request
+from preacher.core.scenario.response import (
+    ResponseDescription,
+    ResponseVerification,
+)
+from preacher.core.scenario.status import Status
+from preacher.core.scenario.verification import Verification
 
 
-PACKAGE = 'preacher.core.case'
+PACKAGE = 'preacher.core.scenario.case'
 
 
 @fixture
 def retry_patch():
     return patch(
-        'preacher.core.case.retry_while_false',
+        'preacher.core.scenario.case.retry_while_false',
         side_effect=lambda func, *args, **kwargs: func(),
     )
 

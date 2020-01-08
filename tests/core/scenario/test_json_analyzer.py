@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 from pytest import fixture, raises
 
-from preacher.core.analysis import analyze_json_str
-from preacher.core.extraction import Extractor
+from preacher.core.scenario.analysis import analyze_json_str
+from preacher.core.scenario.extraction import Extractor
 
 
 @fixture

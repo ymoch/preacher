@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 from pytest import raises
 
-from preacher.core.analysis import Analyzer
-from preacher.core.extraction import Extractor
+from preacher.core.scenario.analysis import Analyzer
+from preacher.core.scenario.extraction import Extractor
 
 
 def test_incomplete_extractor():

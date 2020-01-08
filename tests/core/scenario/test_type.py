@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 from pytest import mark
 
-from preacher.core.type import is_scalar
+from preacher.core.scenario.type import is_scalar
 
 
 @mark.parametrize('value, expected', [
