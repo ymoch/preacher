@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Iterable, Optional
 
 from preacher.core.scenario import Scenario
+from preacher.core.scenario.status import Status
 from preacher.listener import Listener
 
 
@@ -20,11 +21,11 @@ class ScenarioRunner:
         self._timeout = timeout
         self._listener = listener or Listener()
 
-        self._is_succeeded = True
+        self._status = Status.SKIPPED
 
     @property
-    def is_succeeded(self) -> bool:
-        return self._is_succeeded
+    def status(self) -> Status:
+        return self._status
 
     def run(
         self,
@@ -44,7 +45,7 @@ class ScenarioRunner:
         ]
         results = (task.result() for task in tasks)
         for result in results:
-            self._is_succeeded &= result.status.is_succeeded
+            self._status = self._status.merge(result.status)
             self._listener.on_scenario(result)
 
         self._listener.on_end()

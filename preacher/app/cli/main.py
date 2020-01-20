@@ -50,7 +50,7 @@ def _main() -> None:
     with ThreadPoolExecutor(args.concurrency) as executor:
         app.run(executor, scenarios)
 
-    if not app.is_succeeded:
+    if not app.status.is_succeeded:
         sys.exit(1)
 
 
