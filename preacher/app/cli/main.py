@@ -5,7 +5,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
-from preacher.app.application import Application
+from preacher.core.application import Application
 from preacher.app.cli.option import parse_args
 from preacher.compilation.factory import create_compiler
 from preacher.compilation.yaml import load
