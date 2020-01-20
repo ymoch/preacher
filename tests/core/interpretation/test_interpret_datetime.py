@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 from pytest import mark
 
-from preacher.interpretation.datetime import interpret_datetime
+from preacher.core.interpretation.datetime import interpret_datetime
 
-PACKAGE = 'preacher.interpretation.datetime'
+PACKAGE = 'preacher.core.interpretation.datetime'
 UTC = timezone.utc
 JST = timezone(timedelta(hours=9))
 

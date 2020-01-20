@@ -1,6 +1,6 @@
 from pytest import raises
 
-from preacher.interpretation.value import Value
+from preacher.core.interpretation.value import Value
 
 
 def test_incomplete_value():
