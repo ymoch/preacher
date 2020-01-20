@@ -58,7 +58,8 @@ _SINGLE_MATCHER_HAMCREST_MAP = {
 }
 
 _MULTI_MATCHERS_HAMCREST_MAP = {
-    'contain': hamcrest.contains,
+    'contain': hamcrest.contains_exactly,
+    'contain_exactly': hamcrest.contains_exactly,
     'contain_in_any_order': hamcrest.contains_inanyorder,
     'have_items': hamcrest.has_items,
     'all_of': hamcrest.all_of,

@@ -93,6 +93,7 @@ def test_invalid_mapping(obj):
     ({'have_item': {'equal': 1}}, [0, 1, 2], SUCCESS),
     ({'contain': 1}, [], UNSTABLE),
     ({'contain': 1}, [1], SUCCESS),
+    ({'contain_exactly': 1}, [1], SUCCESS),
     ({'contain': 1}, [1, 2], UNSTABLE),
     ({'contain': 1}, [2, 3], UNSTABLE),
     ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
