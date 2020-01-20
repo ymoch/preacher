@@ -9,7 +9,7 @@ from preacher.listener import Listener
 class ScenarioRunner:
     def __init__(
         self,
-        base_url: str,
+        base_url: str = '',
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
