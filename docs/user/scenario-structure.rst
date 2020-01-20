@@ -92,7 +92,7 @@ A ``Scenario`` is written in `YAML`_.
       - List[Scenario]
       - ``[]``
       - Nested scenarios.
-    * - params
+    * - parameters
       - List[:ref:`parameter`]
       - ``null``
       - Parameters to make parameterized test.
