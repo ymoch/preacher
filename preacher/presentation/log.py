@@ -3,11 +3,54 @@ import io
 import logging
 from typing import Iterator
 
+from colorama import Fore, Style, init
+
 from preacher.core.scenario import ScenarioResult
 from preacher.core.scenario.case import CaseResult
 from preacher.core.scenario.response import ResponseVerification
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
+
+init()
+
+
+def _default(message: str) -> str:
+    return message
+
+
+def _info(message: str) -> str:
+    return f'{Fore.GREEN}{message}{Style.RESET_ALL}'
+
+
+def _warning(message: str) -> str:
+    return f'{Fore.YELLOW}{message}{Style.RESET_ALL}'
+
+
+def _error(message: str) -> str:
+    return f'{Fore.RED}{message}{Style.RESET_ALL}'
+
+
+def _critical(message: str) -> str:
+    return f'{Fore.RED}{Fore.BRIGHT}{message}{Style.RESET_ALL}'
+
+
+_STYLE_FUNC_MAP = {
+    logging.INFO: _info,
+    logging.WARNING: _warning,
+    logging.ERROR: _error,
+    logging.CRITICAL: _critical,
+}
+
+
+class ColoredFormatter(logging.Formatter):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def format(self, record: logging.LogRecord) -> str:
+        style_func = _STYLE_FUNC_MAP.get(record.levelno, _default)
+        return style_func(super().format(record))
+
 
 _LEVEL_MAP = {
     Status.SKIPPED: logging.DEBUG,
@@ -22,9 +65,6 @@ class Logger:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
         self._indent = ''
-
-    def on_scenario(self, result: ScenarioResult) -> None:
-        self.show_scenario_result(result)
 
     def show_scenario_result(self, scenario: ScenarioResult) -> None:
         status = scenario.status

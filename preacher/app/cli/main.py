@@ -5,12 +5,14 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
-from preacher.app.application import Application
-from preacher.app.cli.logging import ColoredFormatter
 from preacher.app.cli.option import parse_args
-from preacher.listener.log import LoggingListener
-from preacher.listener.merging import MergingListener
-from preacher.listener.report import ReportingListener
+from preacher.compilation.factory import create_compiler
+from preacher.compilation.yaml import load
+from preacher.core.listener.log import LoggingListener
+from preacher.core.listener.merging import MergingListener
+from preacher.core.listener.report import ReportingListener
+from preacher.core.runner import ScenarioRunner
+from preacher.presentation.log import ColoredFormatter
 
 FORMATTER = ColoredFormatter()
 HANDLER = logging.StreamHandler()
@@ -19,7 +21,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 
 
-def main() -> None:
+def _main() -> None:
     """Main."""
     args = parse_args(environ=os.environ)
 
@@ -32,16 +34,29 @@ def main() -> None:
     if args.report:
         listener.append(ReportingListener.from_path(args.report))
 
-    with ThreadPoolExecutor(args.concurrency) as executor:
-        app = Application(
-            base_url=args.url,
-            arguments=args.argument,
-            retry=args.retry,
-            delay=args.delay,
-            timeout=args.timeout,
-            listener=listener,
-        )
-        app.run(executor, args.scenario)
+    compiler = create_compiler()
+    scenarios = (
+        compiler.compile(load(path), arguments=args.argument)
+        for path in args.scenario
+    )
 
-    if not app.is_succeeded:
+    app = ScenarioRunner(
+        base_url=args.url,
+        retry=args.retry,
+        delay=args.delay,
+        timeout=args.timeout,
+        listener=listener,
+    )
+    with ThreadPoolExecutor(args.concurrency) as executor:
+        app.run(executor, scenarios)
+
+    if not app.status.is_succeeded:
         sys.exit(1)
+
+
+def main():
+    try:
+        _main()
+    except Exception as error:
+        LOGGER.exception('%s', error)
+        sys.exit(2)
