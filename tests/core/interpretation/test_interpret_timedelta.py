@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from pytest import mark, raises
 
-from preacher.interpretation.error import InterpretationError
-from preacher.interpretation.datetime import interpret_timedelta
+from preacher.core.interpretation.datetime import interpret_timedelta
+from preacher.core.interpretation.error import InterpretationError
 
 
 @mark.parametrize('value', (

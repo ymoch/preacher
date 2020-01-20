@@ -11,8 +11,8 @@ from preacher.core.scenario.matcher import (
     match,
 )
 from preacher.core.scenario.status import Status
-from preacher.interpretation.error import InterpretationError
-from preacher.interpretation.value import Value
+from preacher.core.interpretation.error import InterpretationError
+from preacher.core.interpretation.value import Value
 
 PACKAGE = 'preacher.core.scenario.matcher'
 
