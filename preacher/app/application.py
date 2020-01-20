@@ -2,11 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Iterable, Optional
 
 from preacher.compilation.argument import Arguments
-from preacher.compilation.error import CompilationError
-from preacher.compilation.factory import create_compiler
-from preacher.compilation.yaml import load
-from preacher.core.scenario import ScenarioResult
-from preacher.core.scenario.status import Status
+from preacher.core.scenario import ScenarioResult, Scenario
 from preacher.listener import Listener
 
 
@@ -36,9 +32,9 @@ class Application:
     def run(
         self,
         executor: ThreadPoolExecutor,
-        config_paths: Iterable[str],
+        scenarios: Iterable[Scenario],
     ) -> None:
-        tasks = [self._submit_each(executor, path) for path in config_paths]
+        tasks = [self._submit_each(executor, s) for s in scenarios]
         results = (task() for task in tasks)
         for result in results:
             self._is_succeeded &= result.status.is_succeeded
@@ -49,20 +45,8 @@ class Application:
     def _submit_each(
         self,
         executor: ThreadPoolExecutor,
-        config_path: str,
+        scenario: Scenario,
     ) -> Callable[[], ScenarioResult]:
-        compiler = create_compiler()
-        try:
-            scenario_obj = load(config_path)
-            scenario = compiler.compile(scenario_obj, self._arguments)
-        except CompilationError as error:
-            result = ScenarioResult(
-                label=f'Compilation Error ({config_path})',
-                status=Status.FAILURE,
-                message=str(error),
-            )
-            return lambda: result
-
         return scenario.submit(
             executor,
             base_url=self._base_url,

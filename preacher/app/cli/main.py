@@ -7,6 +7,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from preacher.app.application import Application
 from preacher.app.cli.option import parse_args
+from preacher.compilation.factory import create_compiler
+from preacher.compilation.yaml import load
 from preacher.listener.log import LoggingListener
 from preacher.listener.merging import MergingListener
 from preacher.listener.report import ReportingListener
@@ -19,7 +21,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 
 
-def main() -> None:
+def _main() -> None:
     """Main."""
     args = parse_args(environ=os.environ)
 
@@ -32,16 +34,27 @@ def main() -> None:
     if args.report:
         listener.append(ReportingListener.from_path(args.report))
 
+    compiler = create_compiler()
+    scenarios = (compiler.compile(load(path)) for path in args.scenario)
+
+    app = Application(
+        base_url=args.url,
+        arguments=args.argument,
+        retry=args.retry,
+        delay=args.delay,
+        timeout=args.timeout,
+        listener=listener,
+    )
     with ThreadPoolExecutor(args.concurrency) as executor:
-        app = Application(
-            base_url=args.url,
-            arguments=args.argument,
-            retry=args.retry,
-            delay=args.delay,
-            timeout=args.timeout,
-            listener=listener,
-        )
-        app.run(executor, args.scenario)
+        app.run(executor, scenarios)
 
     if not app.is_succeeded:
         sys.exit(1)
+
+
+def main():
+    try:
+        _main()
+    except Exception as error:
+        LOGGER.exception('%s', error)
+        sys.exit(2)
