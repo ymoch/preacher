@@ -1,7 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Iterable, Optional
 
-from preacher.compilation.argument import Arguments
 from preacher.core.scenario import Scenario
 from preacher.listener import Listener
 
@@ -10,14 +9,12 @@ class Application:
     def __init__(
         self,
         base_url: str,
-        arguments: Optional[Arguments] = None,
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
         listener: Optional[Listener] = None,
     ):
         self._base_url = base_url
-        self._arguments = arguments or {}
         self._retry = retry
         self._delay = delay
         self._timeout = timeout

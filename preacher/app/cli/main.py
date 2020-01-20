@@ -35,11 +35,13 @@ def _main() -> None:
         listener.append(ReportingListener.from_path(args.report))
 
     compiler = create_compiler()
-    scenarios = (compiler.compile(load(path)) for path in args.scenario)
+    scenarios = (
+        compiler.compile(load(path), arguments=args.argument)
+        for path in args.scenario
+    )
 
     app = Application(
         base_url=args.url,
-        arguments=args.argument,
         retry=args.retry,
         delay=args.delay,
         timeout=args.timeout,
