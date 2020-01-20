@@ -69,8 +69,10 @@ Sequence
     - Matches if it is a collection and has the given item.
 - have_items: ``List<Matcher>``
     - Matches if all given items appear in the list, in any order.
-- contain: ``List<Matcher>``
+- contain_exactly: ``List<Matcher>``
     - Exactly matches the entire sequence.
+- contain: ``List<Matcher>`` (Deprecated)
+    - Same as ``contain_exactly``. ``contain`` will be removed in the future.
 - contain_in_any_order: ``List<Matcher>``
     - Matches the entire sequence, but in any order.
 

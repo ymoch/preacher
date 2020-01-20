@@ -68,7 +68,7 @@ cases:
             multiple: true
             cast_to: int
           should:
-            - contain: [1, null, 2]
+            - contain_exactly: [1, null, 2]
             - contain_in_any_order: [1, 2, be_null]
             - have_items: [1, 2]
 
