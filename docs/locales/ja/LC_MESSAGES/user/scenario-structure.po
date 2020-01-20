@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-06 18:00+0900\n"
+"POT-Creation-Date: 2020-01-20 22:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -228,9 +228,8 @@ msgid "Nested scenarios."
 msgstr ""
 
 #: ../../user/scenario-structure.rst:95
-#: ../../user/scenario-structure.rst:173
-#: 0180cb63af674dd78a5ae43a737b49d2 3098c830868b4c0aa29d5280fe405e55
-msgid "params"
+#: b9b28406d4f84cabaf6c01afbe2a16af
+msgid "parameters"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:96
@@ -379,6 +378,11 @@ msgstr ""
 #: ../../user/scenario-structure.rst:172
 #: 59ac4bddf5bc4482af225aa2d566937a
 msgid "The headers as a map of names to values."
+msgstr ""
+
+#: ../../user/scenario-structure.rst:173
+#: 3098c830868b4c0aa29d5280fe405e55
+msgid "params"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:174

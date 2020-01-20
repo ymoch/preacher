@@ -56,13 +56,13 @@ which can reduce test scenarios description and make them simpler and more decla
 
 To make tests parameterized:
 
-- Define ``params`` field.
+- Define ``parameters`` field.
 - Set ``!argument`` tag and its key on parameterized fields.
 
 .. code-block:: yaml
 
     label: Parameterized test example.
-    params:
+    parameters:
       - label: parameter 1
         args:
           foo: a string

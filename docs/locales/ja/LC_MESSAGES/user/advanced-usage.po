@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-06 18:14+0900\n"
+"POT-Creation-Date: 2020-01-20 22:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,8 +55,8 @@ msgstr "テストをパラメータ化するには:"
 
 #: ../../user/advanced-usage.rst:59
 #: e4a65c0680af455995c38e801eb1f903
-msgid "Define ``params`` field."
-msgstr "``params`` フィールドを定義します."
+msgid "Define ``parameters`` field."
+msgstr "``parameters`` フィールドを定義します."
 
 #: ../../user/advanced-usage.rst:60
 #: 46213fd142a247a797d57fd6127f98d9
