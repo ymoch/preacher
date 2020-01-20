@@ -8,11 +8,11 @@ from concurrent.futures import ThreadPoolExecutor
 from preacher.app.cli.option import parse_args
 from preacher.compilation.factory import create_compiler
 from preacher.compilation.yaml import load
-from preacher.listener.log import LoggingListener
-from preacher.listener.merging import MergingListener
-from preacher.listener.report import ReportingListener
+from preacher.core.listener.log import LoggingListener
+from preacher.core.listener.merging import MergingListener
+from preacher.core.listener.report import ReportingListener
+from preacher.core.runner import ScenarioRunner
 from preacher.presentation.log import ColoredFormatter
-from preacher.runner import ScenarioRunner
 
 FORMATTER = ColoredFormatter()
 HANDLER = logging.StreamHandler()

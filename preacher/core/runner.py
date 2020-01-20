@@ -3,7 +3,7 @@ from typing import Iterable, Optional
 
 from preacher.core.scenario import Scenario
 from preacher.core.scenario.status import Status
-from preacher.listener import Listener
+from preacher.core.listener import Listener
 
 
 class ScenarioRunner:

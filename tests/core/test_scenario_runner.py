@@ -2,8 +2,8 @@ from unittest.mock import MagicMock, call, sentinel
 
 from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask
 from preacher.core.scenario.status import Status
-from preacher.listener import Listener
-from preacher.runner import ScenarioRunner
+from preacher.core.listener import Listener
+from preacher.core.runner import ScenarioRunner
 
 
 def test_given_no_scenario():
