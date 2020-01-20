@@ -1,9 +1,9 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Iterable, Optional
 
-from preacher.core.scenario import Scenario
-from preacher.core.scenario.status import Status
-from preacher.core.listener import Listener
+from .listener import Listener
+from .scenario import Scenario
+from .scenario.status import Status
 
 
 class ScenarioRunner:
