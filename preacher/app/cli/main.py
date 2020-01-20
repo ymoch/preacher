@@ -5,7 +5,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
-from preacher.core.application import Application
+from preacher.core.scenariorunner import ScenarioRunner
 from preacher.app.cli.option import parse_args
 from preacher.compilation.factory import create_compiler
 from preacher.compilation.yaml import load
@@ -40,7 +40,7 @@ def _main() -> None:
         for path in args.scenario
     )
 
-    app = Application(
+    app = ScenarioRunner(
         base_url=args.url,
         retry=args.retry,
         delay=args.delay,

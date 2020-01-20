@@ -5,7 +5,7 @@ from preacher.core.scenario import Scenario
 from preacher.listener import Listener
 
 
-class Application:
+class ScenarioRunner:
     def __init__(
         self,
         base_url: str,
