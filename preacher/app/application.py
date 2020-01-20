@@ -1,8 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor
-from typing import Callable, Iterable, Optional
+from typing import Iterable, Optional
 
 from preacher.compilation.argument import Arguments
-from preacher.core.scenario import ScenarioResult, Scenario
+from preacher.core.scenario import Scenario
 from preacher.listener import Listener
 
 
@@ -34,24 +34,20 @@ class Application:
         executor: ThreadPoolExecutor,
         scenarios: Iterable[Scenario],
     ) -> None:
-        tasks = [self._submit_each(executor, s) for s in scenarios]
-        results = (task() for task in tasks)
+        tasks = [
+            scenario.submit(
+                executor,
+                base_url=self._base_url,
+                retry=self._retry,
+                delay=self._delay,
+                timeout=self._timeout,
+                listener=self._listener,
+            )
+            for scenario in scenarios
+        ]
+        results = (task.result() for task in tasks)
         for result in results:
             self._is_succeeded &= result.status.is_succeeded
             self._listener.on_scenario(result)
 
         self._listener.on_end()
-
-    def _submit_each(
-        self,
-        executor: ThreadPoolExecutor,
-        scenario: Scenario,
-    ) -> Callable[[], ScenarioResult]:
-        return scenario.submit(
-            executor,
-            base_url=self._base_url,
-            retry=self._retry,
-            delay=self._delay,
-            timeout=self._timeout,
-            listener=self._listener,
-        ).result
