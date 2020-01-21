@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from concurrent.futures import Executor, Future, ThreadPoolExecutor
+from concurrent.futures import Executor, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Iterable
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
@@ -36,6 +36,34 @@ class ScenarioResult(StatusedMixin):
     )
 
 
+class CasesTask:
+
+    def __init__(
+        self,
+        executor: Executor,
+        cases: Iterable[Case],
+        *args,
+        **kwargs,
+    ):
+        self._future = executor.submit(
+            self._run_in_order,
+            cases,
+            *args,
+            **kwargs,
+        )
+
+    def result(self):
+        return self._future.result()
+
+    @staticmethod
+    def _run_in_order(
+        cases: Iterable[Case],
+        *args,
+        **kwargs
+    ) -> StatusedSequence[CaseResult]:
+        return collect_statused(case.run(*args, **kwargs) for case in cases)
+
+
 class ScenarioTask(ABC):
 
     @abstractmethod
@@ -46,9 +74,10 @@ class ScenarioTask(ABC):
 class RunningScenarioTask(ScenarioTask):
 
     def __init__(
-        self, label: Optional[str],
+        self,
+        label: Optional[str],
         conditions: Verification,
-        cases: Future,
+        cases: CasesTask,
         subscenarios: List[ScenarioTask],
     ):
         self._label = label
@@ -144,13 +173,15 @@ class Scenario:
             ))
 
         listener = listener or ScenarioListener()
-        cases = executor.submit(
-            self._run_cases,
-            base_url,
-            retry,
-            delay,
-            timeout,
-            listener,
+
+        cases = CasesTask(
+            executor,
+            self._cases,
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
+            timeout=timeout,
+            listener=listener,
         )
         subscenarios = [
             subscenario.submit(
@@ -168,23 +199,4 @@ class Scenario:
             conditions=conditions,
             cases=cases,
             subscenarios=subscenarios,
-        )
-
-    def _run_cases(
-        self,
-        base_url: str,
-        retry: int,
-        delay: float,
-        timeout: Optional[float],
-        listener: CaseListener,
-    ) -> StatusedSequence[CaseResult]:
-        return collect_statused(
-            case.run(
-                base_url=base_url,
-                retry=retry,
-                delay=delay,
-                timeout=timeout,
-                listener=listener,
-            )
-            for case in self._cases
         )
