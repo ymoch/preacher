@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Executor, Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import List, Optional
 
@@ -112,7 +112,7 @@ class Scenario:
 
     def submit(
         self,
-        executor: ThreadPoolExecutor,
+        executor: Executor,
         base_url: str = '',
         retry: int = 0,
         delay: float = 0.1,

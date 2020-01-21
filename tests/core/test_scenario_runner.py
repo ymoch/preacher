@@ -1,16 +1,16 @@
 from unittest.mock import MagicMock, call, sentinel
 
-from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask
-from preacher.core.scenario.status import Status
 from preacher.core.listener import Listener
 from preacher.core.runner import ScenarioRunner
+from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask
+from preacher.core.scenario.status import Status
 
 
 def test_given_no_scenario():
     runner = ScenarioRunner()
-    runner.run(sentinel.executor, [])
+    status = runner.run(sentinel.executor, [])
 
-    assert runner.status == Status.SKIPPED
+    assert status == Status.SKIPPED
 
 
 def test_given_scenarios():
@@ -33,11 +33,10 @@ def test_given_scenarios():
         retry=sentinel.retry,
         delay=sentinel.delay,
         timeout=sentinel.timeout,
-        listener=listener,
     )
-    runner.run(sentinel.executor, scenarios)
+    status = runner.run(sentinel.executor, scenarios, listener=listener)
 
-    assert runner.status == Status.FAILURE
+    assert status == Status.FAILURE
     for scenario in scenarios:
         scenario.submit.assert_called_once_with(
             sentinel.executor,

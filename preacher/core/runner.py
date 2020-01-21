@@ -13,25 +13,19 @@ class ScenarioRunner:
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
-        listener: Optional[Listener] = None,
     ):
         self._base_url = base_url
         self._retry = retry
         self._delay = delay
         self._timeout = timeout
-        self._listener = listener or Listener()
-
-        self._status = Status.SKIPPED
-
-    @property
-    def status(self) -> Status:
-        return self._status
 
     def run(
         self,
         executor: ThreadPoolExecutor,
         scenarios: Iterable[Scenario],
-    ) -> None:
+        listener: Optional[Listener] = None,
+    ) -> Status:
+        listener = listener or Listener()
         tasks = [
             scenario.submit(
                 executor,
@@ -39,13 +33,16 @@ class ScenarioRunner:
                 retry=self._retry,
                 delay=self._delay,
                 timeout=self._timeout,
-                listener=self._listener,
+                listener=listener,
             )
             for scenario in scenarios
         ]
         results = (task.result() for task in tasks)
-        for result in results:
-            self._status = self._status.merge(result.status)
-            self._listener.on_scenario(result)
 
-        self._listener.on_end()
+        status = Status.SKIPPED
+        for result in results:
+            status = status.merge(result.status)
+            listener.on_scenario(result)
+
+        listener.on_end()
+        return status
