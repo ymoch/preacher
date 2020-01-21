@@ -485,11 +485,8 @@ category = "main"
 description = "Hamcrest framework for matcher objects"
 name = "pyhamcrest"
 optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
-version = "1.10.1"
-
-[package.dependencies]
-six = "*"
+python-versions = ">=3.5"
+version = "2.0.0"
 
 [[package]]
 category = "main"
@@ -754,7 +751,7 @@ python-versions = "*"
 version = "1.6.1"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -1048,7 +1045,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "contextlib2", "unittest2"]
 
 [metadata]
-content-hash = "164cc32f8a33209e892ffc3b44e63d1309eb9f2c4cb60eecef1e504421b2cc44"
+content-hash = "52c9bfff5dc9135cfcae9ec6e011a33d695247dbff94157278638493783c56c7"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1316,8 +1313,8 @@ pygments = [
     {file = "Pygments-2.5.2.tar.gz", hash = "sha256:98c8aa5a9f778fcd1026a17361ddaf7330d1b7c62ae97c3bb0ae73e0b9b6b0fe"},
 ]
 pyhamcrest = [
-    {file = "PyHamcrest-1.10.1-py3-none-any.whl", hash = "sha256:d31a6793c6e5fa47137d7be3e796df3645b0afa0092db01ec946d6bee086ab8c"},
-    {file = "PyHamcrest-1.10.1.tar.gz", hash = "sha256:f7ae19ddfd71f11a421bcec9608d708c0fab816db98b51fdbc672a6d99a30874"},
+    {file = "PyHamcrest-2.0.0-py3-none-any.whl", hash = "sha256:36cda5e849e3ee9ce54628667471e5e769f596259bb3c13c3596f6059a615ef8"},
+    {file = "PyHamcrest-2.0.0.tar.gz", hash = "sha256:5959cb4ab465b303522d2e0d270a6ee581c3ad9ba419e304bb6ebe50a60ea37a"},
 ]
 pyjq = [
     {file = "pyjq-2.4.0-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:562e62a18d306d4fefe691d2ced951b34e44f0d300da505727cd66e2aa70aa0c"},

@@ -20,7 +20,7 @@ preacher-cli = "preacher.app.cli.main:main"
 [tool.poetry.dependencies]
 python = "^3.7"
 aniso8601 = "^8.0"
-pyhamcrest = "^1.9"
+pyhamcrest = "^2.0"
 pyjq = "^2.3"
 requests = "^2.21"
 "ruamel.yaml" = "^0.16.5"
