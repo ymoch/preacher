@@ -29,10 +29,12 @@ def _main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    listener = MergingListener()
-    listener.append(LoggingListener.from_logger(LOGGER))
-    if args.report:
-        listener.append(ReportingListener.from_path(args.report))
+    app = ScenarioRunner(
+        base_url=args.url,
+        retry=args.retry,
+        delay=args.delay,
+        timeout=args.timeout,
+    )
 
     compiler = create_compiler()
     scenarios = (
@@ -40,17 +42,15 @@ def _main() -> None:
         for path in args.scenario
     )
 
-    app = ScenarioRunner(
-        base_url=args.url,
-        retry=args.retry,
-        delay=args.delay,
-        timeout=args.timeout,
-        listener=listener,
-    )
-    with ThreadPoolExecutor(args.concurrency) as executor:
-        app.run(executor, scenarios)
+    listener = MergingListener()
+    listener.append(LoggingListener.from_logger(LOGGER))
+    if args.report:
+        listener.append(ReportingListener.from_path(args.report))
 
-    if not app.status.is_succeeded:
+    with ThreadPoolExecutor(args.concurrency) as executor:
+        status = app.run(executor, scenarios, listener=listener)
+
+    if not status.is_succeeded:
         sys.exit(1)
 
 
