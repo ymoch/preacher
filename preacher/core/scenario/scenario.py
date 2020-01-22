@@ -36,6 +36,14 @@ class ScenarioResult(StatusedMixin):
     )
 
 
+def _run_cases_in_order(
+    cases: Iterable[Case],
+    *args,
+    **kwargs
+) -> StatusedSequence[CaseResult]:
+    return collect_statused(case.run(*args, **kwargs) for case in cases)
+
+
 class CasesTask:
 
     def __init__(
@@ -46,7 +54,7 @@ class CasesTask:
         **kwargs,
     ):
         self._future = executor.submit(
-            self._run_in_order,
+            _run_cases_in_order,
             cases,
             *args,
             **kwargs,
@@ -54,14 +62,6 @@ class CasesTask:
 
     def result(self):
         return self._future.result()
-
-    @staticmethod
-    def _run_in_order(
-        cases: Iterable[Case],
-        *args,
-        **kwargs
-    ) -> StatusedSequence[CaseResult]:
-        return collect_statused(case.run(*args, **kwargs) for case in cases)
 
 
 class ScenarioTask(ABC):
