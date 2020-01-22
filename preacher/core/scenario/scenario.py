@@ -47,11 +47,11 @@ def _run_cases_in_order(
 def _submit_ordered_cases(
     executor: Executor,
     cases: Iterable[Case],
-    base_url: str = '',
-    retry: int = 0,
-    delay: float = 0.1,
-    timeout: Optional[float] = None,
-    listener: Optional[CaseListener] = None,
+    base_url: str,
+    retry: int,
+    delay: float,
+    timeout: Optional[float],
+    listener: Optional[CaseListener],
 ) -> Callable[[], StatusedSequence[CaseResult]]:
     return executor.submit(
         _run_cases_in_order,
@@ -62,6 +62,29 @@ def _submit_ordered_cases(
         timeout=timeout,
         listener=listener,
     ).result
+
+
+def _submit_unordered_cases(
+    executor: Executor,
+    cases: Iterable[Case],
+    base_url: str,
+    retry: int,
+    delay: float,
+    timeout: Optional[float],
+    listener: Optional[CaseListener],
+) -> Callable[[], StatusedSequence[CaseResult]]:
+    futures = [
+        executor.submit(
+            case.run,
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
+            timeout=timeout,
+            listener=listener,
+        )
+        for case in cases
+    ]
+    return lambda: collect_statused(f.result() for f in futures)
 
 
 class ScenarioTask(ABC):
@@ -112,11 +135,13 @@ class Scenario:
     def __init__(
         self,
         label: Optional[str] = None,
+        ordered: bool = True,
         conditions: Optional[List[Description]] = None,
         cases: Optional[List[Case]] = None,
         subscenarios: Optional[List[Scenario]] = None,
     ):
         self._label = label
+        self._ordered = ordered
         self._conditions = conditions or []
         self._cases = cases or []
         self._subscenarios = subscenarios or []
@@ -174,7 +199,11 @@ class Scenario:
 
         listener = listener or ScenarioListener()
 
-        cases = _submit_ordered_cases(
+        if self._ordered:
+            submit_cases = _submit_ordered_cases
+        else:
+            submit_cases = _submit_unordered_cases
+        cases = submit_cases(
             executor,
             self._cases,
             base_url=base_url,
@@ -183,6 +212,7 @@ class Scenario:
             timeout=timeout,
             listener=listener,
         )
+
         subscenarios = [
             subscenario.submit(
                 executor,
