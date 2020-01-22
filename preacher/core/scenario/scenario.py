@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent.futures import Executor, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, List, Optional, Iterator
+from typing import Iterable, List, Optional, Iterator
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
@@ -13,6 +13,7 @@ from .description import Description
 from .status import (
     Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
 )
+from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 from .verification import Verification, collect
 
 
@@ -52,16 +53,16 @@ def _submit_ordered_cases(
     delay: float,
     timeout: Optional[float],
     listener: Optional[CaseListener],
-) -> Callable[[], Iterator[CaseResult]]:
-    return executor.submit(
-        _run_cases_in_order,
+) -> CasesTask:
+    return OrderedCasesTask(
+        executor,
         cases,
         base_url=base_url,
         retry=retry,
         delay=delay,
         timeout=timeout,
         listener=listener,
-    ).result
+    )
 
 
 def _submit_unordered_cases(
@@ -72,19 +73,16 @@ def _submit_unordered_cases(
     delay: float,
     timeout: Optional[float],
     listener: Optional[CaseListener],
-) -> Callable[[], Iterator[CaseResult]]:
-    futures = [
-        executor.submit(
-            case.run,
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-            listener=listener,
-        )
-        for case in cases
-    ]
-    return lambda: (f.result() for f in futures)
+) -> CasesTask:
+    return UnorderedCasesTask(
+        executor,
+        cases,
+        base_url=base_url,
+        retry=retry,
+        delay=delay,
+        timeout=timeout,
+        listener=listener,
+    )
 
 
 class ScenarioTask(ABC):
@@ -100,7 +98,7 @@ class RunningScenarioTask(ScenarioTask):
         self,
         label: Optional[str],
         conditions: Verification,
-        cases: Callable[[], Iterator[CaseResult]],
+        cases: CasesTask,
         subscenarios: List[ScenarioTask],
     ):
         self._label = label
@@ -109,7 +107,7 @@ class RunningScenarioTask(ScenarioTask):
         self._subscenarios = subscenarios
 
     def result(self) -> ScenarioResult:
-        cases = collect_statused(self._cases())
+        cases = self._cases.result()
         subscenarios = collect_statused(s.result() for s in self._subscenarios)
         status = merge_statuses(cases.status, subscenarios.status)
         return ScenarioResult(
