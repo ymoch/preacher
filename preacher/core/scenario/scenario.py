@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent.futures import Executor, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, List, Optional
+from typing import Callable, Iterable, List, Optional, Iterator
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
@@ -40,8 +40,8 @@ def _run_cases_in_order(
     cases: Iterable[Case],
     *args,
     **kwargs
-) -> StatusedSequence[CaseResult]:
-    return collect_statused(case.run(*args, **kwargs) for case in cases)
+) -> Iterator[CaseResult]:
+    return (case.run(*args, **kwargs) for case in cases)
 
 
 def _submit_ordered_cases(
@@ -52,7 +52,7 @@ def _submit_ordered_cases(
     delay: float,
     timeout: Optional[float],
     listener: Optional[CaseListener],
-) -> Callable[[], StatusedSequence[CaseResult]]:
+) -> Callable[[], Iterator[CaseResult]]:
     return executor.submit(
         _run_cases_in_order,
         cases,
@@ -72,7 +72,7 @@ def _submit_unordered_cases(
     delay: float,
     timeout: Optional[float],
     listener: Optional[CaseListener],
-) -> Callable[[], StatusedSequence[CaseResult]]:
+) -> Callable[[], Iterator[CaseResult]]:
     futures = [
         executor.submit(
             case.run,
@@ -84,7 +84,7 @@ def _submit_unordered_cases(
         )
         for case in cases
     ]
-    return lambda: collect_statused(f.result() for f in futures)
+    return lambda: (f.result() for f in futures)
 
 
 class ScenarioTask(ABC):
@@ -100,7 +100,7 @@ class RunningScenarioTask(ScenarioTask):
         self,
         label: Optional[str],
         conditions: Verification,
-        cases: Callable[[], StatusedSequence[CaseResult]],
+        cases: Callable[[], Iterator[CaseResult]],
         subscenarios: List[ScenarioTask],
     ):
         self._label = label
@@ -109,7 +109,7 @@ class RunningScenarioTask(ScenarioTask):
         self._subscenarios = subscenarios
 
     def result(self) -> ScenarioResult:
-        cases = self._cases()
+        cases = collect_statused(self._cases())
         subscenarios = collect_statused(s.result() for s in self._subscenarios)
         status = merge_statuses(cases.status, subscenarios.status)
         return ScenarioResult(

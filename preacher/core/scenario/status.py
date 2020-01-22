@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import reduce, singledispatch
 from typing import (
-    Iterable as IterableType,
     Iterator,
     Sequence,
     TypeVar,
@@ -187,7 +186,7 @@ StatusedType = TypeVar('StatusedType', bound=Statused)
 
 
 def collect_statused(
-    items: IterableType[StatusedType],
+    items: Iterable[StatusedType],
 ) -> StatusedSequence[StatusedType]:
     items = list(items)
     status = merge_statuses(item.status for item in items)
