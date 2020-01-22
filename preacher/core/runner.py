@@ -7,6 +7,7 @@ from .scenario.status import Status
 
 
 class ScenarioRunner:
+
     def __init__(
         self,
         base_url: str = '',
