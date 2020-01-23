@@ -1,7 +1,7 @@
 from concurrent.futures import Executor, Future
-from unittest.mock import ANY, MagicMock, patch, sentinel
+from unittest.mock import MagicMock, patch, sentinel
 
-from pytest import raises, fixture
+from pytest import raises, fixture, mark
 
 from preacher.core.scenario import Scenario, ScenarioTask, ScenarioResult
 from preacher.core.scenario.status import Status, StatusedSequence
@@ -32,70 +32,35 @@ def test_not_implemented():
         _IncompleteScenario().result()
 
 
-@patch(f'{PACKAGE}.OrderedCasesTask')
+@mark.parametrize('case_status, subscenario_status, expected_status', [
+    (Status.SUCCESS, Status.UNSTABLE, Status.UNSTABLE),
+    (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
+])
+@patch(f'{PACKAGE}.UnorderedCasesTask')
 @patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
-def test_given_a_filled_scenario(
+def test_given_filled_scenarios(
     analyze_context,
     context_ctor,
     cases_task_ctor,
     executor,
+    case_status,
+    subscenario_status,
+    expected_status,
 ):
     case_results = StatusedSequence(
-        status=Status.UNSTABLE,
+        status=case_status,
         items=[sentinel.case_result],
     )
     cases_task = MagicMock(CasesTask)
     cases_task.result = MagicMock(return_value=case_results)
     cases_task_ctor.return_value = cases_task
 
-    scenario = Scenario(label='label', cases=sentinel.cases)
-    result = scenario.submit(executor).result()
-    assert result.label == 'label'
-    assert result.status == Status.UNSTABLE
-    assert result.cases is case_results
-
-    context_ctor.assert_called_once_with(
-        base_url='',
-        retry=0,
-        delay=0.1,
-        timeout=None,
-    )
-    analyze_context.assert_called_once_with(sentinel.context)
-    cases_task_ctor.assert_called_once_with(
-        executor,
-        sentinel.cases,
-        base_url='',
-        retry=0,
-        delay=0.1,
-        timeout=None,
-        listener=ANY,
-    )
-    cases_task.result.assert_called_once_with()
-
-
-@patch(f'{PACKAGE}.UnorderedCasesTask')
-@patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
-@patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
-def test_given_subscenarios(
-    analyze_context,
-    context_ctor,
-    cases_task_ctor,
-    executor,
-):
-    subscenario_result = MagicMock(ScenarioResult, status=Status.FAILURE)
+    subscenario_result = MagicMock(ScenarioResult, status=subscenario_status)
     subscenario_task = MagicMock(ScenarioTask)
     subscenario_task.result = MagicMock(return_value=subscenario_result)
     subscenario = MagicMock(Scenario)
     subscenario.submit = MagicMock(return_value=subscenario_task)
-
-    case_results = StatusedSequence(
-        status=Status.UNSTABLE,
-        items=[sentinel.case_result],
-    )
-    cases_task = MagicMock(CasesTask)
-    cases_task.result = MagicMock(return_value=case_results)
-    cases_task_ctor.return_value = cases_task
 
     sentinel.context.starts = sentinel.starts
 
@@ -112,7 +77,7 @@ def test_given_subscenarios(
         timeout=1.0,
         listener=sentinel.listener,
     ).result()
-    assert result.status == Status.FAILURE
+    assert result.status == expected_status
     assert result.cases is case_results
     assert result.subscenarios[0] is subscenario_result
 
