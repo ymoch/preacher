@@ -1,15 +1,29 @@
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Executor, Future, ThreadPoolExecutor
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
-from pytest import raises
+from pytest import raises, fixture
 
 from preacher.core.scenario.case import Case
 from preacher.core.scenario.description import Description
 from preacher.core.scenario import Scenario, ScenarioTask, ScenarioResult
-from preacher.core.scenario.status import Status
+from preacher.core.scenario.status import Status, StatusedSequence
+from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.scenario.verification import Verification
 
 PACKAGE = 'preacher.core.scenario.scenario'
+
+
+def submit(func, *args, **kwargs) -> Future:
+    future: Future = Future()
+    future.set_result(func(*args, **kwargs))
+    return future
+
+
+@fixture
+def executor():
+    executor = MagicMock(Executor)
+    executor.submit = MagicMock(side_effect=submit)
+    return executor
 
 
 def test_not_implemented():
@@ -30,19 +44,28 @@ def test_given_an_empty_scenario():
     assert list(result.cases) == []
 
 
+@patch(f'{PACKAGE}.OrderedCasesTask')
 @patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
-def test_given_a_filled_scenario(analyze_context, context_ctor):
-    sentinel.result1.status = Status.UNSTABLE
-    case1 = MagicMock(Case, run=MagicMock(return_value=sentinel.result1))
-    sentinel.result2.status = Status.SUCCESS
-    case2 = MagicMock(Case, run=MagicMock(return_value=sentinel.result2))
+def test_given_a_filled_scenario(
+    analyze_context,
+    context_ctor,
+    cases_task_ctor,
+    executor,
+):
+    case_results = StatusedSequence(
+        status=Status.UNSTABLE,
+        items=[sentinel.case_result],
+    )
+    cases_task = MagicMock(CasesTask)
+    cases_task.result = MagicMock(return_value=case_results)
+    cases_task_ctor.return_value = cases_task
 
-    scenario = Scenario(label='label', cases=[case1, case2])
-    result = scenario.run()
+    scenario = Scenario(label='label', cases=sentinel.cases)
+    result = scenario.submit(executor).result()
     assert result.label == 'label'
     assert result.status == Status.UNSTABLE
-    assert list(result.cases) == [sentinel.result1, sentinel.result2]
+    assert result.cases is case_results
 
     context_ctor.assert_called_once_with(
         base_url='',
@@ -51,14 +74,16 @@ def test_given_a_filled_scenario(analyze_context, context_ctor):
         timeout=None,
     )
     analyze_context.assert_called_once_with(sentinel.context)
-    for case in [case1, case2]:
-        case.run.assert_called_once_with(
-            base_url='',
-            retry=0,
-            delay=0.1,
-            timeout=None,
-            listener=ANY,
-        )
+    cases_task_ctor.assert_called_once_with(
+        executor,
+        sentinel.cases,
+        base_url='',
+        retry=0,
+        delay=0.1,
+        timeout=None,
+        listener=ANY,
+    )
+    cases_task.result.assert_called_once_with()
 
 
 @patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)

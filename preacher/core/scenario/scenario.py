@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent.futures import Executor, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Iterable, List, Optional, Iterator
+from typing import Callable, Iterable, Iterator, List, Optional
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
@@ -43,46 +43,6 @@ def _run_cases_in_order(
     **kwargs
 ) -> Iterator[CaseResult]:
     return (case.run(*args, **kwargs) for case in cases)
-
-
-def _submit_ordered_cases(
-    executor: Executor,
-    cases: Iterable[Case],
-    base_url: str,
-    retry: int,
-    delay: float,
-    timeout: Optional[float],
-    listener: Optional[CaseListener],
-) -> CasesTask:
-    return OrderedCasesTask(
-        executor,
-        cases,
-        base_url=base_url,
-        retry=retry,
-        delay=delay,
-        timeout=timeout,
-        listener=listener,
-    )
-
-
-def _submit_unordered_cases(
-    executor: Executor,
-    cases: Iterable[Case],
-    base_url: str,
-    retry: int,
-    delay: float,
-    timeout: Optional[float],
-    listener: Optional[CaseListener],
-) -> CasesTask:
-    return UnorderedCasesTask(
-        executor,
-        cases,
-        base_url=base_url,
-        retry=retry,
-        delay=delay,
-        timeout=timeout,
-        listener=listener,
-    )
 
 
 class ScenarioTask(ABC):
@@ -198,9 +158,9 @@ class Scenario:
         listener = listener or ScenarioListener()
 
         if self._ordered:
-            submit_cases = _submit_ordered_cases
+            submit_cases: Callable = OrderedCasesTask
         else:
-            submit_cases = _submit_unordered_cases
+            submit_cases = UnorderedCasesTask
         cases = submit_cases(
             executor,
             self._cases,
