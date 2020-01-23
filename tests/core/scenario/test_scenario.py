@@ -4,8 +4,10 @@ from unittest.mock import MagicMock, patch, sentinel
 from pytest import raises, fixture, mark
 
 from preacher.core.scenario import Scenario, ScenarioTask, ScenarioResult
+from preacher.core.scenario.description import Description
 from preacher.core.scenario.status import Status, StatusedSequence
 from preacher.core.scenario.util.concurrency import CasesTask
+from preacher.core.scenario.verification import Verification
 
 PACKAGE = 'preacher.core.scenario.scenario'
 
@@ -48,6 +50,10 @@ def test_given_filled_scenarios(
     subscenario_status,
     expected_status,
 ):
+    condition_result = MagicMock(Verification, status=Status.SUCCESS)
+    condition = MagicMock(Description)
+    condition.verify = MagicMock(return_value=condition_result)
+
     case_results = StatusedSequence(
         status=case_status,
         items=[sentinel.case_result],
@@ -66,6 +72,7 @@ def test_given_filled_scenarios(
 
     scenario = Scenario(
         ordered=False,
+        conditions=[condition],
         cases=sentinel.cases,
         subscenarios=[subscenario]
     )
@@ -78,6 +85,7 @@ def test_given_filled_scenarios(
         listener=sentinel.listener,
     ).result()
     assert result.status == expected_status
+    assert result.conditions.children[0] is condition_result
     assert result.cases is case_results
     assert result.subscenarios[0] is subscenario_result
 
@@ -86,6 +94,10 @@ def test_given_filled_scenarios(
         retry=2,
         delay=0.5,
         timeout=1.0,
+    )
+    condition.verify.assert_called_once_with(
+        sentinel.context_analyzer,
+        origin_datetime=sentinel.starts,
     )
     analyze_context.assert_called_with(sentinel.context)
     cases_task_ctor.assert_called_once_with(
