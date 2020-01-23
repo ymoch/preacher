@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from concurrent.futures import Executor, ThreadPoolExecutor
+from concurrent.futures import Executor
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, Iterator, List, Optional
+from typing import Callable, List, Optional
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
@@ -35,14 +35,6 @@ class ScenarioResult(StatusedMixin):
     subscenarios: StatusedSequence[ScenarioResult] = field(
         default_factory=StatusedSequence,
     )
-
-
-def _run_cases_in_order(
-    cases: Iterable[Case],
-    *args,
-    **kwargs
-) -> Iterator[CaseResult]:
-    return (case.run(*args, **kwargs) for case in cases)
 
 
 class ScenarioTask(ABC):
@@ -103,24 +95,6 @@ class Scenario:
         self._conditions = conditions or []
         self._cases = cases or []
         self._subscenarios = subscenarios or []
-
-    def run(
-        self,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
-        listener: Optional[ScenarioListener] = None,
-    ) -> ScenarioResult:
-        with ThreadPoolExecutor(1) as executor:
-            return self.submit(
-                executor,
-                base_url=base_url,
-                retry=retry,
-                delay=delay,
-                timeout=timeout,
-                listener=listener,
-            ).result()
 
     def submit(
         self,
