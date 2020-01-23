@@ -1,9 +1,13 @@
 from concurrent.futures import Executor, Future
-from unittest.mock import MagicMock, patch, sentinel
+from unittest.mock import ANY, MagicMock, patch, sentinel
 
-from pytest import raises, fixture, mark
+from pytest import fixture, mark, raises
 
-from preacher.core.scenario import Scenario, ScenarioTask, ScenarioResult
+from preacher.core.scenario.scenario import (
+    Scenario,
+    ScenarioTask,
+    ScenarioResult,
+)
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.status import Status, StatusedSequence
 from preacher.core.scenario.util.concurrency import CasesTask
@@ -32,6 +36,43 @@ def test_not_implemented():
 
     with raises(NotImplementedError):
         _IncompleteScenario().result()
+
+
+def test_given_unstable_condition():
+    pass
+
+
+def test_given_failing_condition():
+    pass
+
+
+@patch(f'{PACKAGE}.OrderedCasesTask')
+def test_given_default_scenario(cases_task_ctor, executor):
+    case_results = StatusedSequence(status=Status.SKIPPED)
+    cases_task = MagicMock(CasesTask)
+    cases_task.result = MagicMock(return_value=case_results)
+    cases_task_ctor.return_value = cases_task
+
+    scenario = Scenario()
+    result = scenario.submit(executor).result()
+
+    assert result.label is None
+    assert result.status is Status.SKIPPED
+    assert result.conditions.status is Status.SKIPPED
+    assert result.cases is case_results
+    assert result.subscenarios.status is Status.SKIPPED
+
+    cases_task_ctor.assert_called_once_with(
+        executor,
+        [],
+        base_url='',
+        retry=0,
+        delay=0.1,
+        timeout=None,
+        listener=ANY,
+    )
+    cases_task.result.assert_called_once_with()
+    executor.submit.assert_not_called()
 
 
 @mark.parametrize('case_status, subscenario_status, expected_status', [
