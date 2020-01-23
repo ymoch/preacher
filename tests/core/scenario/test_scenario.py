@@ -1,4 +1,4 @@
-from concurrent.futures import Executor, Future, ThreadPoolExecutor
+from concurrent.futures import Executor, Future
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import raises, fixture
@@ -30,15 +30,6 @@ def test_not_implemented():
 
     with raises(NotImplementedError):
         _IncompleteScenario().result()
-
-
-def test_given_an_empty_scenario():
-    scenario = Scenario(label=None, cases=[])
-    with ThreadPoolExecutor(1) as executor:
-        result = scenario.submit(executor).result()
-    assert result.label is None
-    assert result.status == Status.SKIPPED
-    assert list(result.cases) == []
 
 
 @patch(f'{PACKAGE}.OrderedCasesTask')
