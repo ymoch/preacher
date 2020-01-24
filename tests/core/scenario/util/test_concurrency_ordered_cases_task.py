@@ -31,13 +31,20 @@ def test_given_no_cases(executor):
 
 
 def test_given_cases(executor):
-    case_result = MagicMock(CaseResult, status=Status.SUCCESS)
-    case = MagicMock(Case, run=MagicMock(return_value=case_result))
+    case_results = [
+        MagicMock(CaseResult, status=Status.SUCCESS),
+        MagicMock(CaseResult, status=Status.UNSTABLE),
+    ]
+    cases = [
+        MagicMock(Case, run=MagicMock(return_value=result))
+        for result in case_results
+    ]
 
-    task = OrderedCasesTask(executor, [case], 1, foo='bar')
+    task = OrderedCasesTask(executor, cases, 1, foo='bar')
     result = task.result()
-    assert result.status is Status.SUCCESS
-    assert result.items == [case_result]
+    assert result.status is Status.UNSTABLE
+    assert result.items == case_results
 
     executor.submit.assert_called_once()
-    case.run.assert_called_once_with(1, foo='bar')
+    for case in cases:
+        case.run.assert_called_once_with(1, foo='bar')
