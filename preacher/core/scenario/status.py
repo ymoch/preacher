@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from functools import reduce
-from typing import Iterator, Sequence, TypeVar, Union
+from typing import Generic, List, TypeVar
 
 T = TypeVar('T')
 
@@ -102,65 +101,17 @@ class StatusedMixin:
     status: Status = Status.SKIPPED
 
 
-class StatusedInterface(ABC):
-    """
-    >>> class ConcreteStatused(StatusedInterface):
-    ...     @property
-    ...     def status(self) -> Status:
-    ...         return super().status
-    >>> ConcreteStatused().status
-    SKIPPED
-    """
-    @property
-    @abstractmethod
-    def status(self) -> Status:
-        return Status.SKIPPED
+@dataclass(frozen=True)
+class StatusedList(Generic[T], StatusedMixin):
+    items: List[T] = field(default_factory=list)
 
 
-class StatusedSequence(StatusedInterface, Sequence[T]):
-    """
-    >>> bool(StatusedSequence())
-    False
-    >>> bool(StatusedSequence(Status.SUCCESS, []))
-    False
-    >>> bool(StatusedSequence(Status.FAILURE, [1]))
-    True
-    >>> list(StatusedSequence(Status.UNSTABLE, [1, 2]))
-    [1, 2]
-    """
-
-    def __init__(
-        self,
-        status: Status = Status.SKIPPED,
-        items: Sequence[T] = [],
-    ):
-        self._status = status
-        self._items = items
-
-    @property
-    def status(self) -> Status:
-        return self._status
-
-    def __bool__(self) -> bool:
-        return bool(self._items)
-
-    def __len__(self) -> int:
-        return len(self._items)
-
-    def __iter__(self) -> Iterator[T]:
-        return iter(self._items)
-
-    def __getitem__(self, key):
-        return self._items[key]
-
-
-Statused = Union[StatusedMixin, StatusedInterface]
-StatusedType = TypeVar('StatusedType', bound=Statused)
+Statused = TypeVar('Statused', bound=StatusedMixin)
 
 
 def collect_statused(
-    items: Iterable[StatusedType],
-) -> StatusedSequence[StatusedType]:
+    items: Iterable[Statused],
+) -> StatusedList[Statused]:
     items = list(items)
     status = merge_statuses(item.status for item in items)
-    return StatusedSequence(status=status, items=items)
+    return StatusedList(status=status, items=items)

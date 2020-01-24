@@ -79,10 +79,10 @@ class Logger:
                 self._multi_line_message(level, message)
 
         with self._nested():
-            for case in scenario.cases:
+            for case in scenario.cases.items:
                 self.show_case_result(case)
 
-            for subscenario in scenario.subscenarios:
+            for subscenario in scenario.subscenarios.items:
                 self.show_scenario_result(subscenario)
 
         self._log(level, '')

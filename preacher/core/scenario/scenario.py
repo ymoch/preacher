@@ -11,7 +11,11 @@ from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
 from .description import Description
 from .status import (
-    Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
+    Status,
+    StatusedList,
+    StatusedMixin,
+    collect_statused,
+    merge_statuses,
 )
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 from .verification import Verification, collect
@@ -29,11 +33,9 @@ class ScenarioResult(StatusedMixin):
     label: Optional[str] = None
     message: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
-    cases: StatusedSequence[CaseResult] = field(
-        default_factory=StatusedSequence,
-    )
-    subscenarios: StatusedSequence[ScenarioResult] = field(
-        default_factory=StatusedSequence,
+    cases: StatusedList[CaseResult] = field(default_factory=StatusedList)
+    subscenarios: StatusedList[ScenarioResult] = field(
+        default_factory=StatusedList,
     )
 
 

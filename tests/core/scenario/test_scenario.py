@@ -9,7 +9,7 @@ from preacher.core.scenario.scenario import (
     ScenarioResult,
 )
 from preacher.core.scenario.description import Description
-from preacher.core.scenario.status import Status, StatusedSequence
+from preacher.core.scenario.status import Status, StatusedList
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.scenario.verification import Verification
 
@@ -83,8 +83,10 @@ def test_given_bad_conditions(condition_verifications, expected_status):
     assert result.label is sentinel.label
     assert result.status is expected_status
     assert result.conditions.children == condition_verifications
-    assert not result.cases
-    assert not result.subscenarios
+    assert result.cases.status is Status.SKIPPED
+    assert not result.cases.items
+    assert result.subscenarios.status is Status.SKIPPED
+    assert not result.subscenarios.items
 
     ordered_cases_task_ctor.assert_not_called()
     unordered_cases_task_ctor.assert_not_called()
@@ -92,7 +94,7 @@ def test_given_bad_conditions(condition_verifications, expected_status):
 
 
 def test_given_default_scenario(executor):
-    case_results = MagicMock(StatusedSequence, status=Status.SKIPPED)
+    case_results = MagicMock(StatusedList, status=Status.SKIPPED)
     cases_task = MagicMock(CasesTask)
     cases_task.result = MagicMock(return_value=case_results)
 
@@ -108,6 +110,7 @@ def test_given_default_scenario(executor):
     assert result.conditions.status is Status.SKIPPED
     assert result.cases is case_results
     assert result.subscenarios.status is Status.SKIPPED
+    assert not result.subscenarios.items
 
     cases_task_ctor.assert_called_once_with(
         executor,
@@ -140,7 +143,7 @@ def test_given_filled_scenarios(
     condition = MagicMock(Description)
     condition.verify = MagicMock(return_value=condition_result)
 
-    case_results = MagicMock(StatusedSequence, status=cases_status)
+    case_results = MagicMock(StatusedList, status=cases_status)
     cases_task = MagicMock(CasesTask)
     cases_task.result = MagicMock(return_value=case_results)
 
@@ -175,7 +178,7 @@ def test_given_filled_scenarios(
     assert result.status == expected_status
     assert result.conditions.children[0] is condition_result
     assert result.cases is case_results
-    assert result.subscenarios[0] is subscenario_result
+    assert result.subscenarios.items[0] is subscenario_result
 
     context_ctor.assert_called_with(
         base_url='base-url',

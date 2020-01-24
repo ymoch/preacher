@@ -24,8 +24,8 @@ def executor():
 def test_given_no_cases(executor):
     task = OrderedCasesTask(executor, [])
     result = task.result()
-    assert result.status == Status.SKIPPED
-    assert len(result) == 0
+    assert result.status is Status.SKIPPED
+    assert not result.items
 
     executor.submit.assert_called_once()
 
@@ -36,8 +36,8 @@ def test_given_cases(executor):
 
     task = OrderedCasesTask(executor, [case], 1, foo='bar')
     result = task.result()
-    assert result.status == Status.SUCCESS
-    assert result[0] == case_result
+    assert result.status is Status.SUCCESS
+    assert result.items == [case_result]
 
     executor.submit.assert_called_once()
     case.run.assert_called_once_with(1, foo='bar')
