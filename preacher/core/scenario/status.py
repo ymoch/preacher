@@ -125,6 +125,8 @@ class StatusedSequence(StatusedInterface, Sequence[T]):
     False
     >>> bool(StatusedSequence(Status.FAILURE, [1]))
     True
+    >>> list(StatusedSequence(Status.UNSTABLE, [1, 2]))
+    [1, 2]
     """
 
     def __init__(
