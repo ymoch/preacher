@@ -1,15 +1,32 @@
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Executor, Future
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
-from pytest import raises
+from pytest import fixture, mark, raises
 
-from preacher.core.scenario.case import Case
+from preacher.core.scenario.scenario import (
+    Scenario,
+    ScenarioTask,
+    ScenarioResult,
+)
 from preacher.core.scenario.description import Description
-from preacher.core.scenario import Scenario, ScenarioTask, ScenarioResult
-from preacher.core.scenario.status import Status
+from preacher.core.scenario.status import Status, StatusedList
+from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.scenario.verification import Verification
 
 PACKAGE = 'preacher.core.scenario.scenario'
+
+
+def submit(func, *args, **kwargs) -> Future:
+    future: Future = Future()
+    future.set_result(func(*args, **kwargs))
+    return future
+
+
+@fixture
+def executor():
+    executor = MagicMock(Executor)
+    executor.submit = MagicMock(side_effect=submit)
+    return executor
 
 
 def test_not_implemented():
@@ -21,126 +38,143 @@ def test_not_implemented():
         _IncompleteScenario().result()
 
 
-def test_given_an_empty_scenario():
-    scenario = Scenario(label=None, cases=[])
-    with ThreadPoolExecutor(1) as executor:
+@mark.parametrize('condition_verifications, expected_status', [
+    (
+        [
+            MagicMock(Verification, status=Status.SKIPPED),
+            MagicMock(Verification, status=Status.UNSTABLE),
+            MagicMock(Verification, status=Status.SUCCESS),
+        ],
+        Status.SKIPPED,
+    ),
+    (
+        [
+            MagicMock(Verification, status=Status.SUCCESS),
+            MagicMock(Verification, status=Status.FAILURE),
+            MagicMock(Verification, status=Status.UNSTABLE),
+        ],
+        Status.FAILURE,
+    ),
+])
+def test_given_bad_conditions(condition_verifications, expected_status):
+    conditions = [
+        MagicMock(Description, verify=MagicMock(return_value=verification))
+        for verification in condition_verifications
+    ]
+    subscenario = MagicMock(Scenario)
+
+    scenario = Scenario(
+        label=sentinel.label,
+        conditions=conditions,
+        cases=sentinel.cases,
+        subscenarios=[subscenario],
+    )
+    with patch(
+        f'{PACKAGE}.OrderedCasesTask'
+    ) as ordered_cases_task_ctor, patch(
+        f'{PACKAGE}.UnorderedCasesTask'
+    ) as unordered_cases_task_ctor:
         result = scenario.submit(executor).result()
+
+    assert result.label is sentinel.label
+    assert result.status is expected_status
+    assert result.conditions.children == condition_verifications
+    assert result.cases.status is Status.SKIPPED
+    assert not result.cases.items
+    assert result.subscenarios.status is Status.SKIPPED
+    assert not result.subscenarios.items
+
+    ordered_cases_task_ctor.assert_not_called()
+    unordered_cases_task_ctor.assert_not_called()
+    subscenario.submit.assert_not_called()
+
+
+def test_given_default_scenario(executor):
+    case_results = MagicMock(StatusedList, status=Status.SKIPPED)
+    cases_task = MagicMock(CasesTask)
+    cases_task.result = MagicMock(return_value=case_results)
+
+    scenario = Scenario()
+    with patch(
+        target=f'{PACKAGE}.OrderedCasesTask',
+        return_value=cases_task,
+    ) as cases_task_ctor:
+        result = scenario.submit(executor).result()
+
     assert result.label is None
-    assert result.status == Status.SKIPPED
-    assert list(result.cases) == []
+    assert result.status is Status.SKIPPED
+    assert result.conditions.status is Status.SKIPPED
+    assert result.cases is case_results
+    assert result.subscenarios.status is Status.SKIPPED
+    assert not result.subscenarios.items
 
-
-@patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
-@patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
-def test_given_a_filled_scenario(analyze_context, context_ctor):
-    sentinel.result1.status = Status.UNSTABLE
-    case1 = MagicMock(Case, run=MagicMock(return_value=sentinel.result1))
-    sentinel.result2.status = Status.SUCCESS
-    case2 = MagicMock(Case, run=MagicMock(return_value=sentinel.result2))
-
-    scenario = Scenario(label='label', cases=[case1, case2])
-    result = scenario.run()
-    assert result.label == 'label'
-    assert result.status == Status.UNSTABLE
-    assert list(result.cases) == [sentinel.result1, sentinel.result2]
-
-    context_ctor.assert_called_once_with(
+    cases_task_ctor.assert_called_once_with(
+        executor,
+        [],
         base_url='',
         retry=0,
         delay=0.1,
         timeout=None,
+        listener=ANY,
     )
-    analyze_context.assert_called_once_with(sentinel.context)
-    for case in [case1, case2]:
-        case.run.assert_called_once_with(
-            base_url='',
-            retry=0,
-            delay=0.1,
-            timeout=None,
-            listener=ANY,
-        )
+    cases_task.result.assert_called_once_with()
+    executor.submit.assert_not_called()
 
 
+@mark.parametrize('cases_status, subscenario_status, expected_status', [
+    (Status.SUCCESS, Status.UNSTABLE, Status.UNSTABLE),
+    (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
+])
 @patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
-def test_given_subscenarios(analyze_context, context_ctor):
-    condition1 = MagicMock(Description, verify=MagicMock(
-        return_value=Verification.succeed()
-    ))
-    condition2 = MagicMock(Description, verify=MagicMock(
-        return_value=Verification(status=Status.UNSTABLE)
-    ))
-    condition3 = MagicMock(Description, verify=MagicMock(
-        return_value=Verification.succeed()
-    ))
-    condition4 = MagicMock(Description, verify=MagicMock(
-        return_value=Verification(status=Status.FAILURE)
-    ))
-    condition5 = MagicMock(Description, verify=MagicMock(
-        return_value=Verification(status=Status.UNSTABLE)
-    ))
+def test_given_filled_scenarios(
+    analyze_context,
+    context_ctor,
+    executor,
+    cases_status,
+    subscenario_status,
+    expected_status,
+):
+    condition_result = MagicMock(Verification, status=Status.SUCCESS)
+    condition = MagicMock(Description)
+    condition.verify = MagicMock(return_value=condition_result)
 
-    sentinel.result1.status = Status.SUCCESS
-    case1 = MagicMock(Case, run=MagicMock(return_value=sentinel.result1))
+    case_results = MagicMock(StatusedList, status=cases_status)
+    cases_task = MagicMock(CasesTask)
+    cases_task.result = MagicMock(return_value=case_results)
 
-    sentinel.subresult1.status = Status.UNSTABLE
-    subcase1 = MagicMock(Case)
-    subcase1.run.return_value = sentinel.subresult1
-    sentinel.subresult2.status = Status.SUCCESS
-    subcase2 = MagicMock(Case)
-    subcase2.run.return_value = sentinel.subresult2
-    sentinel.subresult3.status = Status.FAILURE
-    subcase3 = MagicMock(Case)
-    subcase3.run.return_value = sentinel.subresult3
-    sentinel.subresult4.status = Status.SUCCESS
-    subcase4 = MagicMock(Case)
-    subcase4.run.return_value = sentinel.subresult4
-    sentinel.subresult5.status = Status.SUCCESS
-    subcase5 = MagicMock(Case)
-    subcase5.run.return_value = sentinel.subresult5
-
-    subscenario1 = Scenario(cases=[subcase1])
-    subscenario2 = Scenario(cases=[subcase2, subcase3])
-    subscenario3 = Scenario(
-        conditions=[condition2, condition3],
-        cases=[subcase4],
-    )
-    subscenario4 = Scenario(
-        conditions=[condition4, condition5],
-        cases=[subcase5],
-    )
-    scenario = Scenario(
-        conditions=[condition1],
-        cases=[case1],
-        subscenarios=[subscenario1, subscenario2, subscenario3, subscenario4],
-    )
+    subscenario_result = MagicMock(ScenarioResult, status=subscenario_status)
+    subscenario_task = MagicMock(ScenarioTask)
+    subscenario_task.result = MagicMock(return_value=subscenario_result)
+    subscenario = MagicMock(Scenario)
+    subscenario.submit = MagicMock(return_value=subscenario_task)
 
     sentinel.context.starts = sentinel.starts
 
-    result = scenario.run(
-        base_url='base-url',
-        retry=2,
-        delay=0.5,
-        timeout=1.0,
-        listener=sentinel.listener,
+    scenario = Scenario(
+        ordered=False,
+        conditions=[condition],
+        cases=sentinel.cases,
+        subscenarios=[subscenario]
     )
-    assert result.status == Status.FAILURE
-    assert result.subscenarios[0].status == Status.UNSTABLE
-    assert result.subscenarios[1].status == Status.FAILURE
-    assert result.subscenarios[2].status == Status.SKIPPED
-    assert (
-        result.subscenarios[2].conditions.children[0].status == Status.UNSTABLE
-    )
-    assert (
-        result.subscenarios[2].conditions.children[1].status == Status.SUCCESS
-    )
-    assert result.subscenarios[3].status == Status.FAILURE
-    assert (
-        result.subscenarios[3].conditions.children[0].status == Status.FAILURE
-    )
-    assert (
-        result.subscenarios[3].conditions.children[1].status == Status.UNSTABLE
-    )
+
+    with patch(
+        target=f'{PACKAGE}.UnorderedCasesTask',
+        return_value=cases_task,
+    ) as cases_task_ctor:
+        result = scenario.submit(
+            executor,
+            base_url='base-url',
+            retry=2,
+            delay=0.5,
+            timeout=1.0,
+            listener=sentinel.listener,
+        ).result()
+
+    assert result.status == expected_status
+    assert result.conditions.children[0] is condition_result
+    assert result.cases is case_results
+    assert result.subscenarios.items[0] is subscenario_result
 
     context_ctor.assert_called_with(
         base_url='base-url',
@@ -148,18 +182,27 @@ def test_given_subscenarios(analyze_context, context_ctor):
         delay=0.5,
         timeout=1.0,
     )
-    analyze_context.assert_called_with(sentinel.context)
-    condition1.verify.assert_called_with(
+    condition.verify.assert_called_once_with(
         sentinel.context_analyzer,
         origin_datetime=sentinel.starts,
     )
-    for case in [subcase1, subcase2, subcase3]:
-        case.run.assert_called_once_with(
-            base_url='base-url',
-            retry=2,
-            delay=0.5,
-            timeout=1.0,
-            listener=sentinel.listener,
-        )
-    for case in [subcase4, subcase5]:
-        case.run.assert_not_called()
+    analyze_context.assert_called_with(sentinel.context)
+    cases_task_ctor.assert_called_once_with(
+        executor,
+        sentinel.cases,
+        base_url='base-url',
+        retry=2,
+        delay=0.5,
+        timeout=1.0,
+        listener=sentinel.listener,
+    )
+    cases_task.result.assert_called_once_with()
+    subscenario.submit.assert_called_once_with(
+        executor,
+        base_url='base-url',
+        retry=2,
+        delay=0.5,
+        timeout=1.0,
+        listener=sentinel.listener,
+    )
+    subscenario_task.result.assert_called_once_with()
