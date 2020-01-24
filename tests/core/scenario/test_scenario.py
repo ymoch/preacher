@@ -43,7 +43,38 @@ def test_given_unstable_condition():
 
 
 def test_given_failing_condition():
-    pass
+    condition_verifications = [
+        MagicMock(Verification, status=Status.SUCCESS),
+        MagicMock(Verification, status=Status.FAILURE),
+        MagicMock(Verification, status=Status.UNSTABLE),
+    ]
+    conditions = [
+        MagicMock(Description, verify=MagicMock(return_value=verification))
+        for verification in condition_verifications
+    ]
+    subscenario = MagicMock(Scenario)
+
+    scenario = Scenario(
+        label=sentinel.label,
+        conditions=conditions,
+        cases=sentinel.cases,
+        subscenarios=[subscenario],
+    )
+    with patch(
+        f'{PACKAGE}.OrderedCasesTask'
+    ) as ordered_cases_task_ctor, patch(
+        f'{PACKAGE}.UnorderedCasesTask'
+    ) as unordered_cases_task_ctor:
+        result = scenario.submit(executor).result()
+
+    assert result.label is sentinel.label
+    assert result.conditions.children == condition_verifications
+    assert not result.cases
+    assert not result.subscenarios
+
+    ordered_cases_task_ctor.assert_not_called()
+    unordered_cases_task_ctor.assert_not_called()
+    subscenario.submit.assert_not_called()
 
 
 def test_given_default_scenario(executor):
