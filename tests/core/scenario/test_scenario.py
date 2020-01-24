@@ -42,12 +42,25 @@ def test_given_unstable_condition():
     pass
 
 
-def test_given_failing_condition():
-    condition_verifications = [
-        MagicMock(Verification, status=Status.SUCCESS),
-        MagicMock(Verification, status=Status.FAILURE),
-        MagicMock(Verification, status=Status.UNSTABLE),
-    ]
+@mark.parametrize('condition_verifications, expected_status', [
+    (
+        [
+            MagicMock(Verification, status=Status.SKIPPED),
+            MagicMock(Verification, status=Status.UNSTABLE),
+            MagicMock(Verification, status=Status.SUCCESS),
+        ],
+        Status.SKIPPED,
+    ),
+    (
+        [
+            MagicMock(Verification, status=Status.SUCCESS),
+            MagicMock(Verification, status=Status.FAILURE),
+            MagicMock(Verification, status=Status.UNSTABLE),
+        ],
+        Status.FAILURE,
+    ),
+])
+def test_given_bad_conditions(condition_verifications, expected_status):
     conditions = [
         MagicMock(Description, verify=MagicMock(return_value=verification))
         for verification in condition_verifications
@@ -68,6 +81,7 @@ def test_given_failing_condition():
         result = scenario.submit(executor).result()
 
     assert result.label is sentinel.label
+    assert result.status is expected_status
     assert result.conditions.children == condition_verifications
     assert not result.cases
     assert not result.subscenarios
