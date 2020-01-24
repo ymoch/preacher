@@ -58,17 +58,17 @@ def test_given_failing_condition():
     pass
 
 
-@patch(f'{PACKAGE}.OrderedCasesTask')
-def test_given_default_scenario(
-    cases_task_ctor,
-    executor,
-    case_results,
-    cases_task,
-):
-    cases_task_ctor.return_value = cases_task
+def test_given_default_scenario(executor):
+    case_results = MagicMock(StatusedSequence, status=Status.SKIPPED)
+    cases_task = MagicMock(CasesTask)
+    cases_task.result = MagicMock(return_value=case_results)
 
     scenario = Scenario()
-    result = scenario.submit(executor).result()
+    with patch(
+        target=f'{PACKAGE}.OrderedCasesTask',
+        return_value=cases_task,
+    ) as cases_task_ctor:
+        result = scenario.submit(executor).result()
 
     assert result.label is None
     assert result.status is Status.SKIPPED
@@ -89,21 +89,17 @@ def test_given_default_scenario(
     executor.submit.assert_not_called()
 
 
-@mark.parametrize('case_status, subscenario_status, expected_status', [
+@mark.parametrize('cases_status, subscenario_status, expected_status', [
     (Status.SUCCESS, Status.UNSTABLE, Status.UNSTABLE),
     (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
 ])
-@patch(f'{PACKAGE}.UnorderedCasesTask')
 @patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
 @patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
 def test_given_filled_scenarios(
     analyze_context,
     context_ctor,
-    cases_task_ctor,
     executor,
-    case_results,
-    cases_task,
-    case_status,
+    cases_status,
     subscenario_status,
     expected_status,
 ):
@@ -111,8 +107,9 @@ def test_given_filled_scenarios(
     condition = MagicMock(Description)
     condition.verify = MagicMock(return_value=condition_result)
 
-    case_results.status = case_status
-    cases_task_ctor.return_value = cases_task
+    case_results = MagicMock(StatusedSequence, status=cases_status)
+    cases_task = MagicMock(CasesTask)
+    cases_task.result = MagicMock(return_value=case_results)
 
     subscenario_result = MagicMock(ScenarioResult, status=subscenario_status)
     subscenario_task = MagicMock(ScenarioTask)
@@ -128,14 +125,20 @@ def test_given_filled_scenarios(
         cases=sentinel.cases,
         subscenarios=[subscenario]
     )
-    result = scenario.submit(
-        executor,
-        base_url='base-url',
-        retry=2,
-        delay=0.5,
-        timeout=1.0,
-        listener=sentinel.listener,
-    ).result()
+
+    with patch(
+        target=f'{PACKAGE}.UnorderedCasesTask',
+        return_value=cases_task,
+    ) as cases_task_ctor:
+        result = scenario.submit(
+            executor,
+            base_url='base-url',
+            retry=2,
+            delay=0.5,
+            timeout=1.0,
+            listener=sentinel.listener,
+        ).result()
+
     assert result.status == expected_status
     assert result.conditions.children[0] is condition_result
     assert result.cases is case_results
