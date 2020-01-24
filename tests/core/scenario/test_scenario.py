@@ -29,18 +29,6 @@ def executor():
     return executor
 
 
-@fixture
-def case_results():
-    return MagicMock(StatusedSequence, status=Status.SKIPPED)
-
-
-@fixture
-def cases_task(case_results):
-    cases_task = MagicMock(CasesTask)
-    cases_task.result = MagicMock(return_value=case_results)
-    return cases_task
-
-
 def test_not_implemented():
     class _IncompleteScenario(ScenarioTask):
         def result(self) -> ScenarioResult:
