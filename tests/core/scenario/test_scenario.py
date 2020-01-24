@@ -38,10 +38,6 @@ def test_not_implemented():
         _IncompleteScenario().result()
 
 
-def test_given_unstable_condition():
-    pass
-
-
 @mark.parametrize('condition_verifications, expected_status', [
     (
         [
