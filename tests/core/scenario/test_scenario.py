@@ -29,6 +29,18 @@ def executor():
     return executor
 
 
+@fixture
+def case_results():
+    return MagicMock(StatusedSequence, status=Status.SKIPPED)
+
+
+@fixture
+def cases_task(case_results):
+    cases_task = MagicMock(CasesTask)
+    cases_task.result = MagicMock(return_value=case_results)
+    return cases_task
+
+
 def test_not_implemented():
     class _IncompleteScenario(ScenarioTask):
         def result(self) -> ScenarioResult:
@@ -47,10 +59,12 @@ def test_given_failing_condition():
 
 
 @patch(f'{PACKAGE}.OrderedCasesTask')
-def test_given_default_scenario(cases_task_ctor, executor):
-    case_results = StatusedSequence(status=Status.SKIPPED)
-    cases_task = MagicMock(CasesTask)
-    cases_task.result = MagicMock(return_value=case_results)
+def test_given_default_scenario(
+    cases_task_ctor,
+    executor,
+    case_results,
+    cases_task,
+):
     cases_task_ctor.return_value = cases_task
 
     scenario = Scenario()
@@ -87,6 +101,8 @@ def test_given_filled_scenarios(
     context_ctor,
     cases_task_ctor,
     executor,
+    case_results,
+    cases_task,
     case_status,
     subscenario_status,
     expected_status,
@@ -95,12 +111,7 @@ def test_given_filled_scenarios(
     condition = MagicMock(Description)
     condition.verify = MagicMock(return_value=condition_result)
 
-    case_results = StatusedSequence(
-        status=case_status,
-        items=[sentinel.case_result],
-    )
-    cases_task = MagicMock(CasesTask)
-    cases_task.result = MagicMock(return_value=case_results)
+    case_results.status = case_status
     cases_task_ctor.return_value = cases_task
 
     subscenario_result = MagicMock(ScenarioResult, status=subscenario_status)

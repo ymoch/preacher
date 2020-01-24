@@ -61,7 +61,7 @@ class RunningScenarioTask(ScenarioTask):
     def result(self) -> ScenarioResult:
         cases = self._cases.result()
         subscenarios = collect_statused(s.result() for s in self._subscenarios)
-        status = merge_statuses(cases.status, subscenarios.status)
+        status = merge_statuses([cases.status, subscenarios.status])
         return ScenarioResult(
             label=self._label,
             status=status,

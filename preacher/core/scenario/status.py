@@ -6,14 +6,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
-from functools import reduce, singledispatch
-from typing import (
-    Iterator,
-    Sequence,
-    TypeVar,
-    Union,
-)
-
+from functools import reduce
+from typing import Iterator, Sequence, TypeVar, Union
 
 T = TypeVar('T')
 
@@ -93,36 +87,13 @@ class Status(Enum):
         return self.is_succeeded
 
 
-@singledispatch
-def merge_statuses(*args) -> Status:
+def merge_statuses(statuses: Iterable[Status]) -> Status:
     """
-    >>> merge_statuses(1)
-    Traceback (most recent call last):
-        ...
-    ValueError: (1,)
-
-    For varargs.
-    >>> merge_statuses(Status.UNSTABLE)
-    UNSTABLE
-    >>> merge_statuses(Status.SUCCESS, Status.FAILURE, Status.UNSTABLE)
-    FAILURE
-
-    For iterables.
     >>> merge_statuses([])
     SKIPPED
     >>> merge_statuses([Status.SUCCESS, Status.UNSTABLE, Status.FAILURE])
     FAILURE
     """
-    raise ValueError(str(args))
-
-
-@merge_statuses.register
-def _merge_statuses_for_varargs(*statuses: Status):
-    return merge_statuses(statuses)
-
-
-@merge_statuses.register
-def _merge_statuses_for_iterable(statuses: Iterable):
     return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SKIPPED)
 
 
