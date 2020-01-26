@@ -1,7 +1,7 @@
 import time
 from unittest.mock import MagicMock, patch
 
-from pytest import mark
+from pytest import mark, raises
 
 from preacher.core.datetime import now, parse_datetime
 
@@ -30,14 +30,14 @@ def test_now_pdt(localtime):
     assert current.utcoffset().total_seconds() == -28800
 
 
-@mark.xfail(raises=ValueError)
 @mark.parametrize('value', (
     '',
     'XXX',
     'XXXTYYY',
 ))
 def test_parse_date_given_invalid_format(value):
-    parse_datetime('value')
+    with raises(ValueError):
+        parse_datetime('value')
 
 
 def test_parse_datetime_given_iso_8601_format_ends_with_z():

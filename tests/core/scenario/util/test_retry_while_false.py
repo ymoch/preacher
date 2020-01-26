@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch, sentinel
 
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 
 from preacher.core.scenario.util.retry import retry_while_false
 
@@ -11,9 +11,9 @@ def func():
 
 
 @mark.parametrize('attempts', (-1, 0))
-@mark.xfail(raises=ValueError)
 def test_when_given_invalid_args(func, attempts):
-    retry_while_false(func, attempts=attempts)
+    with raises(ValueError):
+        retry_while_false(func, attempts=attempts)
 
 
 @mark.parametrize(
