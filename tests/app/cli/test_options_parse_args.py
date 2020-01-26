@@ -18,7 +18,6 @@ def test_show_and_exit(argv):
 
 
 @mark.parametrize('argv', [
-    [],
     ['scenario.yml', '-a', ''],
     ['scenario.yml', '--argument', 'foo'],
     ['scenario.yml', '--argument', 'foo=['],
