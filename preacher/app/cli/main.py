@@ -23,8 +23,9 @@ LOGGER.addHandler(HANDLER)
 
 
 def _load(path: str) -> object:
+    origin = os.path.dirname(path)
     with open(path) as f:
-        return load(f)
+        return load(f, origin=origin)
 
 
 def _main() -> None:
