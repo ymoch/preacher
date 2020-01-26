@@ -3,7 +3,10 @@ CLI Application
 
 Arguments
 ---------
-Scenario YAML file paths (one or more).
+Scenario YAML file paths.
+
+When given none, the standard input is used instead
+and the current directory is regarded as the base directory.
 
 Options
 -------
