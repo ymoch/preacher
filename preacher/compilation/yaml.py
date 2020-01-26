@@ -74,3 +74,9 @@ def load(io: TextIO, origin: PathLike = '.') -> object:
     yaml.register_class(_Inclusion)
     yaml.register_class(_ArgumentValue)
     return _load(yaml, io, origin)
+
+
+def load_from_path(path: PathLike) -> object:
+    origin = os.path.dirname(path)
+    with open(path) as f:
+        return load(f, origin)

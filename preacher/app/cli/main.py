@@ -8,7 +8,7 @@ from typing import Iterable
 
 from preacher.app.cli.option import parse_args
 from preacher.compilation.factory import create_compiler
-from preacher.compilation.yaml import load
+from preacher.compilation.yaml import load, load_from_path
 from preacher.core.listener.log import LoggingListener
 from preacher.core.listener.merging import MergingListener
 from preacher.core.listener.report import ReportingListener
@@ -20,12 +20,6 @@ HANDLER = logging.StreamHandler()
 HANDLER.setFormatter(FORMATTER)
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
-
-
-def _load(path: str) -> object:
-    origin = os.path.dirname(path)
-    with open(path) as f:
-        return load(f, origin=origin)
 
 
 def _main() -> None:
@@ -44,7 +38,7 @@ def _main() -> None:
     )
 
     if args.scenario:
-        objs: Iterable = (_load(path) for path in args.scenario)
+        objs: Iterable = (load_from_path(path) for path in args.scenario)
     else:
         objs = [load(sys.stdin)]
 
