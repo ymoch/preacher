@@ -1,0 +1,12 @@
+label: Concurrent tests examples
+ordered: false
+default:
+  request: /sleep/1
+  response:
+    status_code: 200
+cases:
+  - label: Run 1
+  - label: Run 2
+  - label: Run 3
+  - label: Run 4
+  - label: Run 5
