@@ -21,6 +21,11 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 
 
+def _load(path: str) -> object:
+    with open(path) as f:
+        return load(f)
+
+
 def _main() -> None:
     """Main."""
     args = parse_args(environ=os.environ)
@@ -38,8 +43,8 @@ def _main() -> None:
 
     compiler = create_compiler()
     scenarios = (
-        compiler.compile(load(path), arguments=args.argument)
-        for path in args.scenario
+        compiler.compile(obj, arguments=args.argument)
+        for obj in (_load(path) for path in args.scenario)
     )
 
     listener = MergingListener()
