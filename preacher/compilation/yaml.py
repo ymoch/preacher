@@ -25,7 +25,7 @@ class _Inclusion:
             raise CompilationError(f'Must be a string, given {type(obj)}')
 
         path = os.path.join(os.path.dirname(origin), obj)
-        return _load(path, yaml)
+        return _load(yaml, path)
 
     @classmethod
     def from_yaml(cls, _constructor, node: Node) -> _Inclusion:
@@ -49,7 +49,7 @@ class _ArgumentValue:
         return _ArgumentValue(node.value)
 
 
-def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
+def _resolve(yaml: YAML, obj: object, origin: PathLike) -> object:
     if isinstance(obj, _Inclusion):
         return obj.resolve(origin, yaml)
 
@@ -59,18 +59,18 @@ def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
     return obj
 
 
-def _load(path: PathLike, yaml: YAML) -> object:
+def _load(yaml: YAML, path: PathLike) -> object:
     with open(path) as f:
         try:
             obj = yaml.load(f)
         except MarkedYAMLError as error:
             raise CompilationError(message=str(error), cause=error)
 
-    return run_recursively(lambda o: _resolve(o, origin=path, yaml=yaml), obj)
+    return run_recursively(lambda o: _resolve(yaml, o, origin=path), obj)
 
 
 def load(path: PathLike) -> object:
     yaml = YAML(typ='safe', pure=True)
     yaml.register_class(_Inclusion)
     yaml.register_class(_ArgumentValue)
-    return _load(path, yaml)
+    return _load(yaml, path)
