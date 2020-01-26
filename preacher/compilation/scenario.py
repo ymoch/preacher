@@ -11,6 +11,7 @@ from .error import on_key
 from .parameter import Parameter, compile as compile_parameter
 from .util import (
     map_compile,
+    compile_bool,
     compile_optional_str,
     compile_list,
     compile_mapping,
@@ -19,6 +20,7 @@ from .util import (
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
 _KEY_DEFAULT = 'default'
+_KEY_ORDERED = 'ordered'
 _KEY_CASES = 'cases'
 _KEY_PARAMETERS = 'parameters'
 _KEY_SUBSCENARIOS = 'subscenarios'
@@ -67,6 +69,10 @@ class ScenarioCompiler:
             ]
             return Scenario(label=label, subscenarios=subscenarios)
 
+        ordered_obj = inject_arguments(obj.get(_KEY_ORDERED, True), arguments)
+        with on_key(_KEY_ORDERED):
+            ordered = compile_bool(ordered_obj)
+
         default_obj = inject_arguments(obj.get(_KEY_DEFAULT, {}), arguments)
         with on_key(_KEY_DEFAULT):
             case_compiler = self._case.compile_default(default_obj)
@@ -89,6 +95,7 @@ class ScenarioCompiler:
 
         return Scenario(
             label=label,
+            ordered=ordered,
             conditions=conditions,
             cases=cases,
             subscenarios=subscenarios,

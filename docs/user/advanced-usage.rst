@@ -92,7 +92,7 @@ in ``when`` properties.
 
     label: Run this scenario only for localhost.
     when:
-      - describe: .app.base_url
+      - describe: .base_url
         should:
           contain_string: localhost
     cases:
@@ -101,6 +101,29 @@ in ``when`` properties.
 A ``Context`` object, which stands for *context*, is a JSON-like value,
 which can be described by `jq`_.
 See :doc:`context` to find available context.
+
+.. _concurrent-running:
+
+Concurrent running
+------------------
+To reduce runtime, Preacher can run scenarios concurrently
+by ``-c`` or ``--concurrency`` options The default is ``1`` (run serially.)
+
+By default, the running unit is each scenario: cases are run in order, not concurrently.
+When given ``ordered: false`` to a scenario,
+then the cases of the scenario will be run concurrently.
+
+.. code-block:: yaml
+
+    label: Unordered cases.
+    ordered: false
+    cases:
+      # These cases can be run concurrently.
+      - label: Case 1
+        ...
+      - label: Case 2
+        ...
+
 
 Allowing Random Errors
 ----------------------

@@ -51,6 +51,7 @@ def sub_case():
 @mark.parametrize('value, expected_path', (
     ('', []),
     ({'label': []}, [NamedNode('label')]),
+    ({'ordered': 1}, [NamedNode('ordered')]),
     ({'parameters': ''}, [NamedNode('parameters'), IndexedNode(0)]),
     ({'subscenarios': ''}, [NamedNode('subscenarios'), IndexedNode(0)]),
 ))
@@ -72,6 +73,7 @@ def test_given_an_empty_object(
     assert scenario is sentinel.scenario
     ctor.assert_called_once_with(
         label=None,
+        ordered=True,
         conditions=[],
         cases=[],
         subscenarios=[],
@@ -93,30 +95,34 @@ def test_given_a_filled_object(
     scenario = compiler.compile(
         obj={
             'label': ArgumentValue('arg1'),
+            'ordered': False,
             'default': {'a': ArgumentValue('arg2')},
             'when': {'b': ArgumentValue('arg3')},
             'cases': [{}, {'c': ArgumentValue('arg4')}],
             'subscenarios': [
                 {
                     'label': ArgumentValue('arg5'),
+                    'ordered': True,
                     'default': {'d': ArgumentValue('arg6')},
                     'cases': [{'e': ArgumentValue('arg7')}]
                 },
             ],
         },
-        arguments={f'arg{i}': f'v{i}' for i in range(1, 8)},
+        arguments={f'arg{i}': f'v{i}' for i in range(1, 9)},
     )
     assert scenario is sentinel.scenario
 
     ctor.assert_has_calls([
         call(
             label='v5',
+            ordered=True,
             conditions=[],
             cases=[sentinel.sub_case],
             subscenarios=[],
         ),
         call(
             label='v1',
+            ordered=False,
             conditions=[sentinel.description],
             cases=[sentinel.case, sentinel.case],
             subscenarios=[sentinel.scenario],
@@ -163,12 +169,19 @@ def test_given_filled_parameters(
     case_of_default,
 ):
     compile_parameter.side_effect = [
-        Parameter(label='param1', arguments={'foo': 'bar'}),
-        Parameter(label='param2', arguments={'foo': 'baz', 'spam': 'eggs'}),
+        Parameter(
+            label='param1',
+            arguments={'foo': 'bar', 'ordered': False},
+        ),
+        Parameter(
+            label='param2',
+            arguments={'foo': 'baz', 'spam': 'eggs', 'ordered': True},
+        ),
     ]
     scenario = compiler.compile(
         obj={
             'label': ArgumentValue('original_label'),
+            'ordered': ArgumentValue('ordered'),
             'parameters': [sentinel.param_obj1, sentinel.param_obj2],
             'default': {'foo': ArgumentValue('foo')},
             'when': [{'foo': ArgumentValue('foo')}],
@@ -180,16 +193,30 @@ def test_given_filled_parameters(
     assert scenario is sentinel.scenario
 
     ctor.assert_has_calls([
-        call(label='ham', conditions=[], cases=[], subscenarios=[]),
+        call(
+            label='ham',
+            ordered=True,
+            conditions=[],
+            cases=[],
+            subscenarios=[],
+        ),
         call(
             label='param1',
+            ordered=False,
             conditions=[sentinel.description],
             cases=[sentinel.case],
             subscenarios=[sentinel.scenario],
         ),
-        call(label='eggs', conditions=[], cases=[], subscenarios=[]),
+        call(
+            label='eggs',
+            ordered=True,
+            conditions=[],
+            cases=[],
+            subscenarios=[],
+        ),
         call(
             label='param2',
+            ordered=True,
             conditions=[sentinel.description],
             cases=[sentinel.case],
             subscenarios=[sentinel.scenario],

@@ -1,5 +1,6 @@
 import os
 import zlib
+import time
 from datetime import datetime, timedelta, timezone
 
 import responder
@@ -50,7 +51,7 @@ def xml(_req, res) -> None:
 
 
 @api.route('/later/{seconds}')
-def now(_req, res, *, seconds) -> None:
+def later(_req, res, *, seconds) -> None:
     dt = datetime.now(timezone.utc) + timedelta(seconds=int(seconds))
     res.media = {'now': dt.isoformat()}
 
@@ -64,6 +65,12 @@ def text(_req, res) -> None:
 def binary(_req, res) -> None:
     res.headers['content-type'] = 'application/octet-stream'
     res.content = zlib.compress(b'text')
+
+
+@api.route('/sleep/{seconds}')
+def sleep(_req, res, *, seconds) -> None:
+    time.sleep(float(seconds))
+    res.media = "OK"
 
 
 def main() -> None:
