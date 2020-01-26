@@ -110,8 +110,9 @@ def parse_args(
     parser = ArgumentParser()
     parser.add_argument(
         'scenario',
-        nargs='+',
-        help='scenario file paths'
+        nargs='*',
+        metavar='path',
+        help='scenario file paths. When given none, stdin is used instead.'
     )
     parser.add_argument(
         '-v', '--version',

@@ -45,7 +45,7 @@
             <div class="accordion-content" data-tab-content>
               {% if item.cases %}
                 <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-                  {% for case in item.cases %}
+                  {% for case in item.cases.items %}
                     {{ show_case(case) }}
                   {% endfor %}
                 </ul>
@@ -64,7 +64,7 @@
             <div class="accordion-content" data-tab-content>
               {% if item.subscenarios %}
                 <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-                  {% for subscenario in item.subscenarios %}
+                  {% for subscenario in item.subscenarios.items %}
                     {{ show_scenario(subscenario) }}
                   {% endfor %}
                 </ul>

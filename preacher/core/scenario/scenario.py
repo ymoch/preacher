@@ -3,16 +3,21 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Executor
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
 from .description import Description
 from .status import (
-    Status, StatusedMixin, StatusedSequence, collect_statused, merge_statuses
+    Status,
+    StatusedList,
+    StatusedMixin,
+    collect_statused,
+    merge_statuses,
 )
+from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 from .verification import Verification, collect
 
 
@@ -28,11 +33,9 @@ class ScenarioResult(StatusedMixin):
     label: Optional[str] = None
     message: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
-    cases: StatusedSequence[CaseResult] = field(
-        default_factory=StatusedSequence,
-    )
-    subscenarios: StatusedSequence[ScenarioResult] = field(
-        default_factory=StatusedSequence,
+    cases: StatusedList[CaseResult] = field(default_factory=StatusedList)
+    subscenarios: StatusedList[ScenarioResult] = field(
+        default_factory=StatusedList,
     )
 
 
@@ -46,9 +49,10 @@ class ScenarioTask(ABC):
 class RunningScenarioTask(ScenarioTask):
 
     def __init__(
-        self, label: Optional[str],
+        self,
+        label: Optional[str],
         conditions: Verification,
-        cases: Future,
+        cases: CasesTask,
         subscenarios: List[ScenarioTask],
     ):
         self._label = label
@@ -59,7 +63,7 @@ class RunningScenarioTask(ScenarioTask):
     def result(self) -> ScenarioResult:
         cases = self._cases.result()
         subscenarios = collect_statused(s.result() for s in self._subscenarios)
-        status = merge_statuses(cases.status, subscenarios.status)
+        status = merge_statuses([cases.status, subscenarios.status])
         return ScenarioResult(
             label=self._label,
             status=status,
@@ -83,36 +87,20 @@ class Scenario:
     def __init__(
         self,
         label: Optional[str] = None,
+        ordered: bool = True,
         conditions: Optional[List[Description]] = None,
         cases: Optional[List[Case]] = None,
         subscenarios: Optional[List[Scenario]] = None,
     ):
         self._label = label
+        self._ordered = ordered
         self._conditions = conditions or []
         self._cases = cases or []
         self._subscenarios = subscenarios or []
 
-    def run(
-        self,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
-        listener: Optional[ScenarioListener] = None,
-    ) -> ScenarioResult:
-        with ThreadPoolExecutor(1) as executor:
-            return self.submit(
-                executor,
-                base_url=base_url,
-                retry=retry,
-                delay=delay,
-                timeout=timeout,
-                listener=listener,
-            ).result()
-
     def submit(
         self,
-        executor: ThreadPoolExecutor,
+        executor: Executor,
         base_url: str = '',
         retry: int = 0,
         delay: float = 0.1,
@@ -144,14 +132,21 @@ class Scenario:
             ))
 
         listener = listener or ScenarioListener()
-        cases = executor.submit(
-            self._run_cases,
-            base_url,
-            retry,
-            delay,
-            timeout,
-            listener,
+
+        if self._ordered:
+            submit_cases: Callable = OrderedCasesTask
+        else:
+            submit_cases = UnorderedCasesTask
+        cases = submit_cases(
+            executor,
+            self._cases,
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
+            timeout=timeout,
+            listener=listener,
         )
+
         subscenarios = [
             subscenario.submit(
                 executor,
@@ -168,23 +163,4 @@ class Scenario:
             conditions=conditions,
             cases=cases,
             subscenarios=subscenarios,
-        )
-
-    def _run_cases(
-        self,
-        base_url: str,
-        retry: int,
-        delay: float,
-        timeout: Optional[float],
-        listener: CaseListener,
-    ) -> StatusedSequence[CaseResult]:
-        return collect_statused(
-            case.run(
-                base_url=base_url,
-                retry=retry,
-                delay=delay,
-                timeout=timeout,
-                listener=listener,
-            )
-            for case in self._cases
         )

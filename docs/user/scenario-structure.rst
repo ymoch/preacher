@@ -74,6 +74,12 @@ A ``Scenario`` is written in `YAML`_.
       - String
       - ``null``
       - A label of this scenario.
+    * - ordered
+      - Boolean
+      - ``true``
+      - Mark the cases is ordered or not.
+        When ``false``, cases can be run concurrently.
+        See :ref:`concurrent-running` for more information.
     * - default
       - :ref:`case`
       - ``{}``

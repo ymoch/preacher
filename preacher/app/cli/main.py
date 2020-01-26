@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
+from typing import Iterable
 
 from preacher.app.cli.option import parse_args
 from preacher.compilation.factory import create_compiler
@@ -21,6 +22,11 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 
 
+def _load(path: str) -> object:
+    with open(path) as f:
+        return load(f)
+
+
 def _main() -> None:
     """Main."""
     args = parse_args(environ=os.environ)
@@ -29,28 +35,33 @@ def _main() -> None:
     HANDLER.setLevel(level)
     LOGGER.setLevel(level)
 
-    listener = MergingListener()
-    listener.append(LoggingListener.from_logger(LOGGER))
-    if args.report:
-        listener.append(ReportingListener.from_path(args.report))
-
-    compiler = create_compiler()
-    scenarios = (
-        compiler.compile(load(path), arguments=args.argument)
-        for path in args.scenario
-    )
-
     app = ScenarioRunner(
         base_url=args.url,
         retry=args.retry,
         delay=args.delay,
         timeout=args.timeout,
-        listener=listener,
     )
-    with ThreadPoolExecutor(args.concurrency) as executor:
-        app.run(executor, scenarios)
 
-    if not app.status.is_succeeded:
+    if args.scenario:
+        objs: Iterable = (_load(path) for path in args.scenario)
+    else:
+        objs = [load(sys.stdin)]
+
+    compiler = create_compiler()
+    scenarios = (
+        compiler.compile(obj, arguments=args.argument)
+        for obj in objs
+    )
+
+    listener = MergingListener()
+    listener.append(LoggingListener.from_logger(LOGGER))
+    if args.report:
+        listener.append(ReportingListener.from_path(args.report))
+
+    with ThreadPoolExecutor(args.concurrency) as executor:
+        status = app.run(executor, scenarios, listener=listener)
+
+    if not status.is_succeeded:
         sys.exit(1)
 
 

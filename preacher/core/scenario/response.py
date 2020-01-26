@@ -54,11 +54,11 @@ class ResponseDescription:
         if self._body:
             body = self._body.verify(response.body, **kwargs)
 
-        status = merge_statuses(
+        status = merge_statuses([
             status_code.status,
             headers.status,
             body.status,
-        )
+        ])
         return ResponseVerification(
             response_id=response.id,
             status=status,

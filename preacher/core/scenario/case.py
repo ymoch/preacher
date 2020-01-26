@@ -91,10 +91,10 @@ class Case:
             response,
             origin_datetime=response.starts,
         )
-        status = merge_statuses(
+        status = merge_statuses([
             request_verification.status,
             response_verification.status,
-        )
+        ])
         return CaseResult(
             status=status,
             request=request_verification,

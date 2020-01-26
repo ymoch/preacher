@@ -1,3 +1,4 @@
+import os
 from io import StringIO
 from unittest.mock import patch
 
@@ -7,7 +8,6 @@ from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.yaml import load
 
 
-@patch('builtins.open')
 @mark.parametrize('content, expected_message, expected_path', (
     ('!invalid foo', '!invalid', []),
     ('!include []', 'string', []),
@@ -21,40 +21,30 @@ from preacher.compilation.yaml import load
     ('{key: [!include {}]}', '', [NamedNode('key'), IndexedNode(0)]),
     ('{key: [!argument {}]}', '', [NamedNode('key'), IndexedNode(0)]),
 ))
-def test_given_invalid_content(
-    open_mock,
-    content,
-    expected_message,
-    expected_path,
-):
-    open_mock.return_value = StringIO(content)
-
+def test_given_invalid_content(content, expected_message, expected_path):
+    io = StringIO(content)
     with raises(CompilationError) as error_info:
-        load('path')
+        load(io)
     assert expected_message in str(error_info.value)
     assert error_info.value.path == expected_path
-
-    open_mock.assert_called_with('path')
 
 
 @patch('builtins.open')
 def test_given_recursive_inclusion(open_mock):
-    content = '''
+    io = StringIO('''
     list:
       - !include item.yml
       - key: !include value.yml
     recursive: !include recursive.yml
-    '''
+    ''')
     answer_map = {
-        'scenario.yml': content,
-        'item.yml': 'item',
-        'value.yml': 'value',
-        'recursive.yml': '!include inner.yml',
-        'inner.yml': 'inner',
+        os.path.join('base/dir', 'item.yml'): 'item',
+        os.path.join('base/dir', 'value.yml'): 'value',
+        os.path.join('base/dir', 'recursive.yml'): '!include inner.yml',
+        os.path.join('base/dir', 'inner.yml'): 'inner',
     }
     open_mock.side_effect = lambda path: StringIO(answer_map[path])
-
-    actual = load('scenario.yml')
+    actual = load(io, 'base/dir/')
     assert actual == {
         'list': [
             'item',
@@ -64,15 +54,13 @@ def test_given_recursive_inclusion(open_mock):
     }
 
 
-@patch('builtins.open')
-def test_given_argument(open_mock):
-    content = '''
+def test_given_argument():
+    io = StringIO('''
     - !argument foo
     - key: !argument bar
-    '''
-    open_mock.return_value = StringIO(content)
+    ''')
 
-    actual = load('scenario.yml')
+    actual = load(io)
     assert isinstance(actual, list)
     assert actual[0].key == 'foo'
     assert isinstance(actual[1], dict)

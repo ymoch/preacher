@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import Union
+from typing import Union, TextIO
 
 from ruamel.yaml import YAML, Node
 from ruamel.yaml.error import MarkedYAMLError
@@ -24,8 +24,9 @@ class _Inclusion:
         if not isinstance(obj, str):
             raise CompilationError(f'Must be a string, given {type(obj)}')
 
-        path = os.path.join(os.path.dirname(origin), obj)
-        return _load(path, yaml)
+        path = os.path.join(origin, obj)
+        with open(path) as f:
+            return _load(yaml, f, os.path.dirname(path))
 
     @classmethod
     def from_yaml(cls, _constructor, node: Node) -> _Inclusion:
@@ -49,7 +50,7 @@ class _ArgumentValue:
         return _ArgumentValue(node.value)
 
 
-def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
+def _resolve(yaml: YAML, obj: object, origin: PathLike) -> object:
     if isinstance(obj, _Inclusion):
         return obj.resolve(origin, yaml)
 
@@ -59,18 +60,17 @@ def _resolve(obj: object, origin: PathLike, yaml: YAML) -> object:
     return obj
 
 
-def _load(path: PathLike, yaml: YAML) -> object:
-    with open(path) as f:
-        try:
-            obj = yaml.load(f)
-        except MarkedYAMLError as error:
-            raise CompilationError(message=str(error), cause=error)
+def _load(yaml: YAML, io: TextIO, origin: PathLike) -> object:
+    try:
+        obj = yaml.load(io)
+    except MarkedYAMLError as error:
+        raise CompilationError(message=str(error), cause=error)
 
-    return run_recursively(lambda o: _resolve(o, origin=path, yaml=yaml), obj)
+    return run_recursively(lambda o: _resolve(yaml, o, origin), obj)
 
 
-def load(path: PathLike) -> object:
+def load(io: TextIO, origin: PathLike = '.') -> object:
     yaml = YAML(typ='safe', pure=True)
     yaml.register_class(_Inclusion)
     yaml.register_class(_ArgumentValue)
-    return _load(path, yaml)
+    return _load(yaml, io, origin)

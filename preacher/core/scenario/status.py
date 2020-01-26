@@ -2,19 +2,11 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from functools import reduce, singledispatch
-from typing import (
-    Iterable as IterableType,
-    Iterator,
-    Sequence,
-    TypeVar,
-    Union,
-)
-
+from functools import reduce
+from typing import Generic, List, TypeVar
 
 T = TypeVar('T')
 
@@ -94,36 +86,13 @@ class Status(Enum):
         return self.is_succeeded
 
 
-@singledispatch
-def merge_statuses(*args) -> Status:
+def merge_statuses(statuses: Iterable[Status]) -> Status:
     """
-    >>> merge_statuses(1)
-    Traceback (most recent call last):
-        ...
-    ValueError: (1,)
-
-    For varargs.
-    >>> merge_statuses(Status.UNSTABLE)
-    UNSTABLE
-    >>> merge_statuses(Status.SUCCESS, Status.FAILURE, Status.UNSTABLE)
-    FAILURE
-
-    For iterables.
     >>> merge_statuses([])
     SKIPPED
     >>> merge_statuses([Status.SUCCESS, Status.UNSTABLE, Status.FAILURE])
     FAILURE
     """
-    raise ValueError(str(args))
-
-
-@merge_statuses.register
-def _merge_statuses_for_varargs(*statuses: Status):
-    return merge_statuses(statuses)
-
-
-@merge_statuses.register
-def _merge_statuses_for_iterable(statuses: Iterable):
     return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SKIPPED)
 
 
@@ -132,63 +101,17 @@ class StatusedMixin:
     status: Status = Status.SKIPPED
 
 
-class StatusedInterface(ABC):
-    """
-    >>> class ConcreteStatused(StatusedInterface):
-    ...     @property
-    ...     def status(self) -> Status:
-    ...         return super().status
-    >>> ConcreteStatused().status
-    SKIPPED
-    """
-    @property
-    @abstractmethod
-    def status(self) -> Status:
-        return Status.SKIPPED
+@dataclass(frozen=True)
+class StatusedList(Generic[T], StatusedMixin):
+    items: List[T] = field(default_factory=list)
 
 
-class StatusedSequence(StatusedInterface, Sequence[T]):
-    """
-    >>> bool(StatusedSequence())
-    False
-    >>> bool(StatusedSequence(Status.SUCCESS, []))
-    False
-    >>> bool(StatusedSequence(Status.FAILURE, [1]))
-    True
-    """
-
-    def __init__(
-        self,
-        status: Status = Status.SKIPPED,
-        items: Sequence[T] = [],
-    ):
-        self._status = status
-        self._items = items
-
-    @property
-    def status(self) -> Status:
-        return self._status
-
-    def __bool__(self) -> bool:
-        return bool(self._items)
-
-    def __len__(self) -> int:
-        return len(self._items)
-
-    def __iter__(self) -> Iterator[T]:
-        return iter(self._items)
-
-    def __getitem__(self, key):
-        return self._items[key]
-
-
-Statused = Union[StatusedMixin, StatusedInterface]
-StatusedType = TypeVar('StatusedType', bound=Statused)
+Statused = TypeVar('Statused', bound=StatusedMixin)
 
 
 def collect_statused(
-    items: IterableType[StatusedType],
-) -> StatusedSequence[StatusedType]:
+    items: Iterable[Statused],
+) -> StatusedList[Statused]:
     items = list(items)
     status = merge_statuses(item.status for item in items)
-    return StatusedSequence(status=status, items=items)
+    return StatusedList(status=status, items=items)
