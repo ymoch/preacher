@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 22:59+0900\n"
+"POT-Creation-Date: 2020-01-26 19:13+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,14 +91,39 @@ msgstr ""
 "*コンテキスト* を表す ``Context`` オブジェクトは JSON-like な値で, `jq`_ によって記述することができます. "
 ":doc:`context` で利用可能なコンテキストを閲覧できます."
 
+#: ../../user/advanced-usage.rst:108
+#: 9abd183f65e649d5a307164fe612155f
+msgid "Concurrent running"
+msgstr "並列実行"
+
+#: ../../user/advanced-usage.rst:109
+#: 289b71ff2ac844b38c1de9d48ad2cbd5
+msgid ""
+"To reduce runtime, Preacher can run scenarios concurrently by ``-c`` or "
+"``--concurrency`` options The default is ``1`` (run serially.)"
+msgstr ""
+"実行時間を短縮するため, Preacher は"
+" ``-c`` ないし ``--concurrency`` オプションを使用してシナリオを並列に実行できます."
+" デフォルトは 1（シリアルで実行）です。"
+
+#: ../../user/advanced-usage.rst:112
+#: b54c4c4dee7b45aab6a8f2e6e0e4f2b7
+msgid ""
+"By default, the running unit is each scenario: cases are run in order, "
+"not concurrently. When given ``ordered: false`` to a scenario, then the "
+"cases of the scenario will be run concurrently."
+msgstr ""
+"デフォルトでは, 実行単位はシナリオです. ケースは同時にではなく順番に実行されます."
+" シナリオに ``ordered: false`` を指定すると, そのシナリオのケースが並列で実行されることを許容します."
+
 # dc8d1a6a728441d9b4fb1b375063028b
-#: ../../user/advanced-usage.rst:106
+#: ../../user/advanced-usage.rst:129
 #: 63c4141ebb5b4d90951db59b5c4e136c
 msgid "Allowing Random Errors"
 msgstr "ランダムなエラーの許容"
 
 # a38e12d938e64ccb824b11f840094f98
-#: ../../user/advanced-usage.rst:107
+#: ../../user/advanced-usage.rst:130
 #: 7b267a907539433ea1949ac1b8d57e53
 msgid ""
 "Web API cannot always responds due to communication errors and so on. To "
@@ -110,7 +135,7 @@ msgstr ""
 " ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
 
 # 3b47ff03344b4e3dbf773d739ba1780f
-#: ../../user/advanced-usage.rst:112
+#: ../../user/advanced-usage.rst:135
 #: bafbd7049e14477c982fa40f141bad1e
 msgid ""
 "Preacher retries while not only request fails but also a validation "
@@ -118,7 +143,7 @@ msgid ""
 msgstr "Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
 
 # 282fd99674fa427786a5bb87ff884896
-#: ../../user/advanced-usage.rst:114
+#: ../../user/advanced-usage.rst:137
 #: 289b71ff2ac844b38c1de9d48ad2cbd5
 msgid ""
 "Extreme response delaying can affect the testing process. You can set the"
@@ -129,7 +154,7 @@ msgstr ""
 "オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
 
 # d27c47106c004884b2c888a9c88e313a
-#: ../../user/advanced-usage.rst:118
+#: ../../user/advanced-usage.rst:141
 #: 8c521bf29d96456787c10b6a5071340d
 msgid ""
 "Retrying should have intervals to avoid overloading. You can set the "
@@ -140,13 +165,13 @@ msgstr ""
 "オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
 
 # 889d898ebfbf4d7591b777aca497f7e4
-#: ../../user/advanced-usage.rst:124
+#: ../../user/advanced-usage.rst:147
 #: eacc57bfeb784edcb70af6957505d1b4
 msgid "Control Outputs"
 msgstr "出力制御"
 
 # 38f65f102ccd4d08830df16b14174e1c
-#: ../../user/advanced-usage.rst:125
+#: ../../user/advanced-usage.rst:148
 #: 00a9901048bd4f42bbc632d7fb18adb1
 msgid ""
 "By default, not ``SKIPPED`` test results are shown. It is useful for "
@@ -158,13 +183,13 @@ msgstr ""
 "テストが巨大になるにつれ煩わしくなります. 出力レベルの制御は重要なエラーを見つけるために有用です."
 
 # fac7a37ce24c4bc8b0c7473fb795e3ab
-#: ../../user/advanced-usage.rst:135
+#: ../../user/advanced-usage.rst:158
 #: d86bab3b3459443cb61ea6aa554b763f
 msgid "Ignore cases"
 msgstr "テストケースを無視する"
 
 # feeab0fd48a14b1ab5872d8bc8b430e7
-#: ../../user/advanced-usage.rst:136
+#: ../../user/advanced-usage.rst:159
 #: 5868e2636ac0449bbc9b55514f49e7bd
 msgid ""
 "To skip some cases temporarily for some reason, add ``enabled: false`` to"
