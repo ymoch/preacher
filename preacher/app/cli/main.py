@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
+from typing import Iterable
 
 from preacher.app.cli.option import parse_args
 from preacher.compilation.factory import create_compiler
@@ -21,6 +22,11 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(HANDLER)
 
 
+def _load(path: str) -> object:
+    with open(path) as f:
+        return load(f)
+
+
 def _main() -> None:
     """Main."""
     args = parse_args(environ=os.environ)
@@ -36,10 +42,15 @@ def _main() -> None:
         timeout=args.timeout,
     )
 
+    if args.scenario:
+        objs: Iterable = (_load(path) for path in args.scenario)
+    else:
+        objs = [load(sys.stdin)]
+
     compiler = create_compiler()
     scenarios = (
-        compiler.compile(load(path), arguments=args.argument)
-        for path in args.scenario
+        compiler.compile(obj, arguments=args.argument)
+        for obj in objs
     )
 
     listener = MergingListener()

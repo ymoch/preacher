@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-05 13:42+0900\n"
+"POT-Creation-Date: 2020-01-26 21:23+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,421 +16,430 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../user/cli.rst:2
-#: f9d7f4f845764294aac96322c260f1c4
+#: 574d2d43be124b18b9d5752093d70e17
 msgid "CLI Application"
 msgstr "CLI アプリケーション"
 
 #: ../../user/cli.rst:5
-#: f2f25929ad5d467c9ad8aac43bff5c4d
+#: e11c089caa5b4509920dbdfb603df51c
 msgid "Arguments"
 msgstr "引数"
 
 #: ../../user/cli.rst:6
-#: 47766626408044ba98ff9c1dfad73954
-msgid "Scenario YAML file paths (one or more)."
-msgstr "シナリオ YAML ファイルパス (1 つ以上)"
+#: 4e34ef11259a41a5baa3902b443bed7a
+msgid "Scenario YAML file paths."
+msgstr "シナリオ YAML ファイルパス"
 
-#: ../../user/cli.rst:9
-#: 5f2e17e1efd54cba91a03c69e9b4c6c9
+#: ../../user/cli.rst:8
+#: 306d08fbe44442aa8aad08368baa2099
+msgid ""
+"When given none, the standard input is used instead and the current "
+"directory is regarded as the base directory."
+msgstr ""
+"引数が与えられない場合, 標準入力が代わりに使われ,"
+" 実行時のディレクトリが基底ディレクトリとして扱われます."
+
+#: ../../user/cli.rst:12
+#: 999448d8ca3942e0b388fcc45239a45c
 msgid "Options"
 msgstr "オプション"
 
-#: ../../user/cli.rst:11
-#: 35ef3c0e100249f59e6ca10a5cc98663
+#: ../../user/cli.rst:14
+#: 1fc76ebf551046468eb085bb3681307f
 msgid "Preacher CLI Options"
 msgstr "Preacher CLI オプション"
 
-#: ../../user/cli.rst:14
-#: 071e196f3c0444e4bffcb38a1e9b6061
+#: ../../user/cli.rst:17
+#: 5454a8f9b1114ad2b5aa5191340dc84e
 msgid "Short"
 msgstr ""
 
-#: ../../user/cli.rst:15
-#: c3fcf6cda63f49c5993ab5f0c35aa865
+#: ../../user/cli.rst:18
+#: 7ad33bec11144f76a6367c9703b40623
 msgid "Long"
 msgstr ""
 
-#: ../../user/cli.rst:16
-#: 28bbc0014cb94eb09f325e8f6cadbfe6
+#: ../../user/cli.rst:19
+#: 2d0c63f8f8674a48b1098859148c5a70
 msgid "Type"
 msgstr "型"
 
-#: ../../user/cli.rst:17
-#: 878bd364de704f72a661edd5915858e1
+#: ../../user/cli.rst:20
+#: f71ace8dae624c01957c466227875584
 msgid "Description"
 msgstr "説明"
 
-#: ../../user/cli.rst:18
-#: 19c0ea2d48024f088fbd0e6835d2fd67
+#: ../../user/cli.rst:21
+#: 33e5ffd7d71c4c8fb8c1b6539c9d2f6b
 msgid "Default"
 msgstr "デフォルト値"
 
-#: ../../user/cli.rst:19
-#: 889148f0544a4109bc0ac0d62c5e00c9
+#: ../../user/cli.rst:22
+#: cfb2994280244990a96d656904348941
 msgid "``-h``"
 msgstr ""
 
-#: ../../user/cli.rst:20
-#: d40bf5499e524d1d839a943e9f0e051a
+#: ../../user/cli.rst:23
+#: 20b639aea4384b7780cfbdb40f78751b
 msgid "``--help``"
 msgstr ""
 
-#: ../../user/cli.rst:22
-#: 5b6d48ef405e4a76900bea032c559ed5
+#: ../../user/cli.rst:25
+#: 0247fce36fba434e9ba7a2854468d038
 msgid "Show the help message and exit."
 msgstr ""
 
-#: ../../user/cli.rst:24
-#: 517247ceecaf4541be2e615028940ee8
+#: ../../user/cli.rst:27
+#: baa26965879545fbbf2db71891a6afe1
 msgid "``-v``"
 msgstr ""
 
-#: ../../user/cli.rst:25
-#: 58672d6e252d405c8ba8c10e0afa80ca
+#: ../../user/cli.rst:28
+#: 969cf77bbaf94333b7ba42c2f35a6d2d
 msgid "``--version``"
 msgstr ""
 
-#: ../../user/cli.rst:27
-#: bd6c494ffda8404295d3726f85fb6725
+#: ../../user/cli.rst:30
+#: c265ec78678d483ab890c1dc0ad31a47
 msgid "Show program's version number and exit."
 msgstr ""
 
-#: ../../user/cli.rst:29
-#: ea5ed100f9824892af75a0ef6e4a8fa4
+#: ../../user/cli.rst:32
+#: 1b193f55dd704683950a6085fade66d9
 msgid "``-u URL``"
 msgstr ""
 
-#: ../../user/cli.rst:30
-#: 191d8e041ec64e5a969e6950b542d49b
+#: ../../user/cli.rst:33
+#: 22ea9e4233be4a1daa779a1c99b01c36
 msgid "``--url url``"
 msgstr ""
 
-#: ../../user/cli.rst:31
-#: ../../user/cli.rst:62
-#: 638aa7ec79934725873fdc46d30bdd81 7aa8bd0eaf02426d9ab8f6e401e2313c
+#: ../../user/cli.rst:34
+#: ../../user/cli.rst:65
+#: b7a05df6415343e39459140aa866c837
 msgid "string"
 msgstr ""
 
-#: ../../user/cli.rst:32
-#: a62038d6ba3a44219a277ac8e6cb32a1
+#: ../../user/cli.rst:35
+#: 0fd837ba063c4bebb022225aa36335dc
 msgid "Set the base URL."
 msgstr ""
 
-#: ../../user/cli.rst:33
-#: ffdd7de3b8ab43eea99996cab9b43fe5
+#: ../../user/cli.rst:36
+#: f3e0c164adc544abb00fc1cdcc1a2b04
 msgid "``''``"
 msgstr ""
 
-#: ../../user/cli.rst:34
-#: 5c62ec58923647979aa1dc4b98c04b66
+#: ../../user/cli.rst:37
+#: 0df8e207d2a045c29b7bfd8492d2a457
 msgid "``-l level``"
 msgstr ""
 
-#: ../../user/cli.rst:35
-#: 7a05b7f4e1874a0fbc4411faa792f5f8
+#: ../../user/cli.rst:38
+#: 1fbf1c7c744241e09612bbd8333d8b39
 msgid "``--level level``"
 msgstr ""
 
-#: ../../user/cli.rst:36
-#: dd7e6454b46349f0a83185e3ade92ca3
+#: ../../user/cli.rst:39
+#: 08f80c2c324e4f6ea913728f3bec4e15
 msgid ":ref:`level`"
 msgstr ""
 
-#: ../../user/cli.rst:37
-#: e4ce2f1e9c6f495ab0a20436371b1dcb
+#: ../../user/cli.rst:40
+#: 68459c0ab974428c87515f444c42e118
 msgid ""
 "Show only above or equal to this level on the console (cannot affect "
 "other reports.)"
 msgstr ""
 
-#: ../../user/cli.rst:39
-#: ../../user/cli.rst:74
-#: 4908e3ed96324008931e27de0ff2dafb 9f7b9d45de414b5084a9538b80b4a0bb
+#: ../../user/cli.rst:42
+#: ../../user/cli.rst:77
+#: c327250c214f4d2182ddcf401fd96b6a
 msgid "success"
 msgstr ""
 
-#: ../../user/cli.rst:40
-#: efa6437c2afd4d0a9c7e5c2aeab24105
+#: ../../user/cli.rst:43
+#: 436d1cfe5238470399cca68f71f6bf0d
 msgid "``-r num``"
 msgstr ""
 
-#: ../../user/cli.rst:41
-#: 390579388a084457bff8a6a2178ade85
+#: ../../user/cli.rst:44
+#: 3cdc097972494be4b42a5fd530bce980
 msgid "``--retry num``"
 msgstr ""
 
-#: ../../user/cli.rst:42
-#: ../../user/cli.rst:57
-#: b50d74d2cdc04c77b5b1d409f2ce11a6 b85473ce603b47a7acdecb47e8e98a4a
+#: ../../user/cli.rst:45
+#: ../../user/cli.rst:60
+#: 2ea63522a6cc4d65a1f487d03d335684
 msgid "int"
 msgstr ""
 
-#: ../../user/cli.rst:43
-#: 5855e456d77d483a81205fdd2e2bae25
+#: ../../user/cli.rst:46
+#: 9ff2f45bc496475fae5355b00214aef2
 msgid "Set the max retry count."
 msgstr ""
 
-#: ../../user/cli.rst:44
-#: 11ceeb5fdf6b418288771838c339f29c
+#: ../../user/cli.rst:47
+#: f14d985d4a3e402186044795a037c00f
 msgid "0"
 msgstr ""
 
-#: ../../user/cli.rst:45
-#: 7a8b1d37bd6a42a0a883fd8f51029512
+#: ../../user/cli.rst:48
+#: 404c4f35cb9a470e88e38942938fb17a
 msgid "``-d sec``"
 msgstr ""
 
-#: ../../user/cli.rst:46
-#: abc29dfca0b347ccb05209b82745ee55
+#: ../../user/cli.rst:49
+#: 7eb5dc6f9ac440c9be569c4fcb50f700
 msgid "``--delay sec``"
 msgstr ""
 
-#: ../../user/cli.rst:47
-#: ../../user/cli.rst:52
-#: 3b75e308794d469bab2587f94a308822 413faea5812a419ba100088c52fcc400
+#: ../../user/cli.rst:50
+#: ../../user/cli.rst:55
+#: ebfd5b495dbe44118d2e9b71a5e0dd6b
 msgid "float"
 msgstr ""
 
-#: ../../user/cli.rst:48
-#: 4c37515740474e82aeb3dc64ae4a0692
+#: ../../user/cli.rst:51
+#: 564daed8922f44aa8e6537a3bb1a4e98
 msgid "Set the delay between attempts in seconds."
 msgstr ""
 
-#: ../../user/cli.rst:49
-#: efae17be750647dcacc2e4e25e144648
+#: ../../user/cli.rst:52
+#: c691d2e59fef438b9def82cd706ec84b
 msgid "0.1"
 msgstr ""
 
-#: ../../user/cli.rst:50
-#: 5c400855642c4cb2a2d8dd75a43fa1cc
+#: ../../user/cli.rst:53
+#: 5c79a4b142f14f12bc8adaa77284b1b8
 msgid "``-t sec``"
 msgstr ""
 
-#: ../../user/cli.rst:51
-#: bb32debc1d494c03a401241a7d08d99a
+#: ../../user/cli.rst:54
+#: e61e88d19960433ca93e0dca201bbcf4
 msgid "``--timeout sec``"
 msgstr ""
 
-#: ../../user/cli.rst:53
-#: f9e5b77844e34329a49a0ab254e5fc64
+#: ../../user/cli.rst:56
+#: 16666c0382434aa8b018508e3c5dd215
 msgid "Set the request timeout in seconds."
 msgstr ""
 
-#: ../../user/cli.rst:54
-#: 819bdd819eda4264970edb258da09213
+#: ../../user/cli.rst:57
+#: 5fa2559ad34444e9a5b7535c9b61b948
 msgid "no timeout"
 msgstr ""
 
-#: ../../user/cli.rst:55
-#: 4ac0d911d2284147b99944c285fbf879
+#: ../../user/cli.rst:58
+#: bd3e125547334900adb823467aaea1a6
 msgid "``-c num``"
 msgstr ""
 
-#: ../../user/cli.rst:56
-#: c43cedffa59f495a9e85844b10a62968
+#: ../../user/cli.rst:59
+#: 013fde8d2ee848808da54cd7bf585f11
 msgid "``--concurrency num``"
 msgstr ""
 
-#: ../../user/cli.rst:58
-#: 1f8926ea8a53481eb09d4280ee4314dc
+#: ../../user/cli.rst:61
+#: 1936ed26c58d438eaa9083894d489f48
 msgid "Set the request concurrency."
 msgstr ""
 
-#: ../../user/cli.rst:59
-#: eb56af44e4cf4bb6a244444d57ce2c20
+#: ../../user/cli.rst:62
+#: f6120b06aa5d4cb6ac715528b7ca3861
 msgid "1"
 msgstr ""
 
-#: ../../user/cli.rst:60
-#: e795700878844996b635f50e01e4e77b
+#: ../../user/cli.rst:63
+#: 849d082309e647efa8a4677f0df341a1
 msgid "``-R dir``"
 msgstr ""
 
-#: ../../user/cli.rst:61
-#: 83bb9dc8c29d42c9bcfdbaea9d7ee324
+#: ../../user/cli.rst:64
+#: ec8c2c3eec64488180e072b8ffc28270
 msgid "``--report dir``"
 msgstr ""
 
-#: ../../user/cli.rst:63
-#: c06bac174630483ba504343a782bdf6b
+#: ../../user/cli.rst:66
+#: 9082f4bbb78d4c80be7e51d8cf80ad2d
 msgid "Set the report directory. (experimental)"
 msgstr ""
 
-#: ../../user/cli.rst:64
-#: 7e0200650f784b139149807c4d397c15
+#: ../../user/cli.rst:67
+#: 240d23f797fc4d7db438e3fbbce32491
 msgid "no report"
 msgstr ""
 
-#: ../../user/cli.rst:70
-#: 55dc2a436ac04c0784924205f2325a92
+#: ../../user/cli.rst:73
+#: d4a360fe14594dc3874ace344b05ad7e
 msgid "Level"
 msgstr ""
 
-#: ../../user/cli.rst:71
-#: 2c67ff46ad054aaba53eb6b0cee7730d
+#: ../../user/cli.rst:74
+#: c783bab287f24ff6a6abfc67a86a8c38
 msgid "Allowed values are:"
 msgstr ""
 
-#: ../../user/cli.rst:73
-#: a2c1bde7c82f4b87aa0d2080c197bbbb
+#: ../../user/cli.rst:76
+#: e56918c1d850494f91664200f4f7c592
 msgid "skipped"
 msgstr ""
 
-#: ../../user/cli.rst:75
-#: 530bc4938cad4b9d83bb244a18507a9e
+#: ../../user/cli.rst:78
+#: f8ffd98454614f2a9d5e569d196fa81f
 msgid "unstable"
 msgstr ""
 
-#: ../../user/cli.rst:76
-#: 22d5d628e95641cc9cd4df65f8fcf236
+#: ../../user/cli.rst:79
+#: f4febfd8b7fb42eca81ef862cf898d2d
 msgid "failure"
 msgstr ""
 
 # 2f283ba346024a15b1727fdd53698064
-#: ../../user/cli.rst:79
-#: 2f283ba346024a15b1727fdd53698064
+#: ../../user/cli.rst:82
+#: bb44ef4c7a0444f79f95f7089b5cd8ea
 msgid "Environment Variables Interface"
 msgstr "環境変数インタフェース"
 
 # 3a4f4d20e05d438d8313b2f601456faa
-#: ../../user/cli.rst:80
-#: 3a4f4d20e05d438d8313b2f601456faa
+#: ../../user/cli.rst:83
+#: 5a2a7ba288f04d2d8ff996aeff09583c
 msgid "Using commandline options bother us in some situation like:"
 msgstr "以下のような状況では, コマンドラインオプションは面倒に感じることがあります."
 
 # c1bf834bda254fb7b794c5842a72baa9
-#: ../../user/cli.rst:82
-#: c1bf834bda254fb7b794c5842a72baa9
+#: ../../user/cli.rst:85
+#: c64f67938eed484cb1accb5de3dc311e
 msgid "Giving CI build parameters to Preacher."
 msgstr "CI のビルドパラメータを Preacher に渡す."
 
 # cdb69e25c9b047269e1a3ce550370a6f
-#: ../../user/cli.rst:83
-#: cdb69e25c9b047269e1a3ce550370a6f
+#: ../../user/cli.rst:86
+#: f32f53a656194f05af707a7b58a63f64
 msgid "Wrapping Preacher execution with shell scripts."
 msgstr "Preacher の実行をシェルスクリプトでラップする."
 
 # 21aae72bf62f412892594a672a9657f1
-#: ../../user/cli.rst:85
-#: 21aae72bf62f412892594a672a9657f1
+#: ../../user/cli.rst:88
+#: 2df337c4426e44ecaff68fc1a9719016
 msgid ""
 "Alternatively, Preacher supports environment variables that are "
 "equivalent to commandline options."
 msgstr "代わりに, Preacher はコマンドラインオプションと同等の環境変数をサポートしています."
 
 # 2f283ba346024a15b1727fdd53698064
-#: ../../user/cli.rst:88
-#: c3c4030eb70148cdb420abe400a61f5f
+#: ../../user/cli.rst:91
+#: 96d76166227d4d9994a77b82af31f660
 msgid "Environment variables instead of commandline options"
 msgstr "コマンドラインオプションの代わりになる環境変数"
 
 # 662e1cd461af4560bce23a8543075345
-#: ../../user/cli.rst:91
-#: 662e1cd461af4560bce23a8543075345
+#: ../../user/cli.rst:94
+#: 7a3f40e4d34c4d1aa48487adc22b8b6a
 msgid "Name"
 msgstr "名前"
 
 # 1153c72dd9f04e25ae876d6b15fd3a15
-#: ../../user/cli.rst:92
-#: 1153c72dd9f04e25ae876d6b15fd3a15
+#: ../../user/cli.rst:95
+#: f180b79a122f4ed6af85622215fbeadb
 msgid "Equivalent to"
 msgstr "同等のコマンドラインオプション"
 
 # 4d8b1bea03434df4afb9c5eec8b712d0
-#: ../../user/cli.rst:93
-#: 4d8b1bea03434df4afb9c5eec8b712d0
+#: ../../user/cli.rst:96
+#: 3e73f445e23c4772b7b47a37f0aea62a
 msgid "``PREACHER_CLI_BASE_URL``"
 msgstr ""
 
 # e5b6e1fa6ded45628172509ede078487
-#: ../../user/cli.rst:94
-#: e5b6e1fa6ded45628172509ede078487
+#: ../../user/cli.rst:97
+#: 9002fe43c40241f5a48fbbf25bd204fd
 msgid "``-u``, ``--base-url``"
 msgstr ""
 
 # 18b3ce4f387e411982e54cf315c7605a
-#: ../../user/cli.rst:95
-#: 18b3ce4f387e411982e54cf315c7605a
+#: ../../user/cli.rst:98
+#: 1ac7f6aa2d7241c3a6178305798fd5ca
 msgid "``PREACHER_CLI_LEVEL``"
 msgstr ""
 
 # 55927893583143a09056093457d9bcb4
-#: ../../user/cli.rst:96
-#: 55927893583143a09056093457d9bcb4
+#: ../../user/cli.rst:99
+#: 0f919a257e99483186af9e1a2ec84f71
 msgid "``-l``, ``--level``"
 msgstr ""
 
 # ccb5dfc1041c41f3af63101a575ad315
-#: ../../user/cli.rst:97
-#: ccb5dfc1041c41f3af63101a575ad315
+#: ../../user/cli.rst:100
+#: a5d1b77bf6144b13b1571aac69cb66fc
 msgid "``PREACHER_CLI_RETRY``"
 msgstr ""
 
 # 5fa2a0ef3fc14329851b69eb7e37cc5d
-#: ../../user/cli.rst:98
-#: 5fa2a0ef3fc14329851b69eb7e37cc5d
+#: ../../user/cli.rst:101
+#: c73717d21e574b2185873bfac7020868
 msgid "``-r``, ``--retry``"
 msgstr ""
 
 # ae31c5594c3244318fb83335ea6d09da
-#: ../../user/cli.rst:99
-#: ae31c5594c3244318fb83335ea6d09da
+#: ../../user/cli.rst:102
+#: f9430b89e82347a197d16c96541ee5e4
 msgid "``PREACHER_CLI_DELAY``"
 msgstr ""
 
 # 91f3709f83ce4a1e9ce4217b4d338c56
-#: ../../user/cli.rst:100
-#: 91f3709f83ce4a1e9ce4217b4d338c56
+#: ../../user/cli.rst:103
+#: 72a2e66e4bad49cab5bafb361cebc0e5
 msgid "``-d``, ``--delay``"
 msgstr ""
 
 # bdfda258269c4d358e2d46716e712501
-#: ../../user/cli.rst:101
-#: bdfda258269c4d358e2d46716e712501
+#: ../../user/cli.rst:104
+#: 800b84a95f0348979534f185fba703e8
 msgid "``PREACHER_CLI_TIMEOUT``"
 msgstr ""
 
 # cc00c936975542fca079b570d7479ab7
-#: ../../user/cli.rst:102
-#: cc00c936975542fca079b570d7479ab7
+#: ../../user/cli.rst:105
+#: e56f10bdde9f4c278e57fbb76d8bbc09
 msgid "``-t``, ``--timeout``"
 msgstr ""
 
 # cec52b3360ea49bfaf7401fd7a6cb420
-#: ../../user/cli.rst:103
-#: cec52b3360ea49bfaf7401fd7a6cb420
+#: ../../user/cli.rst:106
+#: 93bf38bda4fe4a0fbee00dc18122a4c3
 msgid "``PREACHER_CLI_CONCURRENCY``"
 msgstr ""
 
 # be5919a66656467d81dd5f705a6e57ed
-#: ../../user/cli.rst:104
-#: be5919a66656467d81dd5f705a6e57ed
+#: ../../user/cli.rst:107
+#: 41c6c4b9304249b7ab04c689ec4ad0c9
 msgid "``-c``, ``--concurrency``"
 msgstr ""
 
 # 40ebaf9e54b447898066f9cf244e11e6
-#: ../../user/cli.rst:105
-#: 40ebaf9e54b447898066f9cf244e11e6
+#: ../../user/cli.rst:108
+#: 089563d0fc5e42d59e90492607b4671d
 msgid "``PREACHER_CLI_REPORT``"
 msgstr ""
 
 # b08b3bb39a4e4fdea3a7ebd029faad65
-#: ../../user/cli.rst:106
-#: b08b3bb39a4e4fdea3a7ebd029faad65
+#: ../../user/cli.rst:109
+#: 66e9a9b679e74d52842b385e85e2497a
 msgid "``-r``, ``--report``"
 msgstr ""
 
 # 00c3f89cb75340d9b31ca20a90639aec
-#: ../../user/cli.rst:108
-#: b5580e6efb9549ec9c1c4291d7772090
+#: ../../user/cli.rst:111
+#: e157d9ee1b9f4a4aa2ff84afac5caca1
 msgid ""
 "Environment variables that have empty strings are ignored. This behavior "
 "is useful to handle optional settings."
 msgstr "空文字が格納されている環境変数は無視されます. この挙動は任意の設定を取り扱う上で便利です."
 
 # c459efd8029a469f9daa3487f3ec4b8e
-#: ../../user/cli.rst:111
-#: 247cebcee46b4722a048815b0b3136cc
+#: ../../user/cli.rst:114
+#: 19d741c9f2244ba58129b1d96130e74a
 msgid ""
 "Preacher requests your server using `requests`_, which allows you to pass"
 " environment variables that `requests`_ supports. For example, when you "
