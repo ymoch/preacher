@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, sentinel
 
-from preacher.core.scenario.body import BodyDescription
+from preacher.core.scenario.body_description import BodyDescription
 from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification

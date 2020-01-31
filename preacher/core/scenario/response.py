@@ -10,7 +10,7 @@ from typing import Callable, List, Mapping, Optional
 
 from preacher.core.response import Response
 from .analysis import Analyzer, JsonAnalyzer
-from .body import BodyDescription
+from .body_description import BodyDescription
 from .analysis_description import AnalysisDescription
 from .predicate import Predicate
 from .status import Status, merge_statuses

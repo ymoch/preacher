@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, sentinel
 from pytest import mark, fixture
 
 from preacher.core.response import Response
-from preacher.core.scenario.body import BodyDescription
+from preacher.core.scenario.body_description import BodyDescription
 from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response import ResponseDescription
