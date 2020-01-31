@@ -5,7 +5,7 @@ from .analysis_description import AnalysisDescriptionCompiler
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
 from .request import RequestCompiler
-from .response import ResponseDescriptionCompiler
+from .response_description import ResponseDescriptionCompiler
 from .scenario import ScenarioCompiler
 
 

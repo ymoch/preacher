@@ -9,7 +9,7 @@ from typing import Optional
 
 from preacher.core.response import Response
 from .request import Request
-from .response import ResponseDescription, ResponseVerification
+from .response_description import ResponseDescription, ResponseVerification
 from .status import Status, StatusedMixin, merge_statuses
 from .util.retry import retry_while_false
 from .verification import Verification

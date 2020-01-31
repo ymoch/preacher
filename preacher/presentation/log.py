@@ -6,7 +6,7 @@ from typing import Iterator
 from colorama import Fore, Style, init
 
 from preacher.core.scenario import CaseResult, ScenarioResult
-from preacher.core.scenario.response import ResponseVerification
+from preacher.core.scenario.response_description import ResponseVerification
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
 
