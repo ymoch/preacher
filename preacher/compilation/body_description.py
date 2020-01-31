@@ -4,9 +4,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import List, Optional
 
-from preacher.core.scenario.analysis import Analysis, analyze_json_str
-from preacher.core.scenario.body_description import BodyDescription
-from preacher.core.scenario.analysis_description import AnalysisDescription
+from preacher.core.scenario import (
+    Analysis,
+    analyze_json_str,
+    AnalysisDescription,
+    BodyDescription,
+)
 from .analysis import AnalysisCompiler
 from .analysis_description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key
