@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from preacher.core.scenario.analysis import Analysis, analyze_json_str
 from preacher.core.scenario.body import BodyDescription
-from preacher.core.scenario.description import Description
+from preacher.core.scenario.description import AnalysisDescription
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
@@ -19,7 +19,7 @@ _KEY_DESCRIPTIONS = 'descriptions'
 @dataclass(frozen=True)
 class BodyDescriptionCompiled:
     analyze: Optional[Analysis] = None
-    descriptions: Optional[List[Description]] = None
+    descriptions: Optional[List[AnalysisDescription]] = None
 
     def replace(
         self,
@@ -86,7 +86,7 @@ class BodyDescriptionCompiler:
             default=self._default.replace(default),
         )
 
-    def _compile_descriptions(self, obj: object) -> List[Description]:
+    def _compile_descriptions(self, obj: object) -> List[AnalysisDescription]:
         if not isinstance(obj, list):
             obj = [obj]
 

@@ -1,14 +1,14 @@
 from unittest.mock import MagicMock, sentinel
 
 from preacher.core.scenario.body import BodyDescription
-from preacher.core.scenario.description import Description
+from preacher.core.scenario.description import AnalysisDescription
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
 
 
 def test_given_invalid_body():
     descriptions = [
-        MagicMock(Description, verify=MagicMock(
+        MagicMock(AnalysisDescription, verify=MagicMock(
             return_value=Verification.succeed()
         )),
     ]
@@ -25,10 +25,10 @@ def test_given_invalid_body():
 
 def test_given_descriptions():
     descriptions = [
-        MagicMock(Description, verify=MagicMock(
+        MagicMock(AnalysisDescription, verify=MagicMock(
             return_value=Verification(status=Status.UNSTABLE)
         )),
-        MagicMock(Description, verify=MagicMock(
+        MagicMock(AnalysisDescription, verify=MagicMock(
             return_value=Verification.succeed()
         )),
     ]

@@ -11,7 +11,7 @@ from .predicate import Predicate
 from .verification import Verification, collect
 
 
-class Description:
+class AnalysisDescription:
 
     def __init__(self, extractor: Extractor, predicates: List[Predicate]):
         self._extractor = extractor

@@ -9,7 +9,7 @@ from typing import Callable, List, Optional
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
-from .description import Description
+from .description import AnalysisDescription
 from .status import (
     Status,
     StatusedList,
@@ -88,7 +88,7 @@ class Scenario:
         self,
         label: Optional[str] = None,
         ordered: bool = True,
-        conditions: Optional[List[Description]] = None,
+        conditions: Optional[List[AnalysisDescription]] = None,
         cases: Optional[List[Case]] = None,
         subscenarios: Optional[List[Scenario]] = None,
     ):

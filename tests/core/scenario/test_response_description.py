@@ -4,7 +4,7 @@ from pytest import mark, fixture
 
 from preacher.core.response import Response
 from preacher.core.scenario.body import BodyDescription
-from preacher.core.scenario.description import Description
+from preacher.core.scenario.description import AnalysisDescription
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response import ResponseDescription
 from preacher.core.scenario.status import Status
@@ -35,7 +35,7 @@ def test_when_given_no_description(response):
 
 def test_when_header_verification_fails(response):
     headers = [
-        MagicMock(Description, verify=MagicMock(
+        MagicMock(AnalysisDescription, verify=MagicMock(
             side_effect=RuntimeError('message')
         )),
     ]
@@ -48,10 +48,10 @@ def test_when_header_verification_fails(response):
 
 def test_when_given_descriptions(response):
     headers = [
-        MagicMock(Description, verify=MagicMock(
+        MagicMock(AnalysisDescription, verify=MagicMock(
             return_value=Verification(status=Status.UNSTABLE)
         )),
-        MagicMock(Description, verify=MagicMock(
+        MagicMock(AnalysisDescription, verify=MagicMock(
             return_value=Verification.succeed()
         )),
     ]
@@ -100,7 +100,7 @@ def test_merge_statuses(
         )),
     ]
     headers_descriptions = [
-        MagicMock(Description, verify=MagicMock(
+        MagicMock(AnalysisDescription, verify=MagicMock(
             return_value=Verification(status=headers_status)
         )),
     ]

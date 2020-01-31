@@ -11,7 +11,7 @@ from typing import Callable, List, Mapping, Optional
 from preacher.core.response import Response
 from .analysis import Analyzer, JsonAnalyzer
 from .body import BodyDescription
-from .description import Description
+from .description import AnalysisDescription
 from .predicate import Predicate
 from .status import Status, merge_statuses
 from .verification import Verification, collect
@@ -31,7 +31,7 @@ class ResponseDescription:
     def __init__(
         self,
         status_code: Optional[List[Predicate]] = None,
-        headers: Optional[List[Description]] = None,
+        headers: Optional[List[AnalysisDescription]] = None,
         body: Optional[BodyDescription] = None,
         analyze_headers:
             Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
