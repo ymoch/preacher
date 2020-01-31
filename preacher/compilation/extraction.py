@@ -1,13 +1,8 @@
 """Extraction compilation."""
-
 from collections.abc import Mapping
+from typing import Any, Callable
 
-from preacher.core.scenario.extraction import (
-    Cast,
-    Extractor,
-    JqExtractor,
-    XPathExtractor,
-)
+from preacher.core.scenario import Extractor, JqExtractor, XPathExtractor
 from preacher.core.scenario.util.functional import identify
 from .error import CompilationError, on_key
 from .util import compile_bool, compile_str
@@ -52,7 +47,7 @@ class ExtractionCompiler:
         with on_key(_KEY_MULTIPLE):
             multiple = compile_bool(multiple_obj)
 
-        cast: Cast = identify
+        cast: Callable[[object], Any] = identify
         cast_obj = obj.get(_KEY_CAST_TO)
         if cast_obj is not None:
             with on_key(_KEY_CAST_TO):
@@ -61,7 +56,7 @@ class ExtractionCompiler:
         return func(query, multiple=multiple, cast=cast)
 
     @staticmethod
-    def _compile_cast(obj: object) -> Cast:
+    def _compile_cast(obj: object) -> Callable[[object], Any]:
         """`obj` should be a string."""
 
         key = compile_str(obj)

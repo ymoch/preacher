@@ -7,7 +7,7 @@ import hamcrest
 from preacher.core.interpretation.datetime import interpret_datetime
 from preacher.core.interpretation.value import value_of
 from preacher.core.hamcrest import after, before
-from preacher.core.scenario.matcher import (
+from preacher.core.scenario import (
     Matcher,
     StaticMatcher,
     ValueMatcher,

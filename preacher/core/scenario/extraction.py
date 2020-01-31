@@ -10,7 +10,6 @@ from .analysis import Analyzer
 from .util.functional import identify
 
 T = TypeVar('T')
-Cast = Callable[[object], Any]
 
 
 class ExtractionError(RuntimeError):
@@ -34,7 +33,7 @@ class JqExtractor(Extractor):
         self,
         query: str,
         multiple: bool = False,
-        cast: Cast = identify,
+        cast: Callable[[object], Any] = identify,
     ):
         self._query = query
         self._multiple = multiple
@@ -62,7 +61,7 @@ class XPathExtractor(Extractor):
         self,
         query: str,
         multiple: bool = False,
-        cast: Cast = identify,
+        cast: Callable[[object], Any] = identify,
     ):
         self._query = query
         self._multiple = multiple

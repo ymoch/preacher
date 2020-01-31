@@ -6,9 +6,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional, List
 
-from preacher.core.scenario.analysis_description import AnalysisDescription
-from preacher.core.scenario.predicate import Predicate
-from preacher.core.scenario.response_description import ResponseDescription
+from preacher.core.scenario import (
+    AnalysisDescription,
+    Predicate,
+    ResponseDescription,
+)
 from .body_description import BodyDescriptionCompiler, BodyDescriptionCompiled
 from .analysis_description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key
