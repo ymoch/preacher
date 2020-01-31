@@ -10,7 +10,7 @@ from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response import ResponseDescription
 from .body import BodyDescriptionCompiler, BodyDescriptionCompiled
-from .description import AnalysisDescriptionCompiler
+from .analysis_description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
 from .util import compile_mapping, map_compile, or_else

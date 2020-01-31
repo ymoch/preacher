@@ -7,7 +7,9 @@ from preacher.compilation.body import (
     BodyDescriptionCompiled,
     BodyDescriptionCompiler,
 )
-from preacher.compilation.description import AnalysisDescriptionCompiler
+from preacher.compilation.analysis_description import (
+    AnalysisDescriptionCompiler,
+)
 from preacher.compilation.error import CompilationError
 
 PACKAGE = 'preacher.compilation.body'

@@ -4,7 +4,9 @@ from pytest import fixture, raises
 
 from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.predicate import PredicateCompiler
-from preacher.compilation.description import AnalysisDescriptionCompiler
+from preacher.compilation.analysis_description import (
+    AnalysisDescriptionCompiler,
+)
 from preacher.compilation.error import CompilationError
 
 

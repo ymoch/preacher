@@ -6,7 +6,9 @@ from preacher.compilation.body import (
     BodyDescriptionCompiled,
     BodyDescriptionCompiler,
 )
-from preacher.compilation.description import AnalysisDescriptionCompiler
+from preacher.compilation.analysis_description import (
+    AnalysisDescriptionCompiler,
+)
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
 from preacher.compilation.response import ResponseDescriptionCompiler

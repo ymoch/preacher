@@ -8,7 +8,7 @@ from preacher.core.scenario.analysis import Analysis, analyze_json_str
 from preacher.core.scenario.body import BodyDescription
 from preacher.core.scenario.analysis_description import AnalysisDescription
 from .analysis import AnalysisCompiler
-from .description import AnalysisDescriptionCompiler
+from .analysis_description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key
 from .util import map_compile, or_else
 

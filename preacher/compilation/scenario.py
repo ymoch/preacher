@@ -6,7 +6,7 @@ from preacher.core.scenario.case import Case
 from preacher.core.scenario.scenario import Scenario
 from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
-from .description import AnalysisDescriptionCompiler
+from .analysis_description import AnalysisDescriptionCompiler
 from .error import on_key
 from .parameter import Parameter, compile as compile_parameter
 from .util import (
