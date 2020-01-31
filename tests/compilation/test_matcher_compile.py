@@ -6,7 +6,8 @@ from preacher.compilation.error import CompilationError
 from preacher.compilation.matcher import compile
 from preacher.core.interpretation.datetime import interpret_datetime
 from preacher.core.hamcrest import after, before
-from preacher.core.scenario import Status, match
+from preacher.core.scenario import Status
+from preacher.core.scenario.matcher import match
 
 PACKAGE = 'preacher.compilation.matcher'
 
