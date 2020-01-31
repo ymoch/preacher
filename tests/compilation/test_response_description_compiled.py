@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch, sentinel
 
-from preacher.compilation.body import BodyDescriptionCompiled
+from preacher.compilation.body_description import BodyDescriptionCompiled
 from preacher.compilation.response import ResponseDescriptionCompiled
 
 PACKAGE = 'preacher.compilation.response'

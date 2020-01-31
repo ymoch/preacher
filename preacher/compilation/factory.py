@@ -1,5 +1,5 @@
 from .analysis import AnalysisCompiler
-from .body import BodyDescriptionCompiler
+from .body_description import BodyDescriptionCompiler
 from .case import CaseCompiler
 from .analysis_description import AnalysisDescriptionCompiler
 from .extraction import ExtractionCompiler

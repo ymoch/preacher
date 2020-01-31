@@ -3,7 +3,7 @@ from unittest.mock import ANY, MagicMock, call, sentinel, patch
 from pytest import fixture, mark, raises
 
 from preacher.compilation.analysis import AnalysisCompiler
-from preacher.compilation.body import (
+from preacher.compilation.body_description import (
     BodyDescriptionCompiled,
     BodyDescriptionCompiler,
 )
@@ -12,7 +12,7 @@ from preacher.compilation.analysis_description import (
 )
 from preacher.compilation.error import CompilationError
 
-PACKAGE = 'preacher.compilation.body'
+PACKAGE = 'preacher.compilation.body_description'
 
 
 @fixture

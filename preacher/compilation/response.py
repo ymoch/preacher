@@ -9,7 +9,7 @@ from typing import Optional, List
 from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response import ResponseDescription
-from .body import BodyDescriptionCompiler, BodyDescriptionCompiled
+from .body_description import BodyDescriptionCompiler, BodyDescriptionCompiled
 from .analysis_description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
