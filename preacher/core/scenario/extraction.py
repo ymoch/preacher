@@ -13,7 +13,7 @@ T = TypeVar('T')
 Cast = Callable[[object], Any]
 
 
-class EvaluationError(RuntimeError):
+class ExtractionError(RuntimeError):
     pass
 
 
@@ -44,7 +44,7 @@ class JqExtractor(Extractor):
         try:
             compiled = jq.compile(self._query)
         except ValueError:
-            raise EvaluationError(f'Invalid jq script: {self._query}')
+            raise ExtractionError(f'Invalid jq script: {self._query}')
 
         values = (
             self._cast(value) if value is not None else value
@@ -89,4 +89,4 @@ class XPathExtractor(Extractor):
         try:
             return elem.xpath(self._query)
         except XPathEvalError:
-            raise EvaluationError(f'Invalid XPath: {self._query}')
+            raise ExtractionError(f'Invalid XPath: {self._query}')
