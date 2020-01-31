@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 from pytest import fixture, mark, raises
 
-from preacher.core.scenario.extraction import JqExtractor, EvaluationError
-from preacher.core.scenario.util.functional import identify
+from preacher.core.scenario.extraction import JqExtractor, ExtractionError
+from preacher.core.functional import identify
 
 VALUE = {
     'foo': 'bar',
@@ -37,7 +37,7 @@ def analyzer():
 
 def test_extract_invalid(analyzer):
     extractor = JqExtractor(query='xxx')
-    with raises(EvaluationError) as error_info:
+    with raises(ExtractionError) as error_info:
         extractor.extract(analyzer)
     assert str(error_info.value).endswith(': xxx')
 

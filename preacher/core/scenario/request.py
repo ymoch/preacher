@@ -14,8 +14,12 @@ from .type import ScalarType
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
-ParameterValue = Union[None, ScalarType, List[Optional[ScalarType]]]
-Parameters = Union[None, ScalarType, Mapping[str, ParameterValue]]
+RequestParameterValue = Union[None, ScalarType, List[Optional[ScalarType]]]
+RequestParameters = Union[
+    None,
+    ScalarType,
+    Mapping[str, RequestParameterValue],
+]
 
 
 class ResponseBodyWrapper(ResponseBody):
@@ -75,7 +79,7 @@ class Request:
         self,
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
-        params: Parameters = None,
+        params: RequestParameters = None,
     ):
         self._path = path
         self._headers = headers or {}
@@ -107,5 +111,5 @@ class Request:
         return self._headers
 
     @property
-    def params(self) -> Parameters:
+    def params(self) -> RequestParameters:
         return self._params

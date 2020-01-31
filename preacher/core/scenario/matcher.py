@@ -6,9 +6,9 @@ from typing import Callable, Generic, List, TypeVar
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
+from preacher.core.functional import identify
 from preacher.core.interpretation.value import Value
 from .status import Status
-from .util.functional import identify
 from .verification import Verification
 
 T = TypeVar('T')

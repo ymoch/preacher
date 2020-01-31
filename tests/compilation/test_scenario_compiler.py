@@ -4,7 +4,9 @@ from pytest import mark, raises, fixture
 
 from preacher.compilation.argument import ArgumentValue
 from preacher.compilation.case import CaseCompiler
-from preacher.compilation.description import DescriptionCompiler
+from preacher.compilation.analysis_description import (
+    AnalysisDescriptionCompiler,
+)
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
 from preacher.compilation.scenario import ScenarioCompiler
@@ -21,7 +23,7 @@ def compiler(description, case) -> ScenarioCompiler:
 
 @fixture
 def description():
-    compiler = MagicMock(spec=DescriptionCompiler)
+    compiler = MagicMock(spec=AnalysisDescriptionCompiler)
     compiler.compile = MagicMock(return_value=sentinel.description)
     return compiler
 

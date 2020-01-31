@@ -6,8 +6,13 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from preacher.core.scenario.request import Request, Parameters, ParameterValue
-from preacher.core.scenario.type import is_scalar, ScalarType
+from preacher.core.scenario import (
+    Request,
+    RequestParameters,
+    RequestParameterValue,
+    ScalarType,
+    is_scalar,
+)
 from .error import CompilationError, on_key
 from .util import compile_str, compile_mapping, map_compile, or_else
 
@@ -20,7 +25,7 @@ _KEY_PARAMS = 'params'
 class RequestCompiled:
     path: Optional[str] = None
     headers: Optional[Mapping] = None
-    params: Optional[Parameters] = None
+    params: Optional[RequestParameters] = None
 
     def replace(self, other: RequestCompiled) -> RequestCompiled:
         return RequestCompiled(
@@ -83,7 +88,7 @@ def _compile_param_value_item(item: object) -> Optional[ScalarType]:
     raise CompilationError('Must be a scalar')
 
 
-def _compile_param_value(value: object) -> ParameterValue:
+def _compile_param_value(value: object) -> RequestParameterValue:
     if value is None:
         return value
     if is_scalar(value):
@@ -94,7 +99,7 @@ def _compile_param_value(value: object) -> ParameterValue:
     return list(map_compile(_compile_param_value_item, value))
 
 
-def _compile_params(params: object) -> Parameters:
+def _compile_params(params: object) -> RequestParameters:
     if isinstance(params, str):
         return params
 

@@ -6,14 +6,13 @@ from typing import Any, Callable, List, TypeVar
 import pyjq as jq
 from lxml.etree import _Element as Element, XPathEvalError
 
+from preacher.core.functional import identify
 from .analysis import Analyzer
-from .util.functional import identify
 
 T = TypeVar('T')
-Cast = Callable[[object], Any]
 
 
-class EvaluationError(RuntimeError):
+class ExtractionError(RuntimeError):
     pass
 
 
@@ -34,7 +33,7 @@ class JqExtractor(Extractor):
         self,
         query: str,
         multiple: bool = False,
-        cast: Cast = identify,
+        cast: Callable[[object], Any] = identify,
     ):
         self._query = query
         self._multiple = multiple
@@ -44,7 +43,7 @@ class JqExtractor(Extractor):
         try:
             compiled = jq.compile(self._query)
         except ValueError:
-            raise EvaluationError(f'Invalid jq script: {self._query}')
+            raise ExtractionError(f'Invalid jq script: {self._query}')
 
         values = (
             self._cast(value) if value is not None else value
@@ -62,7 +61,7 @@ class XPathExtractor(Extractor):
         self,
         query: str,
         multiple: bool = False,
-        cast: Cast = identify,
+        cast: Callable[[object], Any] = identify,
     ):
         self._query = query
         self._multiple = multiple
@@ -89,4 +88,4 @@ class XPathExtractor(Extractor):
         try:
             return elem.xpath(self._query)
         except XPathEvalError:
-            raise EvaluationError(f'Invalid XPath: {self._query}')
+            raise ExtractionError(f'Invalid XPath: {self._query}')

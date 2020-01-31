@@ -5,11 +5,13 @@ from typing import Iterator
 
 from colorama import Fore, Style, init
 
-from preacher.core.scenario import ScenarioResult
-from preacher.core.scenario.case import CaseResult
-from preacher.core.scenario.response import ResponseVerification
-from preacher.core.scenario.status import Status
-from preacher.core.scenario.verification import Verification
+from preacher.core.scenario import (
+    ScenarioResult,
+    CaseResult,
+    ResponseVerification,
+    Status,
+    Verification,
+)
 
 init()
 

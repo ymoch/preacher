@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark, raises
 
-from preacher.core.scenario.extraction import XPathExtractor, EvaluationError
-from preacher.core.scenario.util.functional import identify
+from preacher.core.scenario.extraction import XPathExtractor, ExtractionError
+from preacher.core.functional import identify
 
 VALUE = '''
 <root>
@@ -36,7 +36,7 @@ def analyzer():
 
 def test_extract_invalid(analyzer):
     extractor = XPathExtractor('.items')
-    with raises(EvaluationError) as error_info:
+    with raises(ExtractionError) as error_info:
         extractor.extract(analyzer)
     assert str(error_info.value).endswith(': .items')
 

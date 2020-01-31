@@ -5,7 +5,9 @@ from pytest import fixture, mark, raises
 from preacher.compilation.case import CaseCompiled, CaseCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler
-from preacher.compilation.response import ResponseDescriptionCompiler
+from preacher.compilation.response_description import (
+    ResponseDescriptionCompiler,
+)
 
 ctor_patch = patch(
     target='preacher.compilation.case.Case',

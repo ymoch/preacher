@@ -8,7 +8,7 @@ from preacher.core.scenario.scenario import (
     ScenarioTask,
     ScenarioResult,
 )
-from preacher.core.scenario.description import Description
+from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.status import Status, StatusedList
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.scenario.verification import Verification
@@ -58,7 +58,10 @@ def test_not_implemented():
 ])
 def test_given_bad_conditions(condition_verifications, expected_status):
     conditions = [
-        MagicMock(Description, verify=MagicMock(return_value=verification))
+        MagicMock(
+            spec=AnalysisDescription,
+            verify=MagicMock(return_value=verification),
+        )
         for verification in condition_verifications
     ]
     subscenario = MagicMock(Scenario)
@@ -136,7 +139,7 @@ def test_given_filled_scenarios(
     expected_status,
 ):
     condition_result = MagicMock(Verification, status=Status.SUCCESS)
-    condition = MagicMock(Description)
+    condition = MagicMock(AnalysisDescription)
     condition.verify = MagicMock(return_value=condition_result)
 
     case_results = MagicMock(StatusedList, status=cases_status)

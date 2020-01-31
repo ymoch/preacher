@@ -1,7 +1,6 @@
 """Predicate compilation."""
 
-from preacher.core.scenario.description import Predicate
-from preacher.core.scenario.predicate import MatcherPredicate
+from preacher.core.scenario import Predicate, MatcherPredicate
 from .matcher import compile as compile_matcher
 
 

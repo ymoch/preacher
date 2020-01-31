@@ -43,8 +43,10 @@ def _string_datetime_matcher(matcher: BaseMatcher) -> Matcher:
 
 
 def before(value) -> Matcher:
+    # TODO: Fix typing.
     return _string_datetime_matcher(hamcrest.less_than(value))
 
 
 def after(value) -> Matcher:
+    # TODO: Fix typing.
     return _string_datetime_matcher(hamcrest.greater_than(value))

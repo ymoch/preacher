@@ -2,11 +2,10 @@
 
 from typing import List, Optional, Mapping
 
-from preacher.core.scenario.case import Case
-from preacher.core.scenario.scenario import Scenario
+from preacher.core.scenario import Scenario, Case
 from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
-from .description import DescriptionCompiler
+from .analysis_description import AnalysisDescriptionCompiler
 from .error import on_key
 from .parameter import Parameter, compile as compile_parameter
 from .util import (
@@ -28,7 +27,11 @@ _KEY_SUBSCENARIOS = 'subscenarios'
 
 class ScenarioCompiler:
 
-    def __init__(self, description: DescriptionCompiler, case: CaseCompiler):
+    def __init__(
+        self,
+        description: AnalysisDescriptionCompiler,
+        case: CaseCompiler,
+    ):
         self._description = description
         self._case = case
 

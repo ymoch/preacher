@@ -5,10 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from preacher.core.scenario.case import Case
+from preacher.core.scenario import Case
 from .error import on_key
 from .request import RequestCompiler, RequestCompiled
-from .response import ResponseDescriptionCompiled, ResponseDescriptionCompiler
+from .response_description import (
+    ResponseDescriptionCompiled,
+    ResponseDescriptionCompiler,
+)
 from .util import compile_bool, compile_optional_str, or_else, compile_mapping
 
 _KEY_LABEL = 'label'

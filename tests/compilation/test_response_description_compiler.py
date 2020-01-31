@@ -2,16 +2,20 @@ from unittest.mock import ANY, MagicMock, call, sentinel, patch
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.body import (
+from preacher.compilation.body_description import (
     BodyDescriptionCompiled,
     BodyDescriptionCompiler,
 )
-from preacher.compilation.description import DescriptionCompiler
+from preacher.compilation.analysis_description import (
+    AnalysisDescriptionCompiler,
+)
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
-from preacher.compilation.response import ResponseDescriptionCompiler
+from preacher.compilation.response_description import (
+    ResponseDescriptionCompiler,
+)
 
-PACKAGE = 'preacher.compilation.response'
+PACKAGE = 'preacher.compilation.response_description'
 
 
 @fixture
@@ -34,7 +38,7 @@ def predicate():
 @fixture
 def description():
     return MagicMock(
-        spec=DescriptionCompiler,
+        spec=AnalysisDescriptionCompiler,
         compile=MagicMock(return_value=sentinel.description)
     )
 
