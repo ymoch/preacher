@@ -8,7 +8,7 @@ from preacher.core.scenario.analysis import Analysis, analyze_json_str
 from preacher.core.scenario.body import BodyDescription
 from preacher.core.scenario.description import AnalysisDescription
 from .analysis import AnalysisCompiler
-from .description import DescriptionCompiler
+from .description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key
 from .util import map_compile, or_else
 
@@ -42,7 +42,7 @@ class BodyDescriptionCompiler:
     def __init__(
         self,
         analysis: AnalysisCompiler,
-        description: DescriptionCompiler,
+        description: AnalysisDescriptionCompiler,
         default: Optional[BodyDescriptionCompiled] = None,
     ):
         self._analysis = analysis

@@ -7,7 +7,7 @@ from preacher.compilation.body import (
     BodyDescriptionCompiled,
     BodyDescriptionCompiler,
 )
-from preacher.compilation.description import DescriptionCompiler
+from preacher.compilation.description import AnalysisDescriptionCompiler
 from preacher.compilation.error import CompilationError
 
 PACKAGE = 'preacher.compilation.body'
@@ -29,7 +29,7 @@ def analysis():
 @fixture
 def description():
     return MagicMock(
-        spec=DescriptionCompiler,
+        spec=AnalysisDescriptionCompiler,
         compile=MagicMock(return_value=sentinel.desc),
     )
 

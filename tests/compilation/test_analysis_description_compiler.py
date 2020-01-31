@@ -4,7 +4,7 @@ from pytest import fixture, raises
 
 from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.predicate import PredicateCompiler
-from preacher.compilation.description import DescriptionCompiler
+from preacher.compilation.description import AnalysisDescriptionCompiler
 from preacher.compilation.error import CompilationError
 
 
@@ -25,19 +25,19 @@ def predicate_compiler() -> PredicateCompiler:
 
 
 def test_given_not_a_mapping():
-    compiler = DescriptionCompiler()
+    compiler = AnalysisDescriptionCompiler()
     with raises(CompilationError):
         compiler.compile([])
 
 
 def test_given_an_empty_mapping():
-    compiler = DescriptionCompiler()
+    compiler = AnalysisDescriptionCompiler()
     with raises(CompilationError):
         compiler.compile({})
 
 
 def test_given_a_string_predicate(extraction_compiler, predicate_compiler):
-    compiler = DescriptionCompiler(
+    compiler = AnalysisDescriptionCompiler(
         extraction_compiler=extraction_compiler,
         predicate_compiler=predicate_compiler,
     )
@@ -53,7 +53,7 @@ def test_given_a_string_predicate(extraction_compiler, predicate_compiler):
 
 
 def test_given_a_mapping_predicate(extraction_compiler, predicate_compiler):
-    compiler = DescriptionCompiler(
+    compiler = AnalysisDescriptionCompiler(
         extraction_compiler=extraction_compiler,
         predicate_compiler=predicate_compiler,
     )
@@ -72,7 +72,7 @@ def test_given_a_list_of_mapping_predicates(
     extraction_compiler,
     predicate_compiler,
 ):
-    compiler = DescriptionCompiler(
+    compiler = AnalysisDescriptionCompiler(
         extraction_compiler=extraction_compiler,
         predicate_compiler=predicate_compiler,
     )

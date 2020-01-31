@@ -12,7 +12,7 @@ _KEY_DESCRIBE = 'describe'
 _KEY_SHOULD = 'should'
 
 
-class DescriptionCompiler:
+class AnalysisDescriptionCompiler:
 
     def __init__(
         self,

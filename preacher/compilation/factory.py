@@ -1,7 +1,7 @@
 from .analysis import AnalysisCompiler
 from .body import BodyDescriptionCompiler
 from .case import CaseCompiler
-from .description import DescriptionCompiler
+from .description import AnalysisDescriptionCompiler
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
 from .request import RequestCompiler
@@ -15,7 +15,7 @@ def create_compiler() -> ScenarioCompiler:
     extraction = ExtractionCompiler()
     analysis = AnalysisCompiler()
     predicate = PredicateCompiler()
-    description = DescriptionCompiler(
+    description = AnalysisDescriptionCompiler(
         extraction_compiler=extraction,
         predicate_compiler=predicate,
     )

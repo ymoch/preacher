@@ -9,7 +9,7 @@ from typing import Optional, List
 from preacher.core.scenario.description import AnalysisDescription, Predicate
 from preacher.core.scenario.response import ResponseDescription
 from .body import BodyDescriptionCompiler, BodyDescriptionCompiled
-from .description import DescriptionCompiler
+from .description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
 from .util import compile_mapping, map_compile, or_else
@@ -52,7 +52,7 @@ class ResponseDescriptionCompiler:
     def __init__(
         self,
         predicate: PredicateCompiler,
-        description: DescriptionCompiler,
+        description: AnalysisDescriptionCompiler,
         body: BodyDescriptionCompiler,
         default: Optional[ResponseDescriptionCompiled] = None,
     ):
