@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from preacher.core.scenario.analysis import Analysis, analyze_json_str
 from preacher.core.scenario.body import BodyDescription
-from preacher.core.scenario.description import AnalysisDescription
+from preacher.core.scenario.analysis_description import AnalysisDescription
 from .analysis import AnalysisCompiler
 from .description import AnalysisDescriptionCompiler
 from .error import CompilationError, on_key

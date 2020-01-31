@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from preacher.core.response import ResponseBody
 from .analysis import Analysis, analyze_json_str
-from .description import AnalysisDescription
+from .analysis_description import AnalysisDescription
 from .verification import Verification, collect
 
 

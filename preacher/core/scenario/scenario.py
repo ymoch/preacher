@@ -9,7 +9,7 @@ from typing import Callable, List, Optional
 
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
-from .description import AnalysisDescription
+from .analysis_description import AnalysisDescription
 from .status import (
     Status,
     StatusedList,

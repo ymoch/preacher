@@ -8,7 +8,7 @@ from preacher.core.scenario.scenario import (
     ScenarioTask,
     ScenarioResult,
 )
-from preacher.core.scenario.description import AnalysisDescription
+from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.status import Status, StatusedList
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.scenario.verification import Verification

@@ -11,7 +11,7 @@ from typing import Callable, List, Mapping, Optional
 from preacher.core.response import Response
 from .analysis import Analyzer, JsonAnalyzer
 from .body import BodyDescription
-from .description import AnalysisDescription
+from .analysis_description import AnalysisDescription
 from .predicate import Predicate
 from .status import Status, merge_statuses
 from .verification import Verification, collect
