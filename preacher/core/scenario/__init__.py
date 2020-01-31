@@ -8,9 +8,14 @@ from .extraction import (
     XPathExtractor,
     ExtractionError,
 )
+from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
+from .predicate import Predicate, MatcherPredicate
 from .request import Request, RequestParameters, RequestParameterValue
 from .response_description import ResponseDescription, ResponseVerification
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
+from .status import Status, StatusedMixin, StatusedList
+from .type import ScalarType
+from .verification import Verification
 
 __all__ = [
     'Analyzer',
@@ -26,6 +31,12 @@ __all__ = [
     'JqExtractor',
     'XPathExtractor',
     'ExtractionError',
+    'Matcher',
+    'StaticMatcher',
+    'ValueMatcher',
+    'RecursiveMatcher',
+    'Predicate',
+    'MatcherPredicate',
     'Request',
     'RequestParameters',
     'RequestParameterValue',
@@ -35,4 +46,9 @@ __all__ = [
     'ScenarioTask',
     'ScenarioListener',
     'ScenarioResult',
+    'Status',
+    'StatusedMixin',
+    'StatusedList',
+    'ScalarType',
+    'Verification',
 ]

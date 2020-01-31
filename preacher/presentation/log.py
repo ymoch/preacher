@@ -9,9 +9,9 @@ from preacher.core.scenario import (
     ScenarioResult,
     CaseResult,
     ResponseVerification,
+    Status,
+    Verification,
 )
-from preacher.core.scenario.status import Status
-from preacher.core.scenario.verification import Verification
 
 init()
 
