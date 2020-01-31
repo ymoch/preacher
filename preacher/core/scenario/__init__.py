@@ -1,3 +1,16 @@
-from .scenario import Scenario, ScenarioTask, ScenarioListener, ScenarioResult
+from .case import Case, CaseListener, CaseResult
+from .request import Request, RequestParameters, RequestParameterValue
+from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 
-__all__ = ['Scenario', 'ScenarioTask', 'ScenarioListener', 'ScenarioResult']
+__all__ = [
+    'Case',
+    'CaseListener',
+    'CaseResult',
+    'Request',
+    'RequestParameters',
+    'RequestParameterValue',
+    'Scenario',
+    'ScenarioTask',
+    'ScenarioListener',
+    'ScenarioResult',
+]
