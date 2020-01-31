@@ -2,8 +2,8 @@
 from collections.abc import Mapping
 from typing import Any, Callable
 
+from preacher.core.functional import identify
 from preacher.core.scenario import Extractor, JqExtractor, XPathExtractor
-from preacher.core.scenario.util.functional import identify
 from .error import CompilationError, on_key
 from .util import compile_bool, compile_str
 

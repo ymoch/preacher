@@ -4,7 +4,7 @@ from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.util import map_compile, run_recursively
-from preacher.core.scenario.util.functional import identify
+from preacher.core.functional import identify
 
 
 def succeeds(arg):

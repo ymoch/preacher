@@ -4,7 +4,7 @@ from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark, raises
 
 from preacher.core.scenario.extraction import XPathExtractor, ExtractionError
-from preacher.core.scenario.util.functional import identify
+from preacher.core.functional import identify
 
 VALUE = '''
 <root>

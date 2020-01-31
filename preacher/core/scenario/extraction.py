@@ -6,8 +6,8 @@ from typing import Any, Callable, List, TypeVar
 import pyjq as jq
 from lxml.etree import _Element as Element, XPathEvalError
 
+from preacher.core.functional import identify
 from .analysis import Analyzer
-from .util.functional import identify
 
 T = TypeVar('T')
 
