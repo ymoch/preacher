@@ -1,8 +1,10 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
+from typing import Callable, Dict
 
 import hamcrest
+from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from preacher.core.functional import identify
 from preacher.core.hamcrest import after, before
@@ -51,7 +53,10 @@ _VALUE_MATCHER_HAMCREST_MAP = {
     'be_after': after,
 }
 
-_SINGLE_MATCHER_HAMCREST_MAP = {
+_SINGLE_MATCHER_HAMCREST_MAP: Dict[
+    str,
+    Callable[[HamcrestMatcher], HamcrestMatcher]
+] = {
     'be': hamcrest.is_,
     'not': hamcrest.not_,
     'have_item': hamcrest.has_item,
@@ -90,7 +95,9 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
     with on_key(key):
         value = compile_list(value)
         inner_matchers = list(map_compile(compile, value))
-    return RecursiveMatcher(hamcrest_factory, inner_matchers)
+
+    # TODO: Fix typing.
+    return RecursiveMatcher(hamcrest_factory, inner_matchers)  # type: ignore
 
 
 def compile(obj: object) -> Matcher:
@@ -107,8 +114,9 @@ def compile(obj: object) -> Matcher:
         key, value = next(iter(obj.items()))
 
         if key in _VALUE_MATCHER_HAMCREST_MAP:
+            # TODO: Fix typing.
             return ValueMatcher(
-                _VALUE_MATCHER_HAMCREST_MAP[key],
+                _VALUE_MATCHER_HAMCREST_MAP[key],  # type: ignore
                 value_of(value),
                 interpret=_INTERPRETER_MAP.get(key, identify),
             )
