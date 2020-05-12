@@ -112,7 +112,7 @@ class Logger:
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
-        self._log(level, f'%s: %s', label, status)
+        self._log(level, '%s: %s', label, status)
         with self._nested():
             self.show_verification(
                 verification=verification.status_code,
@@ -137,7 +137,7 @@ class Logger:
     ) -> None:
         status = verification.status
         level = _LEVEL_MAP[status]
-        self._log(level, f'%s: %s', label, status)
+        self._log(level, '%s: %s', label, status)
         message = verification.message
         if message:
             with self._nested():

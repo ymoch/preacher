@@ -72,8 +72,8 @@ class RecursiveMatcher(Matcher):
 
 def match(matcher: Matcher, actual: object, **kwargs) -> Verification:
     try:
-        matcher = matcher.to_hamcrest(**kwargs)
-        assert_that(actual, matcher)
+        hamcrest_matcher = matcher.to_hamcrest(**kwargs)
+        assert_that(actual, hamcrest_matcher)
     except AssertionError as error:
         message = str(error).strip()
         return Verification(status=Status.UNSTABLE, message=message)
