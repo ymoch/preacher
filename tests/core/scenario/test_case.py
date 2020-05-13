@@ -73,8 +73,9 @@ def test_when_the_request_fails(retry_patch):
     assert not result
     assert result.label == 'Request fails'
     assert result.status == Status.FAILURE
-    assert result.request.status == Status.FAILURE
-    assert result.request.message == 'RuntimeError: message'
+    assert result.request.request is request
+    assert result.request.result.status == Status.FAILURE
+    assert result.request.result.message == 'RuntimeError: message'
 
     request.assert_called_once_with('base-url', timeout=None)
     response_description.assert_not_called()
@@ -114,7 +115,8 @@ def test_when_given_an_invalid_response(retry_patch):
     assert not result
     assert result.label == 'Response should be unstable'
     assert result.status == Status.UNSTABLE
-    assert result.request.status == Status.SUCCESS
+    assert result.request.request is request
+    assert result.request.result.status == Status.SUCCESS
     assert result.response.status == Status.UNSTABLE
     assert result.response.body.status == Status.UNSTABLE
 

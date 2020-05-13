@@ -26,11 +26,17 @@ class CaseListener:
 
 
 @dataclass(frozen=True)
+class RequestReport:
+    request: Request = field(default_factory=Request)
+    result: Verification = field(default_factory=Verification)
+
+
+@dataclass(frozen=True)
 class CaseResult(StatusedMixin):
     """
     Results for the test cases.
     """
-    request: Verification = field(default_factory=Verification)
+    request: RequestReport = field(default_factory=RequestReport)
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
 
@@ -81,7 +87,10 @@ class Case:
         except Exception as error:
             return CaseResult(
                 status=Status.FAILURE,
-                request=Verification.of_error(error),
+                request=RequestReport(
+                    request=self._request,
+                    result=Verification.of_error(error),
+                ),
                 label=self._label,
             )
         listener.on_response(response)
@@ -97,7 +106,10 @@ class Case:
         ])
         return CaseResult(
             status=status,
-            request=request_verification,
+            request=RequestReport(
+                request=self._request,
+                result=request_verification,
+            ),
             response=response_verification,
             label=self._label,
         )

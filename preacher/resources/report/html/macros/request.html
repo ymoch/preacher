@@ -1,0 +1,48 @@
+{% from "./macros/verification.html" import show_verification %}
+
+{% macro show_request(report) %}
+  {% set request = report.request %}
+  {% set result = report.result %}
+
+  <li class="accordion-item status-{{ result.status }}" data-accordion-item>
+    <a href="#" class="accordion-title">
+      <span class="badge status-{{ result.status }}">{{ result.status }}</span>
+      Request
+    </a>
+
+    <div class="accordion-content" data-tab-content>
+      <dl>
+        <div class="grid-x">
+          <dt class="cell small-4 medium-2 large-1">Path</dt>
+          <dd class="cell small-8 medium-10 large-11">{{ request.path }}</dd>
+        </div>
+        {% if request.headers %}
+          <div class="grid-x">
+            <dt class="cell small-4 medium-2 large-1">Headers</dt>
+            <dd class="cell small-8 medium-10 large-11">{{ show_headers(request.headers) }}</dd>
+          </div>
+        {% endif %}
+        {% if request.params %}
+          <div class="grid-x">
+            <dt class="cell small-4 medium-2 large-1">Params</dt>
+            <dd class="cell small-8 medium-10 large-11">{{ request.params }}</dd>
+          </div>
+        {% endif %}
+      </dl>
+
+      {% if not result.message %}
+        No message.
+      {% else %}
+        <pre>{{ result.message }}</pre>
+      {% endif %}
+    </div>
+  </li>
+{% endmacro %}
+
+{% macro show_headers(headers) %}
+  <ul>
+    {% for name, value in headers.items() %}
+      <li>{{ name }}: {{ value }}</li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
