@@ -49,10 +49,12 @@ def test_invalid_mapping(obj):
     ({'have_length': 1}, 1, UNSTABLE),
     ({'have_length': 1}, '', UNSTABLE),
     ({'have_length': 1}, [], UNSTABLE),
+    ({'have_length': {'be_less_than': 1}}, [0], UNSTABLE),
     ({'have_length': 1}, 'A', SUCCESS),
     ({'have_length': 1}, [0], SUCCESS),
-    ({'have_length': None}, [0], FAILURE),
-    ({'have_length': '1'}, [0], FAILURE),
+    ({'have_length': {'be_less_than': 2}}, [0], SUCCESS),
+    ({'have_length': None}, [0], UNSTABLE),  # HACK: should be FAILURE
+    ({'have_length': '1'}, [0], UNSTABLE),  # HACK: should be FAILURE
     ({'equal': 1}, 0, UNSTABLE),
     ({'equal': 1}, 1, SUCCESS),
     ({'equal': 1}, '1', UNSTABLE),
@@ -82,7 +84,7 @@ def test_invalid_mapping(obj):
     ({'end_with': 0}, '0', FAILURE),
     ({'match_regexp': '^A*B$'}, 'ACB', UNSTABLE),
     ({'match_regexp': '^A*B$'}, 'B', SUCCESS),
-    ({'match_regexp': '^A*B$'}, 0, FAILURE),  # HACK: Should be UNSTABLE.
+    ({'match_regexp': '^A*B$'}, 0, FAILURE),  # HACK: should be UNSTABLE.
     ({'match_regexp': 0}, '0', FAILURE),
     ({'be': 1}, 0, UNSTABLE),
     ({'be': 1}, '1', UNSTABLE),

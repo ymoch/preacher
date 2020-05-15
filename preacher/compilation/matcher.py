@@ -39,7 +39,6 @@ _VALUE_MATCHER_HAMCREST_MAP: Dict[
 ] = {
     # For objects.
     'equal': hamcrest.equal_to,
-    'have_length': require_type(int, hamcrest.has_length),
 
     # For comparable values.
     'be_greater_than': hamcrest.greater_than,
@@ -64,6 +63,11 @@ _SINGLE_MATCHER_HAMCREST_MAP: Dict[
 ] = {
     'be': hamcrest.is_,
     'not': hamcrest.not_,
+
+    # For objects.
+    'have_length': hamcrest.has_length,
+
+    # For collections.
     'have_item': hamcrest.has_item,
 }
 
