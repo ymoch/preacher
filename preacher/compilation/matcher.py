@@ -71,7 +71,7 @@ _SINGLE_MATCHER_HAMCREST_MAP: Dict[
     'have_item': hamcrest.has_item,
 }
 
-_MULTI_MATCHERS_HAMCREST_MAP = {
+_MULTI_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., HamcrestMatcher]] = {
     'contain': hamcrest.contains_exactly,
     'contain_exactly': hamcrest.contains_exactly,
     'contain_in_any_order': hamcrest.contains_inanyorder,
@@ -105,8 +105,7 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
         value = compile_list(value)
         inner_matchers = list(map_compile(compile, value))
 
-    # TODO: Fix typing.
-    return RecursiveMatcher(hamcrest_factory, inner_matchers)  # type: ignore
+    return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 
 def compile(obj: object) -> Matcher:
