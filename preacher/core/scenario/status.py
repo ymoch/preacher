@@ -115,9 +115,12 @@ class StatusedList(Generic[T], StatusedMixin):
     items: List[T] = field(default_factory=list)
 
 
+StatusedType = TypeVar('StatusedType', bound=Statused)
+
+
 def collect_statused(
-    items: Iterable[Statused],
-) -> StatusedList:
+    items: Iterable[StatusedType],
+) -> StatusedList[StatusedType]:
     items = list(items)
     status = merge_statuses(item.status for item in items)
     return StatusedList(status=status, items=items)
