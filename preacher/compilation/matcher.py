@@ -31,22 +31,46 @@ _STATIC_MATCHER_MAP = {
     'anything': StaticMatcher(hamcrest.is_(hamcrest.anything())),
 }
 
-_VALUE_MATCHER_HAMCREST_MAP = {
+
+def _require_int(
+    func: Callable[[int], HamcrestMatcher],
+) -> Callable[[object], HamcrestMatcher]:
+    def _func(value: object) -> HamcrestMatcher:
+        if not isinstance(value, int):
+            raise ValueError("argument 1 must be a integer")
+        return func(value)
+    return _func
+
+
+def _require_str(
+    func: Callable[[str], HamcrestMatcher],
+) -> Callable[[object], HamcrestMatcher]:
+    def _func(value: object) -> HamcrestMatcher:
+        if not isinstance(value, str):
+            raise ValueError("argument 1 must be a str")
+        return func(value)
+    return _func
+
+
+_VALUE_MATCHER_HAMCREST_MAP: Dict[
+    str,
+    Callable[[object], HamcrestMatcher]
+] = {
     # For objects.
     'equal': hamcrest.equal_to,
-    'have_length': hamcrest.has_length,
+    'have_length': _require_int(hamcrest.has_length),
 
-    # For comparables.
+    # For comparable values.
     'be_greater_than': hamcrest.greater_than,
     'be_greater_than_or_equal_to': hamcrest.greater_than_or_equal_to,
     'be_less_than': hamcrest.less_than,
     'be_less_than_or_equal_to': hamcrest.less_than_or_equal_to,
 
     # For strings.
-    'contain_string': hamcrest.contains_string,
-    'start_with': hamcrest.starts_with,
-    'end_with': hamcrest.ends_with,
-    'match_regexp': hamcrest.matches_regexp,
+    'contain_string': _require_str(hamcrest.contains_string),
+    'start_with': _require_str(hamcrest.starts_with),
+    'end_with': _require_str(hamcrest.ends_with),
+    'match_regexp': _require_str(hamcrest.matches_regexp),
 
     # For datetime.
     'be_before': before,
@@ -114,9 +138,8 @@ def compile(obj: object) -> Matcher:
         key, value = next(iter(obj.items()))
 
         if key in _VALUE_MATCHER_HAMCREST_MAP:
-            # TODO: Fix typing.
             return ValueMatcher(
-                _VALUE_MATCHER_HAMCREST_MAP[key],  # type: ignore
+                _VALUE_MATCHER_HAMCREST_MAP[key],
                 value_of(value),
                 interpret=_INTERPRETER_MAP.get(key, identify),
             )
