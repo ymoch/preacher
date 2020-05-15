@@ -51,7 +51,7 @@ def test_when_disabled():
     )
     actual = case.run()
     assert actual.label == 'Disabled'
-    assert actual.status == Status.SKIPPED
+    assert actual.status is Status.SKIPPED
 
     request.assert_not_called()
     response.assert_not_called()
@@ -72,7 +72,7 @@ def test_when_the_request_fails(retry_patch):
 
     assert not result
     assert result.label == 'Request fails'
-    assert result.status == Status.FAILURE
+    assert result.status is Status.FAILURE
     assert result.request is request
     assert result.execution.status == Status.FAILURE
     assert result.execution.message == 'RuntimeError: message'

@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import reduce
-from typing import Generic, List, TypeVar
+from typing import Generic, List, TypeVar, Union
 
 T = TypeVar('T')
 
@@ -101,17 +102,25 @@ class StatusedMixin:
     status: Status = Status.SKIPPED
 
 
+class StatusedInterface(ABC):
+
+    @property
+    @abstractmethod
+    def status(self) -> Status:
+        raise NotImplementedError()
+
+
 @dataclass(frozen=True)
 class StatusedList(Generic[T], StatusedMixin):
     items: List[T] = field(default_factory=list)
 
 
-Statused = TypeVar('Statused', bound=StatusedMixin)
+Statused = Union[StatusedMixin, StatusedInterface]
 
 
 def collect_statused(
     items: Iterable[Statused],
-) -> StatusedList[Statused]:
+) -> StatusedList:
     items = list(items)
     status = merge_statuses(item.status for item in items)
     return StatusedList(status=status, items=items)
