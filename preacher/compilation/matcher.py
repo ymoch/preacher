@@ -9,6 +9,7 @@ from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from preacher.core.functional import identify
 from preacher.core.hamcrest import after, before
 from preacher.core.interpretation.datetime import interpret_datetime
+from preacher.core.interpretation.type import require_type
 from preacher.core.interpretation.value import value_of
 from preacher.core.scenario import (
     Matcher,
@@ -31,22 +32,25 @@ _STATIC_MATCHER_MAP = {
     'anything': StaticMatcher(hamcrest.is_(hamcrest.anything())),
 }
 
-_VALUE_MATCHER_HAMCREST_MAP = {
+
+_VALUE_MATCHER_HAMCREST_MAP: Dict[
+    str,
+    Callable[[object], HamcrestMatcher]
+] = {
     # For objects.
     'equal': hamcrest.equal_to,
-    'have_length': hamcrest.has_length,
 
-    # For comparables.
+    # For comparable values.
     'be_greater_than': hamcrest.greater_than,
     'be_greater_than_or_equal_to': hamcrest.greater_than_or_equal_to,
     'be_less_than': hamcrest.less_than,
     'be_less_than_or_equal_to': hamcrest.less_than_or_equal_to,
 
     # For strings.
-    'contain_string': hamcrest.contains_string,
-    'start_with': hamcrest.starts_with,
-    'end_with': hamcrest.ends_with,
-    'match_regexp': hamcrest.matches_regexp,
+    'contain_string': require_type(str, hamcrest.contains_string),
+    'start_with': require_type(str, hamcrest.starts_with),
+    'end_with': require_type(str, hamcrest.ends_with),
+    'match_regexp': require_type(str, hamcrest.matches_regexp),
 
     # For datetime.
     'be_before': before,
@@ -59,10 +63,15 @@ _SINGLE_MATCHER_HAMCREST_MAP: Dict[
 ] = {
     'be': hamcrest.is_,
     'not': hamcrest.not_,
+
+    # For objects.
+    'have_length': hamcrest.has_length,
+
+    # For collections.
     'have_item': hamcrest.has_item,
 }
 
-_MULTI_MATCHERS_HAMCREST_MAP = {
+_MULTI_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., HamcrestMatcher]] = {
     'contain': hamcrest.contains_exactly,
     'contain_exactly': hamcrest.contains_exactly,
     'contain_in_any_order': hamcrest.contains_inanyorder,
@@ -96,8 +105,7 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
         value = compile_list(value)
         inner_matchers = list(map_compile(compile, value))
 
-    # TODO: Fix typing.
-    return RecursiveMatcher(hamcrest_factory, inner_matchers)  # type: ignore
+    return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 
 def compile(obj: object) -> Matcher:
@@ -114,9 +122,8 @@ def compile(obj: object) -> Matcher:
         key, value = next(iter(obj.items()))
 
         if key in _VALUE_MATCHER_HAMCREST_MAP:
-            # TODO: Fix typing.
             return ValueMatcher(
-                _VALUE_MATCHER_HAMCREST_MAP[key],  # type: ignore
+                _VALUE_MATCHER_HAMCREST_MAP[key],
                 value_of(value),
                 interpret=_INTERPRETER_MAP.get(key, identify),
             )

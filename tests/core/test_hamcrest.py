@@ -26,7 +26,7 @@ def test_before(item, expected):
 
     description = StringDescription()
     matcher.describe_to(description)
-    assert str(description).startswith('a value less than <2019-12')
+    assert str(description).startswith('a value before <2019-12')
 
     description = StringDescription()
     matcher.describe_mismatch(item, description)
@@ -44,7 +44,7 @@ def test_after(item, expected):
 
     description = StringDescription()
     matcher.describe_to(description)
-    assert str(description).startswith('a value greater than <2019-12')
+    assert str(description).startswith('a value after <2019-12')
 
     description = StringDescription()
     matcher.describe_mismatch(item, description)
