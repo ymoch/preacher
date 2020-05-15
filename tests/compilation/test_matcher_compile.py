@@ -77,7 +77,7 @@ def test_invalid_mapping(obj):
     ({'end_with': 'BC'}, 'BCA', UNSTABLE),
     ({'match_regexp': '^A*B$'}, 'ACB', UNSTABLE),
     ({'match_regexp': '^A*B$'}, 'B', SUCCESS),
-    ({'match_regexp': '^A*B$'}, 0, FAILURE),  # TODO: Should be UNSTABLE.
+    ({'match_regexp': '^A*B$'}, 0, FAILURE),  # HACK: Should be UNSTABLE.
     ({'be': 1}, 0, UNSTABLE),
     ({'be': 1}, '1', UNSTABLE),
     ({'be': 1}, 1, SUCCESS),
