@@ -7,10 +7,12 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
+from property_cached import cached_property
+
 from preacher.core.response import Response
 from .request import Request
 from .response_description import ResponseDescription, ResponseVerification
-from .status import Status, StatusedMixin, merge_statuses
+from .status import Status, Statused, merge_statuses
 from .util.retry import retry_while_false
 from .verification import Verification
 
@@ -32,16 +34,24 @@ class RequestReport:
 
 
 @dataclass(frozen=True)
-class CaseResult(StatusedMixin):
+class CaseResult(Statused):
     """
     Results for the test cases.
     """
-    request: RequestReport = field(default_factory=RequestReport)
+    request: Request = field(default_factory=Request)
+    execution: Verification = field(default_factory=Verification)
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
 
     def __bool__(self) -> bool:
         return bool(self.status)
+
+    @cached_property
+    def status(self) -> Status:
+        return merge_statuses([
+            self.execution.status,
+            self.response.status if self.response else Status.SKIPPED,
+        ])
 
 
 class Case:
@@ -86,30 +96,20 @@ class Case:
             response = self._request(base_url, timeout=timeout)
         except Exception as error:
             return CaseResult(
-                status=Status.FAILURE,
-                request=RequestReport(
-                    request=self._request,
-                    result=Verification.of_error(error),
-                ),
+                request=self._request,
+                execution=Verification.of_error(error),
                 label=self._label,
             )
         listener.on_response(response)
 
-        request_verification = Verification.succeed()
+        execution_verification = Verification.succeed()
         response_verification = self._response.verify(
             response,
             origin_datetime=response.starts,
         )
-        status = merge_statuses([
-            request_verification.status,
-            response_verification.status,
-        ])
         return CaseResult(
-            status=status,
-            request=RequestReport(
-                request=self._request,
-                result=request_verification,
-            ),
+            request=self._request,
+            execution=execution_verification,
             response=response_verification,
             label=self._label,
         )

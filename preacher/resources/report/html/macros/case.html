@@ -1,5 +1,6 @@
 {% from "./macros/request.html" import show_request %}
 {% from "./macros/response.html" import show_response %}
+{% from "./macros/verification.html" import show_verification %}
 
 {% macro show_case(item) %}
   <li class="accordion-item status-{{ item.status }}" data-accordion-item>
@@ -10,6 +11,7 @@
     <div class="accordion-content" data-tab-content>
       <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
         {{ show_request(item.request) }}
+        {{ show_verification('Execution', item.execution) }}
         {% if item.response %}
           {{ show_response(item.response) }}
         {% endif %}

@@ -1,13 +1,13 @@
 from unittest.mock import MagicMock, sentinel
 
-from pytest import mark, fixture
+from pytest import mark, fixture, raises
 
 from preacher.core.response import Response
 from preacher.core.scenario.body_description import BodyDescription
 from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response_description import ResponseDescription
-from preacher.core.scenario.status import Status
+from preacher.core.scenario.status import Status, Statused
 from preacher.core.scenario.verification import Verification
 
 
@@ -114,3 +114,15 @@ def test_merge_statuses(
     )
     verification = description.verify(response)
     assert verification.status == expected
+
+
+def test_incomplete_statused_implementation():
+    class _IncompleteStatused(Statused):
+
+        @property
+        def status(self) -> Status:
+            return super().status
+
+    statused = _IncompleteStatused()
+    with raises(NotImplementedError):
+        print(statused.status)

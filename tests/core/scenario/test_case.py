@@ -51,7 +51,7 @@ def test_when_disabled():
     )
     actual = case.run()
     assert actual.label == 'Disabled'
-    assert actual.status == Status.SKIPPED
+    assert actual.status is Status.SKIPPED
 
     request.assert_not_called()
     response.assert_not_called()
@@ -72,10 +72,10 @@ def test_when_the_request_fails(retry_patch):
 
     assert not result
     assert result.label == 'Request fails'
-    assert result.status == Status.FAILURE
-    assert result.request.request is request
-    assert result.request.result.status == Status.FAILURE
-    assert result.request.result.message == 'RuntimeError: message'
+    assert result.status is Status.FAILURE
+    assert result.request is request
+    assert result.execution.status == Status.FAILURE
+    assert result.execution.message == 'RuntimeError: message'
 
     request.assert_called_once_with('base-url', timeout=None)
     response_description.assert_not_called()
@@ -115,8 +115,8 @@ def test_when_given_an_invalid_response(retry_patch):
     assert not result
     assert result.label == 'Response should be unstable'
     assert result.status == Status.UNSTABLE
-    assert result.request.request is request
-    assert result.request.result.status == Status.SUCCESS
+    assert result.request is request
+    assert result.execution.status == Status.SUCCESS
     assert result.response.status == Status.UNSTABLE
     assert result.response.body.status == Status.UNSTABLE
 

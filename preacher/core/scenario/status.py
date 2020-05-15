@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -96,8 +97,16 @@ def merge_statuses(statuses: Iterable[Status]) -> Status:
     return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SKIPPED)
 
 
+class Statused(ABC):
+
+    @property
+    @abstractmethod
+    def status(self) -> Status:
+        raise NotImplementedError()
+
+
 @dataclass(frozen=True)
-class StatusedMixin:
+class StatusedMixin(Statused):
     status: Status = Status.SKIPPED
 
 
@@ -106,12 +115,12 @@ class StatusedList(Generic[T], StatusedMixin):
     items: List[T] = field(default_factory=list)
 
 
-Statused = TypeVar('Statused', bound=StatusedMixin)
+StatusedType = TypeVar('StatusedType', bound=Statused)
 
 
 def collect_statused(
-    items: Iterable[Statused],
-) -> StatusedList[Statused]:
+    items: Iterable[StatusedType],
+) -> StatusedList[StatusedType]:
     items = list(items)
     status = merge_statuses(item.status for item in items)
     return StatusedList(status=status, items=items)

@@ -27,7 +27,8 @@ requests = "^2.21"
 lxml = "^4.4"
 colorama = "^0.4.1"
 jinja2 = "^2.10"
-six = "^1.14.0"  # Should be removed after: https://github.com/doloopwhile/pyjq/issues/43
+six = "^1.14.0"  # HACK: Should be removed after: https://github.com/doloopwhile/pyjq/issues/43
+property-cached = "^1.6.4"  # HACK: Should be replaced after Python 3.8 migration
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
