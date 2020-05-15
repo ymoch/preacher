@@ -7,7 +7,7 @@ from preacher.core.scenario.body_description import BodyDescription
 from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response_description import ResponseDescription
-from preacher.core.scenario.status import Status, StatusedInterface
+from preacher.core.scenario.status import Status, Statused
 from preacher.core.scenario.verification import Verification
 
 
@@ -117,7 +117,7 @@ def test_merge_statuses(
 
 
 def test_incomplete_statused_implementation():
-    class _IncompleteStatused(StatusedInterface):
+    class _IncompleteStatused(Statused):
 
         @property
         def status(self) -> Status:

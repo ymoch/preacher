@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import reduce
-from typing import Generic, List, TypeVar, Union
+from typing import Generic, List, TypeVar
 
 T = TypeVar('T')
 
@@ -97,12 +97,7 @@ def merge_statuses(statuses: Iterable[Status]) -> Status:
     return reduce(lambda lhs, rhs: lhs.merge(rhs), statuses, Status.SKIPPED)
 
 
-@dataclass(frozen=True)
-class StatusedMixin:
-    status: Status = Status.SKIPPED
-
-
-class StatusedInterface(ABC):
+class Statused(ABC):
 
     @property
     @abstractmethod
@@ -111,11 +106,13 @@ class StatusedInterface(ABC):
 
 
 @dataclass(frozen=True)
+class StatusedMixin(Statused):
+    status: Status = Status.SKIPPED
+
+
+@dataclass(frozen=True)
 class StatusedList(Generic[T], StatusedMixin):
     items: List[T] = field(default_factory=list)
-
-
-Statused = Union[StatusedMixin, StatusedInterface]
 
 
 def collect_statused(

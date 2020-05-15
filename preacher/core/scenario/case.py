@@ -10,7 +10,7 @@ from typing import Optional
 from preacher.core.response import Response
 from .request import Request
 from .response_description import ResponseDescription, ResponseVerification
-from .status import Status, StatusedInterface, merge_statuses
+from .status import Status, Statused, merge_statuses
 from .util.retry import retry_while_false
 from .verification import Verification
 
@@ -32,7 +32,7 @@ class RequestReport:
 
 
 @dataclass(frozen=True)
-class CaseResult(StatusedInterface):
+class CaseResult(Statused):
     """
     Results for the test cases.
     """
