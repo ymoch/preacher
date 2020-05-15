@@ -9,6 +9,7 @@ from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from preacher.core.functional import identify
 from preacher.core.hamcrest import after, before
 from preacher.core.interpretation.datetime import interpret_datetime
+from preacher.core.interpretation.type import require_type
 from preacher.core.interpretation.value import value_of
 from preacher.core.scenario import (
     Matcher,
@@ -32,33 +33,13 @@ _STATIC_MATCHER_MAP = {
 }
 
 
-def _require_int(
-    func: Callable[[int], HamcrestMatcher],
-) -> Callable[[object], HamcrestMatcher]:
-    def _func(value: object) -> HamcrestMatcher:
-        if not isinstance(value, int):
-            raise ValueError("argument 1 must be a integer")
-        return func(value)
-    return _func
-
-
-def _require_str(
-    func: Callable[[str], HamcrestMatcher],
-) -> Callable[[object], HamcrestMatcher]:
-    def _func(value: object) -> HamcrestMatcher:
-        if not isinstance(value, str):
-            raise ValueError("argument 1 must be a str")
-        return func(value)
-    return _func
-
-
 _VALUE_MATCHER_HAMCREST_MAP: Dict[
     str,
     Callable[[object], HamcrestMatcher]
 ] = {
     # For objects.
     'equal': hamcrest.equal_to,
-    'have_length': _require_int(hamcrest.has_length),
+    'have_length': require_type(int, hamcrest.has_length),
 
     # For comparable values.
     'be_greater_than': hamcrest.greater_than,
@@ -67,10 +48,10 @@ _VALUE_MATCHER_HAMCREST_MAP: Dict[
     'be_less_than_or_equal_to': hamcrest.less_than_or_equal_to,
 
     # For strings.
-    'contain_string': _require_str(hamcrest.contains_string),
-    'start_with': _require_str(hamcrest.starts_with),
-    'end_with': _require_str(hamcrest.ends_with),
-    'match_regexp': _require_str(hamcrest.matches_regexp),
+    'contain_string': require_type(str, hamcrest.contains_string),
+    'start_with': require_type(str, hamcrest.starts_with),
+    'end_with': require_type(str, hamcrest.ends_with),
+    'match_regexp': require_type(str, hamcrest.matches_regexp),
 
     # For datetime.
     'be_before': before,
