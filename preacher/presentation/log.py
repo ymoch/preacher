@@ -97,8 +97,8 @@ class Logger:
         self._log(level, '%s: %s', label, status)
         with self._nested():
             self.show_verification(
-                verification=case.request.result,
-                label='Request',
+                verification=case.execution,
+                label='Execution',
             )
 
             response = case.response

@@ -36,7 +36,8 @@ class CaseResult(StatusedMixin):
     """
     Results for the test cases.
     """
-    request: RequestReport = field(default_factory=RequestReport)
+    request: Request = field(default_factory=Request)
+    execution: Verification = field(default_factory=Verification)
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
 
@@ -87,29 +88,25 @@ class Case:
         except Exception as error:
             return CaseResult(
                 status=Status.FAILURE,
-                request=RequestReport(
-                    request=self._request,
-                    result=Verification.of_error(error),
-                ),
+                request=self._request,
+                execution=Verification.of_error(error),
                 label=self._label,
             )
         listener.on_response(response)
 
-        request_verification = Verification.succeed()
+        execution_verification = Verification.succeed()
         response_verification = self._response.verify(
             response,
             origin_datetime=response.starts,
         )
         status = merge_statuses([
-            request_verification.status,
+            execution_verification.status,
             response_verification.status,
         ])
         return CaseResult(
             status=status,
-            request=RequestReport(
-                request=self._request,
-                result=request_verification,
-            ),
+            request=self._request,
+            execution=execution_verification,
             response=response_verification,
             label=self._label,
         )
