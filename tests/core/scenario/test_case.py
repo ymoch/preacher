@@ -70,7 +70,6 @@ def test_when_the_request_fails(retry_patch):
     with retry_patch as retry:
         result = case.run(base_url='base-url', listener=listener)
 
-    assert not result
     assert result.label == 'Request fails'
     assert result.status is Status.FAILURE
     assert result.request is request
@@ -112,7 +111,6 @@ def test_when_given_an_invalid_response(retry_patch):
             listener=listener,
         )
 
-    assert not result
     assert result.label == 'Response should be unstable'
     assert result.status == Status.UNSTABLE
     assert result.request is request
@@ -148,5 +146,4 @@ def test_when_given_an_valid_response(retry_patch):
     with retry_patch:
         result = case.run()
 
-    assert result
     assert result.status == Status.SUCCESS

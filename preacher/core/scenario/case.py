@@ -7,8 +7,6 @@ from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional
 
-from property_cached import cached_property
-
 from preacher.core.response import Response
 from .request import Request
 from .response_description import ResponseDescription, ResponseVerification
@@ -43,11 +41,8 @@ class CaseResult(Statused):
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
 
-    def __bool__(self) -> bool:
-        return bool(self.status)
-
-    @cached_property
-    def status(self) -> Status:
+    @property
+    def status(self) -> Status:  # HACK: should be cached
         return merge_statuses([
             self.execution.status,
             self.response.status if self.response else Status.SKIPPED,

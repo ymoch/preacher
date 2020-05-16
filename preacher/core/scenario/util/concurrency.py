@@ -3,7 +3,7 @@ from concurrent.futures import Executor
 from typing import Iterable
 
 from preacher.core.scenario.case import Case, CaseResult
-from preacher.core.scenario.status import StatusedList, collect_statused
+from preacher.core.scenario.status import StatusedList
 
 
 class CasesTask(ABC):
@@ -18,7 +18,7 @@ def _run_cases_in_order(
     *args,
     **kwargs
 ) -> StatusedList[CaseResult]:
-    return collect_statused(case.run(*args, **kwargs) for case in cases)
+    return StatusedList([case.run(*args, **kwargs) for case in cases])
 
 
 class OrderedCasesTask(CasesTask):
@@ -56,4 +56,4 @@ class UnorderedCasesTask(CasesTask):
         ]
 
     def result(self) -> StatusedList[CaseResult]:
-        return collect_statused(f.result() for f in self._futures)
+        return StatusedList([f.result() for f in self._futures])

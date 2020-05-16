@@ -5,11 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Optional, Sequence
 
-from .status import Status, StatusedMixin, merge_statuses
+from .status import Status, Statused, merge_statuses
 
 
 @dataclass(frozen=True)
-class Verification(StatusedMixin):
+class Verification(Statused):
+    status: Status = Status.SKIPPED
     message: Optional[str] = None
     children: Sequence[Verification] = tuple()
 

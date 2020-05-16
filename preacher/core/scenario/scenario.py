@@ -10,13 +10,7 @@ from typing import Callable, List, Optional
 from .case import Case, CaseListener, CaseResult
 from .context import ScenarioContext, analyze_context
 from .analysis_description import AnalysisDescription
-from .status import (
-    Status,
-    StatusedList,
-    StatusedMixin,
-    collect_statused,
-    merge_statuses,
-)
+from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 from .verification import Verification, collect
 
@@ -29,7 +23,8 @@ class ScenarioListener(CaseListener):
 
 
 @dataclass(frozen=True)
-class ScenarioResult(StatusedMixin):
+class ScenarioResult(Statused):
+    status: Status = Status.SKIPPED
     label: Optional[str] = None
     message: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
@@ -62,7 +57,7 @@ class RunningScenarioTask(ScenarioTask):
 
     def result(self) -> ScenarioResult:
         cases = self._cases.result()
-        subscenarios = collect_statused(s.result() for s in self._subscenarios)
+        subscenarios = StatusedList([s.result() for s in self._subscenarios])
         status = merge_statuses([cases.status, subscenarios.status])
         return ScenarioResult(
             label=self._label,
