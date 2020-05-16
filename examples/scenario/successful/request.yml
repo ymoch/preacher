@@ -53,6 +53,7 @@ cases:
         boolean-key: false
         integer-key: 1
         float-key: 1.2
+        datetime-key: 2020-04-01 01:23:45 +09:00
     response:
       status_code: 200
       body:
@@ -71,3 +72,7 @@ cases:
         - describe: ."float-key"
           should:
             equal: "1.2"
+        - describe: ."datetime-key"
+          should:
+            - equal: '2020-03-31T16:23:45+00:00'
+            - be_before: now

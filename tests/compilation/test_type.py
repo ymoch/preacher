@@ -19,6 +19,15 @@ def test_ensure_scalar_raises_compilation_error(value):
         ensure_scalar(value)
 
 
-@mark.parametrize('value', [False, 0, 0.0, '', datetime.now()])
-def test_ensure_scalar_returns_value(value):
-    assert ensure_scalar(value) == value
+@mark.parametrize('value, expected', [
+    (False, False),
+    (0, 0),
+    (0.0, 0.0),
+    ('', ''),
+    (
+        datetime.fromisoformat('2020-04-01T01:23:45+09:00'),
+        '2020-04-01T01:23:45+09:00',
+    )
+])
+def test_ensure_scalar_returns_value(value, expected):
+    assert ensure_scalar(value) == expected

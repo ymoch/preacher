@@ -17,5 +17,5 @@ def ensure_scalar(
     if isinstance(value, str):
         return value
     if isinstance(value, datetime):
-        return value
+        return value.isoformat()
     raise CompilationError(error_message)

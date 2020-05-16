@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from io import StringIO
 from unittest.mock import patch
 
@@ -65,3 +66,13 @@ def test_given_argument():
     assert actual[0].key == 'foo'
     assert isinstance(actual[1], dict)
     assert actual[1]['key'].key == 'bar'
+
+
+def test_given_datetime():
+    io = StringIO('2020-04-01 01:23:45 +09:00')
+    actual = load(io)
+    assert isinstance(actual, datetime)
+    assert (
+        actual - datetime(2020, 3, 31, 16, 23, 45, tzinfo=timezone.utc)
+    ).total_seconds() == 0.0
+    assert actual.tzinfo == timezone.utc
