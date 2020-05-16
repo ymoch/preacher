@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from pytest import mark, raises
 
-from preacher.core.interpretation.datetime import interpret_timedelta
+from preacher.core.interpretation.timedelta import interpret_timedelta
 from preacher.core.interpretation.error import InterpretationError
 
 
