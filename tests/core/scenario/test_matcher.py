@@ -3,6 +3,8 @@ from unittest.mock import MagicMock, patch, sentinel
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from pytest import fixture, raises
 
+from preacher.core.interpretation.error import InterpretationError
+from preacher.core.interpretation.value import Value
 from preacher.core.scenario.matcher import (
     Matcher,
     StaticMatcher,
@@ -11,8 +13,6 @@ from preacher.core.scenario.matcher import (
     match,
 )
 from preacher.core.scenario.status import Status
-from preacher.core.interpretation.error import InterpretationError
-from preacher.core.interpretation.value import Value
 
 PACKAGE = 'preacher.core.scenario.matcher'
 
@@ -47,15 +47,13 @@ def test_static_matcher():
 def test_value_matcher(hamcrest_factory):
     value = MagicMock(Value)
     value.apply_context.return_value = sentinel.value_in_context
-    interpret = MagicMock(return_value=sentinel.value_interpreted)
 
-    matcher = ValueMatcher(hamcrest_factory, value, interpret=interpret)
+    matcher = ValueMatcher(hamcrest_factory, value)
     hamcrest = matcher.to_hamcrest(key='value')
 
     assert hamcrest == sentinel.hamcrest
     value.apply_context.assert_called_once_with(key='value')
-    interpret.assert_called_once_with(sentinel.value_in_context, key='value')
-    hamcrest_factory.assert_called_once_with(sentinel.value_interpreted)
+    hamcrest_factory.assert_called_once_with(sentinel.value_in_context)
 
 
 def test_recursive_matcher(hamcrest_factory):

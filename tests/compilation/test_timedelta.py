@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from pytest import mark, raises
 
-from preacher.core.interpretation.datetime import interpret_timedelta
-from preacher.core.interpretation.error import InterpretationError
+from preacher.compilation.error import CompilationError
+from preacher.compilation.timedelta import compile_timedelta
 
 
 @mark.parametrize('value', (
@@ -14,9 +14,9 @@ from preacher.core.interpretation.error import InterpretationError
     'invalid',
     'now +1 day',
 ))
-def test_interpret_datetime_given_an_invalid_format(value):
-    with raises(InterpretationError):
-        interpret_timedelta(value)
+def test_compile_datetime_given_an_invalid_format(value):
+    with raises(CompilationError):
+        compile_timedelta(value)
 
 
 @mark.parametrize('value, expected', (
@@ -43,6 +43,6 @@ def test_interpret_datetime_given_an_invalid_format(value):
     ('+60 seconds', timedelta(minutes=1)),
     ('-120 seconds', timedelta(minutes=-2)),
 ))
-def test_interpret_timedelta(value, expected):
-    actual = interpret_timedelta(value)
+def test_compile_timedelta(value, expected):
+    actual = compile_timedelta(value)
     assert actual == expected

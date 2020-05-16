@@ -1,16 +1,19 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from typing import Callable, Dict
+from datetime import datetime, timezone
+from typing import Any, Callable, Dict
 
 import hamcrest
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
-from preacher.core.functional import identify
 from preacher.core.hamcrest import after, before
-from preacher.core.interpretation.datetime import interpret_datetime
 from preacher.core.interpretation.type import require_type
-from preacher.core.interpretation.value import value_of
+from preacher.core.interpretation.value import (
+    Value,
+    StaticValue,
+    RelativeDatetimeValue,
+)
 from preacher.core.scenario import (
     Matcher,
     StaticMatcher,
@@ -18,6 +21,7 @@ from preacher.core.scenario import (
     RecursiveMatcher,
 )
 from .error import CompilationError, on_key
+from .timedelta import compile_timedelta
 from .util import compile_list, map_compile
 
 _STATIC_MATCHER_MAP = {
@@ -31,7 +35,6 @@ _STATIC_MATCHER_MAP = {
     # Logical.
     'anything': StaticMatcher(hamcrest.is_(hamcrest.anything())),
 }
-
 
 _VALUE_MATCHER_HAMCREST_MAP: Dict[
     str,
@@ -80,10 +83,22 @@ _MULTI_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., HamcrestMatcher]] = {
     'any_of': hamcrest.any_of,
 }
 
-_INTERPRETER_MAP = {
-    'be_before': interpret_datetime,
-    'be_after': interpret_datetime,
+
+def _compile_relative_datetime_value(value: object) -> Value[Any]:
+    if isinstance(value, datetime):
+        if not value.tzinfo:
+            value = value.replace(tzinfo=timezone.utc)
+        return StaticValue(value)
+
+    delta = compile_timedelta(value)
+    return RelativeDatetimeValue(delta)
+
+
+_VALUE_FACTORY_MAP: Dict[str, Callable[[object], Value[Any]]] = {
+    'be_before': _compile_relative_datetime_value,
+    'be_after': _compile_relative_datetime_value,
 }
+_DEFAULT_VALUE_FACTORY: Callable[[object], Value[Any]] = StaticValue
 
 
 def _compile_taking_single_matcher(key: str, value: object) -> Matcher:
@@ -93,7 +108,7 @@ def _compile_taking_single_matcher(key: str, value: object) -> Matcher:
         with on_key(key):
             inner = compile(value)
     else:
-        inner = ValueMatcher(hamcrest.equal_to, value_of(value))
+        inner = ValueMatcher(hamcrest.equal_to, StaticValue(value))
 
     return RecursiveMatcher(hamcrest_factory, [inner])
 
@@ -122,10 +137,10 @@ def compile(obj: object) -> Matcher:
         key, value = next(iter(obj.items()))
 
         if key in _VALUE_MATCHER_HAMCREST_MAP:
+            value_factory = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
             return ValueMatcher(
                 _VALUE_MATCHER_HAMCREST_MAP[key],
-                value_of(value),
-                interpret=_INTERPRETER_MAP.get(key, identify),
+                value_factory(value),
             )
 
         if key in _SINGLE_MATCHER_HAMCREST_MAP:
@@ -134,4 +149,4 @@ def compile(obj: object) -> Matcher:
         if key in _MULTI_MATCHERS_HAMCREST_MAP:
             return _compile_taking_multi_matchers(key, value)
 
-    return ValueMatcher(hamcrest.equal_to, value_of(obj))
+    return ValueMatcher(hamcrest.equal_to, StaticValue(obj))

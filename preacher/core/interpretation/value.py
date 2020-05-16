@@ -3,7 +3,10 @@ Value interpretation.
 """
 
 from abc import ABC, abstractmethod
+from datetime import datetime, timedelta
 from typing import TypeVar, Generic
+
+from preacher.core.datetime import now
 
 T = TypeVar('T')
 
@@ -26,5 +29,11 @@ class StaticValue(Value[T]):
         return self._value
 
 
-def value_of(obj: T) -> Value[T]:
-    return StaticValue(obj)
+class RelativeDatetimeValue(Value[datetime]):
+
+    def __init__(self, delta: timedelta):
+        self._delta = delta
+
+    def apply_context(self, **kwargs) -> datetime:
+        origin = kwargs.get('origin_datetime') or now()
+        return origin + self._delta

@@ -6,7 +6,6 @@ from typing import Callable, Generic, List, TypeVar
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
-from preacher.core.functional import identify
 from preacher.core.interpretation.value import Value
 from .status import Status
 from .verification import Verification
@@ -40,16 +39,13 @@ class ValueMatcher(Matcher, Generic[T]):
         self,
         hamcrest_factory: Callable[..., HamcrestMatcher],
         value: Value[T],
-        interpret: Callable = identify,
     ):
         self._hamcrest_factory = hamcrest_factory
         self._value = value
-        self._interpret = interpret
 
     def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
         value_in_context = self._value.apply_context(**kwargs)
-        value_interpreted = self._interpret(value_in_context, **kwargs)
-        return self._hamcrest_factory(value_interpreted)
+        return self._hamcrest_factory(value_in_context)
 
 
 class RecursiveMatcher(Matcher):
