@@ -41,9 +41,6 @@ class CaseResult(Statused):
     response: Optional[ResponseVerification] = None
     label: Optional[str] = None
 
-    def __bool__(self) -> bool:
-        return bool(self.status)
-
     @property
     def status(self) -> Status:  # HACK: should be cached
         return merge_statuses([
