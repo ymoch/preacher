@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from datetime import datetime, timezone
 from typing import Union, TextIO
 
 from ruamel.yaml import YAML, Node
@@ -56,6 +57,9 @@ def _resolve(yaml: YAML, obj: object, origin: PathLike) -> object:
 
     if isinstance(obj, _ArgumentValue):
         return obj.resolve()
+
+    if isinstance(obj, datetime) and obj.tzinfo is None:
+        return obj.replace(tzinfo=timezone.utc)
 
     return obj
 
