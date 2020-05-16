@@ -8,7 +8,6 @@ import hamcrest
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from preacher.core.hamcrest import after, before
-from preacher.core.interpretation.timedelta import interpret_timedelta
 from preacher.core.interpretation.type import require_type
 from preacher.core.interpretation.value import (
     Value,
@@ -22,6 +21,7 @@ from preacher.core.scenario import (
     RecursiveMatcher,
 )
 from .error import CompilationError, on_key
+from .timedelta import compile_timedelta
 from .util import compile_list, map_compile
 
 _STATIC_MATCHER_MAP = {
@@ -90,7 +90,7 @@ def _compile_relative_datetime_value(value: object) -> Value[Any]:
             value = value.replace(tzinfo=timezone.utc)
         return StaticValue(value)
 
-    delta = interpret_timedelta(value)
+    delta = compile_timedelta(value)
     return RelativeDatetimeValue(delta)
 
 
