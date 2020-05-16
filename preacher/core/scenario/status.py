@@ -103,11 +103,6 @@ class Statused(ABC):
         raise NotImplementedError()
 
 
-@dataclass(frozen=True)
-class StatusedMixin(Statused):
-    status: Status = Status.SKIPPED
-
-
 StatusedType = TypeVar('StatusedType', bound=Statused)
 
 
