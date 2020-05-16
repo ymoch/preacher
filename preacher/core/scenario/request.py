@@ -17,7 +17,7 @@ _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 RequestParameterValue = Union[None, ScalarType, List[Optional[ScalarType]]]
 RequestParameters = Union[
     None,
-    ScalarType,
+    str,
     Mapping[str, RequestParameterValue],
 ]
 
