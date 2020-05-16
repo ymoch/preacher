@@ -13,13 +13,12 @@ from preacher.compilation.type import ensure_scalar
     {},
     frozenset(),
     (date(2019, 12, 31), False),
-    (datetime.now(), False),
 ])
 def test_ensure_scalar_raises_compilation_error(value):
     with raises(CompilationError):
         ensure_scalar(value)
 
 
-@mark.parametrize('value', [False, 0, 0.0, ''])
+@mark.parametrize('value', [False, 0, 0.0, '', datetime.now()])
 def test_ensure_scalar_returns_value(value):
     assert ensure_scalar(value) == value

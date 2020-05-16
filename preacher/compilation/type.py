@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from preacher.core.scenario import ScalarType
 from .error import CompilationError
 
@@ -13,5 +15,7 @@ def ensure_scalar(
     if isinstance(value, float):
         return value
     if isinstance(value, str):
+        return value
+    if isinstance(value, datetime):
         return value
     raise CompilationError(error_message)
