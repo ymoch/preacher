@@ -9,8 +9,6 @@ from enum import Enum
 from functools import reduce
 from typing import Generic, List, TypeVar
 
-T = TypeVar('T')
-
 
 class Status(Enum):
     """
@@ -110,17 +108,13 @@ class StatusedMixin(Statused):
     status: Status = Status.SKIPPED
 
 
-@dataclass(frozen=True)
-class StatusedList(Generic[T], StatusedMixin):
-    items: List[T] = field(default_factory=list)
-
-
 StatusedType = TypeVar('StatusedType', bound=Statused)
 
 
-def collect_statused(
-    items: Iterable[StatusedType],
-) -> StatusedList[StatusedType]:
-    items = list(items)
-    status = merge_statuses(item.status for item in items)
-    return StatusedList(status=status, items=items)
+@dataclass(frozen=True)
+class StatusedList(Generic[StatusedType], Statused):
+    items: List[StatusedType] = field(default_factory=list)
+
+    @property
+    def status(self) -> Status:  # HACK: should be cached
+        return merge_statuses(item.status for item in self.items)

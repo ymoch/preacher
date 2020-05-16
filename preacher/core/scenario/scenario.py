@@ -14,7 +14,6 @@ from .status import (
     Status,
     StatusedList,
     StatusedMixin,
-    collect_statused,
     merge_statuses,
 )
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
@@ -62,7 +61,7 @@ class RunningScenarioTask(ScenarioTask):
 
     def result(self) -> ScenarioResult:
         cases = self._cases.result()
-        subscenarios = collect_statused(s.result() for s in self._subscenarios)
+        subscenarios = StatusedList([s.result() for s in self._subscenarios])
         status = merge_statuses([cases.status, subscenarios.status])
         return ScenarioResult(
             label=self._label,
