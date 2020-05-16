@@ -1,10 +1,10 @@
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch, sentinel
 
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.matcher import compile
-from preacher.core.interpretation.datetime import interpret_datetime
 from preacher.core.hamcrest import after, before
 from preacher.core.scenario import Status
 from preacher.core.scenario.matcher import match
@@ -14,6 +14,8 @@ PACKAGE = 'preacher.compilation.matcher'
 SUCCESS = Status.SUCCESS
 UNSTABLE = Status.UNSTABLE
 FAILURE = Status.FAILURE
+
+NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 
 
 @mark.parametrize('obj', [
@@ -161,13 +163,13 @@ def test_verification(compiled, verified, expected_status):
 
 
 @patch(f'{PACKAGE}.ValueMatcher', return_value=sentinel.matcher)
-@patch(f'{PACKAGE}.value_of', return_value=sentinel.value)
+@patch(f'{PACKAGE}.StaticValue', return_value=sentinel.value)
 @mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
-    ({'be_before': 'now'}, 'now', before),
-    ({'be_after': '1 second'}, '1 second', after),
+    ({'be_before': NOW.replace(tzinfo=None)}, NOW, before),
+    ({'be_after': NOW}, NOW, after),
 ])
 def test_verification_with_datetime(
-    value_of,
+    value_ctor,
     matcher_ctor,
     compiled,
     expected_value,
@@ -176,9 +178,31 @@ def test_verification_with_datetime(
     actual = compile(compiled)
     assert actual == sentinel.matcher
 
-    value_of.assert_called_once_with(expected_value)
+    value_ctor.assert_called_once_with(expected_value)
     matcher_ctor.assert_called_once_with(
         expected_hamcrest_factory,
         sentinel.value,
-        interpret=interpret_datetime,
+    )
+
+
+@patch(f'{PACKAGE}.ValueMatcher', return_value=sentinel.matcher)
+@patch(f'{PACKAGE}.RelativeDatetimeValue', return_value=sentinel.value)
+@mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
+    ({'be_before': 'now'}, timedelta(), before),
+    ({'be_after': '1 second'}, timedelta(seconds=1), after),
+])
+def test_verification_with_timedelta(
+    value_ctor,
+    matcher_ctor,
+    compiled,
+    expected_value,
+    expected_hamcrest_factory,
+):
+    actual = compile(compiled)
+    assert actual == sentinel.matcher
+
+    value_ctor.assert_called_once_with(expected_value)
+    matcher_ctor.assert_called_once_with(
+        expected_hamcrest_factory,
+        sentinel.value,
     )
