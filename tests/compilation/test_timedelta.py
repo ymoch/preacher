@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from pytest import mark, raises
 
+from preacher.compilation.error import CompilationError
 from preacher.compilation.timedelta import compile_timedelta
-from preacher.core.interpretation.error import InterpretationError
 
 
 @mark.parametrize('value', (
@@ -15,7 +15,7 @@ from preacher.core.interpretation.error import InterpretationError
     'now +1 day',
 ))
 def test_compile_datetime_given_an_invalid_format(value):
-    with raises(InterpretationError):
+    with raises(CompilationError):
         compile_timedelta(value)
 
 
