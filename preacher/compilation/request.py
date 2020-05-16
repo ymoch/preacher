@@ -11,9 +11,9 @@ from preacher.core.scenario import (
     RequestParameters,
     RequestParameterValue,
     ScalarType,
-    is_scalar,
 )
 from .error import CompilationError, on_key
+from .type import ensure_scalar
 from .util import compile_str, compile_mapping, map_compile, or_else
 
 _KEY_PATH = 'path'
@@ -31,7 +31,7 @@ class RequestCompiled:
         return RequestCompiled(
             path=or_else(other.path, self.path),
             headers=or_else(other.headers, self.headers),
-            params=or_else(other.params, self.params),  # type: ignore
+            params=other.params if other.params is not None else self.params,
         )
 
     def fix(self) -> Request:
@@ -83,20 +83,15 @@ class RequestCompiler:
 def _compile_param_value_item(item: object) -> Optional[ScalarType]:
     if item is None:
         return item
-    if is_scalar(item):
-        return item  # type: ignore
-    raise CompilationError('Must be a scalar')
+    return ensure_scalar(item)
 
 
 def _compile_param_value(value: object) -> RequestParameterValue:
     if value is None:
         return value
-    if is_scalar(value):
-        return value  # type: ignore
-
-    if not isinstance(value, list):
-        raise CompilationError('Must be a scalar or a list')
-    return list(map_compile(_compile_param_value_item, value))
+    if isinstance(value, list):
+        return list(map_compile(_compile_param_value_item, value))
+    return ensure_scalar(value, 'Must be a scalar or a list')
 
 
 def _compile_params(params: object) -> RequestParameters:

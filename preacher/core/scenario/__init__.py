@@ -14,7 +14,7 @@ from .request import Request, RequestParameters, RequestParameterValue
 from .response_description import ResponseDescription, ResponseVerification
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
-from .type import ScalarType, is_scalar
+from .type import ScalarType
 from .verification import Verification
 
 __all__ = [
@@ -50,6 +50,5 @@ __all__ = [
     'Statused',
     'StatusedList',
     'ScalarType',
-    'is_scalar',
     'Verification',
 ]
