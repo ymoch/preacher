@@ -7,8 +7,8 @@ from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from enum import Enum
 from typing import List, Mapping, Optional, Tuple
 
-from ruamel.yaml import safe_load
-from ruamel.yaml.error import MarkedYAMLError
+from yaml import safe_load
+from yaml.error import MarkedYAMLError
 
 from preacher import __version__ as _version
 

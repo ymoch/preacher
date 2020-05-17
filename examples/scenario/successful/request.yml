@@ -53,7 +53,8 @@ cases:
         boolean-key: false
         integer-key: 1
         float-key: 1.2
-        datetime-key: 2020-04-01 01:23:45 +09:00
+        timezone-naive-datetime-key: 2020-01-23T12:34:56
+        timezone-aware-datetime-key: 2020-04-01 01:23:45 +09:00
     response:
       status_code: 200
       body:
@@ -72,7 +73,10 @@ cases:
         - describe: ."float-key"
           should:
             equal: "1.2"
-        - describe: ."datetime-key"
+        - describe: ."timezone-naive-datetime-key"
           should:
-            - equal: '2020-03-31T16:23:45+00:00'
+            - equal: '2020-01-23T12:34:56'
+        - describe: ."timezone-aware-datetime-key"
+          should:
+            - equal: '2020-04-01T01:23:45+09:00'
             - be_before: now
