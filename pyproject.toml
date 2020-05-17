@@ -23,11 +23,11 @@ aniso8601 = "^8.0"
 pyhamcrest = "^2.0"
 pyjq = "^2.3"
 requests = "^2.21"
-"ruamel.yaml" = "^0.16.5"
 lxml = "^4.4"
 colorama = "^0.4.1"
 jinja2 = "^2.10"
 six = "^1.14.0"  # HACK: Should be removed after: https://github.com/doloopwhile/pyjq/issues/43
+pyyaml = "^5.3.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

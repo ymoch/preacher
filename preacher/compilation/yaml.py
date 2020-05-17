@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
 from typing import Union, TextIO
 
-from ruamel.yaml import YAML, Node
-from ruamel.yaml.error import MarkedYAMLError
+from yaml import YAMLObject, MarkedYAMLError, Node, load as yaml_load
+from yaml.composer import Composer
+from yaml.constructor import SafeConstructor
+from yaml.parser import Parser
+from yaml.reader import Reader
+from yaml.resolver import Resolver
+from yaml.scanner import Scanner
 
 from .argument import ArgumentValue
 from .error import CompilationError
@@ -14,27 +18,27 @@ from .util import run_recursively
 PathLike = Union[str, os.PathLike]
 
 
-class _Inclusion:
+class _Inclusion(YAMLObject):
     yaml_tag = '!include'
 
     def __init__(self, obj: object):
         self._obj = obj
 
-    def resolve(self, origin: PathLike, yaml: YAML) -> object:
+    def resolve(self, origin: PathLike) -> object:
         obj = self._obj
         if not isinstance(obj, str):
             raise CompilationError(f'Must be a string, given {type(obj)}')
 
         path = os.path.join(origin, obj)
         with open(path) as f:
-            return _load(yaml, f, os.path.dirname(path))
+            return load(f, os.path.dirname(path))
 
     @classmethod
     def from_yaml(cls, _constructor, node: Node) -> _Inclusion:
         return _Inclusion(node.value)
 
 
-class _ArgumentValue:
+class _ArgumentValue(YAMLObject):
     yaml_tag = '!argument'
 
     def __init__(self, obj: object):
@@ -51,33 +55,54 @@ class _ArgumentValue:
         return _ArgumentValue(node.value)
 
 
-def _resolve(yaml: YAML, obj: object, origin: PathLike) -> object:
+class _CustomSafeConstructor(SafeConstructor):
+    pass
+
+
+_CustomSafeConstructor.add_constructor(
+    _Inclusion.yaml_tag,
+    _Inclusion.from_yaml,
+)
+_CustomSafeConstructor.add_constructor(
+    _ArgumentValue.yaml_tag,
+    _ArgumentValue.from_yaml,
+)
+
+
+class _CustomSafeLoader(
+    Reader,
+    Scanner,
+    Parser,
+    Composer,
+    _CustomSafeConstructor,
+    Resolver,
+):
+
+    def __init__(self, stream):
+        Reader.__init__(self, stream)
+        Scanner.__init__(self)
+        Parser.__init__(self)
+        Composer.__init__(self)
+        SafeConstructor.__init__(self)
+
+
+def _resolve(obj: object, origin: PathLike) -> object:
     if isinstance(obj, _Inclusion):
-        return obj.resolve(origin, yaml)
+        return obj.resolve(origin)
 
     if isinstance(obj, _ArgumentValue):
         return obj.resolve()
 
-    if isinstance(obj, datetime) and obj.tzinfo is None:
-        return obj.replace(tzinfo=timezone.utc)
-
     return obj
 
 
-def _load(yaml: YAML, io: TextIO, origin: PathLike) -> object:
+def load(io: TextIO, origin: PathLike = '.') -> object:
     try:
-        obj = yaml.load(io)
+        obj = yaml_load(io, Loader=_CustomSafeLoader)
     except MarkedYAMLError as error:
         raise CompilationError(message=str(error), cause=error)
 
-    return run_recursively(lambda o: _resolve(yaml, o, origin), obj)
-
-
-def load(io: TextIO, origin: PathLike = '.') -> object:
-    yaml = YAML(typ='safe', pure=True)
-    yaml.register_class(_Inclusion)
-    yaml.register_class(_ArgumentValue)
-    return _load(yaml, io, origin)
+    return run_recursively(lambda o: _resolve(o, origin), obj)
 
 
 def load_from_path(path: PathLike) -> object:
