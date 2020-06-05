@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import glob
 import os
+import re
 from typing import Union, TextIO
 
 from yaml import YAMLObject, MarkedYAMLError, Node, load as yaml_load
@@ -17,6 +19,8 @@ from .util import run_recursively
 
 PathLike = Union[str, os.PathLike]
 
+WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
+
 
 class _Inclusion(YAMLObject):
     yaml_tag = '!include'
@@ -30,8 +34,10 @@ class _Inclusion(YAMLObject):
             raise CompilationError(f'Must be a string, given {type(obj)}')
 
         path = os.path.join(origin, obj)
-        with open(path) as f:
-            return load(f, os.path.dirname(path))
+        if WILDCARDS_REGEX.match(path):
+            paths = glob.iglob(path, recursive=True)
+            return [load_from_path(p) for p in paths]
+        return load_from_path(path)
 
     @classmethod
     def from_yaml(cls, _constructor, node: Node) -> _Inclusion:
