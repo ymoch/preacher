@@ -1,3 +1,4 @@
+from typing import List
 from unittest.mock import MagicMock, sentinel
 
 from pytest import mark, fixture, raises
@@ -94,19 +95,22 @@ def test_merge_statuses(
     expected: Status,
     response,
 ):
-    status_code_predicates = [
+    status_code_predicates: List[Predicate] = [
         MagicMock(Predicate, verify=MagicMock(
             return_value=Verification(status=status_code_status)
         )),
     ]
-    headers_descriptions = [
+    headers_descriptions: List[AnalysisDescription] = [
         MagicMock(AnalysisDescription, verify=MagicMock(
             return_value=Verification(status=headers_status)
         )),
     ]
-    body_description = MagicMock(BodyDescription, verify=MagicMock(
-        return_value=Verification(status=body_status)
-    ))
+    body_description: BodyDescription = MagicMock(
+        spec=BodyDescription,
+        verify=MagicMock(
+            return_value=Verification(status=body_status)
+        )
+    )
     description = ResponseDescription(
         status_code=status_code_predicates,
         headers=headers_descriptions,
