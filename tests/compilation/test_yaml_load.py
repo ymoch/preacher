@@ -60,7 +60,6 @@ def test_given_recursive_inclusion(open_mock):
 def test_given_wildcard_inclusion(iglob_mock, open_mock):
     io = StringIO(r'''
     'asterisk': !include '*.yml'
-    'backslash-asterisk': !include '\*.yml'
     'double-asterisk': !include '**.yml'
     'question': !include '?.yml'
     'parenthesis-only-opening': !include '[.yml'
@@ -76,7 +75,6 @@ def test_given_wildcard_inclusion(iglob_mock, open_mock):
     actual = load(io, origin='base/path/')
     assert isinstance(actual, dict)
     assert actual['asterisk'] == ['glob:base/path/*.yml:True']
-    assert actual['backslash-asterisk'] == 'base/path/\\*.yml'
     assert actual['double-asterisk'] == ['glob:base/path/**.yml:True']
     assert actual['question'] == ['glob:base/path/?.yml:True']
     assert actual['parenthesis-only-closing'] == 'base/path/].yml'
