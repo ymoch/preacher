@@ -39,13 +39,13 @@ def test_given_recursive_inclusion(open_mock):
     recursive: !include recursive.yml
     ''')
     answer_map = {
-        os.path.join('base/dir', 'item.yml'): 'item',
-        os.path.join('base/dir', 'value.yml'): 'value',
-        os.path.join('base/dir', 'recursive.yml'): '!include inner.yml',
-        os.path.join('base/dir', 'inner.yml'): 'inner',
+        os.path.join('base', 'dir', 'item.yml'): 'item',
+        os.path.join('base', 'dir', 'value.yml'): 'value',
+        os.path.join('base', 'dir', 'recursive.yml'): '!include inner.yml',
+        os.path.join('base', 'dir', 'inner.yml'): 'inner',
     }
     open_mock.side_effect = lambda path: StringIO(answer_map[path])
-    actual = load(io, 'base/dir/')
+    actual = load(io, origin=os.path.join('base', 'dir'))
     assert actual == {
         'list': [
             'item',
@@ -53,6 +53,34 @@ def test_given_recursive_inclusion(open_mock):
         ],
         'recursive': 'inner',
     }
+
+
+@patch('builtins.open')
+@patch('glob.iglob')
+def test_given_wildcard_inclusion(iglob_mock, open_mock):
+    io = StringIO(r'''
+    'asterisk': !include '*.yml'
+    'double-asterisk': !include '**.yml'
+    'question': !include '?.yml'
+    'parenthesis-only-opening': !include '[.yml'
+    'parenthesis-only-closing': !include '].yml'
+    'empty-parenthesis': !include '[].yml'
+    'filled-parenthesis': !include '[abc].yml'
+    ''')
+    iglob_mock.side_effect = (
+        lambda path, recursive: iter([f'glob:{path}:{recursive}'])
+    )
+    open_mock.side_effect = lambda path: StringIO(path)
+
+    actual = load(io, origin='base/path/')
+    assert isinstance(actual, dict)
+    assert actual['asterisk'] == ['glob:base/path/*.yml:True']
+    assert actual['double-asterisk'] == ['glob:base/path/**.yml:True']
+    assert actual['question'] == ['glob:base/path/?.yml:True']
+    assert actual['parenthesis-only-closing'] == 'base/path/].yml'
+    assert actual['parenthesis-only-opening'] == 'base/path/[.yml'
+    assert actual['empty-parenthesis'] == 'base/path/[].yml'
+    assert actual['filled-parenthesis'] == ['glob:base/path/[abc].yml:True']
 
 
 def test_given_argument():

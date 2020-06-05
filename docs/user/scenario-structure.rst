@@ -4,7 +4,7 @@ In Preacher, a "scenario" is the basic unit of verification.
 
 Example
 -------
-Here is a configuration example.
+Here is a scenario example.
 
 .. code-block:: yaml
 
@@ -60,8 +60,6 @@ Components
 
 Scenario
 ^^^^^^^^
-A ``Scenario`` is written in `YAML`_.
-
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -307,8 +305,8 @@ Predicate
 ^^^^^^^^^
 A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the future).
 
-Inclusion
----------
+Including other files
+---------------------
 Using ``!include`` tag, you can include other YAML files.
 This macro is available anywhere in your scenario.
 
@@ -325,9 +323,18 @@ A good practice of this feature is locating subscenarios on subdirectories.
       - !include subscenarios/subscenario1.yml
       - !include subscenarios/subscenario2.yml
 
-.. note:: Anchors in a including YAML are not available in included YAMLs,
+UNIX-like wildcard expansion is available.
+A wildcard inclusion results in the list of matching inclusion.
+
+.. code-block:: yaml
+
+    !include path/to/*.yml
+
+.. note:: Anchors in a included YAML are not available in including YAMLs,
           because the included YAMLs are parsed after the including YAML is parsed.
 
+.. note:: Names of included files should not contain any wildcard characters
+          because not all of the wildcard expansion rules are covered.
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
