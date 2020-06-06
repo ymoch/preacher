@@ -110,6 +110,16 @@ Scenarios can be nested by using "subscenarios."
       - Parameters to make parameterized test.
         See :ref:`parameterized-test` for more information.
 
+Minimally, a scenario should contain ``label`` and ``cases``.
+
+.. code-block:: yaml
+
+    label: A label of this scenario
+    cases:
+      - ...
+      - ...
+
+
 .. _case:
 
 Case
@@ -128,18 +138,20 @@ A "case" is the basic unit of verification, which executes a request and verify 
       - String
       - ``null``
       - A label of this case.
-    * - enabled
-      - Boolean
-      - ``true``
-      - Whether this case is enabled.
     * - request
       - :ref:`request`
-      - The default request
+      - :ref:`The default request <default-test>`
       - The request to be executed in this case.
     * - response
       - :ref:`response-description`
-      - The default response description.
+      - :ref:`The default response description<default-test>`
       - The response description of this case.
+    * - enabled
+      - Boolean
+      - ``true``
+      - Whether this case is enabled. See :ref:`ignore-cases` for more information.
+
+You can use default values to simplify cases. See :ref:`default-test` for more information.
 
 .. _request:
 
