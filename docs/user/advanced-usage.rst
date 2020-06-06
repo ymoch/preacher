@@ -124,7 +124,6 @@ then the cases of the scenario will be run concurrently.
       - label: Case 2
         ...
 
-
 Allowing Random Errors
 ----------------------
 Web API cannot always responds due to communication errors and so on.
@@ -153,6 +152,8 @@ The output level control will help you find important errors.
 .. code-block:: sh
 
     $ preacher-cli --level unstable scenario.yml
+
+.. _ignore-cases:
 
 Ignore cases
 ------------

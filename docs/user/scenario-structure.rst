@@ -1,9 +1,7 @@
 Scenario Structure
 ==================
-In Preacher, a "scenario" is the basic unit of verification.
+Let's take a look at the structure of verification scenario.
 
-Example
--------
 Here is a scenario example.
 
 .. code-block:: yaml
@@ -20,8 +18,8 @@ Here is a scenario example.
         should:
           contain_string: localhost
     cases:
-      - label: Simple
-        request: /path/to/foo
+      - label: A simple example
+        request: /path/to/foo?bar=baz
         response:
           status_code: 200
           body:
@@ -47,10 +45,16 @@ Here is a scenario example.
             - describe: ."content-type"
               should:
                 equal_to: application/xml
+            - describe:
+                jq: ."content-length"
+                cast_to: int
+              should:
+                be_greater_than: 100
           body:
             analyzed_as: xml
             descriptions:
-              - describe: /html/body/h1
+              - describe:
+                  xpath: /html/body/h1
                 should:
                   - start_with: x
                   - end_with: y
@@ -60,6 +64,10 @@ Components
 
 Scenario
 ^^^^^^^^
+A "scenario" is the basic unit of verification process.
+A scenario contains some "cases", which are basically run serially.
+Scenarios can be nested by using "subscenarios."
+
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -72,6 +80,14 @@ Scenario
       - String
       - ``null``
       - A label of this scenario.
+    * - cases
+      - List[:ref:`case`]
+      - ``[]``
+      - Test cases.
+    * - subscenarios
+      - List[Scenario]
+      - ``[]``
+      - Nested scenarios.
     * - ordered
       - Boolean
       - ``true``
@@ -88,47 +104,28 @@ Scenario
       - ``[]``
       - Run this scenario only when the context satisfies these description.
         See :doc:`Application Running Context<context>` for more information.
-    * - cases
-      - List[:ref:`case`]
-      - ``[]``
-      - Test cases.
-    * - subscenarios
-      - List[Scenario]
-      - ``[]``
-      - Nested scenarios.
     * - parameters
       - List[:ref:`parameter`]
       - ``null``
       - Parameters to make parameterized test.
         See :ref:`parameterized-test` for more information.
 
-.. _parameter:
+Minimally, a scenario should contain ``label`` and ``cases``.
 
-Parameter
-^^^^^^^^^
-.. list-table::
-    :header-rows: 1
-    :widths: 10 15 15 60
+.. code-block:: yaml
 
-    * - Key
-      - Type
-      - Default
-      - Description
-    * - label
-      - String
-      - ``null``
-      - Label of this parameter.
-    * - args
-      - Map
-      - ``{}``
-      - An argument map of argument names to their values.
+    label: A label of this scenario
+    cases:
+      - ...
+      - ...
 
-See :ref:`parameterized-test` to check examples.
 
 .. _case:
 
 Case
 ^^^^
+A "case" is the basic unit of verification, which executes a request and verify its response.
+
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -141,23 +138,28 @@ Case
       - String
       - ``null``
       - A label of this case.
+    * - request
+      - :ref:`request`
+      - :ref:`The default request <default-test>`
+      - The request to be executed in this case.
+    * - response
+      - :ref:`response-description`
+      - :ref:`The default response description<default-test>`
+      - The response description of this case.
     * - enabled
       - Boolean
       - ``true``
-      - Whether this case is enabled.
-    * - request
-      - :ref:`request`
-      - The default request
-      - The request of this case.
-    * - response
-      - :ref:`response-description`
-      - The default response description.
-      - The response description of this case.
+      - Whether this case is enabled. See :ref:`ignore-cases` for more information.
+
+You can use default values to simplify cases. See :ref:`default-test` for more information.
 
 .. _request:
 
 Request
 ^^^^^^^
+Normally, a "request" is described in a form of a dictionary.
+When given only a string, that is equivalent to ``{path: it}``.
+
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -175,17 +177,17 @@ Request
       - ``{}``
       - The headers as a map of names to values.
     * - params
-      - :ref:`request-parameter`
+      - :ref:`query-parameter`
       - ``{}``
       - Parameters for the query string.
 
-When given a string as a ``Request``, that is equivalent to ``{path: it}``.
+.. note:: A request path can also contain query parameters like ``/path?foo=bar&spam=ham``.
 
-.. _request-parameter:
+.. _query-parameter:
 
 QueryParameter
 """"""""""""""
-When given a string, then it is regarded as a raw query string.
+When given query parameters as a string, then it is regarded as a raw query string.
 
 .. code-block:: yaml
 
@@ -194,8 +196,8 @@ When given a string, then it is regarded as a raw query string.
       path: /path
       params: foo=bar&foo=baz&spam=ham%26eggs
 
-When given a map, then it is regarded as a map of keys to values
-and the query string is built with it.
+When given query parameters as a dictionary,
+then it is regarded as a map of keys to values and the query string is built with it.
 
 .. code-block:: yaml
 
@@ -209,7 +211,8 @@ and the query string is built with it.
           - null  # `null` is ignored
         spam: ham&eggs
 
-.. note:: Allowed types for the parameter values are integer, float, string and null (ignored).
+.. note:: Allowed types for the parameter values are integer, float, string, timestamp and null (ignored).
+          A timestamp value is converted into IS0 8601 format.
 
 .. _response-description:
 
@@ -304,6 +307,30 @@ Description
 Predicate
 ^^^^^^^^^
 A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the future).
+
+.. _parameter:
+
+Parameter
+^^^^^^^^^
+A "parameter" is a parameter in parameterized tests.
+See :ref:`parameterized-test` for more information.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - label
+      - String
+      - ``null``
+      - Label of this parameter.
+    * - args
+      - Map
+      - ``{}``
+      - An argument map of argument names to their values.
 
 Including other files
 ---------------------
