@@ -157,6 +157,9 @@ You can use default values to simplify cases. See :ref:`default-test` for more i
 
 Request
 ^^^^^^^
+Normally, a "request" is described in a form of a dictionary.
+When given only a string, that is equivalent to ``{path: it}``.
+
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -174,17 +177,17 @@ Request
       - ``{}``
       - The headers as a map of names to values.
     * - params
-      - :ref:`request-parameter`
+      - :ref:`query-parameter`
       - ``{}``
       - Parameters for the query string.
 
-When given a string as a ``Request``, that is equivalent to ``{path: it}``.
+.. note:: A request path can also contain query parameters like ``/path?foo=bar&spam=ham``.
 
-.. _request-parameter:
+.. _query-parameter:
 
 QueryParameter
 """"""""""""""
-When given a string, then it is regarded as a raw query string.
+When given query parameters as a string, then it is regarded as a raw query string.
 
 .. code-block:: yaml
 
@@ -193,8 +196,8 @@ When given a string, then it is regarded as a raw query string.
       path: /path
       params: foo=bar&foo=baz&spam=ham%26eggs
 
-When given a map, then it is regarded as a map of keys to values
-and the query string is built with it.
+When given query parameters as a dictionary,
+then it is regarded as a map of keys to values and the query string is built with it.
 
 .. code-block:: yaml
 
@@ -208,7 +211,8 @@ and the query string is built with it.
           - null  # `null` is ignored
         spam: ham&eggs
 
-.. note:: Allowed types for the parameter values are integer, float, string and null (ignored).
+.. note:: Allowed types for the parameter values are integer, float, string, timestamp and null (ignored).
+          A timestamp value is converted into IS0 8601 format.
 
 .. _response-description:
 
