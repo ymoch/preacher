@@ -527,38 +527,3 @@ msgid ""
 "Names of included files should not contain any wildcard characters "
 "because not all of the wildcard expansion rules are covered."
 msgstr "インクルードされるファイルの名前にはワイルドカード文字を含めないでください. ワイルドカード展開ルールのすべてが網羅されているわけではないためです。"
-
-#~ msgid "The request of this case."
-#~ msgstr ""
-
-#~ msgid "Whether this case is enabled."
-#~ msgstr ""
-
-#~ msgid ":ref:`request-parameter`"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "When given a string as a "
-#~ "``Request``, that is equivalent to "
-#~ "``{path: it}``."
-#~ msgstr ""
-
-#~ msgid "Normally, a \"request\" is described in a form of a dictionary."
-#~ msgstr "通常, 「リクエスト」は辞書形式で記述されます."
-
-#~ msgid "When given a string, then it is regarded as a raw query string."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "When given a map, then it is "
-#~ "regarded as a map of keys to "
-#~ "values and the query string is "
-#~ "built with it."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Allowed types for the parameter values"
-#~ " are integer, float, string and null"
-#~ " (ignored)."
-#~ msgstr ""
-
