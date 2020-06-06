@@ -1,9 +1,7 @@
 Scenario Structure
 ==================
-In Preacher, a "scenario" is the basic unit of verification.
+Let's take a look at the structure of verification scenario.
 
-Example
--------
 Here is a scenario example.
 
 .. code-block:: yaml
@@ -20,8 +18,8 @@ Here is a scenario example.
         should:
           contain_string: localhost
     cases:
-      - label: Simple
-        request: /path/to/foo
+      - label: A simple example
+        request: /path/to/foo?bar=baz
         response:
           status_code: 200
           body:
@@ -47,10 +45,16 @@ Here is a scenario example.
             - describe: ."content-type"
               should:
                 equal_to: application/xml
+            - describe:
+                jq: ."content-length"
+                cast_to: int
+              should:
+                be_greater_than: 100
           body:
             analyzed_as: xml
             descriptions:
-              - describe: /html/body/h1
+              - describe:
+                  xpath: /html/body/h1
                 should:
                   - start_with: x
                   - end_with: y
@@ -60,6 +64,10 @@ Components
 
 Scenario
 ^^^^^^^^
+A "scenario" is the basic unit of verification process.
+A scenario contains some "cases", which are basically run serially.
+Scenarios can be nested by using "subscenarios."
+
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -72,6 +80,14 @@ Scenario
       - String
       - ``null``
       - A label of this scenario.
+    * - cases
+      - List[:ref:`case`]
+      - ``[]``
+      - Test cases.
+    * - subscenarios
+      - List[Scenario]
+      - ``[]``
+      - Nested scenarios.
     * - ordered
       - Boolean
       - ``true``
@@ -88,47 +104,18 @@ Scenario
       - ``[]``
       - Run this scenario only when the context satisfies these description.
         See :doc:`Application Running Context<context>` for more information.
-    * - cases
-      - List[:ref:`case`]
-      - ``[]``
-      - Test cases.
-    * - subscenarios
-      - List[Scenario]
-      - ``[]``
-      - Nested scenarios.
     * - parameters
       - List[:ref:`parameter`]
       - ``null``
       - Parameters to make parameterized test.
         See :ref:`parameterized-test` for more information.
 
-.. _parameter:
-
-Parameter
-^^^^^^^^^
-.. list-table::
-    :header-rows: 1
-    :widths: 10 15 15 60
-
-    * - Key
-      - Type
-      - Default
-      - Description
-    * - label
-      - String
-      - ``null``
-      - Label of this parameter.
-    * - args
-      - Map
-      - ``{}``
-      - An argument map of argument names to their values.
-
-See :ref:`parameterized-test` to check examples.
-
 .. _case:
 
 Case
 ^^^^
+A "case" is the basic unit of verification, which executes a request and verify its response.
+
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -148,7 +135,7 @@ Case
     * - request
       - :ref:`request`
       - The default request
-      - The request of this case.
+      - The request to be executed in this case.
     * - response
       - :ref:`response-description`
       - The default response description.
@@ -304,6 +291,30 @@ Description
 Predicate
 ^^^^^^^^^
 A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the future).
+
+.. _parameter:
+
+Parameter
+^^^^^^^^^
+A "parameter" is a parameter in parameterized tests.
+See :ref:`parameterized-test` for more information.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - label
+      - String
+      - ``null``
+      - Label of this parameter.
+    * - args
+      - Map
+      - ``{}``
+      - An argument map of argument names to their values.
 
 Including other files
 ---------------------
