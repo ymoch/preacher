@@ -10,16 +10,12 @@ import requests
 from preacher import __version__ as _version
 from preacher.core.datetime import now
 from preacher.core.response import Response, ResponseBody
-from .type import ScalarType
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
-RequestParameterValue = Union[None, ScalarType, List[Optional[ScalarType]]]
-RequestParameters = Union[
-    None,
-    str,
-    Mapping[str, RequestParameterValue],
-]
+ParameterValue = Union[None, bool, int, float, str]
+Parameter = Union[ParameterValue, List[ParameterValue]]
+Parameters = Union[str, Mapping[str, Parameter]]
 
 
 class ResponseBodyWrapper(ResponseBody):
@@ -79,7 +75,7 @@ class Request:
         self,
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
-        params: RequestParameters = None,
+        params: Optional[Parameters] = None,
     ):
         self._path = path
         self._headers = headers or {}
@@ -111,5 +107,5 @@ class Request:
         return self._headers
 
     @property
-    def params(self) -> RequestParameters:
+    def params(self) -> Parameters:
         return self._params

@@ -10,11 +10,10 @@ from .extraction import (
 )
 from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
-from .request import Request, RequestParameters, RequestParameterValue
+from .request import Request, Parameter, Parameters, ParameterValue
 from .response_description import ResponseDescription, ResponseVerification
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
-from .type import ScalarType
 from .verification import Verification
 
 __all__ = [
@@ -38,8 +37,9 @@ __all__ = [
     'Predicate',
     'MatcherPredicate',
     'Request',
-    'RequestParameters',
-    'RequestParameterValue',
+    'Parameter',
+    'Parameters',
+    'ParameterValue',
     'ResponseDescription',
     'ResponseVerification',
     'Scenario',
@@ -49,6 +49,5 @@ __all__ = [
     'Status',
     'Statused',
     'StatusedList',
-    'ScalarType',
     'Verification',
 ]
