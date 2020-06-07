@@ -7,7 +7,6 @@ from preacher.compilation.type import ensure_scalar
 
 
 @mark.parametrize('value', [
-    None,
     complex(1, 2),
     [],
     {},
@@ -20,6 +19,7 @@ def test_ensure_scalar_raises_compilation_error(value):
 
 
 @mark.parametrize('value, expected', [
+    (None, None),
     (False, False),
     (0, 0),
     (0.0, 0.0),

@@ -1,13 +1,15 @@
 from datetime import datetime
 
-from preacher.core.scenario import ScalarType
+from preacher.core.scenario import ParameterValue
 from .error import CompilationError
 
 
 def ensure_scalar(
     value: object,
     error_message: str = 'Must be a scalar',
-) -> ScalarType:
+) -> ParameterValue:
+    if value is None:
+        return value
     if isinstance(value, bool):
         return value
     if isinstance(value, int):

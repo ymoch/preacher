@@ -8,9 +8,9 @@ from typing import Optional
 
 from preacher.core.scenario import (
     Request,
-    RequestParameters,
-    RequestParameterValue,
-    ScalarType,
+    Parameter,
+    Parameters,
+    ParameterValue,
 )
 from .error import CompilationError, on_key
 from .type import ensure_scalar
@@ -25,7 +25,7 @@ _KEY_PARAMS = 'params'
 class RequestCompiled:
     path: Optional[str] = None
     headers: Optional[Mapping] = None
-    params: Optional[RequestParameters] = None
+    params: Optional[Parameters] = None
 
     def replace(self, other: RequestCompiled) -> RequestCompiled:
         return RequestCompiled(
@@ -80,13 +80,11 @@ class RequestCompiler:
         return RequestCompiler(default=self._default.replace(default))
 
 
-def _compile_param_value_item(item: object) -> Optional[ScalarType]:
-    if item is None:
-        return item
+def _compile_param_value_item(item: object) -> Optional[ParameterValue]:
     return ensure_scalar(item)
 
 
-def _compile_param_value(value: object) -> RequestParameterValue:
+def _compile_param_value(value: object) -> Parameter:
     if value is None:
         return value
     if isinstance(value, list):
@@ -94,7 +92,7 @@ def _compile_param_value(value: object) -> RequestParameterValue:
     return ensure_scalar(value, 'Must be a scalar or a list')
 
 
-def _compile_params(params: object) -> RequestParameters:
+def _compile_params(params: object) -> Parameters:
     if isinstance(params, str):
         return params
 
