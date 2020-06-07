@@ -13,9 +13,8 @@ from preacher.core.response import Response, ResponseBody
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
-ParameterValueRawType = Union[None, bool, int, float, str, datetime]
-ParameterValue = ParameterValueRawType
-Parameter = Union[None, ParameterValue, List[ParameterValue]]
+ParameterValue = Union[None, bool, int, float, str]
+Parameter = Union[ParameterValue, List[ParameterValue]]
 Parameters = Union[None, str, Mapping[str, Parameter]]
 
 
