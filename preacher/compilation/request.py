@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
+from datetime import datetime
 from typing import Optional
 
 from preacher.core.scenario import (
@@ -13,7 +14,6 @@ from preacher.core.scenario import (
     ParameterValue,
 )
 from .error import CompilationError, on_key
-from .type import ensure_scalar
 from .util import compile_str, compile_mapping, map_compile, or_else
 
 _KEY_PATH = 'path'
@@ -80,16 +80,36 @@ class RequestCompiler:
         return RequestCompiler(default=self._default.replace(default))
 
 
-def _compile_param_value_item(item: object) -> Optional[ParameterValue]:
-    return ensure_scalar(item)
+def compile_param_value(value: object) -> ParameterValue:
+    if value is None:
+        return value
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return value
+    if isinstance(value, str):
+        return value
+    if isinstance(value, datetime):
+        return value.isoformat()
+    raise CompilationError(
+        f'Not allowed type for a request parameter value: {value.__class__}'
+    )
 
 
 def _compile_param_value(value: object) -> Parameter:
     if value is None:
         return value
     if isinstance(value, list):
-        return list(map_compile(_compile_param_value_item, value))
-    return ensure_scalar(value, 'Must be a scalar or a list')
+        return list(map_compile(compile_param_value, value))
+    try:
+        return compile_param_value(value)
+    except CompilationError as error:
+        raise CompilationError(
+            f'Not allowed type for a request parameter: {value.__class__}',
+            cause=error
+        )
 
 
 def _compile_params(params: object) -> Parameters:

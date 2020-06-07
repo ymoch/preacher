@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from unittest.mock import patch, sentinel, MagicMock
 
 from pytest import mark, raises, fixture
@@ -7,7 +8,11 @@ from preacher.compilation.error import (
     NamedNode,
     IndexedNode,
 )
-from preacher.compilation.request import RequestCompiler, RequestCompiled
+from preacher.compilation.request import (
+    RequestCompiler,
+    RequestCompiled,
+    compile_param_value,
+)
 
 PACKAGE = 'preacher.compilation.request'
 
@@ -83,3 +88,30 @@ def test_of_default(compiler_ctor):
 
     default = compiler_ctor.call_args[1]['default']
     assert default is sentinel.new_default
+
+
+@mark.parametrize('value', [
+    complex(1, 2),
+    [],
+    {},
+    frozenset(),
+    (date(2019, 12, 31), False),
+])
+def test_compile_param_value_raises_compilation_error(value):
+    with raises(CompilationError):
+        compile_param_value(value)
+
+
+@mark.parametrize('value, expected', [
+    (None, None),
+    (False, False),
+    (0, 0),
+    (0.0, 0.0),
+    ('', ''),
+    (
+        datetime.fromisoformat('2020-04-01T01:23:45+09:00'),
+        '2020-04-01T01:23:45+09:00',
+    )
+])
+def test_compile_param_value_returns_value(value, expected):
+    assert compile_param_value(value) == expected
