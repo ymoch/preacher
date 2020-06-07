@@ -98,7 +98,7 @@ def compile_param_value(value: object) -> ParameterValue:
     )
 
 
-def _compile_param_value(value: object) -> Parameter:
+def _compile_param(value: object) -> Parameter:
     if value is None:
         return value
     if isinstance(value, list):
@@ -125,5 +125,5 @@ def _compile_params(params: object) -> Parameters:
                 f'A parameter key must be a string, given {key}'
             )
         with on_key(key):
-            compiled[key] = _compile_param_value(value)
+            compiled[key] = _compile_param(value)
     return compiled

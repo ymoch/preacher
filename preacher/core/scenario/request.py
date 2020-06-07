@@ -15,7 +15,7 @@ _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
 ParameterValue = Union[None, bool, int, float, str]
 Parameter = Union[ParameterValue, List[ParameterValue]]
-Parameters = Union[None, str, Mapping[str, Parameter]]
+Parameters = Union[str, Mapping[str, Parameter]]
 
 
 class ResponseBodyWrapper(ResponseBody):
@@ -75,7 +75,7 @@ class Request:
         self,
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
-        params: Parameters = None,
+        params: Optional[Parameters] = None,
     ):
         self._path = path
         self._headers = headers or {}
