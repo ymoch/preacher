@@ -126,7 +126,10 @@ class Request:
         res = requests.get(
             base_url + self._path,
             headers=headers,
-            params=resolve_params(self._params, origin=starts),  # type: ignore
+            params=resolve_params(  # type: ignore
+                self._params,
+                origin_datetime=starts,
+            ),
             timeout=timeout,
         )
         return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)

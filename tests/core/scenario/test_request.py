@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta, timezone
 import uuid
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch, sentinel
 
 import requests
@@ -65,7 +65,9 @@ def test_request(requests_get, now, uuid4):
 
     uuid4.assert_called()
     now.assert_called()
-    param_value.apply_context.assert_called_once_with(origin=sentinel.now)
+    param_value.apply_context.assert_called_once_with(
+        origin_datetime=sentinel.now,
+    )
 
     args, kwargs = requests_get.call_args
     assert args == ('base-url/path',)
