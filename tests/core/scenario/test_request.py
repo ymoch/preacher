@@ -1,9 +1,10 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 import uuid
 from unittest.mock import MagicMock, patch, sentinel
 
 import requests
 
+from preacher.core.interpretation.value import Value
 from preacher.core.scenario.request import Request
 
 PACKAGE = 'preacher.core.scenario.request'
@@ -12,7 +13,7 @@ PACKAGE = 'preacher.core.scenario.request'
 def requests_response():
     return MagicMock(
         spec=requests.Response,
-        elapsed=datetime.timedelta(seconds=1.23),
+        elapsed=timedelta(seconds=1.23),
         status_code=402,
         headers={'Header-Name': 'Header-Value'},
         text=sentinel.text,
@@ -27,10 +28,31 @@ def requests_response():
 @patch(f'{PACKAGE}.now', return_value=sentinel.now)
 @patch('requests.get', return_value=requests_response())
 def test_request(requests_get, now, uuid4):
-    request = Request(path='/path', headers={'k1': 'v1'}, params={'k2': 'v2'})
+    param_value = MagicMock(Value)
+    param_value.apply_context = MagicMock(return_value=sentinel.param_value)
+
+    params = {
+        'none': None,
+        'false': False,
+        'true': True,
+        'list': [
+            None,
+            1,
+            1.2,
+            'str',
+            datetime(2020, 1, 23, 12, 34, 56, tzinfo=timezone.utc),
+            param_value,
+        ]
+    }
+
+    request = Request(
+        path='/path',
+        headers={'k1': 'v1'},
+        params=params,
+    )
     assert request.path == '/path'
     assert request.headers == {'k1': 'v1'}
-    assert request.params == {'k2': 'v2'}
+    assert request.params == params
 
     response = request('base-url', timeout=5.0)
     assert response.id == 'uuid'
@@ -43,13 +65,31 @@ def test_request(requests_get, now, uuid4):
 
     uuid4.assert_called()
     now.assert_called()
+    param_value.apply_context.assert_called_once_with(origin=sentinel.now)
 
     args, kwargs = requests_get.call_args
     assert args == ('base-url/path',)
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['headers']['k1'].startswith('v1')
-    assert kwargs['params']['k2'].startswith('v2')
+    assert kwargs['params']['none'] is None
+    assert kwargs['params']['false'] == 'false'
+    assert kwargs['params']['true'] == 'true'
+    assert kwargs['params']['list'] == [
+        None,
+        '1',
+        '1.2',
+        'str',
+        '2020-01-23T12:34:56+00:00',
+        'sentinel.param_value',
+    ]
     assert kwargs['timeout'] == 5.0
+
+
+@patch('requests.get', return_value=requests_response())
+def test_request_given_string_params(requests_get):
+    Request(params='foo=bar')('')
+    kwargs = requests_get.call_args[1]
+    assert kwargs['params'] == 'foo=bar'
 
 
 @patch('requests.get', return_value=requests_response())

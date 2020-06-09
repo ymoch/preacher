@@ -3,7 +3,7 @@
 import uuid
 from copy import copy
 from datetime import datetime
-from typing import Any, List, Mapping, Optional, Union
+from typing import List, Mapping, Optional, Union
 
 import requests
 
@@ -14,11 +14,13 @@ from preacher.core.response import Response, ResponseBody
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
-ParameterRawValue = Union[None, bool, int, float, str]
+ParameterRawValue = Union[None, bool, int, float, str, datetime]
 ParameterValue = Union[ParameterRawValue, Value[ParameterRawValue]]
 Parameter = Union[ParameterValue, List[ParameterValue]]
 Parameters = Union[str, Mapping[str, Parameter]]
-ResolvedParameter = Union[ParameterRawValue, List[ParameterRawValue]]
+ResolvedParameterValue = Optional[str]
+ResolvedParameter = Union[ResolvedParameterValue, List[ResolvedParameterValue]]
+ResolvedParameters = Union[str, Mapping[str, ResolvedParameter]]
 
 
 class ResponseBodyWrapper(ResponseBody):
@@ -72,10 +74,17 @@ class ResponseWrapper(Response):
         return self._body
 
 
-def resolve_param_value(value: ParameterValue, **kwargs) -> ParameterRawValue:
+def resolve_param_value(value: ParameterValue, **kwargs) -> Optional[str]:
     if isinstance(value, Value):
-        return value.apply_context(**kwargs)
-    return value
+        value = value.apply_context(**kwargs)
+
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return 'true' if value else 'false'
+    if isinstance(value, datetime):
+        return value.isoformat()
+    return str(value)
 
 
 def resolve_param(param: Parameter, **kwargs) -> ResolvedParameter:
@@ -84,7 +93,7 @@ def resolve_param(param: Parameter, **kwargs) -> ResolvedParameter:
     return resolve_param_value(param)
 
 
-def resolve_params(params: Parameters, **kwargs) -> Any:
+def resolve_params(params: Parameters, **kwargs) -> ResolvedParameters:
     if isinstance(params, str):
         return params
     return {
@@ -117,7 +126,7 @@ class Request:
         res = requests.get(
             base_url + self._path,
             headers=headers,
-            params=resolve_params(self._params, origin=starts),
+            params=resolve_params(self._params, origin=starts),  # type: ignore
             timeout=timeout,
         )
         return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)
