@@ -92,7 +92,7 @@ def compile_param_value(value: object) -> ParameterValue:
     if isinstance(value, str):
         return value
     if isinstance(value, datetime):
-        return value.isoformat()
+        return value
     raise CompilationError(
         f'Not allowed type for a request parameter value: {value.__class__}'
     )

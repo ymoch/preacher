@@ -9,13 +9,18 @@ import requests
 
 from preacher import __version__ as _version
 from preacher.core.datetime import now
+from preacher.core.interpretation.value import Value
 from preacher.core.response import Response, ResponseBody
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
-ParameterValue = Union[None, bool, int, float, str]
+ParameterRawValue = Union[None, bool, int, float, str, datetime]
+ParameterValue = Union[ParameterRawValue, Value[ParameterRawValue]]
 Parameter = Union[ParameterValue, List[ParameterValue]]
 Parameters = Union[str, Mapping[str, Parameter]]
+ResolvedParameterValue = Optional[str]
+ResolvedParameter = Union[ResolvedParameterValue, List[ResolvedParameterValue]]
+ResolvedParameters = Union[str, Mapping[str, ResolvedParameter]]
 
 
 class ResponseBodyWrapper(ResponseBody):
@@ -69,6 +74,34 @@ class ResponseWrapper(Response):
         return self._body
 
 
+def resolve_param_value(value: ParameterValue, **kwargs) -> Optional[str]:
+    if isinstance(value, Value):
+        value = value.apply_context(**kwargs)
+
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return 'true' if value else 'false'
+    if isinstance(value, datetime):
+        return value.isoformat()
+    return str(value)
+
+
+def resolve_param(param: Parameter, **kwargs) -> ResolvedParameter:
+    if isinstance(param, list):
+        return [resolve_param_value(value, **kwargs) for value in param]
+    return resolve_param_value(param)
+
+
+def resolve_params(params: Parameters, **kwargs) -> ResolvedParameters:
+    if isinstance(params, str):
+        return params
+    return {
+        key: resolve_param(param, **kwargs)
+        for (key, param) in params.items()
+    }
+
+
 class Request:
 
     def __init__(
@@ -93,7 +126,10 @@ class Request:
         res = requests.get(
             base_url + self._path,
             headers=headers,
-            params=self._params,  # type: ignore
+            params=resolve_params(  # type: ignore
+                self._params,
+                origin_datetime=starts,
+            ),
             timeout=timeout,
         )
         return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)

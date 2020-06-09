@@ -15,6 +15,7 @@ from preacher.compilation.request import (
 )
 
 PACKAGE = 'preacher.compilation.request'
+DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')
 
 
 @fixture
@@ -108,10 +109,7 @@ def test_compile_param_value_raises_compilation_error(value):
     (0, 0),
     (0.0, 0.0),
     ('', ''),
-    (
-        datetime.fromisoformat('2020-04-01T01:23:45+09:00'),
-        '2020-04-01T01:23:45+09:00',
-    )
+    (DATETIME, DATETIME),
 ])
 def test_compile_param_value_returns_value(value, expected):
     assert compile_param_value(value) == expected
