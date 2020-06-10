@@ -13,8 +13,10 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
+from preacher.core.interpretation.value import RelativeDatetimeValue
 from .argument import ArgumentValue
 from .error import CompilationError
+from .timedelta import compile_timedelta
 from .util import run_recursively
 
 PathLike = Union[str, os.PathLike]
@@ -40,7 +42,7 @@ class _Inclusion(YAMLObject):
         return load_from_path(path)
 
     @classmethod
-    def from_yaml(cls, _constructor, node: Node) -> _Inclusion:
+    def from_yaml(cls, loader, node: Node) -> _Inclusion:
         return _Inclusion(node.value)
 
 
@@ -57,8 +59,27 @@ class _ArgumentValue(YAMLObject):
         return ArgumentValue(obj)
 
     @classmethod
-    def from_yaml(cls, _constructor, node: Node) -> _ArgumentValue:
+    def from_yaml(cls, loader, node: Node) -> _ArgumentValue:
         return _ArgumentValue(node.value)
+
+
+class _RelativeDatetime(YAMLObject):
+    yaml_tag = '!relative_datetime'
+
+    def __init__(self, obj: object):
+        self._obj = obj
+
+    def resolve(self) -> RelativeDatetimeValue:
+        obj = self._obj
+        if not isinstance(obj, str):
+            raise CompilationError(f'Must be a string, given {type(obj)}')
+
+        delta = compile_timedelta(obj)
+        return RelativeDatetimeValue(delta)
+
+    @classmethod
+    def from_yaml(cls, loader, node: Node) -> _RelativeDatetime:
+        return _RelativeDatetime(node.value)
 
 
 class _CustomSafeConstructor(SafeConstructor):
@@ -72,6 +93,10 @@ _CustomSafeConstructor.add_constructor(
 _CustomSafeConstructor.add_constructor(
     _ArgumentValue.yaml_tag,
     _ArgumentValue.from_yaml,
+)
+_CustomSafeConstructor.add_constructor(
+    _RelativeDatetime.yaml_tag,
+    _RelativeDatetime.from_yaml,
 )
 
 
@@ -97,6 +122,9 @@ def _resolve(obj: object, origin: PathLike) -> object:
         return obj.resolve(origin)
 
     if isinstance(obj, _ArgumentValue):
+        return obj.resolve()
+
+    if isinstance(obj, _RelativeDatetime):
         return obj.resolve()
 
     return obj

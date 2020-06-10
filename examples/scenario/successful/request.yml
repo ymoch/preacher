@@ -55,6 +55,7 @@ cases:
         float-key: 1.2
         timezone-naive-datetime-key: 2020-01-23T12:34:56
         timezone-aware-datetime-key: 2020-04-01 01:23:45 +09:00
+        relative-datetime-key: !relative_datetime -6 hours
     response:
       status_code: 200
       body:
@@ -80,3 +81,7 @@ cases:
           should:
             - equal: '2020-04-01T01:23:45+09:00'
             - be_before: now
+        - describe: ."relative-datetime-key"
+          should:
+            - be_before: now
+            - be_after: -12 hours
