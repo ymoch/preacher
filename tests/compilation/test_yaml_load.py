@@ -133,6 +133,6 @@ def test_given_datetime_that_is_offset_aware():
     actual = load(io)
     assert isinstance(actual, datetime)
     assert (
-       actual - datetime(2020, 3, 31, 16, 23, 45, tzinfo=timezone.utc)
+        actual - datetime(2020, 3, 31, 16, 23, 45, tzinfo=timezone.utc)
     ).total_seconds() == 0.0
     assert actual.tzinfo
