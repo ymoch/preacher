@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from io import StringIO
 from unittest.mock import patch
 
@@ -7,6 +7,7 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.yaml import load
+from preacher.core.interpretation.value import RelativeDatetimeValue
 
 
 @mark.parametrize('content, expected_message, expected_path', (
@@ -94,6 +95,29 @@ def test_given_argument():
     assert actual[0].key == 'foo'
     assert isinstance(actual[1], dict)
     assert actual[1]['key'].key == 'bar'
+
+
+@mark.parametrize('content', [
+    '!relative_datetime []',
+    '!relative_datetime {}',
+    '!relative_datetime invalid',
+])
+def test_given_invalid_relative_datetime(content):
+    io = StringIO(content)
+    with raises(CompilationError):
+        load(io)
+
+
+def test_given_valid_relative_datetime():
+    io = StringIO('!relative_datetime -1 hour')
+    actual = load(io)
+    assert isinstance(actual, RelativeDatetimeValue)
+
+    now = datetime.now()
+    assert (
+        actual.apply_context(origin_datetime=now)
+        == now - timedelta(hours=1)
+    )
 
 
 def test_given_datetime_that_is_offset_naive():

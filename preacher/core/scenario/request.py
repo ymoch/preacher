@@ -14,8 +14,20 @@ from preacher.core.response import Response, ResponseBody
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
-ParameterRawValue = Union[None, bool, int, float, str, datetime]
-ParameterValue = Union[ParameterRawValue, Value[ParameterRawValue]]
+ParameterValue = Union[
+    None,
+    bool,
+    int,
+    float,
+    str,
+    datetime,
+    Value[None],
+    Value[bool],
+    Value[int],
+    Value[float],
+    Value[str],
+    Value[datetime],
+]
 Parameter = Union[ParameterValue, List[ParameterValue]]
 Parameters = Union[str, Mapping[str, Parameter]]
 ResolvedParameterValue = Optional[str]

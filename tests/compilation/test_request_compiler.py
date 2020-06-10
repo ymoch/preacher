@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from unittest.mock import patch, sentinel, MagicMock
 
 from pytest import mark, raises, fixture
@@ -13,9 +13,11 @@ from preacher.compilation.request import (
     RequestCompiled,
     compile_param_value,
 )
+from preacher.core.interpretation.value import RelativeDatetimeValue
 
 PACKAGE = 'preacher.compilation.request'
 DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')
+RELATIVE_DATETIME_VALUE = RelativeDatetimeValue(timedelta(seconds=1))
 
 
 @fixture
@@ -36,13 +38,13 @@ def compiler() -> RequestCompiler:
         [NamedNode('params'), NamedNode('k'), IndexedNode(1)],
     ),
 ))
-def test_given_invalid_values(compiler, value, expected_path):
+def test_given_invalid_values(compiler: RequestCompiler, value, expected_path):
     with raises(CompilationError) as error_info:
         compiler.compile(value)
     assert error_info.value.path == expected_path
 
 
-def test_given_an_empty_mapping(compiler):
+def test_given_an_empty_mapping(compiler: RequestCompiler):
     compiled = compiler.compile({})
     assert compiled.path is None
     assert compiled.headers is None
@@ -51,21 +53,29 @@ def test_given_an_empty_mapping(compiler):
 
 @mark.parametrize('params', [
     'str',
-    {'k1': None, 'k2': 'str', 'k3': [None, 'str']}
+    {
+        'k1': None,
+        'k2': 'str',
+        'k3': [
+            None,
+            'str',
+            RelativeDatetimeValue(timedelta(seconds=1))
+        ]
+    }
 ])
-def test_given_valid_params(compiler, params):
+def test_given_valid_params(compiler: RequestCompiler, params):
     compiled = compiler.compile({'params': params})
     assert compiled.params == params
 
 
-def test_given_a_string(compiler):
+def test_given_a_string(compiler: RequestCompiler):
     compiled = compiler.compile('/path')
     assert compiled.path == '/path'
     assert compiled.headers is None
     assert compiled.params is None
 
 
-def test_given_a_filled_mapping(compiler):
+def test_given_a_filled_mapping(compiler: RequestCompiler):
     compiled = compiler.compile({
         'path': '/path',
         'headers': {'key1': 'value1'},
@@ -110,6 +120,7 @@ def test_compile_param_value_raises_compilation_error(value):
     (0.0, 0.0),
     ('', ''),
     (DATETIME, DATETIME),
+    (RELATIVE_DATETIME_VALUE, RELATIVE_DATETIME_VALUE)
 ])
 def test_compile_param_value_returns_value(value, expected):
     assert compile_param_value(value) == expected

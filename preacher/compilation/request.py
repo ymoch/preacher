@@ -7,6 +7,7 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from typing import Optional
 
+from preacher.core.interpretation.value import RelativeDatetimeValue
 from preacher.core.scenario import (
     Request,
     Parameter,
@@ -92,6 +93,8 @@ def compile_param_value(value: object) -> ParameterValue:
     if isinstance(value, str):
         return value
     if isinstance(value, datetime):
+        return value
+    if isinstance(value, RelativeDatetimeValue):  # HACK: relax typing.
         return value
     raise CompilationError(
         f'Not allowed type for a request parameter value: {value.__class__}'
