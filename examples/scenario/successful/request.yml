@@ -20,10 +20,10 @@ cases:
           should:
             be_greater_than: 100
       body:
-        - describe: ."header-string"
+        - describe: ."Header-String"
           should:
             equal: yyy
-        - describe: ."user-agent"
+        - describe: ."User-Agent"
           should:
             equal: custom
 
@@ -36,10 +36,12 @@ cases:
       body:
         - describe: .key
           should:
-            equal: value
+            contain_exactly:
+              - value
         - describe: .spam
           should:
-            equal: ham&eggs
+            contain_exactly:
+              - ham&eggs
 
   - label: Sends params as a mapping
     request:
@@ -47,41 +49,32 @@ cases:
       params:
         key: value
         multi-key:
-          - value1
-          - value2
           - null  # should be ignored.
-        boolean-key: false
-        integer-key: 1
-        float-key: 1.2
-        timezone-naive-datetime-key: 2020-01-23T12:34:56
-        timezone-aware-datetime-key: 2020-04-01 01:23:45 +09:00
-        relative-datetime-key: !relative_datetime -6 hours
+          - str
+          - false
+          - 1
+          - 1.2
+          - 2020-01-23T12:34:56
+          - 2020-04-01 01:23:45 +09:00
+          - !relative_datetime -6 hours
     response:
       status_code: 200
       body:
         - describe: .key
           should:
-            equal: value
+            contain_exactly:
+              - equal: value
         - describe: ."multi-key"
           should:
-            equal: value2
-        - describe: ."boolean-key"
-          should:
-            equal: "false"
-        - describe: ."integer-key"
-          should:
-            equal: "1"
-        - describe: ."float-key"
-          should:
-            equal: "1.2"
-        - describe: ."timezone-naive-datetime-key"
-          should:
-            - equal: '2020-01-23T12:34:56'
-        - describe: ."timezone-aware-datetime-key"
-          should:
-            - equal: '2020-04-01T01:23:45+09:00'
-            - be_before: now
-        - describe: ."relative-datetime-key"
-          should:
-            - be_before: now
-            - be_after: -12 hours
+            contain_exactly:
+              - equal: str
+              - equal: "false"
+              - equal: "1"
+              - equal: "1.2"
+              - equal: '2020-01-23T12:34:56'
+              - all_of:
+                  - equal: '2020-04-01T01:23:45+09:00'
+                  - be_before: now
+              - all_of:
+                  - be_before: now
+                  - be_after: -12 hours

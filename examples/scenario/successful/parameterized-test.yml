@@ -21,7 +21,9 @@ cases:
     body:
       - describe: .foo
         should:
-          equal: !argument foo
+          contain_exactly:
+            - equal: !argument foo
       - describe: .spam
         should:
-          equal: !argument spam
+          contain_exactly:
+            - equal: !argument spam
