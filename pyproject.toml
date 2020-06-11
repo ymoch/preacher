@@ -36,11 +36,11 @@ pytest-pycodestyle = "^2.0"
 pytest-mypy = "^0.4.1"
 pytest-cov = "^2.6"
 pytest-xdist = "^1.29"
-responder = "^2.0"
 sphinx = "^2.2"
 sphinx-autobuild = "^0.7.1"
 sphinx-intl = "^2.0"
 tomlkit = "^0.5.8"
+flask = "^1.1.2"
 
 [build-system]
 requires = ["poetry>=1.0"]
