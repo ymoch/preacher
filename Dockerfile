@@ -18,6 +18,7 @@ RUN apk --no-cache add python3 libxml2 libxslt && \
         gcc \
         && \
     \
+    python3 -m ensurepip && \
     pip3 --no-cache-dir install /usr/src/preacher && \
     rm -rf /usr/src/preacher $HOME/.cache && \
     \
