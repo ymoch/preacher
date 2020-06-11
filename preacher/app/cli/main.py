@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Iterable
 
 from preacher.app.cli.option import parse_args
-from preacher.compilation.error import CompilationError
+from preacher.compilation.error import CompilationError, render_path
 from preacher.compilation.factory import create_compiler
 from preacher.compilation.yaml import load, load_from_path
 from preacher.core.listener.log import LoggingListener
@@ -65,7 +65,11 @@ def main():
     try:
         _main()
     except CompilationError as error:
-        LOGGER.critical('%s: %s', error.__class__.__name__, error)
+        LOGGER.critical(
+            'Compilation error on node: %s',
+            render_path(error.path),
+        )
+        LOGGER.critical('%s', error)
         sys.exit(2)
     except Exception as error:
         LOGGER.exception('%s', error)

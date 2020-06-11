@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass
-from functools import reduce
 from typing import List, Optional, Union, Iterator
 
 
@@ -53,13 +52,9 @@ class CompilationError(Exception):
             cause=self._cause,
         )
 
-    def __str__(self):
-        message = super().__str__()
-        if not self._path:
-            return message
 
-        path = reduce(lambda lhs, rhs: lhs + str(rhs), self._path, '')
-        return f'{message}: {path}'
+def render_path(path: Path) -> str:
+    return ''.join(str(node) for node in path)
 
 
 @contextmanager
