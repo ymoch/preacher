@@ -33,7 +33,7 @@ def _error(message: str) -> str:
 
 
 def _critical(message: str) -> str:
-    return f'{Fore.RED}{Fore.BRIGHT}{message}{Style.RESET_ALL}'
+    return f'{Fore.RED}{Style.BRIGHT}{message}{Style.RESET_ALL}'
 
 
 _STYLE_FUNC_MAP = {
