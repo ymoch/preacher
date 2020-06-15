@@ -23,17 +23,19 @@ def extract():
     return MagicMock(Extractor, return_value='value')
 
 
-def test_jq(extract, response_body):
-    analyzer = analyze_xml_str(response_body)
-    with raises(NotImplementedError):
-        analyzer.jq(extract)
-
-    extract.assert_not_called()
-
-
 def test_xpath(extract, response_body):
     analyzer = analyze_xml_str(response_body)
     value = analyzer.xpath(extract)
     assert value == 'value'
 
     extract.assert_called()
+
+
+def test_not_supported(extract, response_body):
+    analyzer = analyze_xml_str(response_body)
+    with raises(NotImplementedError):
+        analyzer.jq(extract)
+    with raises(NotImplementedError):
+        analyzer.key(extract)
+
+    extract.assert_not_called()

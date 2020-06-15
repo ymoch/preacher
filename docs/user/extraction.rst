@@ -30,6 +30,11 @@ Here is the definition of ``Extraction`` as a mapping.
      - ?
      - A `XPath`_ query.
      - ``"/foo/nar"``
+   * - key
+     - string
+     - ?
+     - A key of a dictionary.
+     - ``"key"``
    * - multiple
      - boolean
      - no
@@ -41,7 +46,7 @@ Here is the definition of ``Extraction`` as a mapping.
      - See: :ref:`casting`
      - ``"float"``
 
-.. note:: Either of ``jq`` or ``xpath`` is required.
+.. note:: One of ``jq``, ``xpath`` or ``key`` is required.
 
 .. _multiple:
 
@@ -76,13 +81,15 @@ Analysis Compatibility
 ----------------------
 The extraction must be compatible for the body analysis.
 
-+----------+----+-------+
-| Analysis | jq | xpath |
-+==========+====+=======+
-| JSON     |  o |     x |
-+----------+----+-------+
-| XML      |  x |     o |
-+----------+----+-------+
++----------------------+----+-------+-----+
+| Analysis             | jq | xpath | key |
++======================+====+=======+=====+
+| JSON (an object)     |  o |     x |   o |
++----------------------+----+-------+-----|
+| JSON (not an object) |  o |     x |   x |
++----------------------+----+-------+-----|
+| XML                  |  x |     o |   x |
++----------------------+----+-------+-----+
 
 
 .. _jq: https://stedolan.github.io/jq/

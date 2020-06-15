@@ -92,14 +92,15 @@ in ``when`` properties.
 
     label: Run this scenario only for localhost.
     when:
-      - describe: .base_url
+      - describe:
+          key: base_url
         should:
           contain_string: localhost
+      - describe:
+          jq: .starts  # can be analyzed as a JSON and extracted with a "jq".
     cases:
       - ...
 
-A ``Context`` object, which stands for *context*, is a JSON-like value,
-which can be described by `jq`_.
 See :doc:`context` to find available context.
 
 .. _concurrent-running:
