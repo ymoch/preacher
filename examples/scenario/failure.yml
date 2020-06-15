@@ -1,5 +1,4 @@
-label: Scenario fails
-
-subscenarios:
-  - !include failing/analysis.yml
-  - !include failing/matcher.yml
+---
+!include failing/analysis.yml
+---
+!include failing/matcher.yml
