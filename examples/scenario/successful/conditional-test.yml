@@ -1,7 +1,8 @@
 label: Conditional test examples
 
 when:
-  - describe: .base_url
+  - describe:
+      key: base_url
     should:
       contain_string: localhost
   - describe: .starts

@@ -8,208 +8,203 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 12:16+0900\n"
+"POT-Creation-Date: 2020-06-16 00:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.8.0\n"
 
-#: ../../user/extraction.rst:2
+#: ../../user/extraction.rst:2 a0746b59074c493aa26d5346522d9f3b
 msgid "Extraction"
 msgstr ""
 
-#: ../../user/extraction.rst:3
+#: ../../user/extraction.rst:3 7b9c2e03a9f848ebb4144af80c7bd6d5
 msgid ""
 "In Preacher, an \"extraction\" is a process to extract values from a "
 "target such as a response body. Extractions are descripted in `jq`_ or "
 "`XPath`_."
 msgstr ""
 
-#: ../../user/extraction.rst:8
+#: ../../user/extraction.rst:8 af2dd3fa427d446a86a9faa71d413c0a
 msgid "Grammer"
 msgstr ""
 
-#: ../../user/extraction.rst:11
+#: ../../user/extraction.rst:11 09d4e92a6e524c0fa7c85698f80cba96
 msgid "Full Definition"
 msgstr ""
 
-#: ../../user/extraction.rst:12
+#: ../../user/extraction.rst:12 28197c8bed3649adbc7126624d8f5472
 msgid "Here is the definition of ``Extraction`` as a mapping."
 msgstr ""
 
-#: ../../user/extraction.rst:14
-msgid "The definition of ``Extraction`` Object"
+#: ../../user/extraction.rst:48 8d7d7539fc2f4d37b66158cb67c70a42
+msgid "Either of ``jq``, ``xpath``, ``key`` is required."
 msgstr ""
 
-#: ../../user/extraction.rst:18
-msgid "Key"
-msgstr ""
-
-#: ../../user/extraction.rst:19
-msgid "Type"
-msgstr ""
-
-#: ../../user/extraction.rst:20
-msgid "Required?"
-msgstr ""
-
-#: ../../user/extraction.rst:21
-msgid "Description"
-msgstr ""
-
-#: ../../user/extraction.rst:22
-msgid "Example"
-msgstr ""
-
-#: ../../user/extraction.rst:23 ../../user/extraction.rst:80
-msgid "jq"
-msgstr ""
-
-#: ../../user/extraction.rst:24 ../../user/extraction.rst:29
-#: ../../user/extraction.rst:39
-msgid "string"
-msgstr ""
-
-#: ../../user/extraction.rst:25 ../../user/extraction.rst:30
-msgid "?"
-msgstr ""
-
-#: ../../user/extraction.rst:26
-msgid "A `jq`_ query."
-msgstr ""
-
-#: ../../user/extraction.rst:27
-msgid "``\".foo.bar\"``"
-msgstr ""
-
-#: ../../user/extraction.rst:28 ../../user/extraction.rst:80
-msgid "xpath"
-msgstr ""
-
-#: ../../user/extraction.rst:31
-msgid "A `XPath`_ query."
-msgstr ""
-
-#: ../../user/extraction.rst:32
-msgid "``\"/foo/nar\"``"
-msgstr ""
-
-#: ../../user/extraction.rst:33
-msgid "multiple"
-msgstr ""
-
-#: ../../user/extraction.rst:34
-msgid "boolean"
-msgstr ""
-
-#: ../../user/extraction.rst:35 ../../user/extraction.rst:40
-msgid "no"
-msgstr ""
-
-#: ../../user/extraction.rst:36
-msgid "See: :ref:`multiple`"
-msgstr ""
-
-#: ../../user/extraction.rst:37
-msgid "``true``"
-msgstr ""
-
-#: ../../user/extraction.rst:38
-msgid "cast_to"
-msgstr ""
-
-#: ../../user/extraction.rst:41
-msgid "See: :ref:`casting`"
-msgstr ""
-
-#: ../../user/extraction.rst:42
-msgid "``\"float\"``"
-msgstr ""
-
-#: ../../user/extraction.rst:44
-msgid "Either of ``jq`` or ``xpath`` is required."
-msgstr ""
-
-#: ../../user/extraction.rst:49
+#: ../../user/extraction.rst:53 1c4f0ad3d2a94c91b30ccbee5bddb214
 msgid "Multiple Values"
 msgstr ""
 
-#: ../../user/extraction.rst:50
+#: ../../user/extraction.rst:54 f51ddbe088744061b20388bc0d9eb37f
 msgid ""
 "By default, an extraction provides the first of extracted values. When "
 "``multiple`` is  ``true``, it provides the list of all extracted values."
 msgstr ""
 
-#: ../../user/extraction.rst:56
+#: ../../user/extraction.rst:60 5cfb486683da43c29c13abf21378e971
 msgid "Casting"
 msgstr ""
 
-#: ../../user/extraction.rst:57
+#: ../../user/extraction.rst:61 91051cb0bf4c412eaf2ca91fb89db8f3
 msgid ""
 "Extracted values can be casted by ``cast_to`` settings. This feature is "
 "useful for XML analysis, which provides only strings even if they are "
 "numbers."
 msgstr ""
 
-#: ../../user/extraction.rst:61
+#: ../../user/extraction.rst:65 b79b17b943ca4f2db71e1d44fafe799f
 msgid "Allowed values are:"
 msgstr ""
 
-#: ../../user/extraction.rst:63
+#: ../../user/extraction.rst:67 0d546df2001d4391a4e2ea895d8d6320
 msgid "int: Cast to an integer."
 msgstr ""
 
-#: ../../user/extraction.rst:64
+#: ../../user/extraction.rst:68 76359bd32a4d4d09aad1560608f6a755
 msgid "float: Cast to a floating point number."
 msgstr ""
 
-#: ../../user/extraction.rst:65
+#: ../../user/extraction.rst:69 adec0e92d82f4cc29d7f8b3fe263f193
 msgid "string: Cast to a string."
 msgstr ""
 
-#: ../../user/extraction.rst:67
+#: ../../user/extraction.rst:71 850f63235a554218a999bb37300a99a1
 msgid "Casting does not affect ``null``."
 msgstr ""
 
-#: ../../user/extraction.rst:70
+#: ../../user/extraction.rst:74 b74f9fc6c7904f389615394377253283
 msgid "Abbreviation"
 msgstr ""
 
-#: ../../user/extraction.rst:71
+#: ../../user/extraction.rst:75 c9970e24ead7485d8c9bc6e73b7c85e7
 msgid ""
 "Ordinally, extractions should be very simple `jq`_ queries. In these "
 "cases, an extraction can be written in a string, which is equivalent to "
 "``{\"jq\": it}``."
 msgstr ""
 
-#: ../../user/extraction.rst:76
+#: ../../user/extraction.rst:80 74ecec61903a4e86876be5fde32d13be
 msgid "Analysis Compatibility"
 msgstr ""
 
-#: ../../user/extraction.rst:77
+#: ../../user/extraction.rst:81 fc4f963d000b4b7a843b7d36d4ae32b0
 msgid "The extraction must be compatible for the body analysis."
 msgstr ""
 
-#: ../../user/extraction.rst:80
+#: ../../user/extraction.rst:84 9659a9b337d149e9b52541ec9105994f
 msgid "Analysis"
 msgstr ""
 
-#: ../../user/extraction.rst:82
-msgid "JSON"
+#: ../../user/extraction.rst:84 df17abaa4ae14c57a3fba41ccf448c46
+msgid "jq"
 msgstr ""
 
-#: ../../user/extraction.rst:82 ../../user/extraction.rst:84
+#: ../../user/extraction.rst:84 118c4526d2f24d1798f916596f9b1b89
+msgid "xpath"
+msgstr ""
+
+#: ../../user/extraction.rst:84 e340a7212dd5491986f20b0cb4560717
+msgid "key"
+msgstr ""
+
+#: ../../user/extraction.rst:86 cbdce2aa6b4546bba10b84ff203a0a00
+msgid "JSON (an object)"
+msgstr ""
+
+#: ../../user/extraction.rst:86 ../../user/extraction.rst:88
+#: ../../user/extraction.rst:90 73d3e135fee54a68b18cfd08d00e6329
 msgid "o"
 msgstr ""
 
-#: ../../user/extraction.rst:82 ../../user/extraction.rst:84
+#: ../../user/extraction.rst:86 ../../user/extraction.rst:88
+#: ../../user/extraction.rst:90 98c6616a24244b44a2ef1282c9731238
 msgid "x"
 msgstr ""
 
-#: ../../user/extraction.rst:84
+#: ../../user/extraction.rst:88 bef9f4c6a3fc44db9d4448f93033f10b
+msgid "JSON (not an object)"
+msgstr ""
+
+#: ../../user/extraction.rst:90 157656e4881b4a56b9abc514b99e59d8
 msgid "XML"
 msgstr ""
+
+#~ msgid "The definition of ``Extraction`` Object"
+#~ msgstr ""
+
+#~ msgid "Key"
+#~ msgstr ""
+
+#~ msgid "Type"
+#~ msgstr ""
+
+#~ msgid "Required?"
+#~ msgstr ""
+
+#~ msgid "Description"
+#~ msgstr ""
+
+#~ msgid "Example"
+#~ msgstr ""
+
+#~ msgid "string"
+#~ msgstr ""
+
+#~ msgid "?"
+#~ msgstr ""
+
+#~ msgid "A `jq`_ query."
+#~ msgstr ""
+
+#~ msgid "``\".foo.bar\"``"
+#~ msgstr ""
+
+#~ msgid "A `XPath`_ query."
+#~ msgstr ""
+
+#~ msgid "``\"/foo/nar\"``"
+#~ msgstr ""
+
+#~ msgid "multiple"
+#~ msgstr ""
+
+#~ msgid "boolean"
+#~ msgstr ""
+
+#~ msgid "no"
+#~ msgstr ""
+
+#~ msgid "See: :ref:`multiple`"
+#~ msgstr ""
+
+#~ msgid "``true``"
+#~ msgstr ""
+
+#~ msgid "cast_to"
+#~ msgstr ""
+
+#~ msgid "See: :ref:`casting`"
+#~ msgstr ""
+
+#~ msgid "``\"float\"``"
+#~ msgstr ""
+
+#~ msgid "Either of ``jq`` or ``xpath`` is required."
+#~ msgstr ""
+
+#~ msgid "JSON"
+#~ msgstr ""
 
