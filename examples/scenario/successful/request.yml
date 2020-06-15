@@ -15,7 +15,7 @@ cases:
           should:
             equal: application/json
         - describe:
-            jq: ."content-length"
+            key: content-length
             cast_to: int
           should:
             be_greater_than: 100
