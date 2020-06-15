@@ -81,7 +81,7 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
         call('bar', cast=float),
     ),
 ))
-def test_when_given_a_jq(value, expected_ctor, expected_call):
+def test_when_given_a_valid_value(value, expected_ctor, expected_call):
     with patch(f'{MODULE}.{expected_ctor}') as ctor:
         ExtractionCompiler().compile(value)
     ctor.assert_has_calls([expected_call])
