@@ -34,6 +34,7 @@ Here is the definition of ``Extraction`` as a mapping.
      - string
      - ?
      - A key of a dictionary.
+     - ``"key"``
    * - multiple
      - boolean
      - no
