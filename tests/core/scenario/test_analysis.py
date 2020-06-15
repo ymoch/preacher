@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar
+from typing import Callable, Mapping, TypeVar
 from unittest.mock import MagicMock
 
 from lxml.etree import _Element as Element
@@ -18,6 +18,9 @@ def test_incomplete_analyzer():
         def xpath(self, extract: Callable[[Element], T]) -> T:
             return super().xpath(extract)
 
+        def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
+            return super().key(extract)
+
     analyzer = _IncompleteAnalyzer()
 
     with raises(NotImplementedError):
@@ -25,3 +28,6 @@ def test_incomplete_analyzer():
 
     with raises(NotImplementedError):
         analyzer.xpath(MagicMock(Extractor))
+
+    with raises(NotImplementedError):
+        analyzer.key(MagicMock(Extractor))

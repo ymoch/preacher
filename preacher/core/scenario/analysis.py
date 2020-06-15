@@ -4,7 +4,7 @@ Response body analysis.
 
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Mapping, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, fromstring
 
@@ -26,6 +26,10 @@ class Analyzer(ABC):
     def xpath(self, extract: Callable[[Element], T]) -> T:
         raise NotImplementedError()
 
+    @abstractmethod
+    def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
+        raise NotImplementedError()
+
 
 class JsonAnalyzer(Analyzer):
 
@@ -38,6 +42,9 @@ class JsonAnalyzer(Analyzer):
     def xpath(self, extract: Callable[[Element], T]) -> T:
         raise NotImplementedError('XPath extraction is not allowed for JSON')
 
+    def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
+        raise NotImplementedError('Key extraction is not allowed for JSON')
+
 
 class XmlAnalyzer(Analyzer):
 
@@ -49,6 +56,9 @@ class XmlAnalyzer(Analyzer):
 
     def xpath(self, extract: Callable[[Element], T]) -> T:
         return extract(self._etree)
+
+    def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
+        raise NotImplementedError('Key extraction is not allowed for XML')
 
 
 def analyze_json_str(value: ResponseBody) -> Analyzer:

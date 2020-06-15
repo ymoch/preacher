@@ -89,3 +89,19 @@ class XPathExtractor(Extractor):
             return elem.xpath(self._query)
         except XPathEvalError:
             raise ExtractionError(f'Invalid XPath: {self._query}')
+
+
+class KeyExtractor(Extractor):
+
+    def __init__(
+        self,
+        key: str,
+        cast: Callable[[object], Any] = identify,
+    ):
+        self._key = key
+        self._cast = cast
+
+    def extract(self, analyzer: Analyzer) -> object:
+        return self._cast(
+            analyzer.key(lambda mapping: mapping.get(self._key))
+        )

@@ -19,9 +19,11 @@ def test_jq(extract):
     extract.assert_called_once_with({'k1': 'v1', 'k2': 'v2'})
 
 
-def test_xpath(extract):
+def test_not_supported(extract):
     analyzer = analyze_json_str(MagicMock(text='{}'))
     with raises(NotImplementedError):
         analyzer.xpath(extract)
+    with raises(NotImplementedError):
+        analyzer.key(extract)
 
     extract.assert_not_called()
