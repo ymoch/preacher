@@ -27,7 +27,7 @@ class Analyzer(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
+    def key(self, extract: Callable[[Mapping], T]) -> T:
         raise NotImplementedError()
 
 
@@ -42,8 +42,12 @@ class JsonAnalyzer(Analyzer):
     def xpath(self, extract: Callable[[Element], T]) -> T:
         raise NotImplementedError('XPath extraction is not allowed for JSON')
 
-    def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
-        raise NotImplementedError('Key extraction is not allowed for JSON')
+    def key(self, extract: Callable[[Mapping], T]) -> T:
+        if not isinstance(self._json_body, Mapping):
+            raise ValueError(
+                f'Expected a dictionary, but given {type(self._json_body)}'
+            )
+        return extract(self._json_body)
 
 
 class XmlAnalyzer(Analyzer):
@@ -57,7 +61,7 @@ class XmlAnalyzer(Analyzer):
     def xpath(self, extract: Callable[[Element], T]) -> T:
         return extract(self._etree)
 
-    def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
+    def key(self, extract: Callable[[Mapping], T]) -> T:
         raise NotImplementedError('Key extraction is not allowed for XML')
 
 

@@ -18,7 +18,7 @@ def test_incomplete_analyzer():
         def xpath(self, extract: Callable[[Element], T]) -> T:
             return super().xpath(extract)
 
-        def key(self, extract: Callable[[Mapping[str, object]], T]) -> T:
+        def key(self, extract: Callable[[Mapping], T]) -> T:
             return super().key(extract)
 
     analyzer = _IncompleteAnalyzer()
