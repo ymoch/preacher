@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-16 00:43+0900\n"
+"POT-Creation-Date: 2020-06-16 00:51+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgid "Here is the definition of ``Extraction`` as a mapping."
 msgstr ""
 
 #: ../../user/extraction.rst:48 8d7d7539fc2f4d37b66158cb67c70a42
-msgid "Either of ``jq``, ``xpath``, ``key`` is required."
+msgid "One of ``jq``, ``xpath`` or ``key`` is required."
 msgstr ""
 
 #: ../../user/extraction.rst:53 1c4f0ad3d2a94c91b30ccbee5bddb214
