@@ -1,9 +1,9 @@
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import call, patch
 
 from pytest import mark, raises
 
-from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.extraction import ExtractionCompiler
 from preacher.core.functional import identify
 
 MODULE = 'preacher.compilation.extraction'
@@ -24,47 +24,64 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
     assert error_info.value.path == expected_path
 
 
-@mark.parametrize('value, expected_call', (
+@mark.parametrize('value, expected_ctor, expected_call', (
     (
         '.foo',
+        'JqExtractor',
         call('.foo', multiple=False, cast=identify)
     ),
     (
         {'jq': '.foo'},
+        'JqExtractor',
+        call('.foo', multiple=False, cast=identify),
+    ),
+    (
+        {'jq': '.foo', 'xpath': 'bar', 'key': 'baz'},
+        'JqExtractor',
         call('.foo', multiple=False, cast=identify),
     ),
     (
         {'jq': '.bar', 'multiple': False, 'cast_to': 'int'},
+        'JqExtractor',
         call('.bar', multiple=False, cast=int),
     ),
     (
         {'jq': '.bar', 'multiple': True, 'cast_to': 'float'},
+        'JqExtractor',
         call('.bar', multiple=True, cast=float),
     ),
-))
-def test_when_given_a_jq(value, expected_call):
-    ctor = MagicMock()
-    with patch.dict(f'{MODULE}._EXTRACTION_MAP', jq=ctor):
-        ExtractionCompiler().compile(value)
-    ctor.assert_has_calls([expected_call])
-
-
-@mark.parametrize('value, expected_call', (
     (
         {'xpath': './foo'},
+        'XPathExtractor',
+        call('./foo', multiple=False, cast=identify),
+    ),
+    (
+        {'xpath': './foo', 'key': 'bar'},
+        'XPathExtractor',
         call('./foo', multiple=False, cast=identify),
     ),
     (
         {'xpath': './foo', 'multiple': False},
+        'XPathExtractor',
         call('./foo', multiple=False, cast=identify),
     ),
     (
         {'xpath': './foo', 'multiple': True, 'cast_to': 'string'},
+        'XPathExtractor',
         call('./foo', multiple=True, cast=str),
     ),
+    (
+        {'key': 'foo'},
+        'KeyExtractor',
+        call('foo', cast=identify),
+    ),
+    (
+        {'key': 'bar', 'multiple': True, 'cast_to': 'float'},
+        'KeyExtractor',
+        call('bar', cast=float),
+    ),
 ))
-def test_when_given_an_xpath(value, expected_call):
-    ctor = MagicMock()
-    with patch.dict(f'{MODULE}._EXTRACTION_MAP', xpath=ctor):
+def test_when_given_a_jq(value, expected_ctor, expected_call):
+    with patch(f'{MODULE}.{expected_ctor}') as ctor:
         ExtractionCompiler().compile(value)
     ctor.assert_has_calls([expected_call])

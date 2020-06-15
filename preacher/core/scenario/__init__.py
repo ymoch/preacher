@@ -6,6 +6,7 @@ from .extraction import (
     Extractor,
     JqExtractor,
     XPathExtractor,
+    KeyExtractor,
     ExtractionError,
 )
 from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
@@ -29,6 +30,7 @@ __all__ = [
     'Extractor',
     'JqExtractor',
     'XPathExtractor',
+    'KeyExtractor',
     'ExtractionError',
     'Matcher',
     'StaticMatcher',
