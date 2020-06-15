@@ -44,7 +44,7 @@ def _main() -> None:
             load_all_from_path(path) for path in args.scenario
         )
     else:
-        objs = [load_all(sys.stdin)]
+        objs = list(load_all(sys.stdin))
 
     compiler = create_compiler()
     scenarios = (
