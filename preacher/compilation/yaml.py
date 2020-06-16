@@ -140,7 +140,7 @@ def load(io: TextIO, origin: PathLike = '.') -> object:
     try:
         obj = yaml_load(io, Loader=_CustomSafeLoader)
     except MarkedYAMLError as error:
-        raise CompilationError(message=str(error), cause=error)
+        raise CompilationError.wrap(error)
 
     return run_recursively(lambda o: _resolve(o, origin), obj)
 
@@ -159,7 +159,7 @@ def _yaml_load_all(io: TextIO):
         for obj in yaml_load_all(io, Loader=_CustomSafeLoader):
             yield obj
     except MarkedYAMLError as error:
-        raise CompilationError(message=str(error), cause=error)
+        raise CompilationError.wrap(error)
 
 
 def load_all(io: TextIO, origin: PathLike = '.') -> Iterator[object]:

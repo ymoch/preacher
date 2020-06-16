@@ -52,6 +52,10 @@ class CompilationError(Exception):
             cause=self._cause,
         )
 
+    @staticmethod
+    def wrap(error: Exception) -> CompilationError:
+        return CompilationError(message=str(error), cause=error)
+
 
 def render_path(path: Path) -> str:
     return ''.join(str(node) for node in path)
