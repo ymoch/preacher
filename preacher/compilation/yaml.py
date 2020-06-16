@@ -147,8 +147,11 @@ def load(io: TextIO, origin: PathLike = '.') -> object:
 
 def load_from_path(path: PathLike) -> object:
     origin = os.path.dirname(path)
-    with open(path) as f:
-        return load(f, origin)
+    try:
+        with open(path) as f:
+            return load(f, origin)
+    except FileNotFoundError as error:
+        raise CompilationError.wrap(error)
 
 
 def _yaml_load_all(io: TextIO):
@@ -171,5 +174,8 @@ def load_all(io: TextIO, origin: PathLike = '.') -> Iterator[object]:
 
 def load_all_from_path(path: str) -> Iterator[object]:
     origin = os.path.dirname(path)
-    with open(path) as f:
-        yield from load_all(f, origin=origin)
+    try:
+        with open(path) as f:
+            yield from load_all(f, origin=origin)
+    except FileNotFoundError as error:
+        raise CompilationError.wrap(error)
