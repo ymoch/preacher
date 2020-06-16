@@ -140,15 +140,18 @@ def load(io: TextIO, origin: PathLike = '.') -> object:
     try:
         obj = yaml_load(io, Loader=_CustomSafeLoader)
     except MarkedYAMLError as error:
-        raise CompilationError(message=str(error), cause=error)
+        raise CompilationError.wrap(error)
 
     return run_recursively(lambda o: _resolve(o, origin), obj)
 
 
 def load_from_path(path: PathLike) -> object:
     origin = os.path.dirname(path)
-    with open(path) as f:
-        return load(f, origin)
+    try:
+        with open(path) as f:
+            return load(f, origin)
+    except FileNotFoundError as error:
+        raise CompilationError.wrap(error)
 
 
 def _yaml_load_all(io: TextIO):
@@ -159,7 +162,7 @@ def _yaml_load_all(io: TextIO):
         for obj in yaml_load_all(io, Loader=_CustomSafeLoader):
             yield obj
     except MarkedYAMLError as error:
-        raise CompilationError(message=str(error), cause=error)
+        raise CompilationError.wrap(error)
 
 
 def load_all(io: TextIO, origin: PathLike = '.') -> Iterator[object]:
@@ -171,5 +174,8 @@ def load_all(io: TextIO, origin: PathLike = '.') -> Iterator[object]:
 
 def load_all_from_path(path: str) -> Iterator[object]:
     origin = os.path.dirname(path)
-    with open(path) as f:
-        yield from load_all(f, origin=origin)
+    try:
+        with open(path) as f:
+            yield from load_all(f, origin=origin)
+    except FileNotFoundError as error:
+        raise CompilationError.wrap(error)

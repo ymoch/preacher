@@ -6,7 +6,12 @@ from unittest.mock import patch
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
-from preacher.compilation.yaml import load, load_all, load_all_from_path
+from preacher.compilation.yaml import (
+    load,
+    load_from_path,
+    load_all,
+    load_all_from_path,
+)
 from preacher.core.interpretation.value import RelativeDatetimeValue
 
 
@@ -156,3 +161,19 @@ def test_load_all_from_path(open_mock):
         next(actual)
 
     open_mock.assert_called_once_with('path/to/foo.yaml')
+
+
+@patch('builtins.open')
+def test_load_from_path_not_found(open_mock):
+    open_mock.side_effect = FileNotFoundError('message')
+    with raises(CompilationError):
+        load_from_path('/////foo/bar/baz')
+
+
+@patch('builtins.open')
+def test_load_all_from_path_not_found(open_mock):
+    open_mock.side_effect = FileNotFoundError('message')
+
+    objs = load_all_from_path('/////foo/bar/baz')
+    with raises(CompilationError):
+        next(objs)
