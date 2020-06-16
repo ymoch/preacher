@@ -6,7 +6,7 @@ from unittest.mock import patch
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
-from preacher.compilation.yaml import load
+from preacher.compilation.yaml import load, load_all, load_all_from_path
 from preacher.core.interpretation.value import RelativeDatetimeValue
 
 
@@ -136,3 +136,23 @@ def test_given_datetime_that_is_offset_aware():
         actual - datetime(2020, 3, 31, 16, 23, 45, tzinfo=timezone.utc)
     ).total_seconds() == 0.0
     assert actual.tzinfo
+
+
+def test_load_all_given_invalid_value():
+    io = StringIO('!invalid')
+    with raises(CompilationError):
+        next(load_all(io))
+
+
+@patch('builtins.open')
+def test_load_all_from_path(open_mock):
+    io = StringIO('1\n---\n2\n---\n!argument foo')
+    open_mock.return_value = io
+    actual = load_all_from_path('path/to/foo.yaml')
+    assert next(actual) == 1
+    assert next(actual) == 2
+    assert next(actual).key == 'foo'
+    with raises(StopIteration):
+        next(actual)
+
+    open_mock.assert_called_once_with('path/to/foo.yaml')

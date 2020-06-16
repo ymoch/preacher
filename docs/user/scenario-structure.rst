@@ -114,11 +114,24 @@ Minimally, a scenario should contain ``label`` and ``cases``.
 
 .. code-block:: yaml
 
-    label: A label of this scenario
+    label: The label of this scenario
     cases:
       - ...
       - ...
 
+Only the top level YAML value can be a YAML stream,
+which has zero or more documents.
+
+.. code-block:: yaml
+
+    ---
+    label: The label of the first scenario
+    cases:
+      - ...
+    ---
+    label: The label of the second scenario
+    cases:
+      - ...
 
 .. _case:
 
