@@ -3,7 +3,7 @@ from __future__ import annotations
 import glob
 import os
 import re
-from typing import Iterator, List, TextIO, Union
+from typing import Iterator, TextIO, Union
 
 from yaml import (
     YAMLObject,
@@ -151,19 +151,25 @@ def load_from_path(path: PathLike) -> object:
         return load(f, origin)
 
 
-def load_all(io: TextIO, origin: PathLike = '.') -> Iterator[object]:
+def _yaml_load_all(io: TextIO):
+    """
+    Wrap `yaml_load_all` to handle errors.
+    """
     try:
-        objs = yaml_load_all(io, Loader=_CustomSafeLoader)
+        for obj in yaml_load_all(io, Loader=_CustomSafeLoader):
+            yield obj
     except MarkedYAMLError as error:
         raise CompilationError(message=str(error), cause=error)
 
+
+def load_all(io: TextIO, origin: PathLike = '.') -> Iterator[object]:
     return (
         run_recursively(lambda o: _resolve(o, origin), obj)
-        for obj in objs
+        for obj in _yaml_load_all(io)
     )
 
 
-def load_all_from_path(path: str) -> List[object]:
+def load_all_from_path(path: str) -> Iterator[object]:
     origin = os.path.dirname(path)
     with open(path) as f:
-        return list(load_all(f, origin=origin))
+        yield from load_all(f, origin=origin)
