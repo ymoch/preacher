@@ -5,11 +5,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Callable, List, Optional
 
-from .case import Case, CaseListener, CaseResult
-from .context import ScenarioContext, analyze_context
+from preacher.core.datetime import now
 from .analysis_description import AnalysisDescription
+from .case import Case, CaseListener, CaseResult
+from .context import analyze_context
 from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 from .verification import Verification, collect
@@ -75,6 +77,15 @@ class StaticScenarioTask(ScenarioTask):
 
     def result(self) -> ScenarioResult:
         return self._result
+
+
+@dataclass(frozen=True)
+class ScenarioContext:
+    starts: datetime = field(default_factory=now)
+    base_url: str = ''
+    retry: int = 0
+    delay: float = 0.1
+    timeout: Optional[float] = None
 
 
 class Scenario:
