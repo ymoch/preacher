@@ -3,12 +3,12 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import fixture, mark, raises
 
+from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.scenario import (
     Scenario,
     ScenarioTask,
     ScenarioResult,
 )
-from preacher.core.scenario.analysis_description import AnalysisDescription
 from preacher.core.scenario.status import Status, StatusedList
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.scenario.verification import Verification
@@ -41,28 +41,25 @@ def test_not_implemented():
 @mark.parametrize('condition_verifications, expected_status', [
     (
         [
-            MagicMock(Verification, status=Status.SKIPPED),
-            MagicMock(Verification, status=Status.UNSTABLE),
-            MagicMock(Verification, status=Status.SUCCESS),
+            Verification(status=Status.SKIPPED),
+            Verification(status=Status.UNSTABLE),
+            Verification(status=Status.SUCCESS),
         ],
         Status.SKIPPED,
     ),
     (
         [
-            MagicMock(Verification, status=Status.SUCCESS),
-            MagicMock(Verification, status=Status.FAILURE),
-            MagicMock(Verification, status=Status.UNSTABLE),
+            Verification(status=Status.SUCCESS),
+            Verification(status=Status.FAILURE),
+            Verification(status=Status.UNSTABLE),
         ],
         Status.FAILURE,
     ),
 ])
 def test_given_bad_conditions(condition_verifications, expected_status):
     conditions = [
-        MagicMock(
-            spec=AnalysisDescription,
-            verify=MagicMock(return_value=verification),
-        )
-        for verification in condition_verifications
+        MagicMock(AnalysisDescription, verify=MagicMock(return_value=v))
+        for v in condition_verifications
     ]
     subscenario = MagicMock(Scenario)
 
