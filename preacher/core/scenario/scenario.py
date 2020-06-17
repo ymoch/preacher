@@ -5,11 +5,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Callable, List, Optional
 
-from .case import Case, CaseListener, CaseResult
-from .context import ScenarioContext, analyze_context
+from preacher.core.datetime import now
 from .analysis_description import AnalysisDescription
+from .case import Case, CaseListener, CaseResult
+from .context import analyze_context
 from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 from .verification import Verification, collect
@@ -24,7 +26,6 @@ class ScenarioListener(CaseListener):
 
 @dataclass(frozen=True)
 class ScenarioResult(Statused):
-    status: Status = Status.SKIPPED
     label: Optional[str] = None
     message: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
@@ -32,6 +33,15 @@ class ScenarioResult(Statused):
     subscenarios: StatusedList[ScenarioResult] = field(
         default_factory=StatusedList,
     )
+
+    @property
+    def status(self) -> Status:  # HACK: should be cached
+        if self.conditions.status == Status.UNSTABLE:
+            return Status.SKIPPED
+        if self.conditions.status == Status.FAILURE:
+            return Status.FAILURE
+
+        return merge_statuses([self.cases.status, self.subscenarios.status])
 
 
 class ScenarioTask(ABC):
@@ -58,10 +68,8 @@ class RunningScenarioTask(ScenarioTask):
     def result(self) -> ScenarioResult:
         cases = self._cases.result()
         subscenarios = StatusedList([s.result() for s in self._subscenarios])
-        status = merge_statuses([cases.status, subscenarios.status])
         return ScenarioResult(
             label=self._label,
-            status=status,
             conditions=self._conditions,
             cases=cases,
             subscenarios=subscenarios,
@@ -75,6 +83,15 @@ class StaticScenarioTask(ScenarioTask):
 
     def result(self) -> ScenarioResult:
         return self._result
+
+
+@dataclass(frozen=True)
+class ScenarioContext:
+    starts: datetime = field(default_factory=now)
+    base_url: str = ''
+    retry: int = 0
+    delay: float = 0.1
+    timeout: Optional[float] = None
 
 
 class Scenario:
@@ -113,18 +130,10 @@ class Scenario:
             condition.verify(context_analyzer, origin_datetime=context.starts)
             for condition in self._conditions
         )
-        if conditions.status == Status.FAILURE:
-            return StaticScenarioTask(ScenarioResult(
-                label=self._label,
-                status=Status.FAILURE,
-                conditions=conditions,
-            ))
-        if conditions.status == Status.UNSTABLE:
-            return StaticScenarioTask(ScenarioResult(
-                label=self._label,
-                status=Status.SKIPPED,
-                conditions=conditions,
-            ))
+        if not conditions.status.is_succeeded:
+            return StaticScenarioTask(
+                ScenarioResult(label=self._label, conditions=conditions)
+            )
 
         listener = listener or ScenarioListener()
 

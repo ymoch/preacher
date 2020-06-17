@@ -1,7 +1,8 @@
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
-from pytest import fixture
+from pytest import fixture, mark
 
+from preacher.core.scenario import AnalysisDescription
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.scenario.request import Request
 from preacher.core.scenario.response_description import (
@@ -10,7 +11,6 @@ from preacher.core.scenario.response_description import (
 )
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
-
 
 PACKAGE = 'preacher.core.scenario.case'
 
@@ -25,6 +25,41 @@ def retry_patch():
 
 def test_case_listener():
     CaseListener().on_response(sentinel.response)
+
+
+@mark.parametrize(
+    'condition_verifications, expected_status', [
+        (
+            [
+                Verification(status=Status.SKIPPED),
+                Verification(status=Status.UNSTABLE),
+                Verification(status=Status.SUCCESS),
+            ],
+            Status.SKIPPED,
+        ),
+        (
+            [
+                Verification(status=Status.SUCCESS),
+                Verification(status=Status.FAILURE),
+                Verification(status=Status.UNSTABLE),
+            ],
+            Status.FAILURE,
+        ),
+    ]
+)
+def test_given_bad_condition(condition_verifications, expected_status):
+    conditions = [
+        MagicMock(AnalysisDescription, verify=MagicMock(return_value=v))
+        for v in condition_verifications
+    ]
+    request = MagicMock(Request)
+    case = Case(label=sentinel.label, conditions=conditions, request=request)
+    result = case.run()
+
+    assert result.label is sentinel.label
+    assert result.status is expected_status
+
+    request.assert_not_called()
 
 
 @patch(f'{PACKAGE}.Request', return_value=sentinel.request)

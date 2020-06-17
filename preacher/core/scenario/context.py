@@ -1,18 +1,7 @@
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict
 from datetime import datetime
-from typing import Optional
 
-from preacher.core.datetime import now
 from .analysis import Analyzer, JsonAnalyzer
-
-
-@dataclass(frozen=True)
-class ScenarioContext:
-    starts: datetime = field(default_factory=now)
-    base_url: str = ''
-    retry: int = 0
-    delay: float = 0.1
-    timeout: Optional[float] = None
 
 
 def _to_serializable(value: object) -> object:

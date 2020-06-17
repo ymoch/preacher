@@ -2,17 +2,20 @@
 Test cases, which execute a given request and verify its response
 along the given descriptions.
 """
-
 from dataclasses import dataclass, field
+from datetime import datetime
 from functools import partial
-from typing import Optional
+from typing import Optional, List
 
+from preacher.core.datetime import now
 from preacher.core.response import Response
+from .analysis_description import AnalysisDescription
+from .context import analyze_context
 from .request import Request
 from .response_description import ResponseDescription, ResponseVerification
 from .status import Status, Statused, merge_statuses
 from .util.retry import retry_while_false
-from .verification import Verification
+from .verification import Verification, collect
 
 
 class CaseListener:
@@ -36,17 +39,32 @@ class CaseResult(Statused):
     """
     Results for the test cases.
     """
+    label: Optional[str] = None
+    conditions: Verification = field(default_factory=Verification)
     request: Request = field(default_factory=Request)
     execution: Verification = field(default_factory=Verification)
     response: Optional[ResponseVerification] = None
-    label: Optional[str] = None
 
     @property
     def status(self) -> Status:  # HACK: should be cached
+        if self.conditions.status == Status.UNSTABLE:
+            return Status.SKIPPED
+        if self.conditions.status == Status.FAILURE:
+            return Status.FAILURE
+
         return merge_statuses([
             self.execution.status,
             self.response.status if self.response else Status.SKIPPED,
         ])
+
+
+@dataclass(frozen=True)
+class CaseContext:
+    starts: datetime = field(default_factory=now)
+    base_url: str = ''
+    retry: int = 0
+    delay: float = 0.1
+    timeout: Optional[float] = None
 
 
 class Case:
@@ -59,11 +77,13 @@ class Case:
         self,
         label: Optional[str] = None,
         enabled: bool = True,
+        conditions: Optional[List[AnalysisDescription]] = None,
         request: Optional[Request] = None,
         response: Optional[ResponseDescription] = None,
     ):
         self._label = label
         self._enabled = enabled
+        self._conditions = conditions or []
         self._request = request or Request()
         self._response = response or ResponseDescription()
 
@@ -77,6 +97,21 @@ class Case:
     ) -> CaseResult:
         if not self._enabled:
             return CaseResult(label=self._label)
+
+        context = CaseContext(
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
+            timeout=timeout,
+        )
+        context_analyzer = analyze_context(context)
+        conditions = collect(
+            condition.verify(context_analyzer, origin_datetime=context.starts)
+            for condition in self._conditions
+        )
+        if not conditions.status.is_succeeded:
+            return CaseResult(label=self._label, conditions=conditions)
+
         listener = listener or CaseListener()
         func = partial(self._run, base_url, timeout, listener)
         return retry_while_false(func, attempts=retry + 1, delay=delay)
@@ -91,9 +126,9 @@ class Case:
             response = self._request(base_url, timeout=timeout)
         except Exception as error:
             return CaseResult(
+                label=self._label,
                 request=self._request,
                 execution=Verification.of_error(error),
-                label=self._label,
             )
         listener.on_response(response)
 
@@ -103,10 +138,10 @@ class Case:
             origin_datetime=response.starts,
         )
         return CaseResult(
+            label=self._label,
             request=self._request,
             execution=execution_verification,
             response=response_verification,
-            label=self._label,
         )
 
     @property
