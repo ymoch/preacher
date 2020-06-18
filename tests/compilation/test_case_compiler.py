@@ -2,8 +2,11 @@ from unittest.mock import ANY, MagicMock, sentinel, patch
 
 from pytest import fixture, mark, raises
 
+from preacher.compilation.analysis_description import (
+    AnalysisDescriptionCompiler,
+)
 from preacher.compilation.case import CaseCompiled, CaseCompiler
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.request import RequestCompiler
 from preacher.compilation.response_description import (
     ResponseDescriptionCompiler,
@@ -16,13 +19,13 @@ ctor_patch = patch(
 
 
 @fixture
-def compiler(req, res):
-    return CaseCompiler(req, res)
+def compiler(req, res, desc) -> CaseCompiler:
+    return CaseCompiler(req, res, desc)
 
 
 @fixture
 def req():
-    compiler = MagicMock(spec=RequestCompiler)
+    compiler = MagicMock(RequestCompiler)
     compiler.compile.return_value = sentinel.request
     compiler.of_default.return_value = sentinel.default_req_compiler
     return compiler
@@ -30,9 +33,16 @@ def req():
 
 @fixture
 def res():
-    compiler = MagicMock(spec=ResponseDescriptionCompiler)
+    compiler = MagicMock(ResponseDescriptionCompiler)
     compiler.compile.return_value = sentinel.response
     compiler.of_default.return_value = sentinel.default_res_compiler
+    return compiler
+
+
+@fixture
+def desc():
+    compiler = MagicMock(AnalysisDescriptionCompiler)
+    compiler.compile.return_value = sentinel.description
     return compiler
 
 
@@ -41,13 +51,29 @@ def res():
     ({'label': []}, [NamedNode('label')]),
     ({'enabled': []}, [NamedNode('enabled')]),
 ))
-def test_given_invalid_values(value, expected_path, compiler):
+def test_given_invalid_values(compiler: CaseCompiler, value, expected_path):
     with raises(CompilationError) as error_info:
         compiler.compile(value)
     assert error_info.value.path == expected_path
 
 
-def test_request_compilation_fails(compiler, req):
+def test_conditions_compilation_fails(compiler: CaseCompiler, desc):
+    desc.compile.side_effect = CompilationError(
+        message='message',
+        path=[NamedNode('foo')],
+    )
+    with raises(CompilationError) as error_info:
+        compiler.compile({'when': 'xxx'})
+    assert error_info.value.path == [
+        NamedNode('when'),
+        IndexedNode(0),
+        NamedNode('foo'),
+    ]
+
+    desc.compile.assert_called_once_with('xxx')
+
+
+def test_request_compilation_fails(compiler: CaseCompiler, req):
     req.compile.side_effect = CompilationError(
         message='message',
         path=[NamedNode('foo')],
@@ -59,7 +85,7 @@ def test_request_compilation_fails(compiler, req):
     req.compile.assert_called_once_with('/path')
 
 
-def test_response_compilation_fails(compiler, res):
+def test_response_compilation_fails(compiler: CaseCompiler, res):
     res.compile.side_effect = CompilationError(
         message='message',
         path=[NamedNode('bar')],
@@ -71,10 +97,11 @@ def test_response_compilation_fails(compiler, res):
     res.compile.assert_called_once_with('res')
 
 
-def test_given_an_empty_object(compiler, req, res):
+def test_given_an_empty_object(compiler: CaseCompiler, req, res):
     compiled = compiler.compile({})
     assert compiled.label is None
     assert compiled.enabled is None
+    assert compiled.conditions is None
     assert compiled.request is None
     assert compiled.response is None
 
@@ -82,20 +109,23 @@ def test_given_an_empty_object(compiler, req, res):
     res.compile.assert_not_called()
 
 
-def test_creates_a_case(compiler, req, res):
+def test_creates_a_case(compiler: CaseCompiler, req, res, desc):
     compiled = compiler.compile({
         'label': 'label',
         'enabled': False,
+        'when': {'k': 'v'},
         'request': {'path': '/path'},
         'response': {'key': 'value'},
     })
     assert compiled.label == 'label'
     assert not compiled.enabled
+    assert compiled.conditions == [sentinel.description]
     assert compiled.request is sentinel.request
     assert compiled.response is sentinel.response
 
     req.compile.assert_called_once_with({'path': '/path'})
     res.compile.assert_called_once_with({'key': 'value'})
+    desc.compile.assert_called_once_with({'k': 'v'})
 
 
 @fixture
@@ -109,8 +139,8 @@ def initial_default():
     target='preacher.compilation.case.CaseCompiler',
     return_value=sentinel.default_compiler,
 )
-def test_given_hollow_default(compiler_ctor, req, res, initial_default):
-    compiler = CaseCompiler(req, res, initial_default)
+def test_given_hollow_default(compiler_ctor, req, res, desc, initial_default):
+    compiler = CaseCompiler(req, res, desc, initial_default)
 
     default = MagicMock(CaseCompiled, request=None, response=None)
     compiler_of_default = compiler.of_default(default)
@@ -121,6 +151,7 @@ def test_given_hollow_default(compiler_ctor, req, res, initial_default):
     compiler_ctor.assert_called_once_with(
         request=req,
         response=res,
+        description=desc,
         default=ANY,
     )
     default = compiler_ctor.call_args[1]['default']
@@ -131,8 +162,8 @@ def test_given_hollow_default(compiler_ctor, req, res, initial_default):
     target='preacher.compilation.case.CaseCompiler',
     return_value=sentinel.default_compiler,
 )
-def test_given_filled_default(compiler_ctor, req, res, initial_default):
-    compiler = CaseCompiler(req, res, initial_default)
+def test_given_filled_default(compiler_ctor, req, res, desc, initial_default):
+    compiler = CaseCompiler(req, res, desc, initial_default)
 
     default = MagicMock(
         spec=CaseCompiled,
@@ -147,13 +178,14 @@ def test_given_filled_default(compiler_ctor, req, res, initial_default):
     compiler_ctor.assert_called_once_with(
         request=sentinel.default_req_compiler,
         response=sentinel.default_res_compiler,
+        description=desc,
         default=ANY,
     )
     default = compiler_ctor.call_args[1]['default']
     assert default is sentinel.new_default
 
 
-def test_compile_fixed(compiler):
+def test_compile_fixed(compiler: CaseCompiler):
     compiled = MagicMock(spec=CaseCompiled)
     compiled.fix.return_value = sentinel.fixed
 
@@ -165,7 +197,7 @@ def test_compile_fixed(compiler):
     compiled.fix.assert_called_once_with()
 
 
-def test_compile_default(compiler):
+def test_compile_default(compiler: CaseCompiler):
     with patch.object(
         target=compiler,
         attribute='compile',

@@ -3,19 +3,28 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import Optional
+from typing import List, Optional
 
-from preacher.core.scenario import Case
+from preacher.core.scenario import Case, AnalysisDescription
+from .analysis_description import AnalysisDescriptionCompiler
 from .error import on_key
 from .request import RequestCompiler, RequestCompiled
 from .response_description import (
     ResponseDescriptionCompiled,
     ResponseDescriptionCompiler,
 )
-from .util import compile_bool, compile_optional_str, or_else, compile_mapping
+from .util import (
+    compile_bool,
+    compile_list,
+    compile_mapping,
+    compile_optional_str,
+    map_compile,
+    or_else,
+)
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'
+_KEY_CONDITIONS = 'when'
 _KEY_REQUEST = 'request'
 _KEY_RESPONSE = 'response'
 
@@ -24,6 +33,7 @@ _KEY_RESPONSE = 'response'
 class CaseCompiled:
     label: Optional[str] = None
     enabled: Optional[bool] = None
+    conditions: Optional[List[AnalysisDescription]] = None
     request: Optional[RequestCompiled] = None
     response: Optional[ResponseDescriptionCompiled] = None
 
@@ -31,6 +41,7 @@ class CaseCompiled:
         return CaseCompiled(
             label=or_else(other.label, self.label),
             enabled=or_else(other.enabled, self.enabled),
+            conditions=or_else(other.conditions, self.conditions),
             request=or_else(other.request, self.request),
             response=or_else(other.response, self.response),
         )
@@ -39,6 +50,7 @@ class CaseCompiled:
         return Case(
             label=self.label,
             enabled=or_else(self.enabled, True),
+            conditions=self.conditions or [],
             request=self.request.fix() if self.request else None,
             response=self.response.fix() if self.response else None,
         )
@@ -50,10 +62,12 @@ class CaseCompiler:
         self,
         request: RequestCompiler,
         response: ResponseDescriptionCompiler,
+        description: AnalysisDescriptionCompiler,
         default: Optional[CaseCompiled] = None
     ):
         self._request = request
         self._response = response
+        self._description = description
         self._default = default or CaseCompiled()
 
     def compile_fixed(self, obj: object) -> Case:
@@ -101,6 +115,15 @@ class CaseCompiler:
                 enabled = compile_bool(enabled_obj)
             compiled = replace(compiled, enabled=enabled)
 
+        conditions_obj = obj.get(_KEY_CONDITIONS)
+        if conditions_obj is not None:
+            with on_key(_KEY_CONDITIONS):
+                conditions = list(map_compile(
+                    self._description.compile,
+                    compile_list(conditions_obj),
+                ))
+            compiled = replace(compiled, conditions=conditions)
+
         request_obj = obj.get(_KEY_REQUEST)
         if request_obj is not None:
             with on_key(_KEY_REQUEST):
@@ -127,5 +150,6 @@ class CaseCompiler:
         return CaseCompiler(
             request=request,
             response=response,
+            description=self._description,
             default=self._default.replace(default),
         )
