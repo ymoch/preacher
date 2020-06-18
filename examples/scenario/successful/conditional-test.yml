@@ -11,6 +11,11 @@ when:
 
 cases:
   - label: Request succeeds
+    when:
+      describe:
+        key: base_url
+      should:
+        contain_string: localhost
     request: /json
     response:
       status_code: 200
