@@ -109,6 +109,31 @@ version = "0.16"
 
 [[package]]
 category = "dev"
+description = "A platform independent file lock."
+name = "filelock"
+optional = false
+python-versions = "*"
+version = "3.0.12"
+
+[[package]]
+category = "dev"
+description = "the modular source code checker: pep8 pyflakes and co"
+name = "flake8"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+version = "3.8.3"
+
+[package.dependencies]
+mccabe = ">=0.6.0,<0.7.0"
+pycodestyle = ">=2.6.0a1,<2.7.0"
+pyflakes = ">=2.2.0,<2.3.0"
+
+[package.dependencies.importlib-metadata]
+python = "<3.8"
+version = "*"
+
+[[package]]
+category = "dev"
 description = "A simple framework for building complex web applications."
 name = "flask"
 optional = false
@@ -219,6 +244,14 @@ version = "1.1.1"
 
 [[package]]
 category = "dev"
+description = "McCabe checker, plugin for flake8"
+name = "mccabe"
+optional = false
+python-versions = "*"
+version = "0.6.1"
+
+[[package]]
+category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
 name = "more-itertools"
 optional = false
@@ -245,7 +278,7 @@ dmypy = ["psutil (>=4.0)"]
 [[package]]
 category = "dev"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "mypy-extensions"
 optional = false
 python-versions = "*"
@@ -394,15 +427,15 @@ testing = ["fields", "hunter", "process-tests (2.0.2)", "six", "pytest-xdist", "
 
 [[package]]
 category = "dev"
-description = "pytest plugin to check source code with pyflakes"
-name = "pytest-flakes"
+description = "pytest plugin to check FLAKE8 requirements"
+name = "pytest-flake8"
 optional = false
 python-versions = "*"
-version = "4.0.0"
+version = "1.0.6"
 
 [package.dependencies]
-pyflakes = "*"
-pytest = ">=2.8.0"
+flake8 = ">=3.5"
+pytest = ">=3.5"
 
 [[package]]
 category = "dev"
@@ -410,9 +443,11 @@ description = "Mypy static type checker plugin for Pytest"
 name = "pytest-mypy"
 optional = false
 python-versions = "~=3.4"
-version = "0.4.2"
+version = "0.6.2"
 
 [package.dependencies]
+filelock = ">=3.0"
+
 [[package.dependencies.mypy]]
 python = ">=3.5,<3.8"
 version = ">=0.500"
@@ -423,22 +458,7 @@ version = ">=0.700"
 
 [package.dependencies.pytest]
 python = ">=3.5"
-version = ">=2.8"
-
-[[package]]
-category = "dev"
-description = "pytest plugin to run pycodestyle"
-name = "pytest-pycodestyle"
-optional = false
-python-versions = "~=3.6"
-version = "2.1.3"
-
-[package.dependencies]
-pycodestyle = "*"
-pytest = ">=5.4,<6.0"
-
-[package.extras]
-tests = ["pytest-isort"]
+version = ">=3.5"
 
 [[package]]
 category = "dev"
@@ -633,7 +653,7 @@ description = "Style preserving TOML library"
 name = "tomlkit"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "0.5.11"
+version = "0.6.0"
 
 [[package]]
 category = "dev"
@@ -646,7 +666,7 @@ version = "6.0.4"
 [[package]]
 category = "dev"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "typed-ast"
 optional = false
 python-versions = "*"
@@ -655,7 +675,7 @@ version = "1.4.1"
 [[package]]
 category = "dev"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "typing-extensions"
 optional = false
 python-versions = "*"
@@ -711,7 +731,7 @@ watchdog = ["watchdog"]
 [[package]]
 category = "dev"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\")"
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -722,7 +742,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "94ccc601fe245f3f4f83664761c28ad9413570e1e2552726ee40a3130a19bff8"
+content-hash = "319b5a5290c8da95834b9ebcd1814b0bc55f478aa9832180081f5b0bcf758d71"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -802,6 +822,14 @@ coverage = [
 docutils = [
     {file = "docutils-0.16-py2.py3-none-any.whl", hash = "sha256:0c5b78adfbf7762415433f5515cd5c9e762339e23369dbe8000d84a4bf4ab3af"},
     {file = "docutils-0.16.tar.gz", hash = "sha256:c2de3a60e9e7d07be26b7f2b00ca0309c207e06c100f9cc2a94931fc75a478fc"},
+]
+filelock = [
+    {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
+    {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
+]
+flake8 = [
+    {file = "flake8-3.8.3-py2.py3-none-any.whl", hash = "sha256:15e351d19611c887e482fb960eae4d44845013cc142d42896e9862f775d8cf5c"},
+    {file = "flake8-3.8.3.tar.gz", hash = "sha256:f04b9fcbac03b0a3e58c0ab3a0ecc462e023a9faf046d57794184028123aa208"},
 ]
 flask = [
     {file = "Flask-1.1.2-py2.py3-none-any.whl", hash = "sha256:8a4fdd8936eba2512e9c85df320a37e694c93945b33ef33c89946a340a238557"},
@@ -889,6 +917,10 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9bf40443012702a1d2070043cb6291650a0841ece432556f784f004937f0f32c"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
+mccabe = [
+    {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
+    {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
+]
 more-itertools = [
     {file = "more-itertools-8.4.0.tar.gz", hash = "sha256:68c70cc7167bdf5c7c9d8f6954a7837089c6a36bf565383919bb595efb8a17e5"},
     {file = "more_itertools-8.4.0-py3-none-any.whl", hash = "sha256:b78134b2063dd214000685165d81c154522c3ee0a1c0d4d113c80361c234c5a2"},
@@ -963,16 +995,13 @@ pytest-cov = [
     {file = "pytest-cov-2.10.0.tar.gz", hash = "sha256:1a629dc9f48e53512fcbfda6b07de490c374b0c83c55ff7a1720b3fccff0ac87"},
     {file = "pytest_cov-2.10.0-py2.py3-none-any.whl", hash = "sha256:6e6d18092dce6fad667cd7020deed816f858ad3b49d5b5e2b1cc1c97a4dba65c"},
 ]
-pytest-flakes = [
-    {file = "pytest-flakes-4.0.0.tar.gz", hash = "sha256:341964bf5760ebbdde9619f68a17d5632c674c3f6903ef66daa0a4f540b3d143"},
-    {file = "pytest_flakes-4.0.0-py2.py3-none-any.whl", hash = "sha256:daaf319250eeefa8cb13b0ba78ffdda67926c4b6446a9e14f946b86d1ba6af23"},
+pytest-flake8 = [
+    {file = "pytest-flake8-1.0.6.tar.gz", hash = "sha256:1b82bb58c88eb1db40524018d3fcfd0424575029703b4e2d8e3ee873f2b17027"},
+    {file = "pytest_flake8-1.0.6-py2.py3-none-any.whl", hash = "sha256:2e91578ecd9b200066f99c1e1de0f510fbb85bcf43712d46ea29fe47607cc234"},
 ]
 pytest-mypy = [
-    {file = "pytest-mypy-0.4.2.tar.gz", hash = "sha256:5a5338cecff17f005b181546a13e282761754b481225df37f33d37f86ac5b304"},
-    {file = "pytest_mypy-0.4.2-py3-none-any.whl", hash = "sha256:3b7b56912d55439d5f447cc609f91caac7f74f0f1c89f1379d04f06bac777c32"},
-]
-pytest-pycodestyle = [
-    {file = "pytest-pycodestyle-2.1.3.tar.gz", hash = "sha256:a5c21f4829e61f945be0d367347d8f9e397d2e4b7165f950d03b2a18a489feed"},
+    {file = "pytest-mypy-0.6.2.tar.gz", hash = "sha256:2560a9b27d59bb17810d12ec3402dfc7c8e100e40539a70d2814bcbb27240f27"},
+    {file = "pytest_mypy-0.6.2-py3-none-any.whl", hash = "sha256:76e705cfd3800bf2b534738e792245ac5bb8d780698d0f8cd6c79032cc5e9923"},
 ]
 pytz = [
     {file = "pytz-2020.1-py2.py3-none-any.whl", hash = "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed"},
@@ -1040,8 +1069,8 @@ sphinxcontrib-serializinghtml = [
     {file = "sphinxcontrib_serializinghtml-1.1.4-py2.py3-none-any.whl", hash = "sha256:f242a81d423f59617a8e5cf16f5d4d74e28ee9a66f9e5b637a18082991db5a9a"},
 ]
 tomlkit = [
-    {file = "tomlkit-0.5.11-py2.py3-none-any.whl", hash = "sha256:4e1bd6c9197d984528f9ff0cc9db667c317d8881288db50db20eeeb0f6b0380b"},
-    {file = "tomlkit-0.5.11.tar.gz", hash = "sha256:f044eda25647882e5ef22b43a1688fb6ab12af2fc50e8456cdfc751c873101cf"},
+    {file = "tomlkit-0.6.0-py2.py3-none-any.whl", hash = "sha256:e5d5f20809c2b09276a6c5d98fb0202325aee441a651db84ac12e0812ab7e569"},
+    {file = "tomlkit-0.6.0.tar.gz", hash = "sha256:74f976908030ff164c0aa1edabe3bf83ea004b3daa5b0940b9c86a060c004e9a"},
 ]
 tornado = [
     {file = "tornado-6.0.4-cp35-cp35m-win32.whl", hash = "sha256:5217e601700f24e966ddab689f90b7ea4bd91ff3357c3600fa1045e26d68e55d"},
