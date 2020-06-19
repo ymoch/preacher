@@ -34,7 +34,7 @@ Context for a Scenario
 
 
 Context for a Case
-----------------------
+------------------
 .. list-table:: The definition of ``CaseContext`` Object
    :header-rows: 1
    :widths: 15 15 40 30
