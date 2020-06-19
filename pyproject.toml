@@ -37,7 +37,7 @@ pytest-cov = "^2.6"
 sphinx = "^2.2"
 sphinx-autobuild = "^0.7.1"
 sphinx-intl = "^2.0"
-tomlkit = "^0.5.8"
+tomlkit = "^0.6.0"
 flask = "^1.1.2"
 
 [build-system]
