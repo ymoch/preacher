@@ -79,39 +79,39 @@ def test_when_disabled():
     request = MagicMock(Request)
     response = MagicMock(ResponseDescription)
     case = Case(
-        label='Disabled',
+        label=sentinel.label,
         enabled=False,
         request=request,
         response=response
     )
     actual = case.run()
-    assert actual.label == 'Disabled'
+    assert actual.label is sentinel.label
     assert actual.status is Status.SKIPPED
 
     request.assert_not_called()
-    response.assert_not_called()
+    response.verify.assert_not_called()
 
 
 def test_when_the_request_fails(retry_patch):
     request = MagicMock(side_effect=RuntimeError('message'))
     response_description = MagicMock(ResponseDescription)
     case = Case(
-        label='Request fails',
+        label=sentinel.label,
         request=request,
         response=response_description,
     )
 
     listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
-        result = case.run(base_url='base-url', listener=listener)
+        result = case.run(base_url=sentinel.base_url, listener=listener)
 
-    assert result.label == 'Request fails'
+    assert result.label is sentinel.label
     assert result.status is Status.FAILURE
     assert result.request is request
-    assert result.execution.status == Status.FAILURE
+    assert result.execution.status is Status.FAILURE
     assert result.execution.message == 'RuntimeError: message'
 
-    request.assert_called_once_with('base-url', timeout=None)
+    request.assert_called_once_with(sentinel.base_url, timeout=None)
     response_description.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
 
@@ -131,7 +131,7 @@ def test_when_given_an_invalid_response(retry_patch):
         ),
     ))
     case = Case(
-        label='Response should be unstable',
+        label=sentinel.label,
         request=request,
         response=response,
     )
@@ -139,33 +139,39 @@ def test_when_given_an_invalid_response(retry_patch):
     listener = MagicMock(spec=CaseListener)
     with retry_patch as retry:
         result = case.run(
-            base_url='base-url',
+            base_url=sentinel.base_url,
             retry=3,
-            delay=1.0,
-            timeout=5.0,
+            delay=sentinel.delay,
+            timeout=sentinel.timeout,
             listener=listener,
         )
 
-    assert result.label == 'Response should be unstable'
-    assert result.status == Status.UNSTABLE
+    assert result.label is sentinel.label
+    assert result.status is Status.UNSTABLE
     assert result.request is request
-    assert result.execution.status == Status.SUCCESS
-    assert result.response.status == Status.UNSTABLE
-    assert result.response.body.status == Status.UNSTABLE
+    assert result.execution.status is Status.SUCCESS
+    assert result.response.status is Status.UNSTABLE
+    assert result.response.body.status is Status.UNSTABLE
 
-    request.assert_called_with('base-url', timeout=5.0)
+    request.assert_called_with(sentinel.base_url, timeout=sentinel.timeout)
     response.verify.assert_called_with(
         sentinel.response,
         origin_datetime=sentinel.starts,
     )
-    retry.assert_called_once_with(ANY, attempts=4, delay=1.0)
+    retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay)
     listener.on_response.assert_called_once_with(sentinel.response)
 
 
 def test_when_given_an_valid_response(retry_patch):
     sentinel.response.starts = sentinel.starts
     case = Case(
-        label='Response should be success',
+        label=sentinel.label,
+        conditions=[
+            MagicMock(
+                spec=AnalysisDescription,
+                verify=MagicMock(return_value=Verification.succeed()),
+            ),
+        ],
         request=MagicMock(return_value=sentinel.response),
         response=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
@@ -181,4 +187,8 @@ def test_when_given_an_valid_response(retry_patch):
     with retry_patch:
         result = case.run()
 
-    assert result.status == Status.SUCCESS
+    assert result.label is sentinel.label
+    assert result.status is Status.SUCCESS
+    assert result.conditions.status is Status.SUCCESS
+    assert result.execution.status is Status.SUCCESS
+    assert result.response.status is Status.SUCCESS
