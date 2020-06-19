@@ -109,6 +109,14 @@ version = "0.16"
 
 [[package]]
 category = "dev"
+description = "A platform independent file lock."
+name = "filelock"
+optional = false
+python-versions = "*"
+version = "3.0.12"
+
+[[package]]
+category = "dev"
 description = "the modular source code checker: pep8 pyflakes and co"
 name = "flake8"
 optional = false
@@ -435,9 +443,11 @@ description = "Mypy static type checker plugin for Pytest"
 name = "pytest-mypy"
 optional = false
 python-versions = "~=3.4"
-version = "0.4.2"
+version = "0.6.2"
 
 [package.dependencies]
+filelock = ">=3.0"
+
 [[package.dependencies.mypy]]
 python = ">=3.5,<3.8"
 version = ">=0.500"
@@ -448,7 +458,7 @@ version = ">=0.700"
 
 [package.dependencies.pytest]
 python = ">=3.5"
-version = ">=2.8"
+version = ">=3.5"
 
 [[package]]
 category = "dev"
@@ -732,7 +742,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "9513fdf33a666f7b6436121fe9581acdc21970ff530cddefd32dec44632070cb"
+content-hash = "4d1721d059dc93746a707cb858c997fb502541dd1a41126d9f46109a258dbf08"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -812,6 +822,10 @@ coverage = [
 docutils = [
     {file = "docutils-0.16-py2.py3-none-any.whl", hash = "sha256:0c5b78adfbf7762415433f5515cd5c9e762339e23369dbe8000d84a4bf4ab3af"},
     {file = "docutils-0.16.tar.gz", hash = "sha256:c2de3a60e9e7d07be26b7f2b00ca0309c207e06c100f9cc2a94931fc75a478fc"},
+]
+filelock = [
+    {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
+    {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
 ]
 flake8 = [
     {file = "flake8-3.8.3-py2.py3-none-any.whl", hash = "sha256:15e351d19611c887e482fb960eae4d44845013cc142d42896e9862f775d8cf5c"},
@@ -986,8 +1000,8 @@ pytest-flake8 = [
     {file = "pytest_flake8-1.0.6-py2.py3-none-any.whl", hash = "sha256:2e91578ecd9b200066f99c1e1de0f510fbb85bcf43712d46ea29fe47607cc234"},
 ]
 pytest-mypy = [
-    {file = "pytest-mypy-0.4.2.tar.gz", hash = "sha256:5a5338cecff17f005b181546a13e282761754b481225df37f33d37f86ac5b304"},
-    {file = "pytest_mypy-0.4.2-py3-none-any.whl", hash = "sha256:3b7b56912d55439d5f447cc609f91caac7f74f0f1c89f1379d04f06bac777c32"},
+    {file = "pytest-mypy-0.6.2.tar.gz", hash = "sha256:2560a9b27d59bb17810d12ec3402dfc7c8e100e40539a70d2814bcbb27240f27"},
+    {file = "pytest_mypy-0.6.2-py3-none-any.whl", hash = "sha256:76e705cfd3800bf2b534738e792245ac5bb8d780698d0f8cd6c79032cc5e9923"},
 ]
 pytz = [
     {file = "pytz-2020.1-py2.py3-none-any.whl", hash = "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed"},
