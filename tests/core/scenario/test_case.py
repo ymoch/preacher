@@ -1,6 +1,6 @@
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
-from pytest import fixture, mark
+from pytest import mark
 
 from preacher.core.scenario import AnalysisDescription
 from preacher.core.scenario.case import Case, CaseListener
@@ -14,13 +14,10 @@ from preacher.core.scenario.verification import Verification
 
 PACKAGE = 'preacher.core.scenario.case'
 
-
-@fixture
-def retry_patch():
-    return patch(
-        'preacher.core.scenario.case.retry_while_false',
-        side_effect=lambda func, *args, **kwargs: func(),
-    )
+retry_patch = patch(
+    f'{PACKAGE}.retry_while_false',
+    side_effect=lambda func, *args, **kwargs: func(),
+)
 
 
 def test_case_listener():
@@ -92,7 +89,8 @@ def test_when_disabled():
     response.verify.assert_not_called()
 
 
-def test_when_the_request_fails(retry_patch):
+@retry_patch
+def test_when_the_request_fails(retry):
     request = MagicMock(side_effect=RuntimeError('message'))
     response_description = MagicMock(ResponseDescription)
     case = Case(
@@ -102,8 +100,7 @@ def test_when_the_request_fails(retry_patch):
     )
 
     listener = MagicMock(spec=CaseListener)
-    with retry_patch as retry:
-        result = case.run(base_url=sentinel.base_url, listener=listener)
+    result = case.run(base_url=sentinel.base_url, listener=listener)
 
     assert result.label is sentinel.label
     assert result.status is Status.FAILURE
@@ -118,7 +115,8 @@ def test_when_the_request_fails(retry_patch):
     listener.on_response.assert_not_called()
 
 
-def test_when_given_an_invalid_response(retry_patch):
+@retry_patch
+def test_when_given_an_invalid_response(retry):
     sentinel.response.starts = sentinel.starts
     request = MagicMock(return_value=sentinel.response)
     response = MagicMock(ResponseDescription, verify=MagicMock(
@@ -137,14 +135,13 @@ def test_when_given_an_invalid_response(retry_patch):
     )
 
     listener = MagicMock(spec=CaseListener)
-    with retry_patch as retry:
-        result = case.run(
-            base_url=sentinel.base_url,
-            retry=3,
-            delay=sentinel.delay,
-            timeout=sentinel.timeout,
-            listener=listener,
-        )
+    result = case.run(
+        base_url=sentinel.base_url,
+        retry=3,
+        delay=sentinel.delay,
+        timeout=sentinel.timeout,
+        listener=listener,
+    )
 
     assert result.label is sentinel.label
     assert result.status is Status.UNSTABLE
@@ -162,7 +159,8 @@ def test_when_given_an_invalid_response(retry_patch):
     listener.on_response.assert_called_once_with(sentinel.response)
 
 
-def test_when_given_an_valid_response(retry_patch):
+@retry_patch
+def test_when_given_an_valid_response(retry):
     sentinel.response.starts = sentinel.starts
     case = Case(
         label=sentinel.label,
@@ -183,9 +181,7 @@ def test_when_given_an_valid_response(retry_patch):
             )
         )),
     )
-
-    with retry_patch:
-        result = case.run()
+    result = case.run()
 
     assert result.label is sentinel.label
     assert result.status is Status.SUCCESS
