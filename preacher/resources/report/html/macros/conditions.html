@@ -1,0 +1,22 @@
+{% from "./macros/verification.html" import show_verification %}
+
+{% macro show_conditions(conditions) %}
+<li class="accordion-item status-{{ conditions.status }}" data-accordion-item>
+  <a href="#" class="accordion-title">
+    <span class="badge status-{{ conditions.status }}">{{ conditions.status }}</span>
+    Conditions
+  </a>
+
+  <div class="accordion-content" data-tab-content>
+    {% if conditions.children %}
+      <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+        {% for child in conditions.children %}
+          {{ show_verification("Condition" + loop.index | string, child) }}
+        {% endfor %}
+      </ul>
+    {% else %}
+      No message.
+    {% endif %}
+  </div>
+</li>
+{% endmacro %}
