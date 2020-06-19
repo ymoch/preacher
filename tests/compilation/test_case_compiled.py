@@ -51,6 +51,7 @@ def test_fix_hollow(ctor):
     ctor.assert_called_once_with(
         label=None,
         enabled=True,
+        conditions=[],
         request=None,
         response=None,
     )
@@ -67,6 +68,7 @@ def test_fix_filled(ctor):
     compiled = CaseCompiled(
         label=sentinel.label,
         enabled=sentinel.enabled,
+        conditions=sentinel.conditions,
         request=request,
         response=response,
     )
@@ -76,6 +78,7 @@ def test_fix_filled(ctor):
     ctor.assert_called_once_with(
         label=sentinel.label,
         enabled=sentinel.enabled,
+        conditions=sentinel.conditions,
         request=sentinel.request,
         response=sentinel.response,
     )

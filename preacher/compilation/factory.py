@@ -31,6 +31,7 @@ def create_compiler() -> ScenarioCompiler:
     case = CaseCompiler(
         request=request,
         response=response,
+        description=description,
     )
     scenario_compiler = ScenarioCompiler(
         description=description,

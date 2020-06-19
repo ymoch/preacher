@@ -2,7 +2,7 @@
 Test cases, which execute a given request and verify its response
 along the given descriptions.
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from functools import partial
 from typing import Optional, List
@@ -114,7 +114,8 @@ class Case:
 
         listener = listener or CaseListener()
         func = partial(self._run, base_url, timeout, listener)
-        return retry_while_false(func, attempts=retry + 1, delay=delay)
+        result = retry_while_false(func, attempts=retry + 1, delay=delay)
+        return replace(result, conditions=conditions)
 
     def _run(
         self,

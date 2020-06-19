@@ -1,4 +1,5 @@
 {% from "./macros/case.html" import show_case %}
+{% from "./macros/conditions.html" import show_conditions %}
 {% from "./macros/verification.html" import show_verification %}
 
 {% macro show_scenario(item) %}
@@ -17,24 +18,7 @@
 
         <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
 
-          <li class="accordion-item status-{{ item.conditions.status }}" data-accordion-item>
-            <a href="#" class="accordion-title">
-              <span class="badge status-{{ item.conditions.status }}">{{ item.conditions.status }}</span>
-              Conditions
-            </a>
-
-            <div class="accordion-content" data-tab-content>
-              {% if item.conditions %}
-                <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-                  {% for child in item.conditions.children %}
-                    {{ show_verification("Condition" + loop.index | string, child) }}
-                  {% endfor %}
-                </ul>
-              {% else %}
-                No message.
-              {% endif %}
-            </div>
-          </li>
+          {{ show_conditions(item.conditions) }}
 
           <li class="accordion-item status-{{ item.cases.status }}" data-accordion-item>
             <a href="#" class="accordion-title">
