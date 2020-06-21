@@ -1,52 +1,53 @@
 Matcher
 =======
-A ``Matcher`` is a string or a mapping that has an item.
-Allowed matchers are below.
+A string or a dictionary is given as a ``Matcher``. Allowed matchers are below.
 
 .. note:: A ``Value`` given as a ``Matcher`` is equivalent to ``{"equal": it}``.
 
 For Objects
 -----------
 - be: ``Matcher``
-    - Matches the given matcher.
+    - Matches an object that matches the given matcher.
 - be_null
-    - Matches if it is a null value.
+    - Matches ``null``.
 - not_be_null
-    - Matches if it is not a null value.
+    - Matches not ``null``.
 - equal: ``Value``
-    - Matches if it equals the given value.
+    - Matches an equal object.
 - have_length: ``Integer``
-    - Matches if it has a length and its length is equal to the given value.
+    - Matches an object that has a length and whose length matches the given matcher.
 
 For Comparable Values
 ---------------------
 - be_greater_than: ``Comparable``
-    - Matches if it is greater than the given value (it > argument).
+    - Matches a value that is greater than the given value (it > argument).
 - be_greater_than_or_equal_to: ``Comparable``
-    - Matches if it is greater than or equal to the given value (it >= argument).
+    - Matches a value that is greater than or equal to the given value (it >= argument).
 - be_less_than: ``Comparable``
-    - Matches if it is less than the given value (it < argument).
+    - Matches a value that is less than the given value (it < argument).
 - be_less_than_or_equal_to: ``Comparable``
-    - Matches if it is less than or equal to the given value (it < argument).
+    - Matches a value that is less than or equal to the given value (it < argument).
 
 For String Values
 -----------------
 - contain_string: ``String``
-    - Matches if it is an string and contains the given value.
+    - Matches an string that contains the given string.
 - start_with: ``String``
-    - Matches if it is an string and starts with the given value.
+    - Matches an string that starts with the given string.
 - end_with: ``String``
-    - Matches if it is an string and ends with the given value.
+    - Matches an string that ends with the given string.
 - match_regexp: ``String``
-    - Matches if it is an string and matches the given regular expression.
+    - Matches an string that matches the given regular expression.
 
 For Datetime Values
 -------------------
 - be_before: :ref:`datetime`
-    - Matches if it is a datetime and before the given datetime.
-- be_after: ``String``
-    - Matches if it is a datetime and after the given datetime.
-    - Usage is the same as ``be_before``.
+    - Matches a datetime before the given datetime.
+- be_after: :ref:`datetime`
+    - Matches a datetime after the given datetime.
+
+.. note:: Validated datetime values must be in ISO 8601 format
+          like ``2019-01-23T12:34:56Z``.
 
 .. _datetime:
 
@@ -57,23 +58,20 @@ A naive datetime value is regarded as a UTC datetime.
 
 A "relative datetime" is given as a string value in the particular format.
 
-- When given ``now``, then compares to the datetime just when the request starts.
-- When given an offset, then compares to the datetime when the request starts.
+- When given ``now``, then uses the datetime just when the request starts.
+- When given an offset, then uses the datetime before or after the request starts.
     - Days, hours, minutes and seconds offsets are available.
     - When given a positive offset like ``1 day`` or ``+2 hours``,
-      then compares to the future datetime.
+      then uses the future datetime.
     - When given a negative offset like ``-1 minute`` or ``-2 seconds``,
-      then compares to the past datetime.
-
-.. note:: Validated datetime values must be in ISO 8601 format
-          like ``2019-01-23T12:34:56Z``.
+      then uses the past datetime.
 
 For Sequence values
 -------------------
 - be_empty
     - Matches an empty sequence.
 - have_item: ``Matcher``
-    - Matches if it is a collection and has the given item.
+    - Matches a collection that has an item that matches the given item.
 - have_items: ``List<Matcher>``
     - Matches if all given items appear in the list, in any order.
 - contain_exactly: ``List<Matcher>``
@@ -86,10 +84,10 @@ For Sequence values
 Logical Matchers
 ----------------
 - not: ``Matcher``
-    - Matches if it doesn't match the given matcher.
+    - Matches a value that doesn't match the given matcher.
 - all_of: ``List<Matcher>``
-    - Matches if it matches all of the given matchers.
+    - Matches a value that matches all of the given matchers.
 - any_of: ``List<Matcher>``
-    - Matches if it matches any of the given matchers.
+    - Matches a value that matches any of the given matchers.
 - anything
     - Matches anything.
