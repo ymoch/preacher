@@ -47,6 +47,10 @@
     .accordion-content .accordion-title {
       border-right: none;
     }
+    :last-child>.accordion-content:last-child,
+    :last-child:not(.is-active)>.accordion-title {
+      border-bottom: none;
+    }
 
     .accordion-item.status-SKIPPED {
       background-color: #FAFAFA; /* grey lighten-5 */
