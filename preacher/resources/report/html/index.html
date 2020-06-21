@@ -82,6 +82,13 @@
 
 <h1 class="h2">Preacher Test Report</h1>
 
+<div class="button-group small no-gaps">
+  <button class="status-toggle button secondary hollow" data-status="SKIPPED">SKIPPED</button>
+  <button class="status-toggle button success" data-status="SUCCESS">SUCCESS</button>
+  <button class="status-toggle button warning" data-status="UNSTABLE">UNSTABLE</button>
+  <button class="status-toggle button alert" data-status="FAILURE">FAILURE</button>
+</div>
+
 <ul class="scenarios accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
   {% for scenario in scenarios %}
   {{ show_scenario(scenario) }}
@@ -91,6 +98,48 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
 <script>
+const activatingMatrix = {
+  SKIPPED: {
+    SKIPPED: true,
+    SUCCESS: true,
+    UNSTABLE: true,
+    FAILURE: true
+  },
+  SUCCESS: {
+    SKIPPED: false,
+    SUCCESS: true,
+    UNSTABLE: true,
+    FAILURE: true
+  },
+  UNSTABLE: {
+    SKIPPED: false,
+    SUCCESS: false,
+    UNSTABLE: true,
+    FAILURE: true
+  },
+  FAILURE: {
+    SKIPPED: false,
+    SUCCESS: false,
+    UNSTABLE: false,
+    FAILURE: true
+  }
+}
+
+function toggleStatus(status) {
+  const activatingMap = activatingMatrix[status]
+  for (targetStatus in activatingMap) {
+    const activating = activatingMap[targetStatus]
+    $(`.status-${targetStatus}`).toggle(activating)
+    $(`.status-toggle[data-status=${targetStatus}]`).toggleClass('hollow', !activating)
+  }
+}
+
+toggleStatus('SUCCESS')
+$('.status-toggle').click(function () {
+  const status = $(this).data('status')
+  toggleStatus(status)
+})
+
 $(document).foundation()
 $('.scenarios').foundation('down', $('.status-UNSTABLE,.status-FAILURE').children('.accordion-content'))
 </script>
