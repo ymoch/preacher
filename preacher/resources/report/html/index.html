@@ -11,8 +11,8 @@
     /**
      * Color palette: https://vuetifyjs.com/ja/styles/colors
      */
-    body {
-      padding: 0em 1em;
+    main {
+      padding: 0.4em 0.2em;
     }
 
     .badge {
@@ -80,20 +80,31 @@
 
 <body>
 
-<h1 class="h2">Preacher Test Report</h1>
+<header data-sticky-container>
+  <div class="title-bar" data-sticky data-options="marginTop:0;">
+    <div class="title-bar-left">
+      <h1 class="h3">Preacher Test Report</h1>
+    </div>
+    <div class="title-bar-right">
+      <div style="display: inline-block">
+        <div class="button-group small" style="margin-top: 0.2em; margin-bottom: 0.2em">
+          <button class="status-toggle button secondary hollow" data-status="SKIPPED">SKIPPED</button>
+          <button class="status-toggle button success" data-status="SUCCESS">SUCCESS</button>
+          <button class="status-toggle button warning" data-status="UNSTABLE">UNSTABLE</button>
+          <button class="status-toggle button alert" data-status="FAILURE">FAILURE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
 
-<div class="button-group small no-gaps">
-  <button class="status-toggle button secondary hollow" data-status="SKIPPED">SKIPPED</button>
-  <button class="status-toggle button success" data-status="SUCCESS">SUCCESS</button>
-  <button class="status-toggle button warning" data-status="UNSTABLE">UNSTABLE</button>
-  <button class="status-toggle button alert" data-status="FAILURE">FAILURE</button>
-</div>
-
-<ul class="scenarios accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-  {% for scenario in scenarios %}
-  {{ show_scenario(scenario) }}
-  {% endfor %}
-</ul>
+<main>
+  <ul class="scenarios accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    {% for scenario in scenarios %}
+    {{ show_scenario(scenario) }}
+    {% endfor %}
+  </ul>
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"></script>
