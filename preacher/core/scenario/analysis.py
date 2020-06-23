@@ -86,8 +86,8 @@ def _to_serializable(value: object) -> object:
     return value
 
 
-def analyze_context(context) -> Analyzer:
-    return JsonAnalyzer(_to_serializable(asdict(context)))
+def analyze_data_obj(obj) -> Analyzer:
+    return JsonAnalyzer(_to_serializable(asdict(obj)))
 
 
 Analysis = Callable[[ResponseBody], Analyzer]

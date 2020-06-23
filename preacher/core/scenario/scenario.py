@@ -10,7 +10,7 @@ from typing import Callable, List, Optional
 
 from preacher.core.datetime import now
 from .case import Case, CaseListener, CaseResult
-from .analysis import analyze_context
+from .analysis import analyze_data_obj
 from .description import Description
 from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
@@ -125,7 +125,7 @@ class Scenario:
             delay=delay,
             timeout=timeout,
         )
-        context_analyzer = analyze_context(context)
+        context_analyzer = analyze_data_obj(context)
         conditions = collect(
             condition.verify(context_analyzer, origin_datetime=context.starts)
             for condition in self._conditions

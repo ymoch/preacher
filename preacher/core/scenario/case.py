@@ -9,7 +9,7 @@ from typing import Optional, List
 
 from preacher.core.datetime import now
 from preacher.core.response import Response
-from .analysis import analyze_context
+from .analysis import analyze_data_obj
 from .description import Description
 from .request import Request
 from .response_description import ResponseDescription, ResponseVerification
@@ -104,7 +104,7 @@ class Case:
             delay=delay,
             timeout=timeout,
         )
-        context_analyzer = analyze_context(context)
+        context_analyzer = analyze_data_obj(context)
         conditions = collect(
             condition.verify(context_analyzer, origin_datetime=context.starts)
             for condition in self._conditions

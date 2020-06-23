@@ -126,7 +126,7 @@ def test_given_default_scenario(executor):
     (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
 ])
 @patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
-@patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
+@patch(f'{PACKAGE}.analyze_data_obj', return_value=sentinel.context_analyzer)
 def test_given_filled_scenarios(
     analyze_context,
     context_ctor,
