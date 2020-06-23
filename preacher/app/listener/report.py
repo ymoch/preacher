@@ -4,8 +4,8 @@ from typing import List
 
 from preacher.app.presentation.report import Reporter
 from preacher.core.response import Response
+from preacher.core.runner import Listener
 from preacher.core.scenario import ScenarioResult
-from . import Listener
 
 
 class ReportingListener(Listener):

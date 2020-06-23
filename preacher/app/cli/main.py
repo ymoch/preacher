@@ -8,6 +8,11 @@ from itertools import chain
 from typing import Iterable
 
 from preacher.app.cli.option import parse_args
+from preacher.app.listener import (
+    LoggingListener,
+    ReportingListener,
+    MergingListener,
+)
 from preacher.app.presentation.log import ColoredFormatter
 from preacher.compilation import (
     create_compiler,
@@ -15,9 +20,6 @@ from preacher.compilation import (
     load_all_from_path,
     CompilationError,
 )
-from preacher.core.listener.log import LoggingListener
-from preacher.core.listener.merging import MergingListener
-from preacher.core.listener.report import ReportingListener
 from preacher.core.runner import ScenarioRunner
 
 FORMATTER = ColoredFormatter()
