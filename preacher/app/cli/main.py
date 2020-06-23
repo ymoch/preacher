@@ -8,14 +8,19 @@ from itertools import chain
 from typing import Iterable
 
 from preacher.app.cli.option import parse_args
-from preacher.compilation.error import CompilationError, render_path
-from preacher.compilation.factory import create_compiler
-from preacher.compilation.yaml import load_all, load_all_from_path
-from preacher.core.listener.log import LoggingListener
-from preacher.core.listener.merging import MergingListener
-from preacher.core.listener.report import ReportingListener
+from preacher.app.listener import (
+    LoggingListener,
+    ReportingListener,
+    MergingListener,
+)
+from preacher.app.presentation.log import ColoredFormatter
+from preacher.compilation import (
+    create_compiler,
+    load_all,
+    load_all_from_path,
+    CompilationError,
+)
 from preacher.core.runner import ScenarioRunner
-from preacher.presentation.log import ColoredFormatter
 
 FORMATTER = ColoredFormatter()
 HANDLER = logging.StreamHandler()
@@ -70,7 +75,7 @@ def main():
     except CompilationError as error:
         LOGGER.critical(
             'Compilation error on node: %s',
-            render_path(error.path),
+            error.render_path(),
         )
         LOGGER.critical('%s', error)
         sys.exit(2)

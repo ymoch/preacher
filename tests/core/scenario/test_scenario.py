@@ -3,7 +3,7 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import fixture, mark, raises
 
-from preacher.core.scenario.analysis_description import AnalysisDescription
+from preacher.core.scenario.description import Description
 from preacher.core.scenario.scenario import (
     Scenario,
     ScenarioTask,
@@ -58,7 +58,7 @@ def test_not_implemented():
 ])
 def test_given_bad_conditions(condition_verifications, expected_status):
     conditions = [
-        MagicMock(AnalysisDescription, verify=MagicMock(return_value=v))
+        MagicMock(Description, verify=MagicMock(return_value=v))
         for v in condition_verifications
     ]
     subscenario = MagicMock(Scenario)
@@ -126,7 +126,7 @@ def test_given_default_scenario(executor):
     (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
 ])
 @patch(f'{PACKAGE}.ScenarioContext', return_value=sentinel.context)
-@patch(f'{PACKAGE}.analyze_context', return_value=sentinel.context_analyzer)
+@patch(f'{PACKAGE}.analyze_data_obj', return_value=sentinel.context_analyzer)
 def test_given_filled_scenarios(
     analyze_context,
     context_ctor,
@@ -136,7 +136,7 @@ def test_given_filled_scenarios(
     expected_status,
 ):
     condition_result = MagicMock(Verification, status=Status.SUCCESS)
-    condition = MagicMock(AnalysisDescription)
+    condition = MagicMock(Description)
     condition.verify = MagicMock(return_value=condition_result)
 
     case_results = MagicMock(StatusedList, status=cases_status)

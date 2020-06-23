@@ -6,13 +6,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional, List
 
-from preacher.core.scenario import (
-    AnalysisDescription,
-    Predicate,
-    ResponseDescription,
-)
+from preacher.core.scenario import Description, Predicate, ResponseDescription
 from .body_description import BodyDescriptionCompiler, BodyDescriptionCompiled
-from .analysis_description import AnalysisDescriptionCompiler
+from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
 from .util import compile_mapping, map_compile, or_else
@@ -25,7 +21,7 @@ _KEY_BODY = 'body'
 @dataclass(frozen=True)
 class ResponseDescriptionCompiled:
     status_code: Optional[List[Predicate]] = None
-    headers: Optional[List[AnalysisDescription]] = None
+    headers: Optional[List[Description]] = None
     body: Optional[BodyDescriptionCompiled] = None
 
     def replace(
@@ -55,7 +51,7 @@ class ResponseDescriptionCompiler:
     def __init__(
         self,
         predicate: PredicateCompiler,
-        description: AnalysisDescriptionCompiler,
+        description: DescriptionCompiler,
         body: BodyDescriptionCompiler,
         default: Optional[ResponseDescriptionCompiled] = None,
     ):
@@ -110,7 +106,7 @@ class ResponseDescriptionCompiler:
             obj = [obj]
         return list(map_compile(self._predicate.compile, obj))
 
-    def _compile_headers(self, obj: object) -> List[AnalysisDescription]:
+    def _compile_headers(self, obj: object) -> List[Description]:
         if isinstance(obj, Mapping):
             obj = [obj]
         if not isinstance(obj, list):

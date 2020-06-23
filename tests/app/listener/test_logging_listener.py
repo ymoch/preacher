@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock, patch, sentinel
 
-from preacher.core.listener.log import LoggingListener
-from preacher.presentation.log import Logger
+from preacher.app.listener import LoggingListener
+from preacher.app.presentation.log import Logger
 
-PACKAGE = 'preacher.core.listener.log'
+PACKAGE = 'preacher.app.listener.log'
 
 
 def test_on_scenario():

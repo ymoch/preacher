@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, sentinel
 
 from pytest import fixture
 
-from preacher.core.scenario.analysis_description import AnalysisDescription
+from preacher.core.scenario.description import Description
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
@@ -15,7 +15,7 @@ def extractor():
 
 def test_when_analysis_fails():
     extractor = MagicMock(extract=MagicMock(side_effect=Exception('message')))
-    description = AnalysisDescription(extractor=extractor, predicates=[])
+    description = Description(extractor=extractor, predicates=[])
     verification = description.verify(sentinel.analyzer)
     assert verification.status == Status.FAILURE
     assert verification.message == 'Exception: message'
@@ -24,7 +24,7 @@ def test_when_analysis_fails():
 
 
 def test_when_given_no_predicates(extractor):
-    description = AnalysisDescription(extractor=extractor, predicates=[])
+    description = Description(extractor=extractor, predicates=[])
     verification = description.verify(sentinel.analyzer)
     assert verification.status == Status.SKIPPED
     assert len(verification.children) == 0
@@ -44,7 +44,7 @@ def test_when_given_a_predicate_to_fail(extractor):
             return_value=Verification(Status.SUCCESS),
         )),
     ]
-    description = AnalysisDescription(
+    description = Description(
         extractor=extractor,
         predicates=predicates,
     )
@@ -69,7 +69,7 @@ def test_when_given_predicates_to_success(extractor):
             return_value=Verification(Status.SUCCESS)
         )),
     ]
-    description = AnalysisDescription(
+    description = Description(
         extractor=extractor,
         predicates=predicates,
     )

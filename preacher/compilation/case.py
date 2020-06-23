@@ -5,8 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import List, Optional
 
-from preacher.core.scenario import Case, AnalysisDescription
-from .analysis_description import AnalysisDescriptionCompiler
+from preacher.core.scenario import Case, Description
+from .description import DescriptionCompiler
 from .error import on_key
 from .request import RequestCompiler, RequestCompiled
 from .response_description import (
@@ -33,7 +33,7 @@ _KEY_RESPONSE = 'response'
 class CaseCompiled:
     label: Optional[str] = None
     enabled: Optional[bool] = None
-    conditions: Optional[List[AnalysisDescription]] = None
+    conditions: Optional[List[Description]] = None
     request: Optional[RequestCompiled] = None
     response: Optional[ResponseDescriptionCompiled] = None
 
@@ -62,7 +62,7 @@ class CaseCompiler:
         self,
         request: RequestCompiler,
         response: ResponseDescriptionCompiler,
-        description: AnalysisDescriptionCompiler,
+        description: DescriptionCompiler,
         default: Optional[CaseCompiled] = None
     ):
         self._request = request

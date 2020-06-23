@@ -6,9 +6,7 @@ from preacher.compilation.body_description import (
     BodyDescriptionCompiled,
     BodyDescriptionCompiler,
 )
-from preacher.compilation.analysis_description import (
-    AnalysisDescriptionCompiler,
-)
+from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
 from preacher.compilation.response_description import (
@@ -38,7 +36,7 @@ def predicate():
 @fixture
 def description():
     return MagicMock(
-        spec=AnalysisDescriptionCompiler,
+        spec=DescriptionCompiler,
         compile=MagicMock(return_value=sentinel.description)
     )
 

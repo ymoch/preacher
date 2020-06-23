@@ -2,10 +2,8 @@ from unittest.mock import ANY, MagicMock, sentinel, patch
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.analysis_description import (
-    AnalysisDescriptionCompiler,
-)
 from preacher.compilation.case import CaseCompiled, CaseCompiler
+from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.request import RequestCompiler
 from preacher.compilation.response_description import (
@@ -41,7 +39,7 @@ def res():
 
 @fixture
 def desc():
-    compiler = MagicMock(AnalysisDescriptionCompiler)
+    compiler = MagicMock(DescriptionCompiler)
     compiler.compile.return_value = sentinel.description
     return compiler
 

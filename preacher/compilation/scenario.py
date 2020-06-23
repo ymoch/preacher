@@ -5,7 +5,7 @@ from typing import List, Optional, Mapping
 from preacher.core.scenario import Scenario, Case
 from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
-from .analysis_description import AnalysisDescriptionCompiler
+from .description import DescriptionCompiler
 from .error import on_key
 from .parameter import Parameter, compile as compile_parameter
 from .util import (
@@ -29,7 +29,7 @@ class ScenarioCompiler:
 
     def __init__(
         self,
-        description: AnalysisDescriptionCompiler,
+        description: DescriptionCompiler,
         case: CaseCompiler,
     ):
         self._description = description
