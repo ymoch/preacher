@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch, sentinel
 
+from preacher.app.presentation.log import Logger
 from preacher.core.listener.log import LoggingListener
-from preacher.presentation.log import Logger
 
 PACKAGE = 'preacher.core.listener.log'
 

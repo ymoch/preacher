@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import List
 
+from preacher.app.presentation.report import Reporter
 from preacher.core.response import Response
 from preacher.core.scenario import ScenarioResult
-from preacher.presentation.report import Reporter
 from . import Listener
 
 
