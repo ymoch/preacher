@@ -2,8 +2,8 @@ from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import mark
 
-from preacher.core.scenario import AnalysisDescription
 from preacher.core.scenario.case import Case, CaseListener
+from preacher.core.scenario.description import Description
 from preacher.core.scenario.request import Request
 from preacher.core.scenario.response_description import (
     ResponseDescription,
@@ -46,7 +46,7 @@ def test_case_listener():
 )
 def test_given_bad_condition(condition_verifications, expected_status):
     conditions = [
-        MagicMock(AnalysisDescription, verify=MagicMock(return_value=v))
+        MagicMock(Description, verify=MagicMock(return_value=v))
         for v in condition_verifications
     ]
     request = MagicMock(Request)
@@ -166,7 +166,7 @@ def test_when_given_an_valid_response(retry):
         label=sentinel.label,
         conditions=[
             MagicMock(
-                spec=AnalysisDescription,
+                spec=Description,
                 verify=MagicMock(return_value=Verification.succeed()),
             ),
         ],

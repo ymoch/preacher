@@ -9,8 +9,8 @@ from typing import Optional, List
 
 from preacher.core.datetime import now
 from preacher.core.response import Response
-from .analysis_description import AnalysisDescription
 from .context import analyze_context
+from .description import Description
 from .request import Request
 from .response_description import ResponseDescription, ResponseVerification
 from .status import Status, Statused, merge_statuses
@@ -77,7 +77,7 @@ class Case:
         self,
         label: Optional[str] = None,
         enabled: bool = True,
-        conditions: Optional[List[AnalysisDescription]] = None,
+        conditions: Optional[List[Description]] = None,
         request: Optional[Request] = None,
         response: Optional[ResponseDescription] = None,
     ):

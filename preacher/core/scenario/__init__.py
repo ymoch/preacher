@@ -1,7 +1,7 @@
 from .analysis import Analyzer, Analysis, analyze_json_str, analyze_xml_str
-from .analysis_description import AnalysisDescription
 from .body_description import BodyDescription
 from .case import Case, CaseListener, CaseResult
+from .description import Description
 from .extraction import (
     Extractor,
     JqExtractor,
@@ -22,7 +22,7 @@ __all__ = [
     'Analysis',
     'analyze_json_str',
     'analyze_xml_str',
-    'AnalysisDescription',
+    'Description',
     'BodyDescription',
     'Case',
     'CaseListener',

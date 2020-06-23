@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from preacher.core.response import ResponseBody
 from .analysis import Analysis, analyze_json_str
-from .analysis_description import AnalysisDescription
+from .description import Description
 from .verification import Verification, collect
 
 
@@ -15,7 +15,7 @@ class BodyDescription:
     def __init__(
         self,
         analyze: Analysis = analyze_json_str,
-        descriptions: Optional[List[AnalysisDescription]] = None,
+        descriptions: Optional[List[Description]] = None,
     ):
         self._analyze = analyze
         self._descriptions = descriptions or []

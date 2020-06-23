@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from preacher.core.scenario import AnalysisDescription
+from preacher.core.scenario import Description
 from .error import on_key
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
@@ -40,4 +40,4 @@ class DescriptionCompiler:
                 predicate_objs,
             ))
 
-        return AnalysisDescription(extractor=extractor, predicates=predicates)
+        return Description(extractor=extractor, predicates=predicates)

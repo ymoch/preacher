@@ -9,9 +9,9 @@ from datetime import datetime
 from typing import Callable, List, Optional
 
 from preacher.core.datetime import now
-from .analysis_description import AnalysisDescription
 from .case import Case, CaseListener, CaseResult
 from .context import analyze_context
+from .description import Description
 from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 from .verification import Verification, collect
@@ -100,7 +100,7 @@ class Scenario:
         self,
         label: Optional[str] = None,
         ordered: bool = True,
-        conditions: Optional[List[AnalysisDescription]] = None,
+        conditions: Optional[List[Description]] = None,
         cases: Optional[List[Case]] = None,
         subscenarios: Optional[List[Scenario]] = None,
     ):
