@@ -8,9 +8,13 @@ from itertools import chain
 from typing import Iterable
 
 from preacher.app.cli.option import parse_args
-from preacher.compilation.error import CompilationError, render_path
-from preacher.compilation.factory import create_compiler
-from preacher.compilation.yaml import load_all, load_all_from_path
+from preacher.compilation import (
+    create_compiler,
+    load_all,
+    load_all_from_path,
+    CompilationError,
+    render_path,
+)
 from preacher.core.listener.log import LoggingListener
 from preacher.core.listener.merging import MergingListener
 from preacher.core.listener.report import ReportingListener
