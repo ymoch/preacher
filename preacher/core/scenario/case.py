@@ -9,7 +9,7 @@ from typing import Optional, List
 
 from preacher.core.datetime import now
 from preacher.core.response import Response
-from .context import analyze_context
+from .analysis import analyze_context
 from .description import Description
 from .request import Request
 from .response_description import ResponseDescription, ResponseVerification

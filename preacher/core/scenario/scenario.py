@@ -10,7 +10,7 @@ from typing import Callable, List, Optional
 
 from preacher.core.datetime import now
 from .case import Case, CaseListener, CaseResult
-from .context import analyze_context
+from .analysis import analyze_context
 from .description import Description
 from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
