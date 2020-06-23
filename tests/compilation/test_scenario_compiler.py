@@ -4,9 +4,7 @@ from pytest import mark, raises, fixture
 
 from preacher.compilation.argument import ArgumentValue
 from preacher.compilation.case import CaseCompiler
-from preacher.compilation.analysis_description import (
-    AnalysisDescriptionCompiler,
-)
+from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
 from preacher.compilation.scenario import ScenarioCompiler
@@ -23,7 +21,7 @@ def compiler(description, case) -> ScenarioCompiler:
 
 @fixture
 def description():
-    compiler = MagicMock(spec=AnalysisDescriptionCompiler)
+    compiler = MagicMock(spec=DescriptionCompiler)
     compiler.compile = MagicMock(return_value=sentinel.description)
     return compiler
 
@@ -66,7 +64,7 @@ def test_when_given_invalid_values(value, expected_path, compiler):
 @ctor_patch
 def test_given_an_empty_object(
     ctor,
-    compiler,
+    compiler: ScenarioCompiler,
     case,
     case_of_default,
 ):
@@ -88,7 +86,7 @@ def test_given_an_empty_object(
 @ctor_patch
 def test_given_a_filled_object(
     ctor,
-    compiler,
+    compiler: ScenarioCompiler,
     description,
     case,
     case_of_default,

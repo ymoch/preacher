@@ -11,7 +11,7 @@ from preacher.core.scenario import (
     BodyDescription,
 )
 from .analysis import AnalysisCompiler
-from .analysis_description import AnalysisDescriptionCompiler
+from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .util import map_compile, or_else
 
@@ -45,7 +45,7 @@ class BodyDescriptionCompiler:
     def __init__(
         self,
         analysis: AnalysisCompiler,
-        description: AnalysisDescriptionCompiler,
+        description: DescriptionCompiler,
         default: Optional[BodyDescriptionCompiled] = None,
     ):
         self._analysis = analysis

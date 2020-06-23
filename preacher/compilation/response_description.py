@@ -12,7 +12,7 @@ from preacher.core.scenario import (
     ResponseDescription,
 )
 from .body_description import BodyDescriptionCompiler, BodyDescriptionCompiled
-from .analysis_description import AnalysisDescriptionCompiler
+from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
 from .util import compile_mapping, map_compile, or_else
@@ -55,7 +55,7 @@ class ResponseDescriptionCompiler:
     def __init__(
         self,
         predicate: PredicateCompiler,
-        description: AnalysisDescriptionCompiler,
+        description: DescriptionCompiler,
         body: BodyDescriptionCompiler,
         default: Optional[ResponseDescriptionCompiled] = None,
     ):

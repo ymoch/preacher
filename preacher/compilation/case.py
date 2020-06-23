@@ -6,7 +6,7 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.core.scenario import Case, AnalysisDescription
-from .analysis_description import AnalysisDescriptionCompiler
+from .description import DescriptionCompiler
 from .error import on_key
 from .request import RequestCompiler, RequestCompiled
 from .response_description import (
@@ -62,7 +62,7 @@ class CaseCompiler:
         self,
         request: RequestCompiler,
         response: ResponseDescriptionCompiler,
-        description: AnalysisDescriptionCompiler,
+        description: DescriptionCompiler,
         default: Optional[CaseCompiled] = None
     ):
         self._request = request
