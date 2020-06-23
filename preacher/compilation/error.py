@@ -8,14 +8,6 @@ from typing import List, Optional, Union, Iterator
 
 
 @dataclass(frozen=True)
-class NamedNode:
-    name: str
-
-    def __str__(self) -> str:
-        return f'.{self.name}'
-
-
-@dataclass(frozen=True)
 class IndexedNode:
     index: int
 
@@ -23,8 +15,20 @@ class IndexedNode:
         return f'[{self.index}]'
 
 
+@dataclass(frozen=True)
+class NamedNode:
+    name: str
+
+    def __str__(self) -> str:
+        return f'.{self.name}'
+
+
 Node = Union[NamedNode, IndexedNode]
 Path = List[Node]
+
+
+def render_path(path: Path) -> str:
+    return ''.join(str(node) for node in path)
 
 
 class CompilationError(Exception):
@@ -45,6 +49,9 @@ class CompilationError(Exception):
     def path(self) -> Path:
         return self._path
 
+    def render_path(self) -> str:
+        return render_path(self._path)
+
     def of_parent(self, parent_path: Path) -> CompilationError:
         return CompilationError(
             message=self._message,
@@ -55,10 +62,6 @@ class CompilationError(Exception):
     @staticmethod
     def wrap(error: Exception) -> CompilationError:
         return CompilationError(message=str(error), cause=error)
-
-
-def render_path(path: Path) -> str:
-    return ''.join(str(node) for node in path)
 
 
 @contextmanager

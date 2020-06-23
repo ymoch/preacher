@@ -13,7 +13,6 @@ from preacher.compilation import (
     load_all,
     load_all_from_path,
     CompilationError,
-    render_path,
 )
 from preacher.core.listener.log import LoggingListener
 from preacher.core.listener.merging import MergingListener
@@ -74,7 +73,7 @@ def main():
     except CompilationError as error:
         LOGGER.critical(
             'Compilation error on node: %s',
-            render_path(error.path),
+            error.render_path(),
         )
         LOGGER.critical('%s', error)
         sys.exit(2)
