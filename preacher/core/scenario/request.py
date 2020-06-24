@@ -3,6 +3,7 @@
 import uuid
 from copy import copy
 from datetime import datetime
+from enum import Enum
 from typing import List, Mapping, Optional, Union
 
 import requests
@@ -33,6 +34,13 @@ Parameters = Union[str, Mapping[str, Parameter]]
 ResolvedParameterValue = Optional[str]
 ResolvedParameter = Union[ResolvedParameterValue, List[ResolvedParameterValue]]
 ResolvedParameters = Union[str, Mapping[str, ResolvedParameter]]
+
+
+class Method(Enum):
+    GET = 'GET'
+    POST = 'POST'
+    PUT = 'PUT'
+    DELETE = 'DELETE'
 
 
 class ResponseBodyWrapper(ResponseBody):
@@ -118,10 +126,12 @@ class Request:
 
     def __init__(
         self,
+        method: Method = Method.GET,
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
         params: Optional[Parameters] = None,
     ):
+        self._method = method
         self._path = path
         self._headers = headers or {}
         self._params = params or {}
@@ -131,19 +141,20 @@ class Request:
         base_url: str,
         timeout: Optional[float] = None,
     ) -> Response:
+        url = base_url + self._path
         headers = copy(_DEFAULT_HEADERS)
         headers.update(self._headers)
         starts = now()
+        params = resolve_params(self._params, origin_datetime=starts)
 
-        res = requests.get(
-            base_url + self._path,
-            headers=headers,
-            params=resolve_params(  # type: ignore
-                self._params,
-                origin_datetime=starts,
-            ),
-            timeout=timeout,
-        )
+        with requests.Session() as session:
+            res = session.request(
+                str(self._method.value),
+                url,
+                headers=headers,
+                params=params,  # type: ignore
+                timeout=timeout,
+            )
         return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)
 
     @property
