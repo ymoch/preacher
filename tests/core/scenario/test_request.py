@@ -10,7 +10,7 @@ from preacher.core.scenario.request import Request, ResponseWrapper, Method
 
 PACKAGE = 'preacher.core.scenario.request'
 
-uuid_patch = patch('uuid.uuid4', return_value=MagicMock(
+uuid4_patch = patch('uuid.uuid4', return_value=MagicMock(
     spec=uuid.UUID,
     __str__=MagicMock(return_value='uuid')
 ))
@@ -62,7 +62,7 @@ def test_request(session):
     assert request.params == params
 
     with patch('requests.Session', return_value=session), \
-            uuid_patch as uuid4, \
+            uuid4_patch as uuid4, \
             now_patch as now:
         response = request('base-url', timeout=5.0)
 
