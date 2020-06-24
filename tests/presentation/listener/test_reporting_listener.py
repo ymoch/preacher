@@ -2,10 +2,10 @@ from unittest.mock import MagicMock, call, patch, sentinel
 
 from pytest import fixture
 
-from preacher.app.listener import ReportingListener
-from preacher.app.presentation.report import Reporter
+from preacher.presentation.listener import ReportingListener
+from preacher.presentation.report import Reporter
 
-PACKAGE = 'preacher.app.listener.report'
+PACKAGE = 'preacher.presentation.listener.report'
 
 
 @fixture
