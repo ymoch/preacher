@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from preacher.core.runner import Listener
+from preacher.core.listener import Listener
 from preacher.core.scenario import ScenarioResult
 from preacher.presentation.log import Logger
 

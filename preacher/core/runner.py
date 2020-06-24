@@ -1,20 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Iterable, Optional
 
-from .scenario import Scenario, ScenarioListener, ScenarioResult, Status
-
-
-class Listener(ScenarioListener):
-    """
-    Listener interface.
-    Default implementations do nothing.
-    """
-
-    def on_end(self) -> None:
-        pass
-
-    def on_scenario(self, result: ScenarioResult) -> None:
-        pass
+from .listener import Listener
+from .scenario import Scenario, Status
 
 
 class ScenarioRunner:

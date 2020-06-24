@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import List
 
+from preacher.core.listener import Listener
 from preacher.core.response import Response
-from preacher.core.runner import Listener
 from preacher.core.scenario import ScenarioResult
 from preacher.presentation.report import Reporter
 
