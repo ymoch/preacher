@@ -3,15 +3,23 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch, sentinel
 
 import requests
+from pytest import fixture
 
 from preacher.core.interpretation.value import Value
-from preacher.core.scenario.request import Request
+from preacher.core.scenario.request import Request, ResponseWrapper, Method
 
 PACKAGE = 'preacher.core.scenario.request'
 
+uuid4_patch = patch('uuid.uuid4', return_value=MagicMock(
+    spec=uuid.UUID,
+    __str__=MagicMock(return_value='uuid')
+))
+now_patch = patch(f'{PACKAGE}.now', return_value=sentinel.now)
 
-def requests_response():
-    return MagicMock(
+
+@fixture
+def session():
+    response = MagicMock(
         spec=requests.Response,
         elapsed=timedelta(seconds=1.23),
         status_code=402,
@@ -19,15 +27,13 @@ def requests_response():
         text=sentinel.text,
         content=sentinel.content,
     )
+    session = MagicMock(requests.Session)
+    session.__enter__ = MagicMock(return_value=session)
+    session.request = MagicMock(return_value=response)
+    return session
 
 
-@patch('uuid.uuid4', return_value=MagicMock(
-    spec=uuid.UUID,
-    __str__=MagicMock(return_value='uuid')
-))
-@patch(f'{PACKAGE}.now', return_value=sentinel.now)
-@patch('requests.get', return_value=requests_response())
-def test_request(requests_get, now, uuid4):
+def test_request(session):
     param_value = MagicMock(Value)
     param_value.apply_context = MagicMock(return_value=sentinel.param_value)
 
@@ -46,6 +52,7 @@ def test_request(requests_get, now, uuid4):
     }
 
     request = Request(
+        method=Method.POST,
         path='/path',
         headers={'k1': 'v1'},
         params=params,
@@ -54,7 +61,12 @@ def test_request(requests_get, now, uuid4):
     assert request.headers == {'k1': 'v1'}
     assert request.params == params
 
-    response = request('base-url', timeout=5.0)
+    with patch('requests.Session', return_value=session), \
+            uuid4_patch as uuid4, \
+            now_patch as now:
+        response = request('base-url', timeout=5.0)
+
+    assert isinstance(response, ResponseWrapper)
     assert response.id == 'uuid'
     assert response.elapsed == 1.23
     assert response.status_code == 402
@@ -69,8 +81,8 @@ def test_request(requests_get, now, uuid4):
         origin_datetime=sentinel.now,
     )
 
-    args, kwargs = requests_get.call_args
-    assert args == ('base-url/path',)
+    args, kwargs = session.request.call_args
+    assert args == ('POST', 'base-url/path')
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['headers']['k1'].startswith('v1')
     assert kwargs['params']['none'] is None
@@ -86,22 +98,28 @@ def test_request(requests_get, now, uuid4):
     ]
     assert kwargs['timeout'] == 5.0
 
+    session.__exit__.assert_called()
 
-@patch('requests.get', return_value=requests_response())
-def test_request_given_string_params(requests_get):
-    Request(params='foo=bar')('')
-    kwargs = requests_get.call_args[1]
+
+def test_request_given_string_params(session):
+    request = Request(params='foo=bar')
+    with patch('requests.Session', return_value=session):
+        request('')
+    kwargs = session.request.call_args[1]
     assert kwargs['params'] == 'foo=bar'
 
 
-@patch('requests.get', return_value=requests_response())
-def test_request_overwrites_default_headers(requests_get):
-    Request(headers={'User-Agent': 'custom-user-agent'})('base-url')
-    kwargs = requests_get.call_args[1]
+def test_request_overwrites_default_headers(session):
+    request = Request(headers={'User-Agent': 'custom-user-agent'})
+    with patch('requests.Session', return_value=session):
+        request('base-url')
+    kwargs = session.request.call_args[1]
     assert kwargs['headers']['User-Agent'] == 'custom-user-agent'
 
     # Doesn't change the state.
-    Request()('base-url')
-    kwargs = requests_get.call_args[1]
+    request = Request()
+    with patch('requests.Session', return_value=session):
+        request('base-url')
+    kwargs = session.request.call_args[1]
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['timeout'] is None
