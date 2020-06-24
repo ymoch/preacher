@@ -13,12 +13,9 @@ from preacher.compilation import (
     load_all_from_path,
     CompilationError,
 )
+from preacher.core.listener import MergingListener
 from preacher.core.runner import ScenarioRunner
-from preacher.presentation.listener import (
-    LoggingListener,
-    ReportingListener,
-    MergingListener,
-)
+from preacher.presentation.listener import LoggingListener, ReportingListener
 from .log import ColoredFormatter
 from .option import parse_args
 
