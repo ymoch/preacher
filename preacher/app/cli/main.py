@@ -7,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import chain
 from typing import Iterable
 
-from preacher.app.cli.option import parse_args
 from preacher.compilation import (
     create_compiler,
     load_all,
@@ -20,7 +19,8 @@ from preacher.presentation.listener import (
     ReportingListener,
     MergingListener,
 )
-from preacher.presentation.log import ColoredFormatter
+from .log import ColoredFormatter
+from .option import parse_args
 
 FORMATTER = ColoredFormatter()
 HANDLER = logging.StreamHandler()
