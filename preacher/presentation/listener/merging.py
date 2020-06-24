@@ -12,7 +12,7 @@ class MergingListener(Listener):
     def __init__(self):
         self._listeners: List[Listener] = []
 
-    def append(self, listener: Listener):
+    def append(self, listener: Listener) -> None:
         self._listeners.append(listener)
 
     def on_response(self, response: Response) -> None:
@@ -23,6 +23,6 @@ class MergingListener(Listener):
         for listener in self._listeners:
             listener.on_scenario(result)
 
-    def on_end(self):
+    def on_end(self) -> None:
         for listener in self._listeners:
             listener.on_end()
