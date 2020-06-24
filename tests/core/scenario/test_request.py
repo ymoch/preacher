@@ -12,7 +12,7 @@ PACKAGE = 'preacher.core.scenario.request'
 
 
 @fixture
-def requests_session():
+def session():
     response = MagicMock(
         spec=requests.Response,
         elapsed=timedelta(seconds=1.23),
@@ -32,7 +32,7 @@ def requests_session():
     __str__=MagicMock(return_value='uuid')
 ))
 @patch(f'{PACKAGE}.now', return_value=sentinel.now)
-def test_request(now, uuid4, requests_session):
+def test_request(now, uuid4, session):
     param_value = MagicMock(Value)
     param_value.apply_context = MagicMock(return_value=sentinel.param_value)
 
@@ -60,7 +60,7 @@ def test_request(now, uuid4, requests_session):
     assert request.headers == {'k1': 'v1'}
     assert request.params == params
 
-    with patch('requests.Session', return_value=requests_session):
+    with patch('requests.Session', return_value=session):
         response = request('base-url', timeout=5.0)
 
     assert isinstance(response, ResponseWrapper)
@@ -78,7 +78,7 @@ def test_request(now, uuid4, requests_session):
         origin_datetime=sentinel.now,
     )
 
-    args, kwargs = requests_session.request.call_args
+    args, kwargs = session.request.call_args
     assert args == ('POST', 'base-url/path')
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['headers']['k1'].startswith('v1')
@@ -95,28 +95,28 @@ def test_request(now, uuid4, requests_session):
     ]
     assert kwargs['timeout'] == 5.0
 
-    requests_session.__exit__.assert_called()
+    session.__exit__.assert_called()
 
 
-def test_request_given_string_params(requests_session):
+def test_request_given_string_params(session):
     request = Request(params='foo=bar')
-    with patch('requests.Session', return_value=requests_session):
+    with patch('requests.Session', return_value=session):
         request('')
-    kwargs = requests_session.request.call_args[1]
+    kwargs = session.request.call_args[1]
     assert kwargs['params'] == 'foo=bar'
 
 
-def test_request_overwrites_default_headers(requests_session):
+def test_request_overwrites_default_headers(session):
     request = Request(headers={'User-Agent': 'custom-user-agent'})
-    with patch('requests.Session', return_value=requests_session):
+    with patch('requests.Session', return_value=session):
         request('base-url')
-    kwargs = requests_session.request.call_args[1]
+    kwargs = session.request.call_args[1]
     assert kwargs['headers']['User-Agent'] == 'custom-user-agent'
 
     # Doesn't change the state.
     request = Request()
-    with patch('requests.Session', return_value=requests_session):
+    with patch('requests.Session', return_value=session):
         request('base-url')
-    kwargs = requests_session.request.call_args[1]
+    kwargs = session.request.call_args[1]
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['timeout'] is None
