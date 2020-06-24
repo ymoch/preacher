@@ -10,6 +10,12 @@ from preacher.core.scenario.request import Request, ResponseWrapper, Method
 
 PACKAGE = 'preacher.core.scenario.request'
 
+uuid_patch = patch('uuid.uuid4', return_value=MagicMock(
+    spec=uuid.UUID,
+    __str__=MagicMock(return_value='uuid')
+))
+now_patch = patch(f'{PACKAGE}.now', return_value=sentinel.now)
+
 
 @fixture
 def session():
@@ -27,12 +33,7 @@ def session():
     return session
 
 
-@patch('uuid.uuid4', return_value=MagicMock(
-    spec=uuid.UUID,
-    __str__=MagicMock(return_value='uuid')
-))
-@patch(f'{PACKAGE}.now', return_value=sentinel.now)
-def test_request(now, uuid4, session):
+def test_request(session):
     param_value = MagicMock(Value)
     param_value.apply_context = MagicMock(return_value=sentinel.param_value)
 
@@ -60,7 +61,9 @@ def test_request(now, uuid4, session):
     assert request.headers == {'k1': 'v1'}
     assert request.params == params
 
-    with patch('requests.Session', return_value=session):
+    with patch('requests.Session', return_value=session), \
+            uuid_patch as uuid4, \
+            now_patch as now:
         response = request('base-url', timeout=5.0)
 
     assert isinstance(response, ResponseWrapper)
