@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import logging
 
-from preacher.app.presentation.log import Logger
 from preacher.core.runner import Listener
 from preacher.core.scenario import ScenarioResult
+from preacher.presentation.log import Logger
 
 
 class LoggingListener(Listener):
