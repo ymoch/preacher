@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 from typing import Iterable
 
+from requests import Session
+
 from preacher.core.scenario.case import Case, CaseResult
 from preacher.core.scenario.status import StatusedList
 
@@ -16,8 +18,13 @@ class CasesTask(ABC):
 def _run_cases_in_order(
     cases: Iterable[Case],
     *args,
-    **kwargs
+    **kwargs,
 ) -> StatusedList[CaseResult]:
+    if not kwargs.get('session'):
+        with Session() as session:
+            kwargs['session'] = session
+            return _run_cases_in_order(cases, *args, **kwargs)
+
     return StatusedList([case.run(*args, **kwargs) for case in cases])
 
 
