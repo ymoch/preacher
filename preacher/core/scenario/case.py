@@ -7,6 +7,8 @@ from datetime import datetime
 from functools import partial
 from typing import Optional, List
 
+from requests import Session
+
 from preacher.core.datetime import now
 from preacher.core.response import Response
 from .analysis import analyze_data_obj
@@ -94,6 +96,7 @@ class Case:
         delay: float = 0.1,
         timeout: Optional[float] = None,
         listener: Optional[CaseListener] = None,
+        session: Optional[Session] = None,
     ) -> CaseResult:
         if not self._enabled:
             return CaseResult(label=self._label)
@@ -113,7 +116,7 @@ class Case:
             return CaseResult(label=self._label, conditions=conditions)
 
         listener = listener or CaseListener()
-        func = partial(self._run, base_url, timeout, listener)
+        func = partial(self._run, base_url, timeout, listener, session)
         result = retry_while_false(func, attempts=retry + 1, delay=delay)
         return replace(result, conditions=conditions)
 
@@ -122,9 +125,14 @@ class Case:
         base_url: str,
         timeout: Optional[float],
         listener: CaseListener,
+        session: Optional[Session],
     ) -> CaseResult:
         try:
-            response = self._request(base_url, timeout=timeout)
+            response = self._request(
+                base_url,
+                timeout=timeout,
+                session=session,
+            )
         except Exception as error:
             return CaseResult(
                 label=self._label,

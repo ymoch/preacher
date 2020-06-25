@@ -100,7 +100,10 @@ def test_when_the_request_fails(retry):
     )
 
     listener = MagicMock(spec=CaseListener)
-    result = case.run(base_url=sentinel.base_url, listener=listener)
+    result = case.run(
+        base_url=sentinel.base_url,
+        listener=listener,
+    )
 
     assert result.label is sentinel.label
     assert result.status is Status.FAILURE
@@ -108,7 +111,11 @@ def test_when_the_request_fails(retry):
     assert result.execution.status is Status.FAILURE
     assert result.execution.message == 'RuntimeError: message'
 
-    request.assert_called_once_with(sentinel.base_url, timeout=None)
+    request.assert_called_once_with(
+        sentinel.base_url,
+        timeout=None,
+        session=None,
+    )
     response_description.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
 
@@ -141,6 +148,7 @@ def test_when_given_an_invalid_response(retry):
         delay=sentinel.delay,
         timeout=sentinel.timeout,
         listener=listener,
+        session=sentinel.session,
     )
 
     assert result.label is sentinel.label
@@ -150,7 +158,11 @@ def test_when_given_an_invalid_response(retry):
     assert result.response.status is Status.UNSTABLE
     assert result.response.body.status is Status.UNSTABLE
 
-    request.assert_called_with(sentinel.base_url, timeout=sentinel.timeout)
+    request.assert_called_with(
+        sentinel.base_url,
+        timeout=sentinel.timeout,
+        session=sentinel.session,
+    )
     response.verify.assert_called_with(
         sentinel.response,
         origin_datetime=sentinel.starts,
@@ -160,7 +172,8 @@ def test_when_given_an_invalid_response(retry):
 
 
 @retry_patch
-def test_when_given_an_valid_response(retry):
+def test_when_given_an_valid_response(_retry):
+    request = MagicMock(return_value=sentinel.response)
     sentinel.response.starts = sentinel.starts
     case = Case(
         label=sentinel.label,
@@ -170,7 +183,7 @@ def test_when_given_an_valid_response(retry):
                 verify=MagicMock(return_value=Verification.succeed()),
             ),
         ],
-        request=MagicMock(return_value=sentinel.response),
+        request=request,
         response=MagicMock(verify=MagicMock(
             return_value=ResponseVerification(
                 response_id=sentinel.response_id,
@@ -188,3 +201,5 @@ def test_when_given_an_valid_response(retry):
     assert result.conditions.status is Status.SUCCESS
     assert result.execution.status is Status.SUCCESS
     assert result.response.status is Status.SUCCESS
+
+    request.assert_called_once_with('', timeout=None, session=None)
