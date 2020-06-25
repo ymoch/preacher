@@ -9,8 +9,8 @@ from datetime import datetime
 from typing import Callable, List, Optional
 
 from preacher.core.datetime import now
-from .case import Case, CaseListener, CaseResult
 from .analysis import analyze_data_obj
+from .case import Case, CaseListener, CaseResult
 from .description import Description
 from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
