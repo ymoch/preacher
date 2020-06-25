@@ -6,11 +6,13 @@ from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Callable, List, Optional
+from typing import List, Optional
+
+from requests import Session
 
 from preacher.core.datetime import now
-from .case import Case, CaseListener, CaseResult
 from .analysis import analyze_data_obj
+from .case import Case, CaseListener, CaseResult
 from .description import Description
 from .status import Status, Statused, StatusedList, merge_statuses
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
@@ -138,18 +140,27 @@ class Scenario:
         listener = listener or ScenarioListener()
 
         if self._ordered:
-            submit_cases: Callable = OrderedCasesTask
+            with Session() as session:
+                cases: CasesTask = OrderedCasesTask(
+                    executor,
+                    self._cases,
+                    base_url=base_url,
+                    retry=retry,
+                    delay=delay,
+                    timeout=timeout,
+                    listener=listener,
+                    session=session,
+                )
         else:
-            submit_cases = UnorderedCasesTask
-        cases = submit_cases(
-            executor,
-            self._cases,
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-            listener=listener,
-        )
+            cases = UnorderedCasesTask(
+                executor,
+                self._cases,
+                base_url=base_url,
+                retry=retry,
+                delay=delay,
+                timeout=timeout,
+                listener=listener,
+            )
 
         subscenarios = [
             subscenario.submit(

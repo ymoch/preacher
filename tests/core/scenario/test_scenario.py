@@ -2,6 +2,7 @@ from concurrent.futures import Executor, Future
 from unittest.mock import ANY, MagicMock, patch, sentinel
 
 from pytest import fixture, mark, raises
+from requests import Session
 
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.scenario import (
@@ -94,11 +95,17 @@ def test_given_default_scenario(executor):
     cases_task = MagicMock(CasesTask)
     cases_task.result = MagicMock(return_value=case_results)
 
+    session = MagicMock(Session)
+    session.__enter__ = MagicMock(return_value=session)
+
     scenario = Scenario()
     with patch(
         target=f'{PACKAGE}.OrderedCasesTask',
         return_value=cases_task,
-    ) as cases_task_ctor:
+    ) as cases_task_ctor, patch(
+        target=f'{PACKAGE}.Session',
+        return_value=session,
+    ):
         result = scenario.submit(executor).result()
 
     assert result.label is None
@@ -116,9 +123,11 @@ def test_given_default_scenario(executor):
         delay=0.1,
         timeout=None,
         listener=ANY,
+        session=session,
     )
     cases_task.result.assert_called_once_with()
     executor.submit.assert_not_called()
+    session.__exit__.assert_called()
 
 
 @mark.parametrize('cases_status, subscenario_status, expected_status', [
