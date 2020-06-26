@@ -8,15 +8,12 @@ from preacher.compilation.error import (
     NamedNode,
     IndexedNode,
 )
-from preacher.compilation.request import (
-    RequestCompiler,
-    RequestCompiled,
-    compile_param_value,
-)
+from preacher.compilation.request import RequestCompiler, RequestCompiled
 from preacher.core.interpretation.value import RelativeDatetimeValue
 from preacher.core.scenario import Method
 
 PACKAGE = 'preacher.compilation.request'
+DATE = date(2019, 12, 31)
 DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')
 RELATIVE_DATETIME_VALUE = RelativeDatetimeValue(timedelta(seconds=1))
 
@@ -35,7 +32,15 @@ def compiler() -> RequestCompiler:
     ({'params': 1}, [NamedNode('params')]),
     ({'params': ['a', 1]}, [NamedNode('params')]),
     ({'params': {1: 2}}, [NamedNode('params')]),
+    ({'params': {'k': complex(1, 2)}}, [NamedNode('params'), NamedNode('k')]),
+    ({'params': {'k': {}}}, [NamedNode('params'), NamedNode('k')]),
+    ({'params': {'k': frozenset()}}, [NamedNode('params'), NamedNode('k')]),
+    ({'params': {'k': DATE}}, [NamedNode('params'), NamedNode('k')]),
     ({'params': {'k': {'kk': 'vv'}}}, [NamedNode('params'), NamedNode('k')]),
+    (
+        {'params': {'k': [[]]}},
+        [NamedNode('params'), NamedNode('k'), IndexedNode(0)],
+    ),
     (
         {'params': {'k': ['a', {}]}},
         [NamedNode('params'), NamedNode('k'), IndexedNode(1)],
@@ -116,15 +121,3 @@ def test_of_default(compiler_ctor):
 
     default = compiler_ctor.call_args[1]['default']
     assert default is sentinel.new_default
-
-
-@mark.parametrize('value', [
-    complex(1, 2),
-    [],
-    {},
-    frozenset(),
-    (date(2019, 12, 31), False),
-])
-def test_compile_param_value_raises_compilation_error(value):
-    with raises(CompilationError):
-        compile_param_value(value)
