@@ -103,7 +103,7 @@ def _compile_method(obj: object) -> Method:
     return method
 
 
-def compile_param_value(value: object) -> ParameterValue:
+def _compile_param_value(value: object) -> ParameterValue:
     if value is None:
         return value
     if isinstance(value, bool):
@@ -127,9 +127,9 @@ def _compile_param(value: object) -> Parameter:
     if value is None:
         return value
     if isinstance(value, list):
-        return list(map_compile(compile_param_value, value))
+        return list(map_compile(_compile_param_value, value))
     try:
-        return compile_param_value(value)
+        return _compile_param_value(value)
     except CompilationError as error:
         raise CompilationError(
             f'Not allowed type for a request parameter: {value.__class__}',
