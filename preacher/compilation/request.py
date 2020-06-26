@@ -10,9 +10,10 @@ from typing import Optional
 from preacher.core.interpretation.value import RelativeDatetimeValue
 from preacher.core.scenario import (
     Request,
+    Method,
     Parameter,
     Parameters,
-    ParameterValue, Method,
+    ParameterValue,
 )
 from .error import CompilationError, on_key
 from .util import compile_str, compile_mapping, map_compile, or_else

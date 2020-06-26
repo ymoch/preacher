@@ -186,6 +186,11 @@ When given only a string, that is equivalent to ``{path: it}``.
       - Type
       - Default
       - Description
+    * - method
+      - String
+      - ``GET``
+      - An HTTP method,
+        which must be in ``GET``, ``POST``, ``PUT`` or ``DELETE``.
     * - path
       - String
       - ``''``
