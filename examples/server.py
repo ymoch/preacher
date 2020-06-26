@@ -8,6 +8,16 @@ from flask import Flask, jsonify, make_response, render_template, request
 api = Flask(__name__,)
 
 
+@api.route('/echo', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def echo():
+    return jsonify({
+        'method': request.method,
+        'path': request.path,
+        'headers': dict(request.headers.items()),
+        'args': dict(request.args.lists()),
+    })
+
+
 @api.route('/header')
 def header():
     return jsonify(dict(request.headers.items()))

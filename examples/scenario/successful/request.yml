@@ -78,3 +78,20 @@ cases:
               - all_of:
                   - be_before: now
                   - be_after: -12 hours
+
+  - label: Sends a POST request
+    request:
+      method: POST
+      path: /echo
+      params:
+        key: value
+    response:
+      status_code: 200
+      body:
+        - describe: .method
+          should:
+            - equal: POST
+        - describe: .args.key
+          should:
+            - contain_exactly:
+                - value
