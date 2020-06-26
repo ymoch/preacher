@@ -35,6 +35,10 @@ def session():
 
 def test_default_request(session):
     request = Request()
+    assert request.method is Method.GET
+    assert request.path == ''
+    assert request.headers == {}
+    assert request.params == {}
     with patch('requests.Session', return_value=session):
         request('base-url')
 
@@ -70,6 +74,7 @@ def test_request(session):
         headers={'k1': 'v1'},
         params=params,
     )
+    assert request.method is Method.POST
     assert request.path == '/path'
     assert request.headers == {'k1': 'v1'}
     assert request.params == params

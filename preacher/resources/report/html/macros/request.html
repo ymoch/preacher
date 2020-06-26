@@ -3,6 +3,10 @@
 {% macro show_request(request) %}
   <dl>
     <div class="grid-x">
+      <dt class="cell small-4 medium-2 large-1">Method</dt>
+      <dd class="cell small-8 medium-10 large-11">{{ request.method.value }}</dd>
+    </div>
+    <div class="grid-x">
       <dt class="cell small-4 medium-2 large-1">Path</dt>
       <dd class="cell small-8 medium-10 large-11">{{ request.path }}</dd>
     </div>

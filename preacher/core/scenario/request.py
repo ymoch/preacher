@@ -166,6 +166,10 @@ class Request:
         return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)
 
     @property
+    def method(self) -> Method:
+        return self._method
+
+    @property
     def path(self) -> str:
         return self._path
 
