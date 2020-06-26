@@ -12,24 +12,29 @@ from preacher.core.scenario import (
     Request,
     Parameter,
     Parameters,
-    ParameterValue,
+    ParameterValue, Method,
 )
 from .error import CompilationError, on_key
 from .util import compile_str, compile_mapping, map_compile, or_else
 
+_KEY_METHOD = 'method'
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
 _KEY_PARAMS = 'params'
 
+_METHOD_MAP = {method.name: method for method in Method}
+
 
 @dataclass(frozen=True)
 class RequestCompiled:
+    method: Optional[Method] = None
     path: Optional[str] = None
     headers: Optional[Mapping] = None
     params: Optional[Parameters] = None
 
     def replace(self, other: RequestCompiled) -> RequestCompiled:
         return RequestCompiled(
+            method=or_else(other.method, self.method),
             path=or_else(other.path, self.path),
             headers=or_else(other.headers, self.headers),
             params=other.params if other.params is not None else self.params,
@@ -37,6 +42,7 @@ class RequestCompiled:
 
     def fix(self) -> Request:
         return Request(
+            method=or_else(self.method, Method.GET),
             path=or_else(self.path, ''),
             headers=self.headers,
             params=self.params,
@@ -56,6 +62,12 @@ class RequestCompiler:
 
         obj = compile_mapping(obj)
         compiled = self._default
+
+        method_obj = obj.get(_KEY_METHOD)
+        if method_obj is not None:
+            with on_key(_KEY_METHOD):
+                method = _compile_method(method_obj)
+            compiled = replace(compiled, method=method)
 
         path_obj = obj.get(_KEY_PATH)
         if path_obj is not None:
@@ -79,6 +91,16 @@ class RequestCompiler:
 
     def of_default(self, default: RequestCompiled) -> RequestCompiler:
         return RequestCompiler(default=self._default.replace(default))
+
+
+def _compile_method(obj: object) -> Method:
+    key = compile_str(obj).upper()
+    method = _METHOD_MAP.get(key)
+    if not method:
+        raise CompilationError(
+            message=f'Must be in {list(_METHOD_MAP)}, but given: {obj}',
+        )
+    return method
 
 
 def compile_param_value(value: object) -> ParameterValue:

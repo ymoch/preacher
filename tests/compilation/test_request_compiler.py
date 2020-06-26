@@ -14,6 +14,7 @@ from preacher.compilation.request import (
     compile_param_value,
 )
 from preacher.core.interpretation.value import RelativeDatetimeValue
+from preacher.core.scenario import Method
 
 PACKAGE = 'preacher.compilation.request'
 DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')
@@ -27,6 +28,8 @@ def compiler() -> RequestCompiler:
 
 @mark.parametrize('value, expected_path', (
     ([], []),
+    ({'method': 1}, [NamedNode('method')]),
+    ({'method': 'invalid'}, [NamedNode('method')]),
     ({'path': {'key': 'value'}}, [NamedNode('path')]),
     ({'headers': ''}, [NamedNode('headers')]),
     ({'params': 1}, [NamedNode('params')]),
@@ -46,9 +49,21 @@ def test_given_invalid_values(compiler: RequestCompiler, value, expected_path):
 
 def test_given_an_empty_mapping(compiler: RequestCompiler):
     compiled = compiler.compile({})
+    assert compiled.method is None
     assert compiled.path is None
     assert compiled.headers is None
     assert compiled.params is None
+
+
+@mark.parametrize('method_obj, expected', [
+    ('get', Method.GET),
+    ('POST', Method.POST),
+    ('Put', Method.PUT),
+    ('Delete', Method.DELETE),
+])
+def test_given_a_valid_method(compiler: RequestCompiler, method_obj, expected):
+    compiled = compiler.compile({'method': method_obj})
+    assert compiled.method is expected
 
 
 @mark.parametrize('params', [
