@@ -82,7 +82,11 @@ def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
         'k2': 'str',
         'k3': [
             None,
+            False,
+            1,
+            0.1,
             'str',
+            DATETIME,
             RelativeDatetimeValue(timedelta(seconds=1))
         ]
     }
@@ -124,16 +128,3 @@ def test_of_default(compiler_ctor):
 def test_compile_param_value_raises_compilation_error(value):
     with raises(CompilationError):
         compile_param_value(value)
-
-
-@mark.parametrize('value, expected', [
-    (None, None),
-    (False, False),
-    (0, 0),
-    (0.0, 0.0),
-    ('', ''),
-    (DATETIME, DATETIME),
-    (RELATIVE_DATETIME_VALUE, RELATIVE_DATETIME_VALUE)
-])
-def test_compile_param_value_returns_value(value, expected):
-    assert compile_param_value(value) == expected
