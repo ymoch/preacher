@@ -11,7 +11,7 @@ from .extraction import (
 )
 from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
-from .request import Request, Parameter, Parameters, ParameterValue, Method
+from .request import Request, Method, Parameter, Parameters, ParameterValue
 from .response_description import ResponseDescription, ResponseVerification
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
