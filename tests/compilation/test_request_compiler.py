@@ -66,6 +66,15 @@ def test_given_a_valid_method(compiler: RequestCompiler, method_obj, expected):
     assert compiled.method is expected
 
 
+@mark.parametrize('headers_obj', [
+    {},
+    {'name1': 'value1', 'name2': 'value2'},
+])
+def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
+    compiled = compiler.compile({'headers': headers_obj})
+    assert compiled.headers == headers_obj
+
+
 @mark.parametrize('params', [
     'str',
     {
@@ -88,17 +97,6 @@ def test_given_a_string(compiler: RequestCompiler):
     assert compiled.path == '/path'
     assert compiled.headers is None
     assert compiled.params is None
-
-
-def test_given_a_filled_mapping(compiler: RequestCompiler):
-    compiled = compiler.compile({
-        'path': '/path',
-        'headers': {'key1': 'value1'},
-        'params': {'key': 'value'},
-    })
-    assert compiled.path == '/path'
-    assert compiled.headers == {'key1': 'value1'}
-    assert compiled.params == {'key': 'value'}
 
 
 @patch(f'{PACKAGE}.RequestCompiler', return_value=sentinel.compiler_of_default)
