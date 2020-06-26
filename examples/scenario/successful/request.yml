@@ -3,7 +3,7 @@ label: Request examples
 cases:
   - label: Sends headers
     request:
-      path: /header
+      path: /echo
       headers:
         header-string: xxx
         Header-String: yyy
@@ -11,7 +11,8 @@ cases:
     response:
       status_code: 200
       headers:
-        - describe: ."content-type"
+        - describe:
+            key: content-type
           should:
             equal: application/json
         - describe:
@@ -20,32 +21,32 @@ cases:
           should:
             be_greater_than: 100
       body:
-        - describe: ."Header-String"
+        - describe: .headers."Header-String"
           should:
             equal: yyy
-        - describe: ."User-Agent"
+        - describe: .headers."User-Agent"
           should:
             equal: custom
 
   - label: Sends params as a string
     request:
-      path: /params
+      path: /echo
       params: key=value&spam=ham%26eggs
     response:
       status_code: 200
       body:
-        - describe: .key
+        - describe: .args.key
           should:
             contain_exactly:
               - value
-        - describe: .spam
+        - describe: .args.spam
           should:
             contain_exactly:
               - ham&eggs
 
   - label: Sends params as a mapping
     request:
-      path: /params
+      path: /echo
       params:
         key: value
         multi-key:
@@ -60,11 +61,11 @@ cases:
     response:
       status_code: 200
       body:
-        - describe: .key
+        - describe: .args.key
           should:
             contain_exactly:
               - equal: value
-        - describe: ."multi-key"
+        - describe: .args."multi-key"
           should:
             contain_exactly:
               - equal: str

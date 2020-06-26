@@ -5,32 +5,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Flask, jsonify, make_response, render_template, request
 
 
-api = Flask(__name__,)
-
-
-@api.route('/echo', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def echo():
-    return jsonify({
-        'method': request.method,
-        'path': request.path,
-        'headers': dict(request.headers.items()),
-        'args': dict(request.args.lists()),
-    })
-
-
-@api.route('/header')
-def header():
-    return jsonify(dict(request.headers.items()))
-
-
-@api.route('/params')
-def query_params():
-    return jsonify(dict(request.args.lists()))
-
-
-@api.route('/error/404')
-def not_found():
-    return jsonify({'message': 'not found'}), 404
+api = Flask(__name__)
 
 
 @api.route('/json')
@@ -46,6 +21,21 @@ def json():
             {'x': '2'},
         ],
     })
+
+
+@api.route('/echo', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def echo():
+    return jsonify({
+        'method': request.method,
+        'path': request.path,
+        'headers': dict(request.headers.items()),
+        'args': dict(request.args.lists()),
+    })
+
+
+@api.route('/error/404')
+def not_found():
+    return jsonify({'message': 'not found'}), 404
 
 
 @api.route('/xml')
