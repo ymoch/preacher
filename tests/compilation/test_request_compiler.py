@@ -92,7 +92,7 @@ def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
             0.1,
             'str',
             DATETIME,
-            RelativeDatetimeValue(timedelta(seconds=1))
+            RELATIVE_DATETIME_VALUE,
         ]
     }
 ])
@@ -103,6 +103,7 @@ def test_given_valid_params(compiler: RequestCompiler, params):
 
 def test_given_a_string(compiler: RequestCompiler):
     compiled = compiler.compile('/path')
+    assert compiled.method is None
     assert compiled.path == '/path'
     assert compiled.headers is None
     assert compiled.params is None
