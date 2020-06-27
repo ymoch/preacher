@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
-from preacher.compilation.request_params import compile_params
+from preacher.compilation.url_param import compile_params
 from preacher.core.interpretation.value import RelativeDatetimeValue
 
 DATE = date(2019, 12, 31)

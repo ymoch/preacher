@@ -5,7 +5,7 @@ from dataclasses import dataclass, replace
 from typing import Mapping, Optional, Callable
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.request_params import compile_params
+from preacher.compilation.url_param import compile_params
 from preacher.compilation.util import compile_mapping, compile_str
 from preacher.core.scenario import (
     RequestBody,

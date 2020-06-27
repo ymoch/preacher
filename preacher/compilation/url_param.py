@@ -1,4 +1,4 @@
-"""Request parameters compilation."""
+"""URL parameters compilation."""
 
 from datetime import datetime
 from typing import Mapping

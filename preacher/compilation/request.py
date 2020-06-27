@@ -9,7 +9,7 @@ from typing import Optional
 from preacher.core.scenario import Request, Method, Parameters
 from .error import CompilationError, on_key
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
-from .request_params import compile_params
+from .url_param import compile_params
 from .util import compile_str, compile_mapping, or_else
 
 _KEY_METHOD = 'method'
