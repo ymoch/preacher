@@ -10,7 +10,10 @@ from preacher.core.scenario import Description, Predicate, ResponseDescription
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
-from .response_body import BodyDescriptionCompiler, BodyDescriptionCompiled
+from .response_body import (
+    ResponseBodyDescriptionCompiler,
+    ResponseBodyDescriptionCompiled,
+)
 from .util import compile_mapping, map_compile, or_else
 
 _KEY_STATUS_CODE = 'status_code'
@@ -22,7 +25,7 @@ _KEY_BODY = 'body'
 class ResponseDescriptionCompiled:
     status_code: Optional[List[Predicate]] = None
     headers: Optional[List[Description]] = None
-    body: Optional[BodyDescriptionCompiled] = None
+    body: Optional[ResponseBodyDescriptionCompiled] = None
 
     def replace(
         self,
@@ -52,7 +55,7 @@ class ResponseDescriptionCompiler:
         self,
         predicate: PredicateCompiler,
         description: DescriptionCompiler,
-        body: BodyDescriptionCompiler,
+        body: ResponseBodyDescriptionCompiler,
         default: Optional[ResponseDescriptionCompiled] = None,
     ):
         self._predicate = predicate

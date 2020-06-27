@@ -20,15 +20,15 @@ _KEY_DESCRIPTIONS = 'descriptions'
 
 
 @dataclass(frozen=True)
-class BodyDescriptionCompiled:
+class ResponseBodyDescriptionCompiled:
     analyze: Optional[Analysis] = None
     descriptions: Optional[List[Description]] = None
 
     def replace(
         self,
-        other: BodyDescriptionCompiled,
-    ) -> BodyDescriptionCompiled:
-        return BodyDescriptionCompiled(
+        other: ResponseBodyDescriptionCompiled,
+    ) -> ResponseBodyDescriptionCompiled:
+        return ResponseBodyDescriptionCompiled(
             analyze=or_else(other.analyze, self.analyze),
             descriptions=or_else(other.descriptions, self.descriptions),
         )
@@ -40,19 +40,19 @@ class BodyDescriptionCompiled:
         )
 
 
-class BodyDescriptionCompiler:
+class ResponseBodyDescriptionCompiler:
 
     def __init__(
         self,
         analysis: AnalysisCompiler,
         description: DescriptionCompiler,
-        default: Optional[BodyDescriptionCompiled] = None,
+        default: Optional[ResponseBodyDescriptionCompiled] = None,
     ):
         self._analysis = analysis
         self._description = description
-        self._default = default or BodyDescriptionCompiled()
+        self._default = default or ResponseBodyDescriptionCompiled()
 
-    def compile(self, obj: object) -> BodyDescriptionCompiled:
+    def compile(self, obj: object) -> ResponseBodyDescriptionCompiled:
         """
         `obj` should be a mapping or a list.
         An empty list results in an empty description.
@@ -81,9 +81,9 @@ class BodyDescriptionCompiler:
 
     def of_default(
         self,
-        default: BodyDescriptionCompiled
-    ) -> BodyDescriptionCompiler:
-        return BodyDescriptionCompiler(
+        default: ResponseBodyDescriptionCompiled
+    ) -> ResponseBodyDescriptionCompiler:
+        return ResponseBodyDescriptionCompiler(
             analysis=self._analysis,
             description=self._description,
             default=self._default.replace(default),

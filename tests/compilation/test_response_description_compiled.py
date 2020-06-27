@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch, sentinel
 
 from preacher.compilation.response import ResponseDescriptionCompiled
-from preacher.compilation.response_body import BodyDescriptionCompiled
+from preacher.compilation.response_body import ResponseBodyDescriptionCompiled
 
 PACKAGE = 'preacher.compilation.response'
 
@@ -50,7 +50,7 @@ def test_fix_hollow(ctor):
 
 @ctor_patch
 def test_fix_filled(ctor):
-    body = MagicMock(BodyDescriptionCompiled)
+    body = MagicMock(ResponseBodyDescriptionCompiled)
     body.fix.return_value = sentinel.body
 
     compiled = ResponseDescriptionCompiled(

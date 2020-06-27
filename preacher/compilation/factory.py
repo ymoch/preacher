@@ -6,7 +6,7 @@ from .predicate import PredicateCompiler
 from .request import RequestCompiler
 from .request_body import RequestBodyCompiler
 from .response import ResponseDescriptionCompiler
-from .response_body import BodyDescriptionCompiler
+from .response_body import ResponseBodyDescriptionCompiler
 from .scenario import ScenarioCompiler
 
 
@@ -21,14 +21,14 @@ def create_compiler() -> ScenarioCompiler:
         extraction_compiler=extraction,
         predicate_compiler=predicate,
     )
-    body_description = BodyDescriptionCompiler(
+    response_body_description = ResponseBodyDescriptionCompiler(
         analysis=analysis,
         description=description,
     )
     response = ResponseDescriptionCompiler(
         predicate=predicate,
         description=description,
-        body=body_description,
+        body=response_body_description,
     )
     case = CaseCompiler(
         request=request,

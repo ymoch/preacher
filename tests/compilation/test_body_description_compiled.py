@@ -1,6 +1,6 @@
 from unittest.mock import patch, sentinel
 
-from preacher.compilation.response_body import BodyDescriptionCompiled
+from preacher.compilation.response_body import ResponseBodyDescriptionCompiled
 from preacher.core.scenario import analyze_json_str
 
 ctor_patch = patch(
@@ -10,17 +10,17 @@ ctor_patch = patch(
 
 
 def test_replace():
-    initial = BodyDescriptionCompiled(
+    initial = ResponseBodyDescriptionCompiled(
         analyze=sentinel.initial_analyze,
         descriptions=sentinel.initial_descriptions,
     )
 
-    other = BodyDescriptionCompiled()
+    other = ResponseBodyDescriptionCompiled()
     replaced = initial.replace(other)
     assert replaced.analyze is sentinel.initial_analyze
     assert replaced.descriptions is sentinel.initial_descriptions
 
-    other = BodyDescriptionCompiled(
+    other = ResponseBodyDescriptionCompiled(
         analyze=sentinel.analyze,
         descriptions=sentinel.descriptions,
     )
@@ -31,7 +31,7 @@ def test_replace():
 
 @ctor_patch
 def test_fix_hollow(ctor):
-    compiled = BodyDescriptionCompiled()
+    compiled = ResponseBodyDescriptionCompiled()
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
 
@@ -43,7 +43,7 @@ def test_fix_hollow(ctor):
 
 @ctor_patch
 def test_fix_filled(ctor):
-    compiled = BodyDescriptionCompiled(
+    compiled = ResponseBodyDescriptionCompiled(
         analyze=sentinel.analyze,
         descriptions=sentinel.descriptions,
     )

@@ -7,8 +7,8 @@ from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
 from preacher.compilation.response import ResponseDescriptionCompiler
 from preacher.compilation.response_body import (
-    BodyDescriptionCompiled,
-    BodyDescriptionCompiler,
+    ResponseBodyDescriptionCompiled,
+    ResponseBodyDescriptionCompiler,
 )
 
 PACKAGE = 'preacher.compilation.response'
@@ -41,7 +41,7 @@ def description():
 
 @fixture
 def body(body_of_default):
-    compiler = MagicMock(spec=BodyDescriptionCompiler)
+    compiler = MagicMock(spec=ResponseBodyDescriptionCompiler)
     compiler.compile.return_value = sentinel.body_desc
     compiler.of_default.return_value = body_of_default
 
@@ -50,7 +50,7 @@ def body(body_of_default):
 
 @fixture
 def body_of_default():
-    compiler = MagicMock(spec=BodyDescriptionCompiler)
+    compiler = MagicMock(spec=ResponseBodyDescriptionCompiler)
     compiler.compile.return_value = sentinel.sub_body_desc
     return compiler
 
@@ -114,7 +114,7 @@ def test_given_filled_values(compiler, predicate, description, body):
 
 @fixture
 def initial_default():
-    initial_default = MagicMock(BodyDescriptionCompiled)
+    initial_default = MagicMock(ResponseBodyDescriptionCompiled)
     initial_default.replace.return_value = sentinel.new_default
     return initial_default
 
@@ -137,7 +137,7 @@ def test_given_hollow_default(
         default=initial_default,
     )
 
-    default = MagicMock(BodyDescriptionCompiled, body=None)
+    default = MagicMock(ResponseBodyDescriptionCompiled, body=None)
     compiler_of_default = compiler.of_default(default)
     assert compiler_of_default is sentinel.compiler_of_default
 
@@ -172,7 +172,10 @@ def test_given_filled_default(
         default=initial_default,
     )
 
-    default = MagicMock(BodyDescriptionCompiled, body=sentinel.default_body)
+    default = MagicMock(
+        spec=ResponseBodyDescriptionCompiled,
+        body=sentinel.default_body,
+    )
     compiler_of_default = compiler.of_default(default)
     assert compiler_of_default is sentinel.compiler_of_default
 

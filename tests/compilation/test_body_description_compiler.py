@@ -6,16 +6,16 @@ from preacher.compilation.analysis import AnalysisCompiler
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
 from preacher.compilation.response_body import (
-    BodyDescriptionCompiled,
-    BodyDescriptionCompiler,
+    ResponseBodyDescriptionCompiled,
+    ResponseBodyDescriptionCompiler,
 )
 
 PACKAGE = 'preacher.compilation.response_body'
 
 
 @fixture
-def compiler(analysis, description) -> BodyDescriptionCompiler:
-    return BodyDescriptionCompiler(analysis, description)
+def compiler(analysis, description) -> ResponseBodyDescriptionCompiler:
+    return ResponseBodyDescriptionCompiler(analysis, description)
 
 
 @fixture
@@ -92,14 +92,18 @@ def test_given_a_mapping(compiler, analysis, description):
 
 
 @patch(
-    target=f'{PACKAGE}.BodyDescriptionCompiler',
+    target=f'{PACKAGE}.ResponseBodyDescriptionCompiler',
     return_value=sentinel.compiler_of_default,
 )
 def test_of_default(compiler_ctor, analysis, description):
-    initial_default = MagicMock(BodyDescriptionCompiled)
+    initial_default = MagicMock(ResponseBodyDescriptionCompiled)
     initial_default.replace.return_value = sentinel.new_default
 
-    compiler = BodyDescriptionCompiler(analysis, description, initial_default)
+    compiler = ResponseBodyDescriptionCompiler(
+        analysis=analysis,
+        description=description,
+        default=initial_default
+    )
     compiler_of_default = compiler.of_default(sentinel.default)
     assert compiler_of_default is sentinel.compiler_of_default
 
