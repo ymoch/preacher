@@ -8,6 +8,7 @@ from typing import Optional
 
 from preacher.core.scenario import Request, Method, Parameters
 from .error import CompilationError, on_key
+from .request_body import RequestBodyCompiled, RequestBodyCompiler
 from .request_params import compile_params
 from .util import compile_str, compile_mapping, or_else
 
@@ -15,6 +16,7 @@ _KEY_METHOD = 'method'
 _KEY_PATH = 'path'
 _KEY_HEADERS = 'headers'
 _KEY_PARAMS = 'params'
+_KEY_BODY = 'body'
 
 _METHOD_MAP = {method.name: method for method in Method}
 
@@ -25,6 +27,7 @@ class RequestCompiled:
     path: Optional[str] = None
     headers: Optional[Mapping] = None
     params: Optional[Parameters] = None
+    body: Optional[RequestBodyCompiled] = None
 
     def replace(self, other: RequestCompiled) -> RequestCompiled:
         return RequestCompiled(
@@ -32,6 +35,7 @@ class RequestCompiled:
             path=or_else(other.path, self.path),
             headers=or_else(other.headers, self.headers),
             params=other.params if other.params is not None else self.params,
+            body=or_else(other.body, self.body),
         )
 
     def fix(self) -> Request:
@@ -40,12 +44,18 @@ class RequestCompiled:
             path=or_else(self.path, ''),
             headers=self.headers,
             params=self.params,
+            body=self.body.fix() if self.body else None
         )
 
 
 class RequestCompiler:
 
-    def __init__(self, default: RequestCompiled = None):
+    def __init__(
+        self,
+        body: RequestBodyCompiler,
+        default: RequestCompiled = None,
+    ):
+        self._body = body
         self._default = default or RequestCompiled()
 
     def compile(self, obj) -> RequestCompiled:
@@ -81,10 +91,23 @@ class RequestCompiler:
                 params = compile_params(params_obj)
             compiled = replace(compiled, params=params)
 
+        body_obj = obj.get(_KEY_BODY)
+        if body_obj is not None:
+            with on_key(_KEY_BODY):
+                body = self._body.compile(body_obj)
+            compiled = replace(compiled, body=body)
+
         return compiled
 
     def of_default(self, default: RequestCompiled) -> RequestCompiler:
-        return RequestCompiler(default=self._default.replace(default))
+        body = self._body
+        if default.body:
+            body = body.of_default(default.body)
+
+        return RequestCompiler(
+            body=body,
+            default=self._default.replace(default)
+        )
 
 
 def _compile_method(obj: object) -> Method:
