@@ -43,7 +43,7 @@ def compile_param(value: object) -> Parameter:
         )
 
 
-def compile_params(params: object) -> Parameters:
+def compile_url_params(params: object) -> Parameters:
     if isinstance(params, str):
         return params
 

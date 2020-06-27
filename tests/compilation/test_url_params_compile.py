@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
-from preacher.compilation.url_param import compile_params
+from preacher.compilation.url_param import compile_url_params
 from preacher.core.interpretation.value import RelativeDatetimeValue
 
 DATE = date(2019, 12, 31)
@@ -23,7 +23,7 @@ RELATIVE_DATETIME_VALUE = RelativeDatetimeValue(timedelta(seconds=1))
 ])
 def test_given_invalid_object(obj, expected_path):
     with raises(CompilationError) as error_info:
-        compile_params(obj)
+        compile_url_params(obj)
     assert error_info.value.path == expected_path
 
 
@@ -40,5 +40,5 @@ def test_given_invalid_object(obj, expected_path):
     {'single': 's', 'multiple': [None, DATETIME, RELATIVE_DATETIME_VALUE]},
 ])
 def test_given_valid_params(obj):
-    compiled = compile_params(obj)
+    compiled = compile_url_params(obj)
     assert compiled == obj

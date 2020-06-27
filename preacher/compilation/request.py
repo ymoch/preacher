@@ -9,7 +9,7 @@ from typing import Optional
 from preacher.core.scenario import Request, Method, Parameters
 from .error import CompilationError, on_key
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
-from .url_param import compile_params
+from .url_param import compile_url_params
 from .util import compile_str, compile_mapping, or_else
 
 _KEY_METHOD = 'method'
@@ -88,7 +88,7 @@ class RequestCompiler:
         params_obj = obj.get(_KEY_PARAMS)
         if params_obj is not None:
             with on_key(_KEY_PARAMS):
-                params = compile_params(params_obj)
+                params = compile_url_params(params_obj)
             compiled = replace(compiled, params=params)
 
         body_obj = obj.get(_KEY_BODY)
