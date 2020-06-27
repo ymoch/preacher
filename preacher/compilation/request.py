@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from preacher.core.scenario import Request, Method, UrlParameters
+from preacher.core.scenario import Request, Method, UrlParams
 from .error import CompilationError, on_key
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
 from .url_param import compile_url_params
@@ -26,7 +26,7 @@ class RequestCompiled:
     method: Optional[Method] = None
     path: Optional[str] = None
     headers: Optional[Mapping] = None
-    params: Optional[UrlParameters] = None
+    params: Optional[UrlParams] = None
     body: Optional[RequestBodyCompiled] = None
 
     def replace(self, other: RequestCompiled) -> RequestCompiled:

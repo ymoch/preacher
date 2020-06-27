@@ -6,14 +6,10 @@ from typing import Mapping
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util import map_compile
 from preacher.core.interpretation.value import RelativeDatetimeValue
-from preacher.core.scenario import (
-    UrlParameters,
-    UrlParameter,
-    UrlParameterValue,
-)
+from preacher.core.scenario import UrlParams, UrlParam, UrlParamValue
 
 
-def compile_param_value(value: object) -> UrlParameterValue:
+def compile_url_param_value(value: object) -> UrlParamValue:
     if value is None:
         return value
     if isinstance(value, bool):
@@ -33,13 +29,13 @@ def compile_param_value(value: object) -> UrlParameterValue:
     )
 
 
-def compile_param(value: object) -> UrlParameter:
+def compile_url_param(value: object) -> UrlParam:
     if value is None:
         return value
     if isinstance(value, list):
-        return list(map_compile(compile_param_value, value))
+        return list(map_compile(compile_url_param_value, value))
     try:
-        return compile_param_value(value)
+        return compile_url_param_value(value)
     except CompilationError as error:
         raise CompilationError(
             f'Not allowed type for a request parameter: {value.__class__}',
@@ -47,7 +43,7 @@ def compile_param(value: object) -> UrlParameter:
         )
 
 
-def compile_url_params(params: object) -> UrlParameters:
+def compile_url_params(params: object) -> UrlParams:
     if isinstance(params, str):
         return params
 
@@ -60,5 +56,5 @@ def compile_url_params(params: object) -> UrlParameters:
                 f'A parameter key must be a string, given {key}'
             )
         with on_key(key):
-            compiled[key] = compile_param(value)
+            compiled[key] = compile_url_param(value)
     return compiled
