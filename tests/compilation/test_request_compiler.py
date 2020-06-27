@@ -1,5 +1,5 @@
 from datetime import date, datetime, timedelta
-from unittest.mock import NonCallableMock, patch, sentinel
+from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark, raises, fixture
 
@@ -109,8 +109,10 @@ def test_given_a_string(compiler: RequestCompiler):
     assert compiled.params is None
 
 
-@patch(f'{PACKAGE}.RequestCompiler', return_value=sentinel.compiler_of_default)
-def test_of_default(compiler_ctor):
+def test_of_default(mocker):
+    compiler_ctor = mocker.patch(f'{PACKAGE}.RequestCompiler')
+    compiler_ctor.return_value = sentinel.compiler_of_default
+
     initial_default = NonCallableMock(RequestCompiled)
     initial_default.replace.return_value = sentinel.new_default
 

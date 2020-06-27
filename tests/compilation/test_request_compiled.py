@@ -1,12 +1,9 @@
-from unittest.mock import patch, sentinel
+from unittest.mock import sentinel
 
 from preacher.compilation.request import RequestCompiled
 from preacher.core.scenario import Method
 
-ctor_patch = patch(
-    target='preacher.compilation.request.Request',
-    return_value=sentinel.fixed,
-)
+PACKAGE = 'preacher.compilation.request'
 
 
 def test_replace():
@@ -37,8 +34,9 @@ def test_replace():
     assert replaced.params is sentinel.params
 
 
-@ctor_patch
-def test_fix_hollow(ctor):
+def test_fix_hollow(mocker):
+    ctor = mocker.patch(f'{PACKAGE}.Request', return_value=sentinel.fixed)
+
     compiled = RequestCompiled()
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
@@ -51,8 +49,9 @@ def test_fix_hollow(ctor):
     )
 
 
-@ctor_patch
-def test_fix_filled(ctor):
+def test_fix_filled(mocker):
+    ctor = mocker.patch(f'{PACKAGE}.Request', return_value=sentinel.fixed)
+
     compiled = RequestCompiled(
         method=sentinel.method,
         path=sentinel.path,
