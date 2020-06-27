@@ -11,6 +11,7 @@ import requests
 from preacher import __version__ as _version
 from preacher.core.datetime import now
 from preacher.core.response import Response, ResponseBody
+from .request_body import RequestBody
 from .request_params import Parameters, resolve_params
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
@@ -82,11 +83,13 @@ class Request:
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
         params: Optional[Parameters] = None,
+        body: RequestBody = None,
     ):
         self._method = method
         self._path = path
         self._headers = headers or {}
         self._params = params or {}
+        self._body = body
 
     def __call__(
         self,
@@ -102,10 +105,18 @@ class Request:
                     session=new_session,
                 )
 
+        starts = now()
+
         url = base_url + self._path
         headers = copy(_DEFAULT_HEADERS)
+
+        data = None
+        if self._body:
+            content_type = self._body.content_type
+            headers['Content-Type'] = content_type
+            data = self._body.resolve(origin_datetime=starts)
+
         headers.update(self._headers)
-        starts = now()
         params = resolve_params(self._params, origin_datetime=starts)
 
         res = session.request(
@@ -113,6 +124,7 @@ class Request:
             url,
             headers=headers,
             params=params,  # type: ignore
+            data=data,
             timeout=timeout,
         )
         return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)
@@ -132,3 +144,7 @@ class Request:
     @property
     def params(self) -> Parameters:
         return self._params
+
+    @property
+    def body(self) -> Optional[RequestBody]:
+        return self._body
