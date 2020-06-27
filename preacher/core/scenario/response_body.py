@@ -10,7 +10,7 @@ from .description import Description
 from .verification import Verification, collect
 
 
-class BodyDescription:
+class ResponseBodyDescription:
 
     def __init__(
         self,

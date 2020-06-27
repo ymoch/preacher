@@ -5,12 +5,12 @@ from dataclasses import dataclass, replace
 from typing import Mapping, Optional, Callable
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.request_params import compile_params
+from preacher.compilation.url_param import compile_url_params
 from preacher.compilation.util import compile_mapping, compile_str
 from preacher.core.scenario import (
     RequestBody,
     UrlencodedRequestBody,
-    Parameters,
+    UrlParams,
 )
 
 _KEY_TYPE = 'type'
@@ -34,7 +34,7 @@ class RequestBodyCompiled(ABC):
 
 @dataclass(frozen=True)
 class UrlencodedRequestBodyCompiled(RequestBodyCompiled):
-    data: Optional[Parameters] = None
+    data: Optional[UrlParams] = None
 
     def replace(self, other: RequestBodyCompiled) -> RequestBodyCompiled:
         if not isinstance(other, UrlencodedRequestBodyCompiled):
@@ -49,7 +49,7 @@ class UrlencodedRequestBodyCompiled(RequestBodyCompiled):
         data_obj = obj.get(_KEY_DATA)
         if data_obj is not None:
             with on_key(_KEY_DATA):
-                data = compile_params(data_obj)
+                data = compile_url_params(data_obj)
             compiled = replace(self, data=data)
 
         return compiled

@@ -9,7 +9,7 @@ from preacher.core.scenario import Case, Description
 from .description import DescriptionCompiler
 from .error import on_key
 from .request import RequestCompiler, RequestCompiled
-from .response_description import (
+from .response import (
     ResponseDescriptionCompiled,
     ResponseDescriptionCompiler,
 )

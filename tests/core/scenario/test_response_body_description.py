@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, sentinel
 
-from preacher.core.scenario.body_description import BodyDescription
 from preacher.core.scenario.description import Description
+from preacher.core.scenario.response_body import ResponseBodyDescription
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
 
@@ -14,7 +14,10 @@ def test_given_invalid_body():
     ]
     analyze = MagicMock(side_effect=RuntimeError('parse error'))
 
-    description = BodyDescription(descriptions=descriptions, analyze=analyze)
+    description = ResponseBodyDescription(
+        descriptions=descriptions,
+        analyze=analyze,
+    )
     verification = description.verify(sentinel.response_body)
     assert verification.status == Status.FAILURE
     assert verification.message.endswith('parse error')
@@ -33,7 +36,10 @@ def test_given_descriptions():
         )),
     ]
     analyze = MagicMock(return_value=sentinel.body)
-    description = BodyDescription(descriptions=descriptions, analyze=analyze)
+    description = ResponseBodyDescription(
+        descriptions=descriptions,
+        analyze=analyze,
+    )
     verification = description.verify(sentinel.response_body, k='v')
     assert verification.status == Status.UNSTABLE
     assert verification.children[0].status == Status.UNSTABLE

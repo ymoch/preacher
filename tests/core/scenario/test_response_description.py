@@ -4,10 +4,10 @@ from unittest.mock import MagicMock, sentinel
 from pytest import mark, fixture, raises
 
 from preacher.core.response import Response
-from preacher.core.scenario.body_description import BodyDescription
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.predicate import Predicate
-from preacher.core.scenario.response_description import ResponseDescription
+from preacher.core.scenario.response import ResponseDescription
+from preacher.core.scenario.response_body import ResponseBodyDescription
 from preacher.core.scenario.status import Status, Statused
 from preacher.core.scenario.verification import Verification
 
@@ -57,7 +57,7 @@ def test_when_given_descriptions(response):
         )),
     ]
     body = MagicMock(
-        spec=BodyDescription,
+        spec=ResponseBodyDescription,
         verify=MagicMock(return_value=Verification(status=Status.UNSTABLE)),
     )
     analyze_headers = MagicMock(return_value=sentinel.headers)
@@ -105,8 +105,8 @@ def test_merge_statuses(
             return_value=Verification(status=headers_status)
         )),
     ]
-    body_description: BodyDescription = MagicMock(
-        spec=BodyDescription,
+    body_description: ResponseBodyDescription = MagicMock(
+        spec=ResponseBodyDescription,
         verify=MagicMock(
             return_value=Verification(status=body_status)
         )

@@ -7,7 +7,7 @@ PACKAGE = 'preacher.core.scenario.request_body'
 
 def test(mocker):
     resolve_params = mocker.patch(
-        f'{PACKAGE}.resolve_params',
+        f'{PACKAGE}.resolve_url_params',
         return_value=sentinel.resolved_params,
     )
 

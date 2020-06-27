@@ -6,9 +6,7 @@ from preacher.compilation.case import CaseCompiled, CaseCompiler
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.request import RequestCompiler
-from preacher.compilation.response_description import (
-    ResponseDescriptionCompiler,
-)
+from preacher.compilation.response import ResponseDescriptionCompiler
 
 ctor_patch = patch(
     target='preacher.compilation.case.Case',

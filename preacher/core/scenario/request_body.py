@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from preacher.core.scenario.request_params import Parameters, resolve_params
+from preacher.core.scenario.url_param import UrlParams, resolve_url_params
 
 
 class RequestBody(ABC):
@@ -18,7 +18,7 @@ class RequestBody(ABC):
 
 class UrlencodedRequestBody(RequestBody):
 
-    def __init__(self, params: Parameters):
+    def __init__(self, params: UrlParams):
         self._params = params
 
     @property
@@ -26,4 +26,4 @@ class UrlencodedRequestBody(RequestBody):
         return 'application/x-www-form-urlencoded'
 
     def resolve(self, **kwargs) -> Any:
-        return resolve_params(self._params, **kwargs)
+        return resolve_url_params(self._params, **kwargs)

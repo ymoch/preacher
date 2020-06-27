@@ -2,11 +2,11 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, sentinel
 
 from preacher.core.interpretation.value import Value
-from preacher.core.scenario.request_params import resolve_params
+from preacher.core.scenario.url_param import resolve_url_params
 
 
 def test_resolve_params_given_a_string():
-    resolved = resolve_params('foo=bar')
+    resolved = resolve_url_params('foo=bar')
     assert resolved == 'foo=bar'
 
 
@@ -27,7 +27,7 @@ def test_resolve_params_given_a_mapping():
             value,
         ]
     }
-    resolved = resolve_params(params, foo=sentinel.foo)
+    resolved = resolve_url_params(params, foo=sentinel.foo)
 
     assert resolved['none'] is None
     assert resolved['false'] == 'false'

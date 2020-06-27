@@ -2,9 +2,7 @@ from unittest.mock import MagicMock, patch, sentinel
 
 from preacher.compilation.case import CaseCompiled
 from preacher.compilation.request import RequestCompiled
-from preacher.compilation.response_description import (
-    ResponseDescriptionCompiled,
-)
+from preacher.compilation.response import ResponseDescriptionCompiled
 
 PACKAGE = 'preacher.compilation.case'
 

@@ -77,7 +77,7 @@ def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
 
 def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
     compile_params = mocker.patch(
-        f'{PACKAGE}.compile_params',
+        f'{PACKAGE}.compile_url_params',
         side_effect=CompilationError('message', path=[NamedNode('x')])
     )
     with raises(CompilationError) as error_info:
@@ -89,7 +89,7 @@ def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
 
 def test_given_valid_params(compiler: RequestCompiler, mocker):
     compile_params = mocker.patch(
-        f'{PACKAGE}.compile_params',
+        f'{PACKAGE}.compile_url_params',
         return_value=sentinel.compiled_params,
     )
 

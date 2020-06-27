@@ -56,7 +56,7 @@ def test_request(mocker, session):
     uuid4 = mocker.patch('uuid.uuid4', return_value=uuid_obj)
 
     resolve_params = mocker.patch(
-        f'{PACKAGE}.resolve_params',
+        f'{PACKAGE}.resolve_url_params',
         return_value=sentinel.resolved_params,
     )
 
