@@ -1,17 +1,12 @@
-from datetime import date, datetime, timedelta
 from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark, raises, fixture
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.core.interpretation.value import RelativeDatetimeValue
 from preacher.core.scenario import Method
 
 PACKAGE = 'preacher.compilation.request'
-DATE = date(2019, 12, 31)
-DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')
-RELATIVE_DATETIME_VALUE = RelativeDatetimeValue(timedelta(seconds=1))
 
 
 @fixture
