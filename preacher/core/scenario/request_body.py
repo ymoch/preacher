@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from preacher.core.scenario.request_params import Parameters, resolve_params
+from preacher.core.scenario.url_param import Parameters, resolve_params
 
 
 class RequestBody(ABC):

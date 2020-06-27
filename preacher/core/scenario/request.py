@@ -12,7 +12,7 @@ from preacher import __version__ as _version
 from preacher.core.datetime import now
 from preacher.core.response import Response, ResponseBody
 from .request_body import RequestBody
-from .request_params import Parameters, resolve_params
+from .url_param import Parameters, resolve_params
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 

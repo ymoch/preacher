@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, sentinel
 
 from preacher.core.interpretation.value import Value
-from preacher.core.scenario.request_params import resolve_params
+from preacher.core.scenario.url_param import resolve_params
 
 
 def test_resolve_params_given_a_string():
