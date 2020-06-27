@@ -23,7 +23,7 @@ def compiler() -> RequestCompiler:
     return RequestCompiler()
 
 
-@mark.parametrize('value, expected_path', (
+@mark.parametrize(('value', 'expected_path'), (
     ([], []),
     ({'method': 1}, [NamedNode('method')]),
     ({'method': 'invalid'}, [NamedNode('method')]),
@@ -60,7 +60,7 @@ def test_given_an_empty_mapping(compiler: RequestCompiler):
     assert compiled.params is None
 
 
-@mark.parametrize('method_obj, expected', [
+@mark.parametrize(('method_obj', 'expected'), [
     ('get', Method.GET),
     ('POST', Method.POST),
     ('Put', Method.PUT),
