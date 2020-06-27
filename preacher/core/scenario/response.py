@@ -12,7 +12,7 @@ from preacher.core.response import Response
 from .analysis import Analyzer, JsonAnalyzer
 from .description import Description
 from .predicate import Predicate
-from .response_body import BodyDescription
+from .response_body import ResponseBodyDescription
 from .status import Status, merge_statuses
 from .verification import Verification, collect
 
@@ -32,7 +32,7 @@ class ResponseDescription:
         self,
         status_code: Optional[List[Predicate]] = None,
         headers: Optional[List[Description]] = None,
-        body: Optional[BodyDescription] = None,
+        body: Optional[ResponseBodyDescription] = None,
         analyze_headers:
             Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
     ):

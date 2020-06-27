@@ -13,7 +13,7 @@ from .predicate import Predicate, MatcherPredicate
 from .request import Request, Method
 from .request_body import RequestBody, UrlencodedRequestBody
 from .response import ResponseDescription, ResponseVerification
-from .response_body import BodyDescription
+from .response_body import ResponseBodyDescription
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
 from .url_param import UrlParam, UrlParams, UrlParamValue
@@ -45,7 +45,7 @@ __all__ = [
     'UrlencodedRequestBody',
     'ResponseDescription',
     'ResponseVerification',
-    'BodyDescription',
+    'ResponseBodyDescription',
     'Scenario',
     'ScenarioTask',
     'ScenarioListener',

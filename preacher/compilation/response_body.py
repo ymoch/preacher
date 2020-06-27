@@ -7,7 +7,7 @@ from typing import List, Optional
 from preacher.core.scenario import (
     Analysis,
     analyze_json_str,
-    BodyDescription,
+    ResponseBodyDescription,
     Description,
 )
 from .analysis import AnalysisCompiler
@@ -33,8 +33,8 @@ class BodyDescriptionCompiled:
             descriptions=or_else(other.descriptions, self.descriptions),
         )
 
-    def fix(self) -> BodyDescription:
-        return BodyDescription(
+    def fix(self) -> ResponseBodyDescription:
+        return ResponseBodyDescription(
             analyze=self.analyze or analyze_json_str,
             descriptions=self.descriptions,
         )
