@@ -1,5 +1,5 @@
 from datetime import date, datetime, timedelta
-from unittest.mock import patch, sentinel, MagicMock
+from unittest.mock import NonCallableMock, patch, sentinel
 
 from pytest import mark, raises, fixture
 
@@ -111,7 +111,7 @@ def test_given_a_string(compiler: RequestCompiler):
 
 @patch(f'{PACKAGE}.RequestCompiler', return_value=sentinel.compiler_of_default)
 def test_of_default(compiler_ctor):
-    initial_default = MagicMock(RequestCompiled)
+    initial_default = NonCallableMock(RequestCompiled)
     initial_default.replace.return_value = sentinel.new_default
 
     compiler = RequestCompiler(initial_default)

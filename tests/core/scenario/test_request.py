@@ -1,6 +1,6 @@
 import uuid
 from datetime import timedelta
-from unittest.mock import MagicMock, patch, sentinel
+from unittest.mock import NonCallableMock, Mock, patch, sentinel
 
 import requests
 from pytest import fixture
@@ -12,17 +12,17 @@ PACKAGE = 'preacher.core.scenario.request'
 
 @fixture
 def session():
-    response = MagicMock(
-        spec=requests.Response,
-        elapsed=timedelta(seconds=1.23),
-        status_code=402,
-        headers={'Header-Name': 'Header-Value'},
-        text=sentinel.text,
-        content=sentinel.content,
-    )
-    session = MagicMock(requests.Session)
-    session.__enter__ = MagicMock(return_value=session)
-    session.request = MagicMock(return_value=response)
+    response = NonCallableMock(requests.Response)
+    response.elapsed = timedelta(seconds=1.23)
+    response.status_code = 402
+    response.headers = {'Header-Name': 'Header-Value'}
+    response.text = sentinel.text
+    response.content = sentinel.content
+
+    session = NonCallableMock(requests.Session)
+    session.__enter__ = Mock(return_value=session)
+    session.__exit__ = Mock()
+    session.request = Mock(return_value=response)
     return session
 
 
@@ -41,14 +41,15 @@ def test_default_request(session):
     assert kwargs['params'] == {}
     assert kwargs['timeout'] is None
 
-    session.__exit__.assert_called()
+    session.__enter__.assert_called_once()
+    session.__exit__.assert_called_once()
 
 
 @patch(f'{PACKAGE}.resolve_params', return_value=sentinel.resolved_params)
 @patch(f'{PACKAGE}.now', return_value=sentinel.now)
-@patch('uuid.uuid4', return_value=MagicMock(
+@patch('uuid.uuid4', return_value=NonCallableMock(
     spec=uuid.UUID,
-    __str__=MagicMock(return_value='uuid'),
+    __str__=Mock(return_value='uuid'),
 ))
 def test_request(uuid4, now, resolve_params, session):
     request = Request(
