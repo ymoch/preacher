@@ -7,10 +7,10 @@ from dataclasses import dataclass, replace
 from typing import Optional, List
 
 from preacher.core.scenario import Description, Predicate, ResponseDescription
-from .body_description import BodyDescriptionCompiler, BodyDescriptionCompiled
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
+from .response_body import BodyDescriptionCompiler, BodyDescriptionCompiled
 from .util import compile_mapping, map_compile, or_else
 
 _KEY_STATUS_CODE = 'status_code'

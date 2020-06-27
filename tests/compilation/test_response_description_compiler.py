@@ -2,13 +2,13 @@ from unittest.mock import ANY, MagicMock, call, sentinel, patch
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.body_description import (
-    BodyDescriptionCompiled,
-    BodyDescriptionCompiler,
-)
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
+from preacher.compilation.response_body import (
+    BodyDescriptionCompiled,
+    BodyDescriptionCompiler,
+)
 from preacher.compilation.response_description import (
     ResponseDescriptionCompiler,
 )

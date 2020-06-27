@@ -1,10 +1,10 @@
 from unittest.mock import patch, sentinel
 
-from preacher.compilation.body_description import BodyDescriptionCompiled
+from preacher.compilation.response_body import BodyDescriptionCompiled
 from preacher.core.scenario import analyze_json_str
 
 ctor_patch = patch(
-    target='preacher.compilation.body_description.BodyDescription',
+    target='preacher.compilation.response_body.BodyDescription',
     return_value=sentinel.fixed,
 )
 

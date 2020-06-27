@@ -1,5 +1,4 @@
 from .analysis import Analyzer, Analysis, analyze_json_str, analyze_xml_str
-from .body_description import BodyDescription
 from .case import Case, CaseListener, CaseResult
 from .description import Description
 from .extraction import (
@@ -13,6 +12,7 @@ from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
 from .request import Request, Method
 from .request_body import RequestBody, UrlencodedRequestBody
+from .response_body import BodyDescription
 from .response_description import ResponseDescription, ResponseVerification
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList

@@ -1,11 +1,11 @@
 from .analysis import AnalysisCompiler
-from .body_description import BodyDescriptionCompiler
 from .case import CaseCompiler
 from .description import DescriptionCompiler
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
 from .request import RequestCompiler
 from .request_body import RequestBodyCompiler
+from .response_body import BodyDescriptionCompiler
 from .response_description import ResponseDescriptionCompiler
 from .scenario import ScenarioCompiler
 
