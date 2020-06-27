@@ -16,7 +16,7 @@ from .request_body import RequestBody, UrlencodedRequestBody
 from .response_description import ResponseDescription, ResponseVerification
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
-from .url_param import Parameter, Parameters, ParameterValue
+from .url_param import UrlParameter, UrlParameters, UrlParameterValue
 from .verification import Verification
 
 __all__ = [
@@ -53,8 +53,8 @@ __all__ = [
     'Status',
     'Statused',
     'StatusedList',
-    'Parameter',
-    'Parameters',
-    'ParameterValue',
+    'UrlParameter',
+    'UrlParameters',
+    'UrlParameterValue',
     'Verification',
 ]

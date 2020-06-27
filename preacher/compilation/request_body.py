@@ -10,7 +10,7 @@ from preacher.compilation.util import compile_mapping, compile_str
 from preacher.core.scenario import (
     RequestBody,
     UrlencodedRequestBody,
-    Parameters,
+    UrlParameters,
 )
 
 _KEY_TYPE = 'type'
@@ -34,7 +34,7 @@ class RequestBodyCompiled(ABC):
 
 @dataclass(frozen=True)
 class UrlencodedRequestBodyCompiled(RequestBodyCompiled):
-    data: Optional[Parameters] = None
+    data: Optional[UrlParameters] = None
 
     def replace(self, other: RequestBodyCompiled) -> RequestBodyCompiled:
         if not isinstance(other, UrlencodedRequestBodyCompiled):

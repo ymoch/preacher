@@ -3,7 +3,7 @@ from typing import Union, List, Mapping, Optional
 
 from preacher.core.interpretation.value import Value
 
-ParameterValue = Union[
+UrlParameterValue = Union[
     None,
     bool,
     int,
@@ -17,14 +17,17 @@ ParameterValue = Union[
     Value[str],
     Value[datetime],
 ]
-Parameter = Union[ParameterValue, List[ParameterValue]]
-Parameters = Union[str, Mapping[str, Parameter]]
-ResolvedParameterValue = Optional[str]
-ResolvedParameter = Union[ResolvedParameterValue, List[ResolvedParameterValue]]
-ResolvedParameters = Union[str, Mapping[str, ResolvedParameter]]
+UrlParameter = Union[UrlParameterValue, List[UrlParameterValue]]
+UrlParameters = Union[str, Mapping[str, UrlParameter]]
+ResolvedUrlParameterValue = Optional[str]
+ResolvedUrlParameter = Union[
+    ResolvedUrlParameterValue,
+    List[ResolvedUrlParameterValue],
+]
+ResolvedUrlParameters = Union[str, Mapping[str, ResolvedUrlParameter]]
 
 
-def resolve_param_value(value: ParameterValue, **kwargs) -> Optional[str]:
+def resolve_param_value(value: UrlParameterValue, **kwargs) -> Optional[str]:
     if isinstance(value, Value):
         value = value.apply_context(**kwargs)
 
@@ -37,13 +40,13 @@ def resolve_param_value(value: ParameterValue, **kwargs) -> Optional[str]:
     return str(value)
 
 
-def resolve_param(param: Parameter, **kwargs) -> ResolvedParameter:
+def resolve_param(param: UrlParameter, **kwargs) -> ResolvedUrlParameter:
     if isinstance(param, list):
         return [resolve_param_value(value, **kwargs) for value in param]
     return resolve_param_value(param)
 
 
-def resolve_params(params: Parameters, **kwargs) -> ResolvedParameters:
+def resolve_params(params: UrlParameters, **kwargs) -> ResolvedUrlParameters:
     if isinstance(params, str):
         return params
     return {

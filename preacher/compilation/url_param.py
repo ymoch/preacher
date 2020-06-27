@@ -6,10 +6,14 @@ from typing import Mapping
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util import map_compile
 from preacher.core.interpretation.value import RelativeDatetimeValue
-from preacher.core.scenario import ParameterValue, Parameter, Parameters
+from preacher.core.scenario import (
+    UrlParameters,
+    UrlParameter,
+    UrlParameterValue,
+)
 
 
-def compile_param_value(value: object) -> ParameterValue:
+def compile_param_value(value: object) -> UrlParameterValue:
     if value is None:
         return value
     if isinstance(value, bool):
@@ -29,7 +33,7 @@ def compile_param_value(value: object) -> ParameterValue:
     )
 
 
-def compile_param(value: object) -> Parameter:
+def compile_param(value: object) -> UrlParameter:
     if value is None:
         return value
     if isinstance(value, list):
@@ -43,7 +47,7 @@ def compile_param(value: object) -> Parameter:
         )
 
 
-def compile_url_params(params: object) -> Parameters:
+def compile_url_params(params: object) -> UrlParameters:
     if isinstance(params, str):
         return params
 

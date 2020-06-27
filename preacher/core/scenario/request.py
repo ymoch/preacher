@@ -12,7 +12,7 @@ from preacher import __version__ as _version
 from preacher.core.datetime import now
 from preacher.core.response import Response, ResponseBody
 from .request_body import RequestBody
-from .url_param import Parameters, resolve_params
+from .url_param import UrlParameters, resolve_params
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
@@ -82,7 +82,7 @@ class Request:
         method: Method = Method.GET,
         path: str = '',
         headers: Optional[Mapping[str, str]] = None,
-        params: Optional[Parameters] = None,
+        params: Optional[UrlParameters] = None,
         body: RequestBody = None,
     ):
         self._method = method
@@ -142,7 +142,7 @@ class Request:
         return self._headers
 
     @property
-    def params(self) -> Parameters:
+    def params(self) -> UrlParameters:
         return self._params
 
     @property
