@@ -14,7 +14,7 @@ from preacher.core.response import Response
 from .analysis import analyze_data_obj
 from .description import Description
 from .request import Request
-from .response_description import ResponseDescription, ResponseVerification
+from .response import ResponseDescription, ResponseVerification
 from .status import Status, Statused, merge_statuses
 from .util.retry import retry_while_false
 from .verification import Verification, collect

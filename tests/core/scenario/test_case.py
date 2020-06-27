@@ -5,7 +5,7 @@ from pytest import mark
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.request import Request
-from preacher.core.scenario.response_description import (
+from preacher.core.scenario.response import (
     ResponseDescription,
     ResponseVerification,
 )

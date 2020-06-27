@@ -12,8 +12,8 @@ from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
 from .request import Request, Method
 from .request_body import RequestBody, UrlencodedRequestBody
+from .response import ResponseDescription, ResponseVerification
 from .response_body import BodyDescription
-from .response_description import ResponseDescription, ResponseVerification
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
 from .url_param import UrlParam, UrlParams, UrlParamValue

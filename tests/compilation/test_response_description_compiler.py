@@ -5,15 +5,13 @@ from pytest import fixture, mark, raises
 from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.predicate import PredicateCompiler
+from preacher.compilation.response import ResponseDescriptionCompiler
 from preacher.compilation.response_body import (
     BodyDescriptionCompiled,
     BodyDescriptionCompiler,
 )
-from preacher.compilation.response_description import (
-    ResponseDescriptionCompiler,
-)
 
-PACKAGE = 'preacher.compilation.response_description'
+PACKAGE = 'preacher.compilation.response'
 
 
 @fixture

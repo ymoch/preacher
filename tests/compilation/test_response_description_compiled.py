@@ -1,11 +1,9 @@
 from unittest.mock import MagicMock, patch, sentinel
 
+from preacher.compilation.response import ResponseDescriptionCompiled
 from preacher.compilation.response_body import BodyDescriptionCompiled
-from preacher.compilation.response_description import (
-    ResponseDescriptionCompiled,
-)
 
-PACKAGE = 'preacher.compilation.response_description'
+PACKAGE = 'preacher.compilation.response'
 
 ctor_patch = patch(
     target=f'{PACKAGE}.ResponseDescription',

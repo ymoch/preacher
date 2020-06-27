@@ -6,8 +6,8 @@ from pytest import mark, fixture, raises
 from preacher.core.response import Response
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.predicate import Predicate
+from preacher.core.scenario.response import ResponseDescription
 from preacher.core.scenario.response_body import BodyDescription
-from preacher.core.scenario.response_description import ResponseDescription
 from preacher.core.scenario.status import Status, Statused
 from preacher.core.scenario.verification import Verification
 
