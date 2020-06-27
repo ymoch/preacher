@@ -30,6 +30,7 @@ def echo():
         'path': request.path,
         'headers': dict(request.headers.items()),
         'args': dict(request.args.lists()),
+        'form': dict(request.form.lists()),
     })
 
 

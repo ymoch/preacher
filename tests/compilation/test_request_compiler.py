@@ -2,16 +2,35 @@ from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark, raises, fixture
 
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.request import RequestCompiler, RequestCompiled
+from preacher.compilation.request_body import RequestBodyCompiler
 from preacher.core.scenario import Method
 
 PACKAGE = 'preacher.compilation.request'
 
 
 @fixture
-def compiler() -> RequestCompiler:
-    return RequestCompiler()
+def body():
+    body = NonCallableMock(RequestBodyCompiler)
+    body.of_default.return_value = sentinel.new_body_compiler
+    return body
+
+
+@fixture
+def default() -> RequestCompiled:
+    return RequestCompiled(
+        method=sentinel.default_method,
+        path=sentinel.default_path,
+        headers=sentinel.default_headers,
+        params=sentinel.default_params,
+        body=sentinel.default_body,
+    )
+
+
+@fixture
+def compiler(body, default: RequestCompiled) -> RequestCompiler:
+    return RequestCompiler(body=body, default=default)
 
 
 @mark.parametrize(('obj', 'expected_path'), (
@@ -27,24 +46,13 @@ def test_given_an_invalid_obj(compiler: RequestCompiler, obj, expected_path):
     assert error_info.value.path == expected_path
 
 
-def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
-    compile_params = mocker.patch(
-        f'{PACKAGE}.compile_params',
-        side_effect=CompilationError('message', path=[NamedNode('x')])
-    )
-    with raises(CompilationError) as error_info:
-        compiler.compile({'params': sentinel.params})
-    assert error_info.value.path == [NamedNode('params'), NamedNode('x')]
-
-    compile_params.assert_called_once_with(sentinel.params)
-
-
 def test_given_an_empty_mapping(compiler: RequestCompiler):
     compiled = compiler.compile({})
-    assert compiled.method is None
-    assert compiled.path is None
-    assert compiled.headers is None
-    assert compiled.params is None
+    assert compiled.method is sentinel.default_method
+    assert compiled.path is sentinel.default_path
+    assert compiled.headers is sentinel.default_headers
+    assert compiled.params is sentinel.default_params
+    assert compiled.body is sentinel.default_body
 
 
 @mark.parametrize(('method_obj', 'expected'), [
@@ -67,6 +75,18 @@ def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
     assert compiled.headers == headers_obj
 
 
+def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
+    compile_params = mocker.patch(
+        f'{PACKAGE}.compile_params',
+        side_effect=CompilationError('message', path=[NamedNode('x')])
+    )
+    with raises(CompilationError) as error_info:
+        compiler.compile({'params': sentinel.params})
+    assert error_info.value.path == [NamedNode('params'), NamedNode('x')]
+
+    compile_params.assert_called_once_with(sentinel.params)
+
+
 def test_given_valid_params(compiler: RequestCompiler, mocker):
     compile_params = mocker.patch(
         f'{PACKAGE}.compile_params',
@@ -79,26 +99,76 @@ def test_given_valid_params(compiler: RequestCompiler, mocker):
     compile_params.assert_called_once_with(sentinel.params)
 
 
+def test_given_invalid_body(compiler: RequestCompiler, body):
+    body.compile.side_effect = CompilationError('x', path=[IndexedNode(1)])
+
+    with raises(CompilationError) as error_info:
+        compiler.compile({'body': sentinel.body_obj})
+    assert error_info.value.path == [NamedNode('body'), IndexedNode(1)]
+
+    body.compile.assert_called_once_with(sentinel.body_obj)
+
+
+def test_given_valid_body(compiler: RequestCompiler, body):
+    body.compile.return_value = sentinel.body
+
+    compiled = compiler.compile({'body': sentinel.body_obj})
+    assert compiled.body is sentinel.body
+
+    body.compile.assert_called_once_with(sentinel.body_obj)
+
+
 def test_given_a_string(compiler: RequestCompiler):
     compiled = compiler.compile('/path')
-    assert compiled.method is None
+    assert compiled.method is sentinel.default_method
     assert compiled.path == '/path'
-    assert compiled.headers is None
-    assert compiled.params is None
+    assert compiled.headers is sentinel.default_headers
+    assert compiled.params is sentinel.default_params
+    assert compiled.body is sentinel.default_body
 
 
-def test_of_default(mocker):
-    compiler_ctor = mocker.patch(f'{PACKAGE}.RequestCompiler')
-    compiler_ctor.return_value = sentinel.compiler_of_default
+def test_of_default_no_body(compiler: RequestCompiler, body, mocker):
+    ctor = mocker.patch(f'{PACKAGE}.RequestCompiler')
+    ctor.return_value = sentinel.compiler_of_default
 
-    initial_default = NonCallableMock(RequestCompiled)
-    initial_default.replace.return_value = sentinel.new_default
+    new_default = RequestCompiled(
+        method=sentinel.new_default_method,
+        path=sentinel.new_default_path,
+        headers=sentinel.new_default_headers,
+        params=sentinel.new_default_params,
+    )
+    new_compiler = compiler.of_default(new_default)
+    assert new_compiler is sentinel.compiler_of_default
 
-    compiler = RequestCompiler(initial_default)
-    compiler_of_default = compiler.of_default(sentinel.default)
-    assert compiler_of_default is sentinel.compiler_of_default
+    ctor.assert_called_once_with(
+        body=body,
+        default=RequestCompiled(
+            method=sentinel.new_default_method,
+            path=sentinel.new_default_path,
+            headers=sentinel.new_default_headers,
+            params=sentinel.new_default_params,
+            body=sentinel.default_body,
+        ),
+    )
+    body.of_default.assert_not_called()
 
-    initial_default.replace.assert_called_once_with(sentinel.default)
 
-    default = compiler_ctor.call_args[1]['default']
-    assert default is sentinel.new_default
+def test_of_default_body(compiler: RequestCompiler, body, mocker):
+    ctor = mocker.patch(f'{PACKAGE}.RequestCompiler')
+    ctor.return_value = sentinel.compiler_of_default
+
+    new_default = RequestCompiled(body=sentinel.new_default_body)
+    new_compiler = compiler.of_default(new_default)
+    assert new_compiler is sentinel.compiler_of_default
+
+    ctor.assert_called_once_with(
+        body=sentinel.new_body_compiler,
+        default=RequestCompiled(
+            method=sentinel.default_method,
+            path=sentinel.default_path,
+            headers=sentinel.default_headers,
+            params=sentinel.default_params,
+            body=sentinel.new_default_body,
+        ),
+    )
+    body.of_default.assert_called_once_with(sentinel.new_default_body)

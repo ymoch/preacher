@@ -80,19 +80,37 @@ cases:
                   - be_before: now
                   - be_after: -12 hours
 
-  - label: Sends a POST request
+  - label: Sends a POST request with a urlencoded body
     request:
       method: POST
       path: /echo
       params:
         key: value
+      body:
+        data:
+          foo: bar
+          spam:
+            - ham
+            - egg
     response:
       status_code: 200
       body:
         - describe: .method
           should:
             - equal: POST
+        - describe: .headers."Content-Type"
+          should:
+            - equal: application/x-www-form-urlencoded
         - describe: .args.key
           should:
             - contain_exactly:
                 - value
+        - describe: .form.foo
+          should:
+            - contain_exactly:
+                - bar
+        - describe: .form.spam
+          should:
+            - contain_exactly:
+                - ham
+                - egg

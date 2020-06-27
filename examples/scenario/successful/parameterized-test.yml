@@ -13,17 +13,17 @@ parameters:
 cases:
   label: Parameterized
   request:
-    path: /params
+    path: /echo
     params:
       foo: !argument foo
       spam: !argument spam
   response:
     body:
-      - describe: .foo
+      - describe: .args.foo
         should:
           contain_exactly:
             - equal: !argument foo
-      - describe: .spam
+      - describe: .args.spam
         should:
           contain_exactly:
             - equal: !argument spam

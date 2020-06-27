@@ -5,12 +5,14 @@ from .description import DescriptionCompiler
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
 from .request import RequestCompiler
+from .request_body import RequestBodyCompiler
 from .response_description import ResponseDescriptionCompiler
 from .scenario import ScenarioCompiler
 
 
 def create_compiler() -> ScenarioCompiler:
-    request = RequestCompiler()
+    request_body = RequestBodyCompiler()
+    request = RequestCompiler(body=request_body)
 
     extraction = ExtractionCompiler()
     analysis = AnalysisCompiler()

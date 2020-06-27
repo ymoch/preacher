@@ -6,6 +6,7 @@ import requests
 from pytest import fixture
 
 from preacher.core.scenario.request import Request, ResponseWrapper, Method
+from preacher.core.scenario.request_body import RequestBody
 
 PACKAGE = 'preacher.core.scenario.request'
 
@@ -34,12 +35,14 @@ def test_default_request(mocker, session):
     assert request.path == ''
     assert request.headers == {}
     assert request.params == {}
+    assert request.body is None
 
     request('base-url')
     args, kwargs = session.request.call_args
     assert args == ('GET', 'base-url')
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['params'] == {}
+    assert kwargs['data'] is None
     assert kwargs['timeout'] is None
 
     session.__enter__.assert_called_once()
@@ -57,16 +60,22 @@ def test_request(mocker, session):
         return_value=sentinel.resolved_params,
     )
 
+    body = NonCallableMock(RequestBody)
+    body.content_type = sentinel.content_type
+    body.resolve = Mock(return_value=sentinel.data)
+
     request = Request(
         method=Method.POST,
         path='/path',
         headers={'k1': 'v1'},
         params=sentinel.params,
+        body=body,
     )
     assert request.method is Method.POST
     assert request.path == '/path'
     assert request.headers == {'k1': 'v1'}
-    assert request.params == sentinel.params
+    assert request.params is sentinel.params
+    assert request.body is body
 
     response = request('base-url', timeout=5.0, session=session)
     assert isinstance(response, ResponseWrapper)
@@ -84,24 +93,39 @@ def test_request(mocker, session):
         sentinel.params,
         origin_datetime=sentinel.now,
     )
+    body.resolve.assert_called_once_with(origin_datetime=sentinel.now)
 
     args, kwargs = session.request.call_args
     assert args == ('POST', 'base-url/path')
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['headers']['k1'].startswith('v1')
+    assert kwargs['headers']['Content-Type'] is sentinel.content_type
     assert kwargs['params'] is sentinel.resolved_params
+    assert kwargs['data'] is sentinel.data
     assert kwargs['timeout'] == 5.0
 
 
 def test_request_overwrites_default_headers(session):
-    request = Request(headers={'User-Agent': 'custom-user-agent'})
+    body = NonCallableMock(RequestBody)
+    body.content_type = sentinel.content_type
+    body.resolve = Mock(return_value=sentinel.data)
+
+    request = Request(
+        headers={
+            'User-Agent': sentinel.custom_user_agent,
+            'Content-Type': sentinel.custom_content_type,
+        },
+        body=body,
+    )
     request('base-url', session=session)
     kwargs = session.request.call_args[1]
-    assert kwargs['headers']['User-Agent'] == 'custom-user-agent'
+    assert kwargs['headers']['User-Agent'] == sentinel.custom_user_agent
+    assert kwargs['headers']['Content-Type'] == sentinel.custom_content_type
 
     # Doesn't change the state.
-    request = Request()
+    request = Request(body=body)
     request('base-url', session=session)
     kwargs = session.request.call_args[1]
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
+    assert kwargs['headers']['Content-Type'] is sentinel.content_type
     assert kwargs['timeout'] is None
