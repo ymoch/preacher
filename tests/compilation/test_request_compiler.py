@@ -1,21 +1,12 @@
-from datetime import date, datetime, timedelta
-from unittest.mock import patch, sentinel, MagicMock
+from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark, raises, fixture
 
-from preacher.compilation.error import (
-    CompilationError,
-    NamedNode,
-    IndexedNode,
-)
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.core.interpretation.value import RelativeDatetimeValue
 from preacher.core.scenario import Method
 
 PACKAGE = 'preacher.compilation.request'
-DATE = date(2019, 12, 31)
-DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')
-RELATIVE_DATETIME_VALUE = RelativeDatetimeValue(timedelta(seconds=1))
 
 
 @fixture
@@ -23,33 +14,29 @@ def compiler() -> RequestCompiler:
     return RequestCompiler()
 
 
-@mark.parametrize('value, expected_path', (
+@mark.parametrize(('obj', 'expected_path'), (
     ([], []),
     ({'method': 1}, [NamedNode('method')]),
     ({'method': 'invalid'}, [NamedNode('method')]),
     ({'path': {'key': 'value'}}, [NamedNode('path')]),
     ({'headers': ''}, [NamedNode('headers')]),
-    ({'params': 1}, [NamedNode('params')]),
-    ({'params': ['a', 1]}, [NamedNode('params')]),
-    ({'params': {1: 2}}, [NamedNode('params')]),
-    ({'params': {'k': complex(1, 2)}}, [NamedNode('params'), NamedNode('k')]),
-    ({'params': {'k': {}}}, [NamedNode('params'), NamedNode('k')]),
-    ({'params': {'k': frozenset()}}, [NamedNode('params'), NamedNode('k')]),
-    ({'params': {'k': DATE}}, [NamedNode('params'), NamedNode('k')]),
-    ({'params': {'k': {'kk': 'vv'}}}, [NamedNode('params'), NamedNode('k')]),
-    (
-        {'params': {'k': [[]]}},
-        [NamedNode('params'), NamedNode('k'), IndexedNode(0)],
-    ),
-    (
-        {'params': {'k': ['a', {}]}},
-        [NamedNode('params'), NamedNode('k'), IndexedNode(1)],
-    ),
 ))
-def test_given_invalid_values(compiler: RequestCompiler, value, expected_path):
+def test_given_an_invalid_obj(compiler: RequestCompiler, obj, expected_path):
     with raises(CompilationError) as error_info:
-        compiler.compile(value)
+        compiler.compile(obj)
     assert error_info.value.path == expected_path
+
+
+def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
+    compile_params = mocker.patch(
+        f'{PACKAGE}.compile_params',
+        side_effect=CompilationError('message', path=[NamedNode('x')])
+    )
+    with raises(CompilationError) as error_info:
+        compiler.compile({'params': sentinel.params})
+    assert error_info.value.path == [NamedNode('params'), NamedNode('x')]
+
+    compile_params.assert_called_once_with(sentinel.params)
 
 
 def test_given_an_empty_mapping(compiler: RequestCompiler):
@@ -60,7 +47,7 @@ def test_given_an_empty_mapping(compiler: RequestCompiler):
     assert compiled.params is None
 
 
-@mark.parametrize('method_obj, expected', [
+@mark.parametrize(('method_obj', 'expected'), [
     ('get', Method.GET),
     ('POST', Method.POST),
     ('Put', Method.PUT),
@@ -80,25 +67,16 @@ def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
     assert compiled.headers == headers_obj
 
 
-@mark.parametrize('params', [
-    'str',
-    {
-        'k1': None,
-        'k2': 'str',
-        'k3': [
-            None,
-            False,
-            1,
-            0.1,
-            'str',
-            DATETIME,
-            RELATIVE_DATETIME_VALUE,
-        ]
-    }
-])
-def test_given_valid_params(compiler: RequestCompiler, params):
-    compiled = compiler.compile({'params': params})
-    assert compiled.params == params
+def test_given_valid_params(compiler: RequestCompiler, mocker):
+    compile_params = mocker.patch(
+        f'{PACKAGE}.compile_params',
+        return_value=sentinel.compiled_params,
+    )
+
+    compiled = compiler.compile({'params': sentinel.params})
+    assert compiled.params == sentinel.compiled_params
+
+    compile_params.assert_called_once_with(sentinel.params)
 
 
 def test_given_a_string(compiler: RequestCompiler):
@@ -109,9 +87,11 @@ def test_given_a_string(compiler: RequestCompiler):
     assert compiled.params is None
 
 
-@patch(f'{PACKAGE}.RequestCompiler', return_value=sentinel.compiler_of_default)
-def test_of_default(compiler_ctor):
-    initial_default = MagicMock(RequestCompiled)
+def test_of_default(mocker):
+    compiler_ctor = mocker.patch(f'{PACKAGE}.RequestCompiler')
+    compiler_ctor.return_value = sentinel.compiler_of_default
+
+    initial_default = NonCallableMock(RequestCompiled)
     initial_default.replace.return_value = sentinel.new_default
 
     compiler = RequestCompiler(initial_default)

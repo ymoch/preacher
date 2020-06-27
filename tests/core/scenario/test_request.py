@@ -1,6 +1,6 @@
 import uuid
 from datetime import timedelta
-from unittest.mock import MagicMock, patch, sentinel
+from unittest.mock import NonCallableMock, Mock, sentinel
 
 import requests
 from pytest import fixture
@@ -12,45 +12,51 @@ PACKAGE = 'preacher.core.scenario.request'
 
 @fixture
 def session():
-    response = MagicMock(
-        spec=requests.Response,
-        elapsed=timedelta(seconds=1.23),
-        status_code=402,
-        headers={'Header-Name': 'Header-Value'},
-        text=sentinel.text,
-        content=sentinel.content,
-    )
-    session = MagicMock(requests.Session)
-    session.__enter__ = MagicMock(return_value=session)
-    session.request = MagicMock(return_value=response)
+    response = NonCallableMock(requests.Response)
+    response.elapsed = timedelta(seconds=1.23)
+    response.status_code = 402
+    response.headers = {'Header-Name': 'Header-Value'}
+    response.text = sentinel.text
+    response.content = sentinel.content
+
+    session = NonCallableMock(requests.Session)
+    session.__enter__ = Mock(return_value=session)
+    session.__exit__ = Mock()
+    session.request = Mock(return_value=response)
     return session
 
 
-def test_default_request(session):
+def test_default_request(mocker, session):
+    mocker.patch('requests.Session', return_value=session)
+
     request = Request()
     assert request.method is Method.GET
     assert request.path == ''
     assert request.headers == {}
     assert request.params == {}
-    with patch('requests.Session', return_value=session):
-        request('base-url')
 
+    request('base-url')
     args, kwargs = session.request.call_args
     assert args == ('GET', 'base-url')
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['params'] == {}
     assert kwargs['timeout'] is None
 
-    session.__exit__.assert_called()
+    session.__enter__.assert_called_once()
+    session.__exit__.assert_called_once()
 
 
-@patch(f'{PACKAGE}.resolve_params', return_value=sentinel.resolved_params)
-@patch(f'{PACKAGE}.now', return_value=sentinel.now)
-@patch('uuid.uuid4', return_value=MagicMock(
-    spec=uuid.UUID,
-    __str__=MagicMock(return_value='uuid'),
-))
-def test_request(uuid4, now, resolve_params, session):
+def test_request(mocker, session):
+    now = mocker.patch(f'{PACKAGE}.now', return_value=sentinel.now)
+
+    uuid_obj = NonCallableMock(uuid.UUID, __str__=Mock(return_value="id"))
+    uuid4 = mocker.patch('uuid.uuid4', return_value=uuid_obj)
+
+    resolve_params = mocker.patch(
+        f'{PACKAGE}.resolve_params',
+        return_value=sentinel.resolved_params,
+    )
+
     request = Request(
         method=Method.POST,
         path='/path',
@@ -64,7 +70,7 @@ def test_request(uuid4, now, resolve_params, session):
 
     response = request('base-url', timeout=5.0, session=session)
     assert isinstance(response, ResponseWrapper)
-    assert response.id == 'uuid'
+    assert response.id == 'id'
     assert response.elapsed == 1.23
     assert response.status_code == 402
     assert response.headers == {'header-name': 'Header-Value'}
