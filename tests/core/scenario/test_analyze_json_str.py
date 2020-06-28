@@ -1,17 +1,19 @@
-from unittest.mock import MagicMock, sentinel
+from unittest.mock import Mock, NonCallableMock, sentinel
 
 from pytest import fixture, raises
 
+from preacher.core.response import ResponseBody
 from preacher.core.scenario.analysis import analyze_json_str
 
 
 @fixture
 def extract():
-    return MagicMock(return_value=sentinel.extracted)
+    return Mock(return_value=sentinel.extracted)
 
 
 def test_jq(extract):
-    analyzer = analyze_json_str(MagicMock(text='{"k1":"v1","k2":"v2"}'))
+    body = NonCallableMock(ResponseBody, text='{"k1":"v1","k2":"v2"}')
+    analyzer = analyze_json_str(body)
     value = analyzer.jq(extract)
     assert value is sentinel.extracted
 
@@ -19,7 +21,8 @@ def test_jq(extract):
 
 
 def test_key_for_invalid_body(extract):
-    analyzer = analyze_json_str(MagicMock(text='[]'))
+    body = NonCallableMock(ResponseBody, text='[]')
+    analyzer = analyze_json_str(body)
     with raises(ValueError):
         analyzer.key(extract)
 
@@ -27,7 +30,8 @@ def test_key_for_invalid_body(extract):
 
 
 def test_key_for_valid_body(extract):
-    analyzer = analyze_json_str(MagicMock(text='{"int":1, "str":"s"}'))
+    body = NonCallableMock(ResponseBody, text='{"int":1,"str":"s"}')
+    analyzer = analyze_json_str(body)
     value = analyzer.key(extract)
     assert value is sentinel.extracted
 
@@ -35,7 +39,8 @@ def test_key_for_valid_body(extract):
 
 
 def test_not_supported(extract):
-    analyzer = analyze_json_str(MagicMock(text='{}'))
+    body = NonCallableMock(ResponseBody, text='{}')
+    analyzer = analyze_json_str(body)
     with raises(NotImplementedError):
         analyzer.xpath(extract)
 

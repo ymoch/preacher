@@ -68,12 +68,12 @@ class XmlAnalyzer(Analyzer):
         raise NotImplementedError('Key extraction is not allowed for XML')
 
 
-def analyze_json_str(value: ResponseBody) -> Analyzer:
-    return JsonAnalyzer(json.loads(value.text))
+def analyze_json_str(body: ResponseBody) -> Analyzer:
+    return JsonAnalyzer(json.loads(body.text))
 
 
-def analyze_xml_str(value: ResponseBody) -> Analyzer:
-    etree = fromstring(value.content, parser=XMLParser())
+def analyze_xml_str(body: ResponseBody) -> Analyzer:
+    etree = fromstring(body.content, parser=XMLParser())
     return XmlAnalyzer(etree)
 
 
