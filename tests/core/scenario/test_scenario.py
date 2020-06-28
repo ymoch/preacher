@@ -1,5 +1,5 @@
 from concurrent.futures import Executor, Future
-from unittest.mock import ANY, MagicMock, patch, sentinel
+from unittest.mock import ANY, MagicMock, NonCallableMock, patch, sentinel
 
 from pytest import fixture, mark, raises
 
@@ -38,28 +38,15 @@ def test_not_implemented():
         _IncompleteScenario().result()
 
 
-@mark.parametrize('condition_verifications, expected_status', [
-    (
-        [
-            Verification(status=Status.SKIPPED),
-            Verification(status=Status.UNSTABLE),
-            Verification(status=Status.SUCCESS),
-        ],
-        Status.SKIPPED,
-    ),
-    (
-        [
-            Verification(status=Status.SUCCESS),
-            Verification(status=Status.FAILURE),
-            Verification(status=Status.UNSTABLE),
-        ],
-        Status.FAILURE,
-    ),
+@mark.parametrize('statuses, expected_status', [
+    ([Status.SKIPPED, Status.UNSTABLE, Status.SUCCESS], Status.SKIPPED),
+    ([Status.SUCCESS, Status.FAILURE, Status.UNSTABLE], Status.FAILURE),
 ])
-def test_given_bad_conditions(condition_verifications, expected_status):
+def test_given_bad_conditions(statuses, expected_status):
+    verifications = [Verification(status) for status in statuses]
     conditions = [
-        MagicMock(Description, verify=MagicMock(return_value=v))
-        for v in condition_verifications
+        NonCallableMock(Description, verify=MagicMock(return_value=v))
+        for v in verifications
     ]
     subscenario = MagicMock(Scenario)
 
@@ -78,7 +65,7 @@ def test_given_bad_conditions(condition_verifications, expected_status):
 
     assert result.label is sentinel.label
     assert result.status is expected_status
-    assert result.conditions.children == condition_verifications
+    assert result.conditions.children == verifications
     assert result.cases.status is Status.SKIPPED
     assert not result.cases.items
     assert result.subscenarios.status is Status.SKIPPED
