@@ -29,6 +29,7 @@ Here is a scenario example.
       - label: A Little Complicated
         enabled: true
         request:
+          method: POST
           path: /path/to/foo
           headers:
             user-agent: custom-value
@@ -37,6 +38,10 @@ Here is a scenario example.
             key2:
               - value1
               - value2
+          body:
+            type: urlencoded
+            data:
+              foo: bar
         response:
           status_code:
             - be_greater_than_or_equal_to: 200
@@ -100,7 +105,7 @@ Scenarios can be nested by using "subscenarios."
       - Default of this scenario.
         See :ref:`default-test` for more information.
     * - when
-      - List[Description]
+      - List[:ref:`description`]
       - ``[]``
       - Run this scenario only when the context satisfies these description.
         See :doc:`Application Running Context<context>` for more information.
@@ -200,17 +205,21 @@ When given only a string, that is equivalent to ``{path: it}``.
       - ``{}``
       - The headers as a map of names to values.
     * - params
-      - :ref:`query-parameter`
+      - :ref:`url-parameters`
       - ``{}``
-      - Parameters for the query string.
+      - The URL parameters for the query string.
+    * - body
+      - :ref:`request-body`
+      - ``null``
+      - The request body.
 
 .. note:: A request path can also contain query parameters like ``/path?foo=bar&spam=ham``.
 
-.. _query-parameter:
+.. _url-parameters:
 
-QueryParameter
-""""""""""""""
-When given query parameters as a string, then it is regarded as a raw query string.
+URLParameters
+"""""""""""""
+When given URL parameters as a string, then it is regarded as a raw query string.
 
 .. code-block:: yaml
 
@@ -219,7 +228,7 @@ When given query parameters as a string, then it is regarded as a raw query stri
       path: /path
       params: foo=bar&foo=baz&spam=ham%26eggs
 
-When given query parameters as a dictionary,
+When given URL parameters as a dictionary,
 then it is regarded as a map of keys to values and the query string is built with it.
 
 .. code-block:: yaml
@@ -236,6 +245,32 @@ then it is regarded as a map of keys to values and the query string is built wit
 
 .. note:: Allowed types for the parameter values are integer, float, string, timestamp and null (ignored).
           A timestamp value is converted into IS0 8601 format.
+
+.. _request-body:
+
+RequestBody
+"""""""""""
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - type
+      - String
+      - ``urlencoded``
+      - The request body type, which is ``urlencoded`` or ``json``.
+    * - data
+      - Depends on the type
+      - Depends on the type
+      - The request body data.
+
+When the type is ``urlencoded``,
+the data are :ref:`url-parameters` and built into a URL-encoded value such that HTML forms send.
+When the type is ``json``, the data are built into JSON.
+The typical ``Content-type`` header will be set automatically.
 
 .. _response-description:
 
@@ -260,7 +295,7 @@ ResponseDescription
       - Descriptions that describe the response headers.
         See :ref:`headers` for more information.
     * - body
-      - :ref:`body-description`
+      - :ref:`response-body-description`
       - ``null``
       - A description that describe the response body.
 
@@ -279,10 +314,10 @@ that is a map of names to values
 and can be described as a JSON (e.g. ``."content-type"``).
 *Note that Names are lower-cased* to normalize.
 
-.. _body-description:
+.. _response-body-description:
 
-BodyDescription
-^^^^^^^^^^^^^^^
+ResponseBodyDescription
+^^^^^^^^^^^^^^^^^^^^^^^
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -301,7 +336,7 @@ BodyDescription
       - ``[]``
       - Descriptions that describe the response body.
 
-When given a list as a ``BodyDescription``,
+When given a list as a ``ResponseBodyDescription``,
 that is equivalent to ``{"descritptions": it}``.
 
 .. _description:

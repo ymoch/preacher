@@ -1,10 +1,15 @@
 label: Default test examples
-
+ordered: false
 default:
   request:
+    method: POST
     path: /echo
+    params:
+      foo: [bar, baz]
     body:
       type: urlencoded
+      data:
+        spam: [ham, egg]
   response:
     status_code: 200
     headers:
@@ -13,32 +18,122 @@ default:
         should:
           equal: application/json
     body:
+      - describe: .method
+        should:
+          equal: POST
       - describe: .headers."Content-Type"
         should:
           equal: application/x-www-form-urlencoded
+      - describe: .args.foo
+        should:
+          contain_exactly: [bar, baz]
+      - describe: .form.spam
+        should:
+          contain_exactly: [ham, egg]
 
 cases:
   - label: Default values are available
 
-  - label: Default values can be overwritten
+  - label: The request method can be overwritten
+    request:
+      method: GET
+    response:
+      body:
+        - describe: .method
+          should:
+            equal: GET
+
+  - label: The request path can be overwritten
     request: /error/404
     response:
       status_code: 404
       body: []
 
-subscenarios:
-  label: Default values are inherited and can be overwritten
+  - label: The URL parameters can be overwritten
+    request:
+      params:
+        spam: ham
+    response:
+      body:
+        - describe: .args.spam
+          should:
+            contain_exactly: [ham]
 
-  default:
+  - label: The request body can be overwritten
+    request:
+      body:
+        type: json
+        data:
+          spam: ham
+    response:
+      body:
+        - describe: .headers."Content-Type"
+          should:
+            equal: application/json
+        - describe: .json.spam
+          should:
+            equal: ham
+
+  - label: The request body type can be overwritten
+    request:
+      body:
+        type: json
+    response:
+      body:
+        - describe: .headers."Content-Type"
+          should:
+            equal: application/json
+        - describe: .json
+          should: be_null
+
+  - label: The request body data can be overwritten
     request:
       body:
         data:
           foo: bar
-
-  cases:
-    label: Overwritten default values are available
     response:
       body:
-        - describe: .form.foo[0]
+        - describe: .form.foo
           should:
-            equal: bar
+            contain_exactly: [bar]
+
+subscenarios:
+  - label: Default values are inherited and can be overwritten
+
+    default:
+      request:
+        body:
+          data:
+            foo: bar
+
+    cases:
+      label: Overwritten default values are available
+      response:
+        body:
+          - describe: .form.foo
+            should:
+              contain_exactly: [bar]
+
+  - label: Body analysis can be overwritten
+
+    default:
+      response:
+        body:
+          analyze_as: xml
+
+    cases:
+      - label: Default XML analysis succeeds
+        request:
+          method: GET
+          path: /xml
+        response:
+          headers:
+            describe:
+              key: content-type
+            should:
+              equal: application/xml
+          body:
+            - describe:
+                xpath: /root/foo
+              should:
+                equal: '1'
