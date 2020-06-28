@@ -1,10 +1,9 @@
-from unittest.mock import MagicMock
+from unittest.mock import Mock, NonCallableMock
 
 from pytest import fixture
 
 from preacher.core.scenario import Analyzer
 from preacher.core.scenario.extraction import KeyExtractor
-
 
 DICTIONARY = {
     'int': 1,
@@ -14,9 +13,9 @@ DICTIONARY = {
 
 @fixture
 def analyzer() -> Analyzer:
-    return MagicMock(
+    return NonCallableMock(
         spec=Analyzer,
-        key=MagicMock(side_effect=lambda x: x(DICTIONARY)),
+        key=Mock(side_effect=lambda x: x(DICTIONARY)),
     )
 
 
