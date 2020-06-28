@@ -29,6 +29,7 @@ Here is a scenario example.
       - label: A Little Complicated
         enabled: true
         request:
+          method: POST
           path: /path/to/foo
           headers:
             user-agent: custom-value
@@ -37,6 +38,10 @@ Here is a scenario example.
             key2:
               - value1
               - value2
+          body:
+            type: urlencoded
+            data:
+              foo: bar
         response:
           status_code:
             - be_greater_than_or_equal_to: 200
@@ -200,17 +205,17 @@ When given only a string, that is equivalent to ``{path: it}``.
       - ``{}``
       - The headers as a map of names to values.
     * - params
-      - :ref:`query-parameter`
+      - :ref:`url-parameter`
       - ``{}``
       - Parameters for the query string.
 
 .. note:: A request path can also contain query parameters like ``/path?foo=bar&spam=ham``.
 
-.. _query-parameter:
+.. _url-parameter:
 
-QueryParameter
-""""""""""""""
-When given query parameters as a string, then it is regarded as a raw query string.
+URL Parameter
+"""""""""""""
+When given URL parameters as a string, then it is regarded as a raw query string.
 
 .. code-block:: yaml
 
@@ -219,7 +224,7 @@ When given query parameters as a string, then it is regarded as a raw query stri
       path: /path
       params: foo=bar&foo=baz&spam=ham%26eggs
 
-When given query parameters as a dictionary,
+When given URL parameters as a dictionary,
 then it is regarded as a map of keys to values and the query string is built with it.
 
 .. code-block:: yaml
