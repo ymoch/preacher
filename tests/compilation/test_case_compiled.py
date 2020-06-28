@@ -1,15 +1,10 @@
-from unittest.mock import MagicMock, patch, sentinel
+from unittest.mock import NonCallableMock, sentinel
 
 from preacher.compilation.case import CaseCompiled
 from preacher.compilation.request import RequestCompiled
 from preacher.compilation.response import ResponseDescriptionCompiled
 
 PACKAGE = 'preacher.compilation.case'
-
-ctor_patch = patch(
-    target=f'{PACKAGE}.Case',
-    return_value=sentinel.fixed,
-)
 
 
 def test_replace():
@@ -40,8 +35,9 @@ def test_replace():
     assert replaced.response is sentinel.response
 
 
-@ctor_patch
-def test_fix_hollow(ctor):
+def test_fix_hollow(mocker):
+    ctor = mocker.patch(f'{PACKAGE}.Case', return_value=sentinel.fixed)
+
     compiled = CaseCompiled()
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
@@ -55,12 +51,13 @@ def test_fix_hollow(ctor):
     )
 
 
-@ctor_patch
-def test_fix_filled(ctor):
-    request = MagicMock(RequestCompiled)
+def test_fix_filled(mocker):
+    ctor = mocker.patch(f'{PACKAGE}.Case', return_value=sentinel.fixed)
+
+    request = NonCallableMock(RequestCompiled)
     request.fix.return_value = sentinel.request
 
-    response = MagicMock(ResponseDescriptionCompiled)
+    response = NonCallableMock(ResponseDescriptionCompiled)
     response.fix.return_value = sentinel.response
 
     compiled = CaseCompiled(
