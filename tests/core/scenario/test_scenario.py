@@ -42,8 +42,8 @@ def test_scenario_task_interface():
     ([Status.SUCCESS, Status.FAILURE, Status.UNSTABLE], Status.FAILURE),
 ])
 def test_conditions_not_satisfied(mocker, statuses, expected_status):
-    context_ctor = mocker.patch(f'{PKG}.ScenarioContext')
-    context_ctor.return_value = ScenarioContext(starts=sentinel.starts)
+    context = ScenarioContext(starts=sentinel.starts)
+    context_ctor = mocker.patch(f'{PKG}.ScenarioContext', return_value=context)
 
     analyze_context = mocker.patch(f'{PKG}.analyze_data_obj')
     analyze_context.return_value = sentinel.context_analyzer
@@ -64,7 +64,13 @@ def test_conditions_not_satisfied(mocker, statuses, expected_status):
         cases=sentinel.cases,
         subscenarios=[subscenario],
     )
-    result = scenario.submit(executor).result()
+    result = scenario.submit(
+        executor,
+        base_url=sentinel.base_url,
+        retry=sentinel.retry,
+        delay=sentinel.delay,
+        timeout=sentinel.timeout,
+    ).result()
 
     assert result.label is sentinel.label
     assert result.status is expected_status
@@ -80,6 +86,13 @@ def test_conditions_not_satisfied(mocker, statuses, expected_status):
             origin_datetime=sentinel.starts,
         )
 
+    context_ctor.assert_called_once_with(
+        base_url=sentinel.base_url,
+        retry=sentinel.retry,
+        delay=sentinel.delay,
+        timeout=sentinel.timeout,
+    )
+    analyze_context.assert_called_once_with(context)
     ordered_task_ctor.assert_not_called()
     unordered_task_ctor.assert_not_called()
     subscenario.submit.assert_not_called()
@@ -136,10 +149,11 @@ def test_given_filled_scenarios(
     condition = NonCallableMock(Description)
     condition.verify.return_value = condition_result
 
-    results = NonCallableMock(StatusedList, status=cases_status)
-    task = NonCallableMock(CasesTask)
-    task.result.return_value = results
-    task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=task)
+    cases_result = NonCallableMock(StatusedList, status=cases_status)
+    cases_task = NonCallableMock(CasesTask)
+    cases_task.result.return_value = cases_result
+    cases_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask')
+    cases_task_ctor.return_value = cases_task
 
     subscenario_result = NonCallableMock(ScenarioResult)
     subscenario_result.status = subscenario_status
@@ -168,7 +182,7 @@ def test_given_filled_scenarios(
 
     assert result.status == expected_status
     assert result.conditions.children[0] is condition_result
-    assert result.cases is results
+    assert result.cases is cases_result
     assert result.subscenarios.items[0] is subscenario_result
 
     context_ctor.assert_called_with(
@@ -182,7 +196,7 @@ def test_given_filled_scenarios(
         origin_datetime=sentinel.starts,
     )
     analyze_context.assert_called_with(sentinel.context)
-    task_ctor.assert_called_once_with(
+    cases_task_ctor.assert_called_once_with(
         executor,
         sentinel.cases,
         base_url='base-url',
@@ -191,7 +205,7 @@ def test_given_filled_scenarios(
         timeout=1.0,
         listener=sentinel.listener,
     )
-    task.result.assert_called_once_with()
+    cases_task.result.assert_called_once_with()
     subscenario.submit.assert_called_once_with(
         executor,
         base_url='base-url',
