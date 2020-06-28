@@ -1,7 +1,6 @@
 import os
 from datetime import datetime, timezone, timedelta
 from io import StringIO
-from unittest.mock import patch
 
 from pytest import mark, raises
 
@@ -36,8 +35,7 @@ def test_given_invalid_content(content, expected_message, expected_path):
     assert error_info.value.path == expected_path
 
 
-@patch('builtins.open')
-def test_given_recursive_inclusion(open_mock):
+def test_given_recursive_inclusion(mocker):
     io = StringIO('''
     list:
       - !include item.yml
@@ -50,7 +48,9 @@ def test_given_recursive_inclusion(open_mock):
         os.path.join('base', 'dir', 'recursive.yml'): '!include inner.yml',
         os.path.join('base', 'dir', 'inner.yml'): 'inner',
     }
+    open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = lambda path: StringIO(answer_map[path])
+
     actual = load(io, origin=os.path.join('base', 'dir'))
     assert actual == {
         'list': [
@@ -61,9 +61,12 @@ def test_given_recursive_inclusion(open_mock):
     }
 
 
-@patch('builtins.open')
-@patch('glob.iglob')
-def test_given_wildcard_inclusion(iglob_mock, open_mock):
+def test_given_wildcard_inclusion(mocker):
+    iglob_mock = mocker.patch('glob.iglob')
+    iglob_mock.side_effect = (
+        lambda path, recursive: iter([f'glob:{path}:{recursive}'])
+    )
+
     io = StringIO(r'''
     'asterisk': !include '*.yml'
     'double-asterisk': !include '**.yml'
@@ -73,9 +76,7 @@ def test_given_wildcard_inclusion(iglob_mock, open_mock):
     'empty-parenthesis': !include '[].yml'
     'filled-parenthesis': !include '[abc].yml'
     ''')
-    iglob_mock.side_effect = (
-        lambda path, recursive: iter([f'glob:{path}:{recursive}'])
-    )
+    open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = lambda path: StringIO(path)
 
     actual = load(io, origin='base/path/')
@@ -149,10 +150,10 @@ def test_load_all_given_invalid_value():
         next(load_all(io))
 
 
-@patch('builtins.open')
-def test_load_all_from_path(open_mock):
-    io = StringIO('1\n---\n2\n---\n!argument foo')
-    open_mock.return_value = io
+def test_load_all_from_path(mocker):
+    open_mock = mocker.patch('builtins.open')
+    open_mock.return_value = StringIO('1\n---\n2\n---\n!argument foo')
+
     actual = load_all_from_path('path/to/foo.yaml')
     assert next(actual) == 1
     assert next(actual) == 2
@@ -163,16 +164,15 @@ def test_load_all_from_path(open_mock):
     open_mock.assert_called_once_with('path/to/foo.yaml')
 
 
-@patch('builtins.open')
-def test_load_from_path_not_found(open_mock):
-    open_mock.side_effect = FileNotFoundError('message')
+def test_load_from_path_not_found(mocker):
+    mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
+
     with raises(CompilationError):
         load_from_path('/////foo/bar/baz')
 
 
-@patch('builtins.open')
-def test_load_all_from_path_not_found(open_mock):
-    open_mock.side_effect = FileNotFoundError('message')
+def test_load_all_from_path_not_found(mocker):
+    mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
 
     objs = load_all_from_path('/////foo/bar/baz')
     with raises(CompilationError):
