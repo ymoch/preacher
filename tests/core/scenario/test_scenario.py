@@ -41,7 +41,7 @@ def test_scenario_task_interface():
     ([Status.SKIPPED, Status.UNSTABLE, Status.SUCCESS], Status.SKIPPED),
     ([Status.SUCCESS, Status.FAILURE, Status.UNSTABLE], Status.FAILURE),
 ])
-def test_conditions_not_satisfied(mocker, statuses, expected_status):
+def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     context = ScenarioContext(starts=sentinel.starts)
     context_ctor = mocker.patch(f'{PKG}.ScenarioContext', return_value=context)
 
@@ -139,12 +139,6 @@ def test_given_filled_scenarios(
     expected_status,
     mocker,
 ):
-    context_ctor = mocker.patch(f'{PKG}.ScenarioContext')
-    context_ctor.return_value = sentinel.context
-
-    analyze_context = mocker.patch(f'{PKG}.analyze_data_obj')
-    analyze_context.return_value = sentinel.context_analyzer
-
     condition_result = NonCallableMock(Verification, status=Status.SUCCESS)
     condition = NonCallableMock(Description)
     condition.verify.return_value = condition_result
@@ -185,17 +179,6 @@ def test_given_filled_scenarios(
     assert result.cases is cases_result
     assert result.subscenarios.items[0] is subscenario_result
 
-    context_ctor.assert_called_with(
-        base_url='base-url',
-        retry=2,
-        delay=0.5,
-        timeout=1.0,
-    )
-    condition.verify.assert_called_once_with(
-        sentinel.context_analyzer,
-        origin_datetime=sentinel.starts,
-    )
-    analyze_context.assert_called_with(sentinel.context)
     cases_task_ctor.assert_called_once_with(
         executor,
         sentinel.cases,
