@@ -5,7 +5,7 @@ from preacher.core.scenario.analysis import analyze_data_obj
 from preacher.core.scenario.extraction import JqExtractor
 
 
-def test_analyze_context():
+def test_analyze_data_obj():
 
     @dataclass(frozen=True)
     class ComplexContext:
