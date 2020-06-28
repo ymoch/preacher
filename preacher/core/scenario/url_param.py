@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Union, List, Mapping, Optional
 
 from preacher.core.interpretation.value import Value
@@ -10,12 +10,13 @@ UrlParamValue = Union[
     float,
     str,
     date,
+    datetime,
     Value[None],
     Value[bool],
     Value[int],
     Value[float],
     Value[str],
-    Value[date],
+    Value[datetime],
 ]
 UrlParam = Union[UrlParamValue, List[UrlParamValue]]
 UrlParams = Union[str, Mapping[str, UrlParam]]
