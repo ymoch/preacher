@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 15:35+0900\n"
+"POT-Creation-Date: 2020-06-28 15:45+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,9 +187,10 @@ msgstr "シナリオにおけるデフォルト設定. 詳しくは :ref:`defaul
 msgid "when"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:108 ../../user/scenario-structure.rst:172
-#: 60508f03bb6441d396e95efc9aabdb40 f9c8b94c12c544dcac6d902c68d5303e
-msgid "List[Description]"
+#: ../../user/scenario-structure.rst:108 ../../user/scenario-structure.rst:263
+#: ../../user/scenario-structure.rst:305 4787bca9e5164a3e90099be10a414d7b
+#: f9c8b94c12c544dcac6d902c68d5303e
+msgid "List[:ref:`description`]"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:110 41a8bb5e9175426b8506e56fc1980724
@@ -280,6 +281,10 @@ msgid ""
 "information."
 msgstr "ケースが有効かどうか. 詳しくは :ref:`ignore-cases` を参照してください."
 
+#: ../../user/scenario-structure.rst:172 60508f03bb6441d396e95efc9aabdb40
+msgid "List[Description]"
+msgstr ""
+
 #: ../../user/scenario-structure.rst:174 96ba359bef7d42e8ac5b31f21162941c
 msgid ""
 "Run this case only when the context satisfies these description. See "
@@ -360,9 +365,8 @@ msgid ""
 msgstr "リクエストパスは ```/path?foo=bar&spam=ham`` のようにクエリ文字列を含むこともできます."
 
 #: ../../user/scenario-structure.rst:217 ade4d3449a3d4787af3832119c0af42b
-#, fuzzy
-msgid "URL Parameter"
-msgstr "URL パラメータ"
+msgid "URLParameter"
+msgstr ""
 
 #: ../../user/scenario-structure.rst:218 b8fb97d58b46481ca742682a6353065d
 msgid ""
@@ -404,11 +408,6 @@ msgid ""
 ":`status-code` for more information."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:263 ../../user/scenario-structure.rst:305
-#: 4787bca9e5164a3e90099be10a414d7b
-msgid "List[:ref:`description`]"
-msgstr ""
-
 #: ../../user/scenario-structure.rst:265 96b8183ec4fa43b29a9f82a8e1f0da46
 msgid ""
 "Descriptions that describe the response headers. See :ref:`headers` for "
@@ -420,7 +419,7 @@ msgid "body"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:268 f2e18f30e98f42d7ba41ef43bfde9ff9
-msgid ":ref:`body-description`"
+msgid ":ref:`response-body-description`"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:270 14064ceb477948d392078059af64e0d8
@@ -446,8 +445,8 @@ msgid ""
 " that Names are lower-cased* to normalize."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:290 11f7e2cc34ae4b01adfb5b12df2198ab
-msgid "BodyDescription"
+#: ../../user/scenario-structure.rst:290 f2e18f30e98f42d7ba41ef43bfde9ff9
+msgid "ResponseBodyDescription"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:299 192d765aee2d4e90b5c4a4b86665a2de
@@ -472,8 +471,8 @@ msgstr ""
 
 #: ../../user/scenario-structure.rst:309 9c3749afc552473aa03ad0182657731a
 msgid ""
-"When given a list as a ``BodyDescription``, that is equivalent to "
-"``{\"descritptions\": it}``."
+"When given a list as a ``ResponseBodyDescription``, that is equivalent to"
+" ``{\"descritptions\": it}``."
 msgstr ""
 
 #: ../../user/scenario-structure.rst:324 dd8d8f89a5cb4c07be4f4c8c5f55d5a2

@@ -105,7 +105,7 @@ Scenarios can be nested by using "subscenarios."
       - Default of this scenario.
         See :ref:`default-test` for more information.
     * - when
-      - List[Description]
+      - List[:ref:`description`]
       - ``[]``
       - Run this scenario only when the context satisfies these description.
         See :doc:`Application Running Context<context>` for more information.
@@ -213,8 +213,8 @@ When given only a string, that is equivalent to ``{path: it}``.
 
 .. _url-parameter:
 
-URL Parameter
-"""""""""""""
+URLParameter
+""""""""""""
 When given URL parameters as a string, then it is regarded as a raw query string.
 
 .. code-block:: yaml
@@ -265,7 +265,7 @@ ResponseDescription
       - Descriptions that describe the response headers.
         See :ref:`headers` for more information.
     * - body
-      - :ref:`body-description`
+      - :ref:`response-body-description`
       - ``null``
       - A description that describe the response body.
 
@@ -284,10 +284,10 @@ that is a map of names to values
 and can be described as a JSON (e.g. ``."content-type"``).
 *Note that Names are lower-cased* to normalize.
 
-.. _body-description:
+.. _response-body-description:
 
-BodyDescription
-^^^^^^^^^^^^^^^
+ResponseBodyDescription
+^^^^^^^^^^^^^^^^^^^^^^^
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -306,7 +306,7 @@ BodyDescription
       - ``[]``
       - Descriptions that describe the response body.
 
-When given a list as a ``BodyDescription``,
+When given a list as a ``ResponseBodyDescription``,
 that is equivalent to ``{"descritptions": it}``.
 
 .. _description:
