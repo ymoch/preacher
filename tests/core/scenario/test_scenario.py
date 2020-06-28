@@ -1,5 +1,5 @@
 from concurrent.futures import Executor, Future
-from unittest.mock import ANY, MagicMock, NonCallableMock, patch, sentinel
+from unittest.mock import ANY, Mock, NonCallableMock, patch, sentinel
 
 from pytest import fixture, mark, raises
 
@@ -24,8 +24,8 @@ def submit(func, *args, **kwargs) -> Future:
 
 @fixture
 def executor():
-    executor = MagicMock(Executor)
-    executor.submit = MagicMock(side_effect=submit)
+    executor = NonCallableMock(Executor)
+    executor.submit.side_effect = submit
     return executor
 
 
@@ -45,10 +45,10 @@ def test_not_implemented():
 def test_given_bad_conditions(statuses, expected_status):
     verifications = [Verification(status) for status in statuses]
     conditions = [
-        NonCallableMock(Description, verify=MagicMock(return_value=v))
+        NonCallableMock(Description, verify=Mock(return_value=v))
         for v in verifications
     ]
-    subscenario = MagicMock(Scenario)
+    subscenario = NonCallableMock(Scenario)
 
     scenario = Scenario(
         label=sentinel.label,
@@ -77,9 +77,9 @@ def test_given_bad_conditions(statuses, expected_status):
 
 
 def test_given_default_scenario(executor):
-    case_results = MagicMock(StatusedList, status=Status.SKIPPED)
-    cases_task = MagicMock(CasesTask)
-    cases_task.result = MagicMock(return_value=case_results)
+    case_results = NonCallableMock(StatusedList, status=Status.SKIPPED)
+    cases_task = NonCallableMock(CasesTask)
+    cases_task.result.return_value = case_results
 
     scenario = Scenario()
     with patch(
@@ -122,19 +122,20 @@ def test_given_filled_scenarios(
     subscenario_status,
     expected_status,
 ):
-    condition_result = MagicMock(Verification, status=Status.SUCCESS)
-    condition = MagicMock(Description)
-    condition.verify = MagicMock(return_value=condition_result)
+    condition_result = NonCallableMock(Verification, status=Status.SUCCESS)
+    condition = NonCallableMock(Description)
+    condition.verify.return_value = condition_result
 
-    case_results = MagicMock(StatusedList, status=cases_status)
-    cases_task = MagicMock(CasesTask)
-    cases_task.result = MagicMock(return_value=case_results)
+    case_results = NonCallableMock(StatusedList, status=cases_status)
+    cases_task = NonCallableMock(CasesTask)
+    cases_task.result.return_value = case_results
 
-    subscenario_result = MagicMock(ScenarioResult, status=subscenario_status)
-    subscenario_task = MagicMock(ScenarioTask)
-    subscenario_task.result = MagicMock(return_value=subscenario_result)
-    subscenario = MagicMock(Scenario)
-    subscenario.submit = MagicMock(return_value=subscenario_task)
+    subscenario_result = NonCallableMock(ScenarioResult)
+    subscenario_result.status = subscenario_status
+    subscenario_task = NonCallableMock(ScenarioTask)
+    subscenario_task.result.return_value = subscenario_result
+    subscenario = NonCallableMock(Scenario)
+    subscenario.submit.return_value = subscenario_task
 
     sentinel.context.starts = sentinel.starts
 
