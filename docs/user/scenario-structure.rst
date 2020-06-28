@@ -205,16 +205,20 @@ When given only a string, that is equivalent to ``{path: it}``.
       - ``{}``
       - The headers as a map of names to values.
     * - params
-      - :ref:`url-parameter`
+      - :ref:`url-parameters`
       - ``{}``
-      - Parameters for the query string.
+      - The URL parameters for the query string.
+    * - body
+      - :ref:`request-body`
+      - ``null``
+      - The request body.
 
 .. note:: A request path can also contain query parameters like ``/path?foo=bar&spam=ham``.
 
-.. _url-parameter:
+.. _url-parameters:
 
-URLParameter
-""""""""""""
+URLParameters
+"""""""""""""
 When given URL parameters as a string, then it is regarded as a raw query string.
 
 .. code-block:: yaml
@@ -241,6 +245,32 @@ then it is regarded as a map of keys to values and the query string is built wit
 
 .. note:: Allowed types for the parameter values are integer, float, string, timestamp and null (ignored).
           A timestamp value is converted into IS0 8601 format.
+
+.. _request-body:
+
+RequestBody
+"""""""""""
+.. list-table::
+    :header-rows: 1
+    :widths: 10 15 15 60
+
+    * - Key
+      - Type
+      - Default
+      - Description
+    * - type
+      - String
+      - ``urlencoded``
+      - The request body type, which is ``urlencoded`` or ``json``.
+    * - data
+      - Depends on the type
+      - Depends on the type
+      - The request body data.
+
+When the type is ``urlencoded``,
+the data are :ref:`url-parameters` and built into a URL-encoded value such that HTML forms send.
+When the type is ``json``, the data are built into JSON.
+The typical ``Content-type`` header will be set automatically.
 
 .. _response-description:
 
