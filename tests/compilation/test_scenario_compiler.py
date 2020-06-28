@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call, patch, sentinel
+from unittest.mock import Mock, NonCallableMock, call, patch, sentinel
 
 from pytest import mark, raises, fixture
 
@@ -16,35 +16,35 @@ compile_parameter_patch = patch(f'{PACKAGE}.compile_parameter')
 
 @fixture
 def compiler(description, case) -> ScenarioCompiler:
-    return ScenarioCompiler(description, case)
+    return ScenarioCompiler(description=description, case=case)
 
 
 @fixture
 def description():
-    compiler = MagicMock(spec=DescriptionCompiler)
-    compiler.compile = MagicMock(return_value=sentinel.description)
+    compiler = NonCallableMock(DescriptionCompiler)
+    compiler.compile = Mock(return_value=sentinel.description)
     return compiler
 
 
 @fixture
 def case(case_of_default):
-    compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile_default = MagicMock(return_value=case_of_default)
+    compiler = NonCallableMock(CaseCompiler)
+    compiler.compile_default = Mock(return_value=case_of_default)
     return compiler
 
 
 @fixture
 def case_of_default(sub_case):
-    compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile_fixed.return_value = sentinel.case
-    compiler.compile_default.return_value = sub_case
+    compiler = NonCallableMock(CaseCompiler)
+    compiler.compile_fixed = Mock(return_value=sentinel.case)
+    compiler.compile_default = Mock(return_value=sub_case)
     return compiler
 
 
 @fixture
 def sub_case():
-    compiler = MagicMock(spec=CaseCompiler)
-    compiler.compile_fixed = MagicMock(return_value=sentinel.sub_case)
+    compiler = NonCallableMock(CaseCompiler)
+    compiler.compile_fixed = Mock(return_value=sentinel.sub_case)
     return compiler
 
 
@@ -163,7 +163,7 @@ def test_when_parameter_compilation_fails(compile_parameter, compiler):
 def test_given_filled_parameters(
     ctor,
     compile_parameter,
-    compiler,
+    compiler: ScenarioCompiler,
     description,
     case,
     case_of_default,
