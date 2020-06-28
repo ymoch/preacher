@@ -99,21 +99,26 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
 
 
 def test_unordered(executor, mocker):
+    # Also tests successful conditions.
+    condition = NonCallableMock(Description)
+    condition.verify.return_value = Verification(Status.SUCCESS)
+
     results = NonCallableMock(StatusedList, status=Status.SKIPPED)
     task = NonCallableMock(CasesTask)
     task.result.return_value = results
     task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=task)
 
-    scenario = Scenario(ordered=False)
+    scenario = Scenario(conditions=[condition], ordered=False)
     result = scenario.submit(executor).result()
 
     assert result.label is None
     assert result.status is Status.SKIPPED
-    assert result.conditions.status is Status.SKIPPED
+    assert result.conditions.status is Status.SUCCESS
     assert result.cases is results
     assert result.subscenarios.status is Status.SKIPPED
     assert not result.subscenarios.items
 
+    condition.verify.assert_called_once()
     task_ctor.assert_called_once_with(
         executor,
         [],
@@ -138,10 +143,6 @@ def test_ordered(
     expected_status,
     mocker,
 ):
-    condition_result = NonCallableMock(Verification, status=Status.SUCCESS)
-    condition = NonCallableMock(Description)
-    condition.verify.return_value = condition_result
-
     cases_result = NonCallableMock(StatusedList, status=cases_status)
     cases_task = NonCallableMock(CasesTask)
     cases_task.result.return_value = cases_result
@@ -158,7 +159,6 @@ def test_ordered(
     sentinel.context.starts = sentinel.starts
 
     scenario = Scenario(
-        conditions=[condition],
         cases=sentinel.cases,
         subscenarios=[subscenario]
     )
@@ -173,7 +173,7 @@ def test_ordered(
     ).result()
 
     assert result.status == expected_status
-    assert result.conditions.children[0] is condition_result
+    assert result.conditions.status is Status.SKIPPED
     assert result.cases is cases_result
     assert result.subscenarios.items[0] is subscenario_result
 
