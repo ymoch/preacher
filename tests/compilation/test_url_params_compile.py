@@ -19,7 +19,7 @@ RELATIVE_DATETIME_VALUE = RelativeDatetimeValue(timedelta(seconds=1))
     ({'k': frozenset()}, [NamedNode('k')]),
     ({'k': {}}, [NamedNode('k')]),
     ({'k': [[]]}, [NamedNode('k'), IndexedNode(0)]),
-    ({'k': ['a', DATE]}, [NamedNode('k'), IndexedNode(1)]),
+    ({'k': ['a', complex(2, 3)]}, [NamedNode('k'), IndexedNode(1)]),
 ])
 def test_given_invalid_object(obj, expected_path):
     with raises(CompilationError) as error_info:
@@ -35,6 +35,7 @@ def test_given_invalid_object(obj, expected_path):
     {'int': 1},
     {'float': 0.1},
     {'str': 'string'},
+    {'date': DATE},
     {'datetime': DATETIME},
     {'relative_datetime_value': RELATIVE_DATETIME_VALUE},
     {'single': 's', 'multiple': [None, DATETIME, RELATIVE_DATETIME_VALUE]},
