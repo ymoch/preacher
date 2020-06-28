@@ -35,7 +35,7 @@ def echo():
     })
 
 
-@api.route('/error/404')
+@api.route('/error/404', methods=['GET', 'POST'])
 def not_found():
     return jsonify({'message': 'not found'}), 404
 
