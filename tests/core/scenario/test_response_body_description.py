@@ -18,11 +18,11 @@ def test_given_invalid_body():
         descriptions=descriptions,
         analyze=analyze,
     )
-    verification = description.verify(sentinel.response_body)
+    verification = description.verify(sentinel.body)
     assert verification.status == Status.FAILURE
     assert verification.message.endswith('parse error')
 
-    analyze.assert_called_once_with(sentinel.response_body)
+    analyze.assert_called_once_with(sentinel.body)
     descriptions[0].verify.assert_not_called()
 
 
@@ -40,11 +40,11 @@ def test_given_descriptions():
         descriptions=descriptions,
         analyze=analyze,
     )
-    verification = description.verify(sentinel.response_body, k='v')
+    verification = description.verify(sentinel.body, k='v')
     assert verification.status == Status.UNSTABLE
     assert verification.children[0].status == Status.UNSTABLE
     assert verification.children[1].status == Status.SUCCESS
 
-    analyze.assert_called_once_with(sentinel.response_body)
+    analyze.assert_called_once_with(sentinel.body)
     for description in descriptions:
         description.verify.assert_called_once_with(sentinel.body, k='v')
