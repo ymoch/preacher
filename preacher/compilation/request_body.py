@@ -11,8 +11,10 @@ from preacher.core.scenario import (
     RequestBody,
     UrlencodedRequestBody,
     UrlParams,
+    JsonRequestBody,
 )
 
+_NOT_SPECIFIED = object()
 _KEY_TYPE = 'type'
 _KEY_DATA = 'data'
 
@@ -39,7 +41,8 @@ class UrlencodedRequestBodyCompiled(RequestBodyCompiled):
     def replace(self, other: RequestBodyCompiled) -> RequestBodyCompiled:
         if not isinstance(other, UrlencodedRequestBodyCompiled):
             return other
-        return UrlencodedRequestBodyCompiled(
+        return replace(
+            self,
             data=other.data if other.data is not None else self.data,
         )
 
@@ -58,8 +61,36 @@ class UrlencodedRequestBodyCompiled(RequestBodyCompiled):
         return UrlencodedRequestBody(params=self.data or {})
 
 
+@dataclass(frozen=True)
+class JsonRequestBodyCompiled(RequestBodyCompiled):
+    data: object = _NOT_SPECIFIED
+
+    def replace(self, other: RequestBodyCompiled) -> RequestBodyCompiled:
+        if not isinstance(other, JsonRequestBodyCompiled):
+            return other
+        return replace(
+            self,
+            data=other.data if other.data is not _NOT_SPECIFIED else self.data,
+        )
+
+    def compile_and_replace(self, obj: Mapping) -> RequestBodyCompiled:
+        compiled = self
+
+        if _KEY_DATA in obj:
+            data = obj[_KEY_DATA]
+            compiled = replace(self, data=data)
+
+        return compiled
+
+    def fix(self) -> RequestBody:
+        return JsonRequestBody(
+            data=self.data if self.data is not _NOT_SPECIFIED else None,
+        )
+
+
 _TYPE_FACTORY_MAP: Mapping[str, Callable[[], RequestBodyCompiled]] = {
     'urlencoded': UrlencodedRequestBodyCompiled,
+    'json': JsonRequestBodyCompiled,
 }
 
 

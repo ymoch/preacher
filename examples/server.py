@@ -31,6 +31,7 @@ def echo():
         'headers': dict(request.headers.items()),
         'args': dict(request.args.lists()),
         'form': dict(request.form.lists()),
+        'json': request.json,
     })
 
 

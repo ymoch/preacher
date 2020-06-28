@@ -5,12 +5,13 @@ Response body analysis.
 import json
 from abc import ABC, abstractmethod
 from dataclasses import asdict
-from datetime import datetime
 from typing import Any, Callable, Mapping, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, fromstring
 
+from preacher.core.functional import recursive_map
 from preacher.core.response import ResponseBody
+from .util.serialization import to_serializable_value
 
 T = TypeVar('T')
 
@@ -76,18 +77,8 @@ def analyze_xml_str(value: ResponseBody) -> Analyzer:
     return XmlAnalyzer(etree)
 
 
-def _to_serializable(value: object) -> object:
-    if isinstance(value, dict):
-        return {k: _to_serializable(v) for (k, v) in value.items()}
-    if isinstance(value, list):
-        return [_to_serializable(v) for v in value]
-    if isinstance(value, datetime):
-        return value.isoformat()
-    return value
-
-
 def analyze_data_obj(obj) -> Analyzer:
-    return JsonAnalyzer(_to_serializable(asdict(obj)))
+    return JsonAnalyzer(recursive_map(to_serializable_value, asdict(obj)))
 
 
 Analysis = Callable[[ResponseBody], Analyzer]
