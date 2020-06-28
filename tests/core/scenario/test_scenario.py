@@ -7,7 +7,7 @@ from preacher.core.scenario.description import Description
 from preacher.core.scenario.scenario import (
     Scenario,
     ScenarioTask,
-    ScenarioResult,
+    ScenarioResult, ScenarioContext,
 )
 from preacher.core.scenario.status import Status, StatusedList
 from preacher.core.scenario.util.concurrency import CasesTask
@@ -16,33 +16,38 @@ from preacher.core.scenario.verification import Verification
 PKG = 'preacher.core.scenario.scenario'
 
 
-def submit(func, *args, **kwargs) -> Future:
-    future: Future = Future()
-    future.set_result(func(*args, **kwargs))
-    return future
-
-
 @fixture
 def executor():
+    def _submit(func, *args, **kwargs) -> Future:
+        future: Future = Future()
+        future.set_result(func(*args, **kwargs))
+        return future
+
     executor = NonCallableMock(Executor)
-    executor.submit.side_effect = submit
+    executor.submit.side_effect = _submit
     return executor
 
 
-def test_not_implemented():
-    class _IncompleteScenario(ScenarioTask):
+def test_scenario_task_interface():
+    class _IncompleteScenarioTask(ScenarioTask):
         def result(self) -> ScenarioResult:
             return super().result()
 
     with raises(NotImplementedError):
-        _IncompleteScenario().result()
+        _IncompleteScenarioTask().result()
 
 
 @mark.parametrize('statuses, expected_status', [
     ([Status.SKIPPED, Status.UNSTABLE, Status.SUCCESS], Status.SKIPPED),
     ([Status.SUCCESS, Status.FAILURE, Status.UNSTABLE], Status.FAILURE),
 ])
-def test_given_bad_conditions(statuses, expected_status, mocker):
+def test_conditions_not_satisfied(mocker, statuses, expected_status):
+    context_ctor = mocker.patch(f'{PKG}.ScenarioContext')
+    context_ctor.return_value = ScenarioContext(starts=sentinel.starts)
+
+    analyze_context = mocker.patch(f'{PKG}.analyze_data_obj')
+    analyze_context.return_value = sentinel.context_analyzer
+
     ordered_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask')
     unordered_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask')
 
@@ -59,7 +64,6 @@ def test_given_bad_conditions(statuses, expected_status, mocker):
         cases=sentinel.cases,
         subscenarios=[subscenario],
     )
-
     result = scenario.submit(executor).result()
 
     assert result.label is sentinel.label
@@ -69,6 +73,12 @@ def test_given_bad_conditions(statuses, expected_status, mocker):
     assert not result.cases.items
     assert result.subscenarios.status is Status.SKIPPED
     assert not result.subscenarios.items
+
+    for condition in conditions:
+        condition.verify.assert_called_once_with(
+            sentinel.context_analyzer,
+            origin_datetime=sentinel.starts,
+        )
 
     ordered_task_ctor.assert_not_called()
     unordered_task_ctor.assert_not_called()
