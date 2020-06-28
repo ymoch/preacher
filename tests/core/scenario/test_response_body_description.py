@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, sentinel
+from unittest.mock import Mock, NonCallableMock, sentinel
 
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.response_body import ResponseBodyDescription
@@ -8,11 +8,11 @@ from preacher.core.scenario.verification import Verification
 
 def test_given_invalid_body():
     descriptions = [
-        MagicMock(Description, verify=MagicMock(
+        NonCallableMock(Description, verify=Mock(
             return_value=Verification.succeed()
         )),
     ]
-    analyze = MagicMock(side_effect=RuntimeError('parse error'))
+    analyze = Mock(side_effect=RuntimeError('parse error'))
 
     description = ResponseBodyDescription(
         descriptions=descriptions,
@@ -28,14 +28,14 @@ def test_given_invalid_body():
 
 def test_given_descriptions():
     descriptions = [
-        MagicMock(Description, verify=MagicMock(
+        NonCallableMock(Description, verify=Mock(
             return_value=Verification(status=Status.UNSTABLE)
         )),
-        MagicMock(Description, verify=MagicMock(
+        NonCallableMock(Description, verify=Mock(
             return_value=Verification.succeed()
         )),
     ]
-    analyze = MagicMock(return_value=sentinel.body)
+    analyze = Mock(return_value=sentinel.body)
     description = ResponseBodyDescription(
         descriptions=descriptions,
         analyze=analyze,
