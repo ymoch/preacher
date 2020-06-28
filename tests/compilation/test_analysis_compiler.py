@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import NonCallableMock
 
 from pytest import mark, raises
 
@@ -28,5 +28,9 @@ def test_given_valid_keys(value, text):
     compiler = AnalysisCompiler()
     analyze = compiler.compile(value)
 
-    body = MagicMock(ResponseBody, text=text, content=text.encode('utf-8'))
+    body = NonCallableMock(
+        spec=ResponseBody,
+        text=text,
+        content=text.encode('utf-8'),
+    )
     analyze(body)

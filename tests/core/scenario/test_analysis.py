@@ -1,11 +1,10 @@
 from typing import Callable, Mapping, TypeVar
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 
 from lxml.etree import _Element as Element
 from pytest import raises
 
 from preacher.core.scenario.analysis import Analyzer
-from preacher.core.scenario.extraction import Extractor
 
 T = TypeVar('T')
 
@@ -22,12 +21,12 @@ def test_incomplete_analyzer():
             return super().key(extract)
 
     analyzer = _IncompleteAnalyzer()
-
+    ext = Mock()
     with raises(NotImplementedError):
-        analyzer.jq(MagicMock(Extractor))
-
+        analyzer.jq(ext)
     with raises(NotImplementedError):
-        analyzer.xpath(MagicMock(Extractor))
-
+        analyzer.xpath(ext)
     with raises(NotImplementedError):
-        analyzer.key(MagicMock(Extractor))
+        analyzer.key(ext)
+
+    ext.assert_not_called()

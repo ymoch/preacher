@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call
+from unittest.mock import Mock, call
 
 from pytest import raises, mark
 
@@ -26,7 +26,7 @@ def test_map_compile_for_successful_func():
 
 def test_map_compile_for_failing_func():
     child_error = CompilationError('message', path=[NamedNode('key')])
-    failing_func = MagicMock(side_effect=[1, child_error, 2])
+    failing_func = Mock(side_effect=[1, child_error, 2])
     results = map_compile(failing_func, [3, 4, 5])
     assert next(results) == 1
     with raises(CompilationError) as error_info:

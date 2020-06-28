@@ -1,7 +1,8 @@
 from typing import Iterable
 
-from pytest import mark
+from pytest import mark, raises
 
+from preacher.core.scenario import Statused
 from preacher.core.scenario.status import Status, merge_statuses
 
 
@@ -47,3 +48,14 @@ def test_merge(lhs: Status, rhs: Status, expected: Status):
 ])
 def test_merge_statuses(statuses: Iterable[Status], expected: Status):
     assert merge_statuses(statuses) is expected
+
+
+def test_statused_interface():
+    class _IncompleteStatused(Statused):
+        @property
+        def status(self) -> Status:
+            return super().status
+
+    statused = _IncompleteStatused()
+    with raises(NotImplementedError):
+        print(statused.status)

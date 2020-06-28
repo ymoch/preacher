@@ -1,6 +1,6 @@
 """URL parameters compilation."""
 
-from datetime import datetime
+from datetime import date
 from typing import Mapping
 
 from preacher.compilation.error import CompilationError, on_key
@@ -20,7 +20,7 @@ def compile_url_param_value(value: object) -> UrlParamValue:
         return value
     if isinstance(value, str):
         return value
-    if isinstance(value, datetime):
+    if isinstance(value, date):
         return value
     if isinstance(value, RelativeDatetimeValue):  # HACK: relax typing.
         return value

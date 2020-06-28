@@ -1,10 +1,11 @@
-from unittest.mock import MagicMock
+from unittest.mock import Mock, NonCallableMock
 
 from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark, raises
 
-from preacher.core.scenario.extraction import XPathExtractor, ExtractionError
 from preacher.core.functional import identify
+from preacher.core.scenario import Analyzer
+from preacher.core.scenario.extraction import XPathExtractor, ExtractionError
 
 VALUE = '''
 <root>
@@ -29,9 +30,7 @@ VALUE = '''
 @fixture
 def analyzer():
     elem = fromstring(VALUE, parser=XMLParser())
-    return MagicMock(
-        xpath=MagicMock(side_effect=lambda x: x(elem))
-    )
+    return NonCallableMock(Analyzer, xpath=Mock(side_effect=lambda x: x(elem)))
 
 
 def test_extract_invalid(analyzer):

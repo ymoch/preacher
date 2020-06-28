@@ -1,9 +1,10 @@
-from unittest.mock import MagicMock
+from unittest.mock import Mock, NonCallableMock
 
 from pytest import fixture, mark, raises
 
-from preacher.core.scenario.extraction import JqExtractor, ExtractionError
 from preacher.core.functional import identify
+from preacher.core.scenario import Analyzer
+from preacher.core.scenario.extraction import JqExtractor, ExtractionError
 
 VALUE = {
     'foo': 'bar',
@@ -30,8 +31,9 @@ VALUE = {
 
 @fixture
 def analyzer():
-    return MagicMock(
-        jq=MagicMock(side_effect=lambda x: x(VALUE))
+    return NonCallableMock(
+        spec=Analyzer,
+        jq=Mock(side_effect=lambda x: x(VALUE))
     )
 
 
@@ -42,17 +44,17 @@ def test_extract_invalid(analyzer):
     assert str(error_info.value).endswith(': xxx')
 
 
-@mark.parametrize('query, expected', (
+@mark.parametrize(('query', 'expected'), [
     ('.xxx', None),
     ('.foo', 'bar'),
     ('.int_string', '10'),
-))
+])
 def test_extract_default(query, expected, analyzer):
     extractor = JqExtractor(query)
     assert extractor.extract(analyzer) == expected
 
 
-@mark.parametrize('query, multiple, cast, expected', (
+@mark.parametrize(('query', 'multiple', 'cast', 'expected'), [
     ('.xxx', False, identify, None),
     ('.foo', False, identify, 'bar'),
     ('.int_string', False, identify, '10'),
@@ -62,7 +64,7 @@ def test_extract_default(query, expected, analyzer):
     ('.int_string', False, int, 10),
     ('.int_strings[].value', False, int, 1),
     ('.int_strings[].value', True, int, [1, None, 2]),
-))
+])
 def test_extract_multiple(query, multiple, cast, expected, analyzer):
     extractor = JqExtractor(query, multiple=multiple, cast=cast)
     assert extractor.extract(analyzer) == expected

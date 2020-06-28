@@ -18,8 +18,8 @@ def create_compiler() -> ScenarioCompiler:
     analysis = AnalysisCompiler()
     predicate = PredicateCompiler()
     description = DescriptionCompiler(
-        extraction_compiler=extraction,
-        predicate_compiler=predicate,
+        extraction=extraction,
+        predicate=predicate,
     )
     response_body_description = ResponseBodyDescriptionCompiler(
         analysis=analysis,

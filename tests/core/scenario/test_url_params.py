@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from unittest.mock import MagicMock, sentinel
 
 from preacher.core.interpretation.value import Value
@@ -23,6 +23,7 @@ def test_resolve_params_given_a_mapping():
             1,
             1.2,
             'str',
+            date(2020, 12, 31),
             datetime(2020, 1, 23, 12, 34, 56, tzinfo=timezone.utc),
             value,
         ]
@@ -37,6 +38,7 @@ def test_resolve_params_given_a_mapping():
         '1',
         '1.2',
         'str',
+        '2020-12-31',
         '2020-01-23T12:34:56+00:00',
         'sentinel.resolved_value',
     ]

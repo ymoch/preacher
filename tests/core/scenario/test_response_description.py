@@ -1,20 +1,20 @@
 from typing import List
-from unittest.mock import MagicMock, sentinel
+from unittest.mock import NonCallableMock, Mock, sentinel
 
-from pytest import mark, fixture, raises
+from pytest import mark, fixture
 
 from preacher.core.response import Response
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response import ResponseDescription
 from preacher.core.scenario.response_body import ResponseBodyDescription
-from preacher.core.scenario.status import Status, Statused
+from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
 
 
 @fixture
 def response():
-    return MagicMock(
+    return NonCallableMock(
         spec=Response,
         id=sentinel.response_id,
         elapsed=sentinel.elapsed,
@@ -36,7 +36,7 @@ def test_when_given_no_description(response):
 
 def test_when_header_verification_fails(response):
     headers = [
-        MagicMock(Description, verify=MagicMock(
+        NonCallableMock(Description, verify=Mock(
             side_effect=RuntimeError('message')
         )),
     ]
@@ -49,18 +49,18 @@ def test_when_header_verification_fails(response):
 
 def test_when_given_descriptions(response):
     headers = [
-        MagicMock(Description, verify=MagicMock(
+        NonCallableMock(Description, verify=Mock(
             return_value=Verification(status=Status.UNSTABLE)
         )),
-        MagicMock(Description, verify=MagicMock(
+        NonCallableMock(Description, verify=Mock(
             return_value=Verification.succeed()
         )),
     ]
-    body = MagicMock(
+    body = NonCallableMock(
         spec=ResponseBodyDescription,
-        verify=MagicMock(return_value=Verification(status=Status.UNSTABLE)),
+        verify=Mock(return_value=Verification(status=Status.UNSTABLE)),
     )
-    analyze_headers = MagicMock(return_value=sentinel.headers)
+    analyze_headers = Mock(return_value=sentinel.headers)
     description = ResponseDescription(
         status_code=[],
         headers=headers,
@@ -96,20 +96,18 @@ def test_merge_statuses(
     response,
 ):
     status_code_predicates: List[Predicate] = [
-        MagicMock(Predicate, verify=MagicMock(
+        NonCallableMock(Predicate, verify=Mock(
             return_value=Verification(status=status_code_status)
         )),
     ]
     headers_descriptions: List[Description] = [
-        MagicMock(Description, verify=MagicMock(
+        NonCallableMock(Description, verify=Mock(
             return_value=Verification(status=headers_status)
         )),
     ]
-    body_description: ResponseBodyDescription = MagicMock(
+    body_description: ResponseBodyDescription = NonCallableMock(
         spec=ResponseBodyDescription,
-        verify=MagicMock(
-            return_value=Verification(status=body_status)
-        )
+        verify=Mock(return_value=Verification(status=body_status))
     )
     description = ResponseDescription(
         status_code=status_code_predicates,
@@ -118,15 +116,3 @@ def test_merge_statuses(
     )
     verification = description.verify(response)
     assert verification.status == expected
-
-
-def test_incomplete_statused_implementation():
-    class _IncompleteStatused(Statused):
-
-        @property
-        def status(self) -> Status:
-            return super().status
-
-    statused = _IncompleteStatused()
-    with raises(NotImplementedError):
-        print(statused.status)

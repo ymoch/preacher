@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from unittest.mock import patch, sentinel
+from unittest.mock import sentinel
 
 from pytest import mark, raises
 
@@ -162,19 +162,21 @@ def test_verification(compiled, verified, expected_status):
     assert match(compile(compiled), verified).status == expected_status
 
 
-@patch(f'{PACKAGE}.ValueMatcher', return_value=sentinel.matcher)
-@patch(f'{PACKAGE}.StaticValue', return_value=sentinel.value)
 @mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
     ({'be_before': NOW.replace(tzinfo=None)}, NOW, before),
     ({'be_after': NOW}, NOW, after),
 ])
 def test_verification_with_datetime(
-    value_ctor,
-    matcher_ctor,
+    mocker,
     compiled,
     expected_value,
     expected_hamcrest_factory,
 ):
+    matcher_ctor = mocker.patch(f'{PACKAGE}.ValueMatcher')
+    matcher_ctor.return_value = sentinel.matcher
+    value_ctor = mocker.patch(f'{PACKAGE}.StaticValue')
+    value_ctor.return_value = sentinel.value
+
     actual = compile(compiled)
     assert actual == sentinel.matcher
 
@@ -185,19 +187,21 @@ def test_verification_with_datetime(
     )
 
 
-@patch(f'{PACKAGE}.ValueMatcher', return_value=sentinel.matcher)
-@patch(f'{PACKAGE}.RelativeDatetimeValue', return_value=sentinel.value)
 @mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
     ({'be_before': 'now'}, timedelta(), before),
     ({'be_after': '1 second'}, timedelta(seconds=1), after),
 ])
 def test_verification_with_timedelta(
-    value_ctor,
-    matcher_ctor,
+    mocker,
     compiled,
     expected_value,
     expected_hamcrest_factory,
 ):
+    matcher_ctor = mocker.patch(f'{PACKAGE}.ValueMatcher')
+    matcher_ctor.return_value = sentinel.matcher
+    value_ctor = mocker.patch(f'{PACKAGE}.RelativeDatetimeValue')
+    value_ctor.return_value = sentinel.value
+
     actual = compile(compiled)
     assert actual == sentinel.matcher
 
