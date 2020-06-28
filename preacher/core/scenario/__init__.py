@@ -11,7 +11,7 @@ from .extraction import (
 from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
 from .request import Request, Method
-from .request_body import RequestBody, UrlencodedRequestBody
+from .request_body import RequestBody, UrlencodedRequestBody, JsonRequestBody
 from .response import ResponseDescription, ResponseVerification
 from .response_body import ResponseBodyDescription
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
@@ -43,6 +43,7 @@ __all__ = [
     'Method',
     'RequestBody',
     'UrlencodedRequestBody',
+    'JsonRequestBody',
     'ResponseDescription',
     'ResponseVerification',
     'ResponseBodyDescription',

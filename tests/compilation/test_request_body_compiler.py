@@ -4,9 +4,10 @@ from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request_body import (
+    RequestBodyCompiler,
     RequestBodyCompiled,
     UrlencodedRequestBodyCompiled,
-    RequestBodyCompiler,
+    JsonRequestBodyCompiled,
 )
 
 PACKAGE = 'preacher.compilation.request_body'
@@ -42,6 +43,7 @@ def test_compile_empty(compiler, default_body):
 
 @mark.parametrize(('type_key', 'expected_replacer'), [
     ('urlencoded', UrlencodedRequestBodyCompiled()),
+    ('json', JsonRequestBodyCompiled()),
 ])
 def test_given_type(compiler, default_body, type_key, expected_replacer):
     replaced_body = NonCallableMock(RequestBodyCompiled)
