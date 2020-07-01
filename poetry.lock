@@ -206,6 +206,14 @@ MarkupSafe = ">=0.23"
 i18n = ["Babel (>=0.8)"]
 
 [[package]]
+category = "main"
+description = "jq is a lightweight and flexible JSON processor."
+name = "jq"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.0.2"
+
+[[package]]
 category = "dev"
 description = "Python LiveReload is an awesome tool for web developers"
 name = "livereload"
@@ -278,7 +286,7 @@ dmypy = ["psutil (>=4.0)"]
 [[package]]
 category = "dev"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "mypy-extensions"
 optional = false
 python-versions = "*"
@@ -367,14 +375,6 @@ name = "pyhamcrest"
 optional = false
 python-versions = ">=3.5"
 version = "2.0.2"
-
-[[package]]
-category = "main"
-description = "Binding for jq JSON processor."
-name = "pyjq"
-optional = false
-python-versions = "*"
-version = "2.4.0"
 
 [[package]]
 category = "dev"
@@ -509,7 +509,7 @@ security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -681,7 +681,7 @@ version = "6.0.4"
 [[package]]
 category = "dev"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "typed-ast"
 optional = false
 python-versions = "*"
@@ -690,7 +690,7 @@ version = "1.4.1"
 [[package]]
 category = "dev"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "typing-extensions"
 optional = false
 python-versions = "*"
@@ -746,7 +746,7 @@ watchdog = ["watchdog"]
 [[package]]
 category = "dev"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\")"
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -757,7 +757,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "9b25859310e1fcfd0bbb7390c1fcb62fe5643aeb710ba473b0829c6e5af9c419"
+content-hash = "49eb6d8a624ad9280914c75cdca9047e2a4e1cb84bbf4605ef932f189f0990b0"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -869,6 +869,44 @@ itsdangerous = [
 jinja2 = [
     {file = "Jinja2-2.11.2-py2.py3-none-any.whl", hash = "sha256:f0a4641d3cf955324a89c04f3d94663aa4d638abe8f733ecd3582848e1c37035"},
     {file = "Jinja2-2.11.2.tar.gz", hash = "sha256:89aab215427ef59c34ad58735269eb58b1a5808103067f7bb9d5836c651b3bb0"},
+]
+jq = [
+    {file = "jq-1.0.2-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:315ccdc834802a761e51ae72f3dca4a1b38a095aaf01fde56c604ae3567d1dd5"},
+    {file = "jq-1.0.2-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:80f1cfc174aa2f40fd0c658d78c379714af7e437d1efaad4bc829e43335d164e"},
+    {file = "jq-1.0.2-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:d356845fc9fbbfd6913f7554a82ca257da22f00109d702264d1e7d5d77744b16"},
+    {file = "jq-1.0.2-cp27-cp27m-manylinux2010_i686.whl", hash = "sha256:3d0aa7d93224cf86eb73eaff8028f270a9a9816468984087df00e156ef077b23"},
+    {file = "jq-1.0.2-cp27-cp27m-manylinux2010_x86_64.whl", hash = "sha256:3229f5ddae7d9f863b099f460d148bcdffb9ace2c458a0a02f4364b7f0c32665"},
+    {file = "jq-1.0.2-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:d54129cdd602a8390628573c3b948328405a95092122fa4ee7efc710c9917cda"},
+    {file = "jq-1.0.2-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:3c1046d12e3fb6c3189bcd78088ca83826bf8ca81be80857006749af808892c4"},
+    {file = "jq-1.0.2-cp27-cp27mu-manylinux2010_i686.whl", hash = "sha256:57836ea27bb14cf1d3883ee35af978e492ba6b486916d8c113346447a1f64c12"},
+    {file = "jq-1.0.2-cp27-cp27mu-manylinux2010_x86_64.whl", hash = "sha256:327591345b36f8698247b3fcc667d8f6aadab2a6c52ea57f939ae24608180d5d"},
+    {file = "jq-1.0.2-cp35-cp35m-macosx_10_9_x86_64.whl", hash = "sha256:dd28b0b712eb6553ad1ff40d9c6ea585b4c2127042de885312eb075d37e416ef"},
+    {file = "jq-1.0.2-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:328eab483dbe44edb5073d067cca49b06d1c1f567883da5855fdb77aec29d409"},
+    {file = "jq-1.0.2-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:1fa192de33ac16cb0e65c7f1fe718a032ce13c428ee60f847f902c658fbc0908"},
+    {file = "jq-1.0.2-cp35-cp35m-manylinux2010_i686.whl", hash = "sha256:4fec20f833fcb9cfecaa8d60aecf0ea2a564785b1e9161436f57359270728d70"},
+    {file = "jq-1.0.2-cp35-cp35m-manylinux2010_x86_64.whl", hash = "sha256:872c8149e6f6d4e87c41f3b8720edaf38c3c4821bf3ffc6c334816a8282e4933"},
+    {file = "jq-1.0.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:df37f6075b06a4768e8144b03e9ddf575ed394a4a2a38357ec0aaf5cb9d2a277"},
+    {file = "jq-1.0.2-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:9357d7593eb5f83d5e493978709c29ae6e5dce00e2e6d1fbbf553de986a58668"},
+    {file = "jq-1.0.2-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:3939179a8ea22f2c464d700cd628e050ae2db8c0e029dac0c39e0efa000d1a1e"},
+    {file = "jq-1.0.2-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:b0d54da59821d6b33994cf16cd39b3c88f5e365bc169a1775a4a849ab1558dab"},
+    {file = "jq-1.0.2-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:83afce296f53f3a116db61287543422a148107673142d319bad8d5b072b92934"},
+    {file = "jq-1.0.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:d91a581a73a3e090f7723c7590f745cc2a4607c6cc99bab9886cece47ff71fc3"},
+    {file = "jq-1.0.2-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:92a596ef777d363d48967395bf7516b9a6d75fd59f9c6da67b13b6c026a235cc"},
+    {file = "jq-1.0.2-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:5c65f4ebaa19ba95ccd9cc9c7438764f77a8106fe03961643509bf369e67a6d6"},
+    {file = "jq-1.0.2-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:e2f46ae0c927adbceb8dde1e4251e913026903bcb928bdff0c577beeac9eabb8"},
+    {file = "jq-1.0.2-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:16024b5b4d949aa39cfad3ca2ba192d717f1ebc1cac99baecbacb57e2c6d2073"},
+    {file = "jq-1.0.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:1961184fc770613056d5a118e05f1b98cbd2a3a087545fa15a9fa3f28808c2c7"},
+    {file = "jq-1.0.2-cp38-cp38-manylinux1_i686.whl", hash = "sha256:25c7d431be007ed3b5db2e77fa521b71fe44599d1eefe90e1aed2d496be00629"},
+    {file = "jq-1.0.2-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:808c3487cd9326737507629cf2f942d21374e6a021a435ddf48650868db566e0"},
+    {file = "jq-1.0.2-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:cf55721d18a30b438055a4ede5f152fa0d561a90a2a2092b7f85bdbac40b7679"},
+    {file = "jq-1.0.2-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:20a541a78700d1dace8ed3dda7d1927df22f7a0e3fb807a948acf36e17e662e2"},
+    {file = "jq-1.0.2-pp27-pypy_73-macosx_10_7_x86_64.whl", hash = "sha256:ffe389d824243d29b82392b6b46f782e470854be2d21a30b221e80ac1b077a29"},
+    {file = "jq-1.0.2-pp27-pypy_73-manylinux1_x86_64.whl", hash = "sha256:592ea31d79e05a538c4815fdb382c419b4479c990b00ad2c32dea68bc1ecef55"},
+    {file = "jq-1.0.2-pp27-pypy_73-manylinux2010_x86_64.whl", hash = "sha256:43eec86a3043cf32a1a361b0ff9c7dda135714a084abcf6dcdd8b38b34c6d1f0"},
+    {file = "jq-1.0.2-pp36-pypy36_pp73-macosx_10_7_x86_64.whl", hash = "sha256:bb4e70b94e1e0ac6ab9771702818d6f1acd3694d9b9fb9b5cc9465479a8c5260"},
+    {file = "jq-1.0.2-pp36-pypy36_pp73-manylinux1_x86_64.whl", hash = "sha256:414735ae5883b91fa3fb79631a114eb66f30297730666691952b65aa5eba1b62"},
+    {file = "jq-1.0.2-pp36-pypy36_pp73-manylinux2010_x86_64.whl", hash = "sha256:4d56dd84c4ca772f537d53e625a3cf1c4b8b1d2d2458cd34833a00024d9add85"},
+    {file = "jq-1.0.2.tar.gz", hash = "sha256:9fe6ce07bc8d209c385d8ba132a2971c69aef015103c46bea87a73a16c5ec147"},
 ]
 livereload = [
     {file = "livereload-2.6.2.tar.gz", hash = "sha256:d1eddcb5c5eb8d2ca1fa1f750e580da624c0f7fcb734aa5780dc81b7dcbd89be"},
@@ -993,10 +1031,6 @@ pygments = [
 pyhamcrest = [
     {file = "PyHamcrest-2.0.2-py3-none-any.whl", hash = "sha256:7ead136e03655af85069b6f47b23eb7c3e5c221aa9f022a4fbb499f5b7308f29"},
     {file = "PyHamcrest-2.0.2.tar.gz", hash = "sha256:412e00137858f04bde0729913874a48485665f2d36fe9ee449f26be864af9316"},
-]
-pyjq = [
-    {file = "pyjq-2.4.0-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:562e62a18d306d4fefe691d2ced951b34e44f0d300da505727cd66e2aa70aa0c"},
-    {file = "pyjq-2.4.0.tar.gz", hash = "sha256:651f7a3ab2087e7c69cf00f1ba5433d7afe7b72f4ff499dcaf9c86cb1c2ae3c1"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},

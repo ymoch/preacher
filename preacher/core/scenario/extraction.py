@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Callable, List, TypeVar
 
-import pyjq as jq
+import jq
 from lxml.etree import _Element as Element, XPathEvalError
 
 from preacher.core.functional import identify
@@ -47,7 +47,7 @@ class JqExtractor(Extractor):
 
         values = (
             self._cast(value) if value is not None else value
-            for value in analyzer.jq(compiled.all)
+            for value in analyzer.jq(compiled.input)
         )
         if self._multiple:
             return list(values)
