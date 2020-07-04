@@ -3,6 +3,7 @@ from unittest.mock import ANY, Mock, NonCallableMock, sentinel
 
 from pytest import fixture, mark, raises
 
+from preacher.core.interpretation import ValueContext
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.scenario import (
     Scenario,
@@ -83,7 +84,7 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     for condition in conditions:
         condition.verify.assert_called_once_with(
             sentinel.context_analyzer,
-            origin_datetime=sentinel.starts,
+            ValueContext(origin_datetime=sentinel.starts),
         )
 
     context_ctor.assert_called_once_with(

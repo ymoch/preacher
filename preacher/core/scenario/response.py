@@ -8,6 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, List, Mapping, Optional
 
+from preacher.core.interpretation import ValueContext
 from preacher.core.response import Response
 from .analysis import Analyzer, JsonAnalyzer
 from .description import Description
@@ -41,18 +42,21 @@ class ResponseDescription:
         self._body = body
         self._analyze_headers = analyze_headers
 
-    def verify(self, response: Response, **kwargs) -> ResponseVerification:
-        """`**kwargs` will be delegated to descriptions."""
-        status_code = self._verify_status_code(response.status_code, **kwargs)
+    def verify(
+        self,
+        response: Response,
+        context: Optional[ValueContext] = None,
+    ) -> ResponseVerification:
+        status_code = self._verify_status_code(response.status_code, context)
 
         try:
-            headers = self._verify_headers(response.headers, **kwargs)
+            headers = self._verify_headers(response.headers, context)
         except Exception as error:
             headers = Verification.of_error(error)
 
         body = Verification.skipped()
         if self._body:
-            body = self._body.verify(response.body, **kwargs)
+            body = self._body.verify(response.body, context)
 
         status = merge_statuses([
             status_code.status,
@@ -67,19 +71,23 @@ class ResponseDescription:
             body=body,
         )
 
-    def _verify_status_code(self, code: int, **kwargs) -> Verification:
+    def _verify_status_code(
+        self,
+        code: int,
+        context: Optional[ValueContext],
+    ) -> Verification:
         return collect(
-            predicate.verify(code, **kwargs)
+            predicate.verify(code, context)
             for predicate in self._status_code
         )
 
     def _verify_headers(
         self,
         headers: Mapping[str, str],
-        **kwargs
+        context: Optional[ValueContext],
     ) -> Verification:
         analyzer = self._analyze_headers(headers)
         return collect(
-            description.verify(analyzer, **kwargs)
+            description.verify(analyzer, context)
             for description in self._headers
         )

@@ -67,7 +67,7 @@ def test_when_given_descriptions(response):
         body=body,
         analyze_headers=analyze_headers,
     )
-    verification = description.verify(response, k='v')
+    verification = description.verify(response, sentinel.context)
     assert verification.response_id == sentinel.response_id
     assert verification.status == Status.UNSTABLE
     assert verification.status_code.status == Status.SKIPPED
@@ -75,8 +75,11 @@ def test_when_given_descriptions(response):
 
     analyze_headers.assert_called_once_with({})
     for description in headers:
-        description.verify.assert_called_once_with(sentinel.headers, k='v')
-    body.verify.assert_called_once_with(sentinel.body, k='v')
+        description.verify.assert_called_once_with(
+            sentinel.headers,
+            sentinel.context,
+        )
+    body.verify.assert_called_once_with(sentinel.body, sentinel.context)
 
 
 @mark.parametrize(

@@ -2,6 +2,7 @@ from unittest.mock import ANY, Mock, NonCallableMock, sentinel
 
 from pytest import mark
 
+from preacher.core.interpretation import ValueContext
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.request import Request
@@ -164,7 +165,7 @@ def test_when_given_an_response(mocker):
     )
     response.verify.assert_called_with(
         sentinel.response,
-        origin_datetime=sentinel.starts,
+        ValueContext(origin_datetime=sentinel.starts),
     )
     retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay)
     listener.on_response.assert_called_once_with(sentinel.response)
