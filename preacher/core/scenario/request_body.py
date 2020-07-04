@@ -1,9 +1,9 @@
 import json
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
 
 from preacher.core.functional import recursive_map
-from preacher.core.interpretation.value import Value
+from preacher.core.interpretation.value import Value, ValueContext
 from preacher.core.scenario.url_param import UrlParams, resolve_url_params
 from preacher.core.scenario.util.serialization import to_serializable_value
 
@@ -16,7 +16,7 @@ class RequestBody(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def resolve(self, **kwargs) -> Any:
+    def resolve(self, context: Optional[ValueContext] = None) -> Any:
         raise NotImplementedError()
 
 
@@ -29,8 +29,8 @@ class UrlencodedRequestBody(RequestBody):
     def content_type(self) -> str:
         return 'application/x-www-form-urlencoded'
 
-    def resolve(self, **kwargs) -> Any:
-        return resolve_url_params(self._params, **kwargs)
+    def resolve(self, context: Optional[ValueContext] = None) -> Any:
+        return resolve_url_params(self._params, context)
 
 
 class JsonRequestBody(RequestBody):
@@ -42,12 +42,12 @@ class JsonRequestBody(RequestBody):
     def content_type(self) -> str:
         return 'application/json'
 
-    def resolve(self, **context) -> Any:
+    def resolve(self, context: Optional[ValueContext] = None) -> Any:
         def _resolve_value(obj: object) -> object:
             if isinstance(obj, Value):
                 return recursive_map(
                     _resolve_value,
-                    _resolve_value(obj.resolve(**context)),
+                    _resolve_value(obj.resolve(context)),
                 )
             return to_serializable_value(obj)
 

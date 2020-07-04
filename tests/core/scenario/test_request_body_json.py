@@ -23,7 +23,7 @@ def test_content_type():
 ])
 def test_resolve_simple(data, expected):
     body = JsonRequestBody(data)
-    resolved = body.resolve(foo='bar')
+    resolved = body.resolve()
     assert resolved == expected
 
 
@@ -37,8 +37,8 @@ def test_resolve_given_values():
     assert isinstance(value, Value)
 
     body = JsonRequestBody({'key': value})
-    resolved = body.resolve(context=sentinel.context)
+    resolved = body.resolve(sentinel.context)
     assert resolved == '{"key":["1234-01-02"]}'
 
-    value.resolve.assert_called_once_with(context=sentinel.context)
-    value_of_value.resolve.assert_called_once_with(context=sentinel.context)
+    value.resolve.assert_called_once_with(sentinel.context)
+    value_of_value.resolve.assert_called_once_with(sentinel.context)

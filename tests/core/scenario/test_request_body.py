@@ -1,7 +1,8 @@
-from typing import Any
+from typing import Any, Optional
 
 from pytest import raises
 
+from preacher.core.interpretation.value import ValueContext
 from preacher.core.scenario.request_body import RequestBody
 
 
@@ -11,12 +12,11 @@ def test_request_body():
         def content_type(self) -> str:
             return super().content_type
 
-        @property
-        def resolve(self, **kwargs) -> Any:
-            return super().resolve(**kwargs)
+        def resolve(self, context: Optional[ValueContext] = None) -> Any:
+            return super().resolve(context)
 
     body = _IncompleteRequestBody()
     with raises(NotImplementedError):
         print(body.content_type)
     with raises(NotImplementedError):
-        body.resolve(foo='bar')
+        body.resolve()

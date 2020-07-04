@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Union, List, Mapping, Optional
 
-from preacher.core.interpretation.value import Value
+from preacher.core.interpretation.value import Value, ValueContext
 
 UrlParamValue = Union[
     None,
@@ -25,9 +25,12 @@ ResolvedUrlParam = Union[ResolvedUrlParamValue, List[ResolvedUrlParamValue]]
 ResolvedUrlParams = Union[str, Mapping[str, ResolvedUrlParam]]
 
 
-def resolve_url_param_value(value: UrlParamValue, **kwargs) -> Optional[str]:
+def resolve_url_param_value(
+    value: UrlParamValue,
+    context: Optional[ValueContext] = None,
+) -> Optional[str]:
     if isinstance(value, Value):
-        value = value.resolve(**kwargs)
+        value = value.resolve(context)
 
     if value is None:
         return None
@@ -38,16 +41,22 @@ def resolve_url_param_value(value: UrlParamValue, **kwargs) -> Optional[str]:
     return str(value)
 
 
-def resolve_url_param(param: UrlParam, **kwargs) -> ResolvedUrlParam:
+def resolve_url_param(
+    param: UrlParam,
+    context: Optional[ValueContext] = None,
+) -> ResolvedUrlParam:
     if isinstance(param, list):
-        return [resolve_url_param_value(value, **kwargs) for value in param]
+        return [resolve_url_param_value(value, context) for value in param]
     return resolve_url_param_value(param)
 
 
-def resolve_url_params(params: UrlParams, **kwargs) -> ResolvedUrlParams:
+def resolve_url_params(
+    params: UrlParams,
+    context: Optional[ValueContext] = None,
+) -> ResolvedUrlParams:
     if isinstance(params, str):
         return params
     return {
-        key: resolve_url_param(param, **kwargs)
+        key: resolve_url_param(param, context)
         for (key, param) in params.items()
     }
