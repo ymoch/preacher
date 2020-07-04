@@ -11,8 +11,8 @@ NOW = datetime.now()
 
 def test_incomplete_value():
     class IncompleteValue(Value[object]):
-        def apply_context(self, **kwargs) -> object:
-            return super().apply_context(**kwargs)
+        def apply_context(self, **context) -> object:
+            return super().apply_context(**context)
 
     value = IncompleteValue()
     with raises(NotImplementedError):
