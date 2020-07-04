@@ -109,11 +109,9 @@ class Case:
             timeout=timeout,
         )
         context_analyzer = analyze_data_obj(context)
+        value_context = ValueContext(origin_datetime=context.starts)
         conditions = collect(
-            condition.verify(
-                context_analyzer,
-                ValueContext(origin_datetime=context.starts),
-            )
+            condition.verify(context_analyzer, value_context)
             for condition in self._conditions
         )
         if not conditions.status.is_succeeded:
