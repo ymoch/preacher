@@ -27,7 +27,7 @@ ResolvedUrlParams = Union[str, Mapping[str, ResolvedUrlParam]]
 
 def resolve_url_param_value(value: UrlParamValue, **kwargs) -> Optional[str]:
     if isinstance(value, Value):
-        value = value.apply_context(**kwargs)
+        value = value.resolve(**kwargs)
 
     if value is None:
         return None

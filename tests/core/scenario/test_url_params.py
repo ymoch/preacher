@@ -12,7 +12,7 @@ def test_resolve_params_given_a_string():
 
 def test_resolve_params_given_a_mapping():
     value = MagicMock(Value)
-    value.apply_context.return_value = sentinel.resolved_value
+    value.resolve.return_value = sentinel.resolved_value
 
     params = {
         'none': None,
@@ -43,4 +43,4 @@ def test_resolve_params_given_a_mapping():
         'sentinel.resolved_value',
     ]
 
-    value.apply_context.assert_called_once_with(foo=sentinel.foo)
+    value.resolve.assert_called_once_with(foo=sentinel.foo)

@@ -20,7 +20,7 @@ class Matcher(ABC):
     """
 
     @abstractmethod
-    def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
+    def to_hamcrest(self, **context) -> HamcrestMatcher:
         raise NotImplementedError()
 
 
@@ -29,7 +29,7 @@ class StaticMatcher(Matcher):
     def __init__(self, hamcrest: HamcrestMatcher):
         self._hamcrest = hamcrest
 
-    def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
+    def to_hamcrest(self, **context) -> HamcrestMatcher:
         return self._hamcrest
 
 
@@ -43,9 +43,9 @@ class ValueMatcher(Matcher, Generic[T]):
         self._hamcrest_factory = hamcrest_factory
         self._value = value
 
-    def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
-        value_in_context = self._value.apply_context(**kwargs)
-        return self._hamcrest_factory(value_in_context)
+    def to_hamcrest(self, **context) -> HamcrestMatcher:
+        resolved_value = self._value.resolve(**context)
+        return self._hamcrest_factory(resolved_value)
 
 
 class RecursiveMatcher(Matcher):
@@ -58,9 +58,9 @@ class RecursiveMatcher(Matcher):
         self._hamcrest_factory = hamcrest_factory
         self._inner_matchers = inner_matchers
 
-    def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
+    def to_hamcrest(self, **context) -> HamcrestMatcher:
         inner_hamcrest_matchers = (
-            inner_matcher.to_hamcrest(**kwargs)
+            inner_matcher.to_hamcrest(**context)
             for inner_matcher in self._inner_matchers
         )
         return self._hamcrest_factory(*inner_hamcrest_matchers)

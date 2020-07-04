@@ -31,7 +31,7 @@ def matcher():
 
 def test_matcher_interface():
     class IncompleteMatcher(Matcher):
-        def to_hamcrest(self, **kwargs) -> HamcrestMatcher:
+        def to_hamcrest(self, **context) -> HamcrestMatcher:
             return super().to_hamcrest()
 
     matcher = IncompleteMatcher()

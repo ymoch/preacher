@@ -42,12 +42,12 @@ class JsonRequestBody(RequestBody):
     def content_type(self) -> str:
         return 'application/json'
 
-    def resolve(self, **kwargs) -> Any:
+    def resolve(self, **context) -> Any:
         def _resolve_value(obj: object) -> object:
             if isinstance(obj, Value):
                 return recursive_map(
                     _resolve_value,
-                    _resolve_value(obj.apply_context(**kwargs)),
+                    _resolve_value(obj.resolve(**context)),
                 )
             return to_serializable_value(obj)
 

@@ -120,10 +120,7 @@ def test_given_valid_relative_datetime():
     assert isinstance(actual, RelativeDatetimeValue)
 
     now = datetime.now()
-    assert (
-        actual.apply_context(origin_datetime=now)
-        == now - timedelta(hours=1)
-    )
+    assert actual.resolve(origin_datetime=now) == now - timedelta(hours=1)
 
 
 def test_given_datetime_that_is_offset_naive():
