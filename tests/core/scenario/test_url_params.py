@@ -1,7 +1,7 @@
 from datetime import date, datetime, timezone
-from unittest.mock import MagicMock, sentinel
+from unittest.mock import NonCallableMock, sentinel
 
-from preacher.core.interpretation.value import Value
+from preacher.core.interpretation import Value
 from preacher.core.scenario.url_param import resolve_url_params
 
 
@@ -11,8 +11,8 @@ def test_resolve_params_given_a_string():
 
 
 def test_resolve_params_given_a_mapping():
-    value = MagicMock(Value)
-    value.apply_context.return_value = sentinel.resolved_value
+    value = NonCallableMock(Value)
+    value.resolve.return_value = sentinel.resolved_value
 
     params = {
         'none': None,
@@ -28,7 +28,7 @@ def test_resolve_params_given_a_mapping():
             value,
         ]
     }
-    resolved = resolve_url_params(params, foo=sentinel.foo)
+    resolved = resolve_url_params(params, sentinel.context)
 
     assert resolved['none'] is None
     assert resolved['false'] == 'false'
@@ -43,4 +43,4 @@ def test_resolve_params_given_a_mapping():
         'sentinel.resolved_value',
     ]
 
-    value.apply_context.assert_called_once_with(foo=sentinel.foo)
+    value.resolve.assert_called_once_with(sentinel.context)

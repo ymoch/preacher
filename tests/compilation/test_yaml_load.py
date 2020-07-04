@@ -11,7 +11,7 @@ from preacher.compilation.yaml import (
     load_all,
     load_all_from_path,
 )
-from preacher.core.interpretation.value import RelativeDatetimeValue
+from preacher.core.interpretation import RelativeDatetimeValue, ValueContext
 
 
 @mark.parametrize('content, expected_message, expected_path', (
@@ -120,10 +120,8 @@ def test_given_valid_relative_datetime():
     assert isinstance(actual, RelativeDatetimeValue)
 
     now = datetime.now()
-    assert (
-        actual.apply_context(origin_datetime=now)
-        == now - timedelta(hours=1)
-    )
+    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    assert resolved == now - timedelta(hours=1)
 
 
 def test_given_datetime_that_is_offset_naive():

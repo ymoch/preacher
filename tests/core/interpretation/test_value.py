@@ -1,34 +1,39 @@
 from datetime import timedelta, datetime
-from unittest.mock import patch
+from typing import Optional
 
 from pytest import raises
 
-from preacher.core.interpretation.value import Value, RelativeDatetimeValue
+from preacher.core.interpretation import (
+    Value,
+    ValueContext,
+    RelativeDatetimeValue,
+)
 
-PACKAGE = 'preacher.core.interpretation.value'
+PKG = 'preacher.core.interpretation.value'
 NOW = datetime.now()
 
 
 def test_incomplete_value():
     class IncompleteValue(Value[object]):
-        def apply_context(self, **kwargs) -> object:
-            return super().apply_context(**kwargs)
+        def resolve(self, context: Optional[ValueContext] = None) -> object:
+            return super().resolve(context)
 
     value = IncompleteValue()
     with raises(NotImplementedError):
-        value.apply_context(key='value')
+        value.resolve(ValueContext())
 
 
-def test_relative_datetime_value_default():
+def test_relative_datetime_value_default(mocker):
+    mocker.patch(f'{PKG}.now', return_value=NOW)
+
     delta = timedelta(seconds=1)
     value = RelativeDatetimeValue(delta=delta)
-    with patch(f'{PACKAGE}.now', return_value=NOW):
-        value_in_context = value.apply_context()
-    assert value_in_context == NOW + delta
+    resolved = value.resolve()
+    assert resolved == NOW + delta
 
 
 def test_relative_datetime_value_contextual():
     delta = timedelta(minutes=-1)
     value = RelativeDatetimeValue(delta)
-    value_in_context = value.apply_context(origin_datetime=NOW)
-    assert value_in_context == NOW + delta
+    resolved = value.resolve(ValueContext(origin_datetime=NOW))
+    assert resolved == NOW + delta

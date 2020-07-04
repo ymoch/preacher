@@ -5,6 +5,7 @@ from unittest.mock import NonCallableMock, Mock, sentinel
 import requests
 from pytest import fixture
 
+from preacher.core.interpretation.value import ValueContext
 from preacher.core.scenario.request import Request, ResponseWrapper, Method
 from preacher.core.scenario.request_body import RequestBody
 
@@ -89,11 +90,10 @@ def test_request(mocker, session):
 
     uuid4.assert_called()
     now.assert_called()
-    resolve_params.assert_called_once_with(
-        sentinel.params,
-        origin_datetime=sentinel.now,
-    )
-    body.resolve.assert_called_once_with(origin_datetime=sentinel.now)
+
+    expected_context = ValueContext(origin_datetime=sentinel.now)
+    resolve_params.assert_called_once_with(sentinel.params, expected_context)
+    body.resolve.assert_called_once_with(expected_context)
 
     args, kwargs = session.request.call_args
     assert args == ('POST', 'base-url/path')

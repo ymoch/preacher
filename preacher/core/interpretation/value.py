@@ -3,8 +3,9 @@ Value interpretation.
 """
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import TypeVar, Generic
+from typing import Generic, Optional, TypeVar
 
 from preacher.core.datetime import now
 
@@ -13,10 +14,15 @@ T = TypeVar('T')
 _KEY_ARGUMENTS = "arguments"
 
 
+@dataclass(frozen=True)
+class ValueContext:
+    origin_datetime: Optional[datetime] = None
+
+
 class Value(ABC, Generic[T]):
 
     @abstractmethod
-    def apply_context(self, **kwargs) -> T:
+    def resolve(self, context: Optional[ValueContext] = None) -> T:
         raise NotImplementedError()
 
 
@@ -25,7 +31,7 @@ class StaticValue(Value[T]):
     def __init__(self, value: T):
         self._value = value
 
-    def apply_context(self, **kwargs) -> T:
+    def resolve(self, context: Optional[ValueContext] = None) -> T:
         return self._value
 
 
@@ -34,6 +40,9 @@ class RelativeDatetimeValue(Value[datetime]):
     def __init__(self, delta: timedelta):
         self._delta = delta
 
-    def apply_context(self, **kwargs) -> datetime:
-        origin = kwargs.get('origin_datetime') or now()
+    def resolve(self, context: Optional[ValueContext] = None) -> datetime:
+        if not context:
+            context = ValueContext()
+
+        origin = context.origin_datetime or now()
         return origin + self._delta

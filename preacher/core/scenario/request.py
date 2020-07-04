@@ -10,6 +10,7 @@ import requests
 
 from preacher import __version__ as _version
 from preacher.core.datetime import now
+from preacher.core.interpretation import ValueContext
 from preacher.core.response import Response, ResponseBody
 from .request_body import RequestBody
 from .url_param import UrlParams, resolve_url_params
@@ -106,6 +107,7 @@ class Request:
                 )
 
         starts = now()
+        context = ValueContext(origin_datetime=now())
 
         url = base_url + self._path
         headers = copy(_DEFAULT_HEADERS)
@@ -114,10 +116,10 @@ class Request:
         if self._body:
             content_type = self._body.content_type
             headers['Content-Type'] = content_type
-            data = self._body.resolve(origin_datetime=starts)
+            data = self._body.resolve(context)
 
         headers.update(self._headers)
-        params = resolve_url_params(self._params, origin_datetime=starts)
+        params = resolve_url_params(self._params, context)
 
         res = session.request(
             str(self._method.value),

@@ -1,9 +1,9 @@
 from datetime import date, datetime, timezone
-from unittest.mock import NonCallableMock, Mock
+from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark
 
-from preacher.core.interpretation.value import Value
+from preacher.core.interpretation import Value
 from preacher.core.scenario.request_body import JsonRequestBody
 
 
@@ -23,18 +23,22 @@ def test_content_type():
 ])
 def test_resolve_simple(data, expected):
     body = JsonRequestBody(data)
-    resolved = body.resolve(foo='bar')
+    resolved = body.resolve()
     assert resolved == expected
 
 
 def test_resolve_given_values():
     value_of_value = NonCallableMock(Value)
-    value_of_value.apply_context = Mock(return_value=date(1234, 1, 2))
+    value_of_value.resolve.return_value = date(1234, 1, 2)
     assert isinstance(value_of_value, Value)
+
     value = NonCallableMock(Value)
-    value.apply_context = Mock(return_value=[value_of_value])
+    value.resolve.return_value = [value_of_value]
     assert isinstance(value, Value)
 
     body = JsonRequestBody({'key': value})
-    resolved = body.resolve(foo='bar')
+    resolved = body.resolve(sentinel.context)
     assert resolved == '{"key":["1234-01-02"]}'
+
+    value.resolve.assert_called_once_with(sentinel.context)
+    value_of_value.resolve.assert_called_once_with(sentinel.context)

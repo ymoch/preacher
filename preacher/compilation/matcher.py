@@ -8,11 +8,11 @@ import hamcrest
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from preacher.core.hamcrest import after, before
-from preacher.core.interpretation.type import require_type
-from preacher.core.interpretation.value import (
+from preacher.core.interpretation import (
     Value,
     StaticValue,
     RelativeDatetimeValue,
+    require_type
 )
 from preacher.core.scenario import (
     Matcher,
