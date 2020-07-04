@@ -3,10 +3,10 @@ from typing import Optional
 
 from pytest import raises
 
-from preacher.core.interpretation.value import (
+from preacher.core.interpretation import (
     Value,
-    RelativeDatetimeValue,
     ValueContext,
+    RelativeDatetimeValue,
 )
 
 PKG = 'preacher.core.interpretation.value'

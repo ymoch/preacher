@@ -3,7 +3,7 @@ from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark
 
-from preacher.core.interpretation.value import Value
+from preacher.core.interpretation import Value
 from preacher.core.scenario.request_body import JsonRequestBody
 
 

@@ -10,7 +10,7 @@ import requests
 
 from preacher import __version__ as _version
 from preacher.core.datetime import now
-from preacher.core.interpretation.value import ValueContext
+from preacher.core.interpretation import ValueContext
 from preacher.core.response import Response, ResponseBody
 from .request_body import RequestBody
 from .url_param import UrlParams, resolve_url_params

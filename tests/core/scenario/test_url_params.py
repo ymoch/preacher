@@ -1,7 +1,7 @@
 from datetime import date, datetime, timezone
 from unittest.mock import NonCallableMock, sentinel
 
-from preacher.core.interpretation.value import Value
+from preacher.core.interpretation import Value
 from preacher.core.scenario.url_param import resolve_url_params
 
 

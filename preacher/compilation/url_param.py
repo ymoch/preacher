@@ -5,7 +5,7 @@ from typing import Mapping
 
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util import map_compile
-from preacher.core.interpretation.value import RelativeDatetimeValue
+from preacher.core.interpretation import RelativeDatetimeValue
 from preacher.core.scenario import UrlParams, UrlParam, UrlParamValue
 
 

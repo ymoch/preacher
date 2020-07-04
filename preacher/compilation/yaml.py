@@ -19,7 +19,7 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.core.interpretation.value import RelativeDatetimeValue
+from preacher.core.interpretation import RelativeDatetimeValue
 from .argument import ArgumentValue
 from .error import CompilationError
 from .timedelta import compile_timedelta

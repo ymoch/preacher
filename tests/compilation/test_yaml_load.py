@@ -11,10 +11,7 @@ from preacher.compilation.yaml import (
     load_all,
     load_all_from_path,
 )
-from preacher.core.interpretation.value import (
-    RelativeDatetimeValue,
-    ValueContext,
-)
+from preacher.core.interpretation import RelativeDatetimeValue, ValueContext
 
 
 @mark.parametrize('content, expected_message, expected_path', (

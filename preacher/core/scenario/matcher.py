@@ -6,7 +6,7 @@ from typing import Callable, Generic, List, Optional, TypeVar
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
-from preacher.core.interpretation.value import Value, ValueContext
+from preacher.core.interpretation import Value, ValueContext
 from .status import Status
 from .verification import Verification
 
