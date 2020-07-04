@@ -19,6 +19,9 @@ RUN apk --no-cache add python3 libxml2 libxslt && \
         && \
     \
     python3 -m ensurepip && \
+    \
+    export CFLAGS='-O2 -g0 -pipe -fPIC -flto' && \
+    export LDFLAGS="-flto" && \
     pip3 --no-cache-dir install /usr/src/preacher && \
     rm -rf /usr/src/preacher $HOME/.cache && \
     \
