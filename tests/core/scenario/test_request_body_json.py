@@ -1,5 +1,5 @@
 from datetime import date, datetime, timezone
-from unittest.mock import NonCallableMock, Mock
+from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark
 
@@ -29,12 +29,16 @@ def test_resolve_simple(data, expected):
 
 def test_resolve_given_values():
     value_of_value = NonCallableMock(Value)
-    value_of_value.apply_context = Mock(return_value=date(1234, 1, 2))
+    value_of_value.resolve.return_value = date(1234, 1, 2)
     assert isinstance(value_of_value, Value)
+
     value = NonCallableMock(Value)
-    value.apply_context = Mock(return_value=[value_of_value])
+    value.resolve.return_value = [value_of_value]
     assert isinstance(value, Value)
 
     body = JsonRequestBody({'key': value})
-    resolved = body.resolve(foo='bar')
+    resolved = body.resolve(context=sentinel.context)
     assert resolved == '{"key":["1234-01-02"]}'
+
+    value.resolve.assert_called_once_with(context=sentinel.context)
+    value_of_value.resolve.assert_called_once_with(context=sentinel.context)

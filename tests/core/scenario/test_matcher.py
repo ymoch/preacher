@@ -46,14 +46,14 @@ def test_static_matcher():
 
 def test_value_matcher(hamcrest_factory):
     value = NonCallableMock(Value)
-    value.apply_context.return_value = sentinel.value_in_context
+    value.resolve.return_value = sentinel.resolved
 
     matcher = ValueMatcher(hamcrest_factory, value)
-    hamcrest = matcher.to_hamcrest(key='value')
+    hamcrest = matcher.to_hamcrest(context=sentinel.context)
 
     assert hamcrest == sentinel.hamcrest
-    value.apply_context.assert_called_once_with(key='value')
-    hamcrest_factory.assert_called_once_with(sentinel.value_in_context)
+    value.resolve.assert_called_once_with(context=sentinel.context)
+    hamcrest_factory.assert_called_once_with(sentinel.resolved)
 
 
 def test_recursive_matcher(hamcrest_factory):
