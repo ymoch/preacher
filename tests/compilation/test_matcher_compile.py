@@ -27,7 +27,7 @@ def test_invalid_mapping(obj):
         compile(obj)
 
 
-@mark.parametrize('compiled, verified, expected_status', [
+@mark.parametrize(('obj', 'verified', 'expected_status'), [
     ('_undefined_string', 1, UNSTABLE),
     ('_undefined_string', 'value', UNSTABLE),
     ('_undefined_string', '_undefined_string', SUCCESS),
@@ -158,55 +158,49 @@ def test_invalid_mapping(obj):
     ('anything', [1], SUCCESS),
     ('anything', {'key': 'value'}, SUCCESS),
 ])
-def test_verification(compiled, verified, expected_status):
-    assert match(compile(compiled), verified).status == expected_status
+def test_verification(obj, verified, expected_status):
+    assert match(compile(obj), verified).status == expected_status
 
 
-@mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
+@mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
     ({'be_before': NOW.replace(tzinfo=None)}, NOW, before),
     ({'be_after': NOW}, NOW, after),
 ])
 def test_verification_with_datetime(
     mocker,
-    compiled,
+    obj,
     expected_value,
-    expected_hamcrest_factory,
+    expected_factory,
 ):
     matcher_ctor = mocker.patch(f'{PACKAGE}.ValueMatcher')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PACKAGE}.StaticValue')
     value_ctor.return_value = sentinel.value
 
-    actual = compile(compiled)
+    actual = compile(obj)
     assert actual == sentinel.matcher
 
     value_ctor.assert_called_once_with(expected_value)
-    matcher_ctor.assert_called_once_with(
-        expected_hamcrest_factory,
-        sentinel.value,
-    )
+    matcher_ctor.assert_called_once_with(expected_factory, sentinel.value)
 
 
-@mark.parametrize('compiled, expected_value, expected_hamcrest_factory', [
+@mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
     ({'be_before': 'now'}, timedelta(), before),
     ({'be_after': '1 second'}, timedelta(seconds=1), after),
 ])
 def test_verification_with_timedelta(
     mocker,
-    compiled,
+    obj,
     expected_value,
-    expected_hamcrest_factory,
+    expected_factory,
 ):
     matcher_ctor = mocker.patch(f'{PACKAGE}.ValueMatcher')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PACKAGE}.RelativeDatetimeValue')
     value_ctor.return_value = sentinel.value
 
-    actual = compile(compiled)
+    actual = compile(obj)
     assert actual == sentinel.matcher
 
     value_ctor.assert_called_once_with(expected_value)
-    matcher_ctor.assert_called_once_with(
-        expected_hamcrest_factory,
-        sentinel.value,
-    )
+    matcher_ctor.assert_called_once_with(expected_factory, sentinel.value)
