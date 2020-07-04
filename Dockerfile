@@ -2,7 +2,7 @@ FROM alpine:3.12
 
 WORKDIR /work
 
-COPY . /usr/src/preacher
+COPY . preacher
 RUN apk --no-cache add python3 yaml libxml2 libxslt && \
     apk --no-cache add --virtual .build-deps \
         python3-dev \
@@ -23,8 +23,10 @@ RUN apk --no-cache add python3 yaml libxml2 libxslt && \
     \
     export CFLAGS='-O2 -g0 -pipe -fPIC -flto' && \
     export LDFLAGS="-flto" && \
-    pip3 --no-cache-dir install /usr/src/preacher && \
-    rm -rf /usr/src/preacher $HOME/.cache && \
+    pip3 --no-cache-dir install ./preacher && \
+    \
+    pip3 --no-cache-dir uninstall -y pip && \
+    rm -rf ./preacher $HOME/.cache && \
     \
     apk --no-cache del .build-deps && \
     \
