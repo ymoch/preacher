@@ -4,6 +4,7 @@ Response body description.
 
 from typing import List, Optional
 
+from preacher.core.interpretation import ValueContext
 from preacher.core.response import ResponseBody
 from .analysis import Analysis, analyze_json_str
 from .description import Description
@@ -20,13 +21,17 @@ class ResponseBodyDescription:
         self._analyze = analyze
         self._descriptions = descriptions or []
 
-    def verify(self, body: ResponseBody, **kwargs) -> Verification:
+    def verify(
+        self,
+        body: ResponseBody,
+        context: Optional[ValueContext] = None,
+    ) -> Verification:
         try:
             analyzer = self._analyze(body)
         except Exception as error:
             return Verification.of_error(error)
 
         return collect(
-            description.verify(analyzer, **kwargs)
+            description.verify(analyzer, context)
             for description in self._descriptions
         )

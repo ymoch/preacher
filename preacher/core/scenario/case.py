@@ -10,6 +10,7 @@ from typing import Optional, List
 from requests import Session
 
 from preacher.core.datetime import now
+from preacher.core.interpretation import ValueContext
 from preacher.core.response import Response
 from .analysis import analyze_data_obj
 from .description import Description
@@ -109,7 +110,10 @@ class Case:
         )
         context_analyzer = analyze_data_obj(context)
         conditions = collect(
-            condition.verify(context_analyzer, origin_datetime=context.starts)
+            condition.verify(
+                context_analyzer,
+                ValueContext(origin_datetime=context.starts),
+            )
             for condition in self._conditions
         )
         if not conditions.status.is_succeeded:
@@ -144,7 +148,7 @@ class Case:
         execution_verification = Verification.succeed()
         response_verification = self._response.verify(
             response,
-            origin_datetime=response.starts,
+            ValueContext(origin_datetime=response.starts),
         )
         return CaseResult(
             label=self._label,

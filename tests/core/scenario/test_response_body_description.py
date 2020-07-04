@@ -40,11 +40,14 @@ def test_given_descriptions():
         descriptions=descriptions,
         analyze=analyze,
     )
-    verification = description.verify(sentinel.body, k='v')
+    verification = description.verify(sentinel.body, sentinel.context)
     assert verification.status == Status.UNSTABLE
     assert verification.children[0].status == Status.UNSTABLE
     assert verification.children[1].status == Status.SUCCESS
 
     analyze.assert_called_once_with(sentinel.body)
     for description in descriptions:
-        description.verify.assert_called_once_with(sentinel.body, k='v')
+        description.verify.assert_called_once_with(
+            sentinel.body,
+            sentinel.context,
+        )

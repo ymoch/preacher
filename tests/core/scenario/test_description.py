@@ -47,7 +47,7 @@ def test_when_given_predicates(extractor):
         for result in predicate_results
     ]
     description = Description(extractor=extractor, predicates=predicates)
-    verification = description.verify(sentinel.analyzer, k='v')
+    verification = description.verify(sentinel.analyzer, sentinel.context)
     assert verification.status is Status.UNSTABLE
     assert len(verification.children) == 2
     assert verification.children[0].status == Status.UNSTABLE
@@ -55,4 +55,7 @@ def test_when_given_predicates(extractor):
 
     extractor.extract.assert_called_once_with(sentinel.analyzer)
     for predicate in predicates:
-        predicate.verify.assert_called_once_with(sentinel.target, k='v')
+        predicate.verify.assert_called_once_with(
+            sentinel.target,
+            sentinel.context,
+        )

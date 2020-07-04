@@ -3,8 +3,9 @@ Descriptions, which extract a value from an analyzer and test
 along the given predicates.
 """
 
-from typing import Any, List
+from typing import List, Optional
 
+from preacher.core.interpretation import ValueContext
 from .analysis import Analyzer
 from .extraction import Extractor
 from .predicate import Predicate
@@ -17,15 +18,18 @@ class Description:
         self._extractor = extractor
         self._predicates = predicates
 
-    def verify(self, analyzer: Analyzer, **kwargs: Any) -> Verification:
-        """`**kwargs` will be delegated to predicates."""
+    def verify(
+        self,
+        analyzer: Analyzer,
+        context: Optional[ValueContext] = None,
+    ) -> Verification:
         try:
             verified_value = self._extractor.extract(analyzer)
         except Exception as error:
             return Verification.of_error(error)
 
         return collect(
-            predicate.verify(verified_value, **kwargs)
+            predicate.verify(verified_value, context)
             for predicate in self._predicates
         )
 

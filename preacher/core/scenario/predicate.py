@@ -3,7 +3,9 @@ Predicates, which tests a given value.
 """
 
 from abc import ABC, abstractmethod
+from typing import Optional
 
+from preacher.core.interpretation import ValueContext
 from .matcher import Matcher, match
 from .verification import Verification
 
@@ -12,7 +14,11 @@ class Predicate(ABC):
     """Predicate interface."""
 
     @abstractmethod
-    def verify(self, actual: object, **kwargs) -> Verification:
+    def verify(
+        self,
+        actual: object,
+        context: Optional[ValueContext] = None,
+    ) -> Verification:
         raise NotImplementedError()
 
 
@@ -22,5 +28,9 @@ class MatcherPredicate(Predicate):
     def __init__(self, matcher: Matcher):
         self._matcher = matcher
 
-    def verify(self, actual: object, **kwargs) -> Verification:
-        return match(self._matcher, actual, **kwargs)
+    def verify(
+        self,
+        actual: object,
+        context: Optional[ValueContext] = None,
+    ) -> Verification:
+        return match(self._matcher, actual, context)
