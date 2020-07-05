@@ -121,7 +121,7 @@ def test_given_valid_relative_datetime():
 
     now = datetime.now()
     resolved = actual.resolve(ValueContext(origin_datetime=now))
-    assert resolved == now - timedelta(hours=1)
+    assert resolved.value == now - timedelta(hours=1)
 
 
 def test_given_datetime_that_is_offset_naive():
