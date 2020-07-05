@@ -6,12 +6,23 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.yaml import (
+    _Resolvable,
     load,
     load_from_path,
     load_all,
-    load_all_from_path,
+    load_all_from_path, PathLike,
 )
 from preacher.core.interpretation import RelativeDatetimeValue, ValueContext
+
+
+def test_resolvable_interface():
+    class _Incomplete(_Resolvable):
+        def resolve(self, origin: PathLike) -> object:
+            return super().resolve(origin)
+
+    resolvable = _Incomplete()
+    with raises(NotImplementedError):
+        resolvable.resolve('')
 
 
 @mark.parametrize('content, expected_message, expected_path', (

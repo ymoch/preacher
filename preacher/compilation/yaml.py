@@ -3,6 +3,7 @@ from __future__ import annotations
 import glob
 import os
 import re
+from abc import ABC
 from collections.abc import Mapping
 from typing import Iterator, TextIO, Union
 
@@ -37,7 +38,13 @@ _KEY_DELTA = 'delta'
 _KEY_FORMAT = 'format'
 
 
-class _Inclusion:
+class _Resolvable(ABC):
+
+    def resolve(self, origin: PathLike) -> object:
+        raise NotImplementedError()
+
+
+class _Inclusion(_Resolvable):
 
     def __init__(self, obj: object):
         self._obj = obj
@@ -58,12 +65,12 @@ class _Inclusion:
         return _Inclusion(node.value)
 
 
-class _ArgumentValue:
+class _ArgumentValue(_Resolvable):
 
     def __init__(self, obj: object):
         self._obj = obj
 
-    def resolve(self) -> ArgumentValue:
+    def resolve(self, origin: PathLike) -> ArgumentValue:
         obj = self._obj
         if not isinstance(obj, str):
             raise CompilationError(f'Must be a key string, given {type(obj)}')
@@ -74,12 +81,12 @@ class _ArgumentValue:
         return _ArgumentValue(node.value)
 
 
-class _RelativeDatetime:
+class _RelativeDatetime(_Resolvable):
 
     def __init__(self, obj: Mapping):
         self._obj = obj
 
-    def resolve(self) -> RelativeDatetimeValue:
+    def resolve(self, origin: PathLike) -> RelativeDatetimeValue:
         obj = self._obj
         delta = compile_timedelta(obj.get(_KEY_DELTA))
         format_string = obj.get(_KEY_FORMAT)
@@ -134,15 +141,8 @@ class _CustomSafeLoader(
 
 
 def _resolve(obj: object, origin: PathLike) -> object:
-    if isinstance(obj, _Inclusion):
+    if isinstance(obj, _Resolvable):
         return obj.resolve(origin)
-
-    if isinstance(obj, _ArgumentValue):
-        return obj.resolve()
-
-    if isinstance(obj, _RelativeDatetime):
-        return obj.resolve()
-
     return obj
 
 
