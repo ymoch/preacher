@@ -10,7 +10,7 @@ from hamcrest.core.base_matcher import BaseMatcher
 from hamcrest.core.matcher import Matcher
 from hamcrest.library.number.ordering_comparison import OrderingComparison
 
-from preacher.core.datetime import DateTimeWithFormat
+from preacher.core.datetime import DatetimeWithFormat
 
 
 class _ConvertingMatcher(BaseMatcher):
@@ -55,16 +55,14 @@ def after(value: object) -> Matcher:
 
 def _ensure_str(obj: object) -> str:
     if not isinstance(obj, str):
-        raise TypeError(f'Must be a str, but given {obj.__class__}: {obj}')
+        raise TypeError(f'Must be a str, but given {type(obj)}: {obj}')
     return obj
 
 
-def _ensure_datetime(obj: object) -> DateTimeWithFormat:
-    if isinstance(obj, DateTimeWithFormat):
+def _ensure_datetime(obj: object) -> DatetimeWithFormat:
+    if isinstance(obj, DatetimeWithFormat):
         return obj
 
     if not isinstance(obj, datetime):
-        raise TypeError(
-            f'Must be a datetime, but given {obj.__class__}: {obj}',
-        )
-    return DateTimeWithFormat(obj)
+        raise TypeError(f'Must be a datetime, but given {type(obj)}: {obj}')
+    return DatetimeWithFormat(obj)

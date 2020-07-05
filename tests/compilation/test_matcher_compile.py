@@ -176,7 +176,7 @@ def test_verification_with_datetime(
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PKG}.StaticValue')
     value_ctor.return_value = sentinel.value
-    datetime_ctor = mocker.patch(f'{PKG}.DateTimeWithFormat')
+    datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat')
     datetime_ctor.return_value = sentinel.datetime
 
     actual = compile(obj)

@@ -6,12 +6,24 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.yaml import (
+    PathLike,
+    _Resolvable,
     load,
     load_from_path,
     load_all,
     load_all_from_path,
 )
 from preacher.core.interpretation import RelativeDatetimeValue, ValueContext
+
+
+def test_resolvable_interface():
+    class _Incomplete(_Resolvable):
+        def resolve(self, origin: PathLike) -> object:
+            return super().resolve(origin)
+
+    resolvable = _Incomplete()
+    with raises(NotImplementedError):
+        resolvable.resolve('')
 
 
 @mark.parametrize('content, expected_message, expected_path', (
@@ -122,6 +134,16 @@ def test_given_valid_relative_datetime():
     now = datetime.now()
     resolved = actual.resolve(ValueContext(origin_datetime=now))
     assert resolved.value == now - timedelta(hours=1)
+
+
+def test_given_valid_full_relative_datetime():
+    io = StringIO('!relative_datetime {delta: -1 minute, format: "%H:%M:%S"}')
+    actual = load(io)
+    assert isinstance(actual, RelativeDatetimeValue)
+
+    now = datetime(2020, 1, 23, 12, 34, 56)
+    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    assert resolved.formatted == '12:33:56'
 
 
 def test_given_datetime_that_is_offset_naive():

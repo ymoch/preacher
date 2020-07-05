@@ -3,12 +3,16 @@ from __future__ import annotations
 import glob
 import os
 import re
+from abc import ABC
+from collections.abc import Mapping
 from typing import Iterator, TextIO, Union
 
 from yaml import (
-    YAMLObject,
-    MarkedYAMLError,
     Node,
+    MappingNode,
+    ScalarNode,
+    BaseLoader,
+    MarkedYAMLError,
     load as yaml_load,
     load_all as yaml_load_all,
 )
@@ -21,17 +25,25 @@ from yaml.scanner import Scanner
 
 from preacher.core.interpretation import RelativeDatetimeValue
 from .argument import ArgumentValue
+from .datetime import compile_datetime_format, compile_timedelta
 from .error import CompilationError
-from .timedelta import compile_timedelta
 from .util import run_recursively
 
 PathLike = Union[str, os.PathLike]
 
 WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
 
+_KEY_DELTA = 'delta'
+_KEY_FORMAT = 'format'
 
-class _Inclusion(YAMLObject):
-    yaml_tag = '!include'
+
+class _Resolvable(ABC):
+
+    def resolve(self, origin: PathLike) -> object:
+        raise NotImplementedError()
+
+
+class _Inclusion(_Resolvable):
 
     def __init__(self, obj: object):
         self._obj = obj
@@ -47,73 +59,57 @@ class _Inclusion(YAMLObject):
             return [load_from_path(p) for p in paths]
         return load_from_path(path)
 
-    @classmethod
-    def from_yaml(cls, loader, node: Node) -> _Inclusion:
+    @staticmethod
+    def from_yaml(_loader: BaseLoader, node: Node) -> _Inclusion:
         return _Inclusion(node.value)
 
 
-class _ArgumentValue(YAMLObject):
-    yaml_tag = '!argument'
+class _ArgumentValue(_Resolvable):
 
     def __init__(self, obj: object):
         self._obj = obj
 
-    def resolve(self) -> ArgumentValue:
+    def resolve(self, origin: PathLike) -> ArgumentValue:
         obj = self._obj
         if not isinstance(obj, str):
             raise CompilationError(f'Must be a key string, given {type(obj)}')
         return ArgumentValue(obj)
 
-    @classmethod
-    def from_yaml(cls, loader, node: Node) -> _ArgumentValue:
+    @staticmethod
+    def from_yaml(_loader: BaseLoader, node: Node) -> _ArgumentValue:
         return _ArgumentValue(node.value)
 
 
-class _RelativeDatetime(YAMLObject):
-    yaml_tag = '!relative_datetime'
+class _RelativeDatetime(_Resolvable):
 
-    def __init__(self, obj: object):
+    def __init__(self, obj: Mapping):
         self._obj = obj
 
-    def resolve(self) -> RelativeDatetimeValue:
+    def resolve(self, origin: PathLike) -> RelativeDatetimeValue:
         obj = self._obj
-        if not isinstance(obj, str):
-            raise CompilationError(f'Must be a string, given {type(obj)}')
+        delta = compile_timedelta(obj.get(_KEY_DELTA))
+        fmt = compile_datetime_format(obj.get(_KEY_FORMAT))
+        return RelativeDatetimeValue(delta, fmt)
 
-        delta = compile_timedelta(obj)
-        return RelativeDatetimeValue(delta)
+    @staticmethod
+    def from_yaml(loader: BaseLoader, node: Node) -> _RelativeDatetime:
+        if isinstance(node, ScalarNode):
+            return _RelativeDatetime({_KEY_DELTA: node.value})
+        if isinstance(node, MappingNode):
+            return _RelativeDatetime(loader.construct_mapping(node))
+        raise CompilationError('Invalid relative datetime value format')
 
-    @classmethod
-    def from_yaml(cls, loader, node: Node) -> _RelativeDatetime:
-        return _RelativeDatetime(node.value)
 
-
-class _CustomSafeConstructor(SafeConstructor):
+class _Constructor(SafeConstructor):
     pass
 
 
-_CustomSafeConstructor.add_constructor(
-    _Inclusion.yaml_tag,
-    _Inclusion.from_yaml,
-)
-_CustomSafeConstructor.add_constructor(
-    _ArgumentValue.yaml_tag,
-    _ArgumentValue.from_yaml,
-)
-_CustomSafeConstructor.add_constructor(
-    _RelativeDatetime.yaml_tag,
-    _RelativeDatetime.from_yaml,
-)
+_Constructor.add_constructor('!include', _Inclusion.from_yaml)
+_Constructor.add_constructor('!argument', _ArgumentValue.from_yaml)
+_Constructor.add_constructor('!relative_datetime', _RelativeDatetime.from_yaml)
 
 
-class _CustomSafeLoader(
-    Reader,
-    Scanner,
-    Parser,
-    Composer,
-    _CustomSafeConstructor,
-    Resolver,
-):
+class _Loader(Reader, Scanner, Parser, Composer, _Constructor, Resolver):
 
     def __init__(self, stream):
         Reader.__init__(self, stream)
@@ -124,21 +120,14 @@ class _CustomSafeLoader(
 
 
 def _resolve(obj: object, origin: PathLike) -> object:
-    if isinstance(obj, _Inclusion):
+    if isinstance(obj, _Resolvable):
         return obj.resolve(origin)
-
-    if isinstance(obj, _ArgumentValue):
-        return obj.resolve()
-
-    if isinstance(obj, _RelativeDatetime):
-        return obj.resolve()
-
     return obj
 
 
 def load(io: TextIO, origin: PathLike = '.') -> object:
     try:
-        obj = yaml_load(io, Loader=_CustomSafeLoader)
+        obj = yaml_load(io, Loader=_Loader)
     except MarkedYAMLError as error:
         raise CompilationError.wrap(error)
 
@@ -159,7 +148,7 @@ def _yaml_load_all(io: TextIO):
     Wrap `yaml_load_all` to handle errors.
     """
     try:
-        for obj in yaml_load_all(io, Loader=_CustomSafeLoader):
+        for obj in yaml_load_all(io, Loader=_Loader):
             yield obj
     except MarkedYAMLError as error:
         raise CompilationError.wrap(error)

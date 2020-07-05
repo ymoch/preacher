@@ -1,0 +1,43 @@
+"""Date and time compilation."""
+
+import re
+from datetime import timedelta
+
+from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat
+from .error import CompilationError
+from .util import compile_optional_str, compile_str
+
+TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
+
+
+def compile_datetime_format(obj: object) -> DatetimeFormat:
+    """
+    Args:
+        obj: The compiled value, which should be `None` or a string.
+    Raises:
+        CompilationError: When compilation fails.
+    """
+    format_string = compile_optional_str(obj)
+    if format_string is None or format_string.lower() == 'iso8601':
+        return ISO8601
+    return StrftimeFormat(format_string)
+
+
+def compile_timedelta(obj: object) -> timedelta:
+    """
+    Args:
+        obj: The compiled value, which should be a string.
+    Raises:
+        CompilationError: When compilation fails.
+    """
+    obj = compile_str(obj)
+    normalized = obj.strip().lower()
+    if normalized == 'now':
+        return timedelta()
+
+    match = TIMEDELTA_PATTERN.match(normalized)
+    if not match:
+        raise CompilationError(f'Invalid timedelta format: {obj}')
+    offset = int(match.group(1))
+    unit = match.group(2) + 's'
+    return timedelta(**{unit: offset})
