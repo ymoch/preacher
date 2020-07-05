@@ -9,7 +9,7 @@ from typing import Optional
 import aniso8601
 
 
-class DateTimeFormat(ABC):
+class DatetimeFormat(ABC):
 
     def format_datetime(self, value: datetime) -> str:
         raise NotImplementedError()
@@ -18,7 +18,7 @@ class DateTimeFormat(ABC):
         raise NotImplementedError()
 
 
-class Iso8601Format(DateTimeFormat):
+class Iso8601Format(DatetimeFormat):
 
     def format_datetime(self, value: datetime) -> str:
         return value.isoformat()
@@ -30,7 +30,7 @@ class Iso8601Format(DateTimeFormat):
             raise ValueError(f'An invalid datetime format: {value}')
 
 
-class StrftimeFormat(DateTimeFormat):
+class StrftimeFormat(DatetimeFormat):
 
     def __init__(self, format_string: str):
         self._format_string = format_string
@@ -45,12 +45,12 @@ class StrftimeFormat(DateTimeFormat):
 ISO8601 = Iso8601Format()
 
 
-class DateTimeWithFormat:
+class DatetimeWithFormat:
 
     def __init__(
         self,
         value: datetime,
-        fmt: Optional[DateTimeFormat] = None,
+        fmt: Optional[DatetimeFormat] = None,
     ):
         self._value = value
         self._fmt = fmt or ISO8601
@@ -60,7 +60,7 @@ class DateTimeWithFormat:
         return self._value
 
     @property
-    def fmt(self) -> DateTimeFormat:
+    def fmt(self) -> DatetimeFormat:
         return self._fmt
 
     @property

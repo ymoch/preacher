@@ -3,14 +3,14 @@
 import re
 from datetime import timedelta
 
-from preacher.core.datetime import DateTimeFormat, ISO8601, StrftimeFormat
+from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat
 from .error import CompilationError
 from .util import compile_optional_str, compile_str
 
 TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
 
 
-def compile_datetime_format(obj: object) -> DateTimeFormat:
+def compile_datetime_format(obj: object) -> DatetimeFormat:
     """
     Args:
         obj: The compiled value, which should be `None` or a string.

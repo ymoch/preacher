@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 from typing import Generic, Optional, TypeVar
 
 from preacher.core.datetime import (
-    DateTimeWithFormat,
-    DateTimeFormat,
+    DatetimeWithFormat,
+    DatetimeFormat,
     ISO8601,
     now,
 )
@@ -38,18 +38,18 @@ class StaticValue(Value[T]):
         return self._value
 
 
-class RelativeDatetimeValue(Value[DateTimeWithFormat]):
+class RelativeDatetimeValue(Value[DatetimeWithFormat]):
 
-    def __init__(self, delta: timedelta, fmt: Optional[DateTimeFormat] = None):
+    def __init__(self, delta: timedelta, fmt: Optional[DatetimeFormat] = None):
         self._delta = delta
         self._fmt = fmt or ISO8601
 
     def resolve(
         self,
         context: Optional[ValueContext] = None,
-    ) -> DateTimeWithFormat:
+    ) -> DatetimeWithFormat:
         if not context:
             context = ValueContext()
 
         origin = context.origin_datetime or now()
-        return DateTimeWithFormat(origin + self._delta, self._fmt)
+        return DatetimeWithFormat(origin + self._delta, self._fmt)

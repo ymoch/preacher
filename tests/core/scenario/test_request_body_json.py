@@ -3,7 +3,7 @@ from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark
 
-from preacher.core.datetime import DateTimeWithFormat
+from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.interpretation import Value
 from preacher.core.scenario.request_body import JsonRequestBody
 
@@ -22,7 +22,7 @@ def test_content_type():
         '"2020-01-23T12:34:56+00:00"',
     ),
     (
-        DateTimeWithFormat(
+        DatetimeWithFormat(
             datetime(2020, 12, 31, 12, 34, 56, 123456, tzinfo=timezone.utc),
         ),
         '"2020-12-31T12:34:56.123456+00:00"',

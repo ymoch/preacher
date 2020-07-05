@@ -4,11 +4,11 @@ from unittest.mock import NonCallableMock
 
 from pytest import mark, raises
 
-from preacher.core.datetime import DateTimeFormat, ISO8601, StrftimeFormat, now
+from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat, now
 
 
 def test_date_time_format_interface():
-    class _Incomplete(DateTimeFormat):
+    class _Incomplete(DatetimeFormat):
         def format_datetime(self, value: datetime) -> str:
             return super().format_datetime(value)
 
