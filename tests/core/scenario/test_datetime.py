@@ -1,9 +1,25 @@
 import time
+from datetime import datetime
 from unittest.mock import NonCallableMock
 
 from pytest import mark, raises
 
-from preacher.core.datetime import now, parse_datetime
+from preacher.core.datetime import DateTimeFormat, now, parse_datetime
+
+
+def test_date_time_format_interface():
+    class _Incomplete(DateTimeFormat):
+        def format_datetime(self, value: datetime) -> str:
+            return super().format_datetime(value)
+
+        def parse_datetime(self, value: str) -> datetime:
+            return super().parse_datetime(value)
+
+    format = _Incomplete()
+    with raises(NotImplementedError):
+        format.parse_datetime('str')
+    with raises(NotImplementedError):
+        format.format_datetime(datetime.now())
 
 
 def test_now_jst(mocker):
