@@ -13,6 +13,13 @@ UrlParamValue = Union[
     date,
     datetime,
     DateTimeWithFormat,
+    Value[None],
+    Value[bool],
+    Value[int],
+    Value[float],
+    Value[str],
+    Value[date],
+    Value[datetime],
     Value[DateTimeWithFormat],
 ]
 UrlParam = Union[UrlParamValue, List[UrlParamValue]]
