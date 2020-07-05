@@ -22,7 +22,7 @@ from preacher.core.scenario import (
     RecursiveMatcher,
 )
 from .error import CompilationError, on_key
-from .timedelta import compile_timedelta
+from .datetime import compile_timedelta
 from .util import compile_list, map_compile
 
 _STATIC_MATCHER_MAP = {

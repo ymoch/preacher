@@ -25,9 +25,8 @@ from yaml.scanner import Scanner
 
 from preacher.core.interpretation import RelativeDatetimeValue
 from .argument import ArgumentValue
-from .datetime import compile_datetime_format
+from .datetime import compile_datetime_format, compile_timedelta
 from .error import CompilationError
-from .timedelta import compile_timedelta
 from .util import run_recursively
 
 PathLike = Union[str, os.PathLike]
