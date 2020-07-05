@@ -3,6 +3,7 @@ from typing import Optional
 
 from pytest import raises
 
+from preacher.core.datetime import StrftimeFormat
 from preacher.core.interpretation import (
     Value,
     ValueContext,
@@ -37,7 +38,7 @@ def test_relative_datetime_value_contextual():
     now = datetime(2020, 12, 31, 1, 23, 45, 123456, timezone.utc)
 
     delta = timedelta(minutes=-1)
-    value = RelativeDatetimeValue(delta)
+    value = RelativeDatetimeValue(delta, fmt=StrftimeFormat('%H:%M:%S'))
     resolved = value.resolve(ValueContext(origin_datetime=now))
     assert resolved.value == now + delta
-    assert resolved.formatted == '2020-12-31T01:22:45.123456+00:00'
+    assert resolved.formatted == '01:22:45'
