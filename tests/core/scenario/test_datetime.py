@@ -4,7 +4,7 @@ from unittest.mock import NonCallableMock
 
 from pytest import mark, raises
 
-from preacher.core.datetime import DateTimeFormat, ISO8601, now
+from preacher.core.datetime import DateTimeFormat, ISO8601, StrftimeFormat, now
 
 
 def test_date_time_format_interface():
@@ -38,8 +38,10 @@ def test_iso8601_format_datetime(value, expected):
     '',
     'XXX',
     'XXXTYYY',
+    '20190123',
     '2019-01-23',
-    # '2019-01-23T', raises IndexError
+    '2019-01-23T',
+    '20190123T',
 ])
 def test_iso8601_format_datetime_invalid(value):
     with raises(ValueError):
@@ -63,6 +65,30 @@ def test_iso8601_format_datetime_invalid(value):
 ])
 def test_iso8601_parse_datetime(value, expected):
     assert ISO8601.parse_datetime(value) == expected
+
+
+@mark.parametrize(('format_string', 'value', 'expected'), [
+    ('%Y-%m-%d', datetime(1234, 1, 1), '1234-01-01'),
+    (
+        '%Y-%m-%d %H:%M:%S %Z',
+        datetime(1234, 1, 1, tzinfo=timezone.utc),
+        '1234-01-01 00:00:00 UTC',
+    )
+])
+def test_strftime_format_datetime(format_string, value, expected):
+    assert StrftimeFormat(format_string).format_datetime(value) == expected
+
+
+@mark.parametrize(('format_string', 'value', 'expected'), [
+    ('%Y-%m-%d', '1234-01-01', datetime(1234, 1, 1)),
+    (
+        '%Y-%m-%d %H:%M:%S %z',
+        '1234-01-01 00:00:00 -09:00',
+        datetime(1234, 1, 1, tzinfo=timezone(timedelta(hours=-9))),
+    )
+])
+def test_strftime_parse_datetime(format_string, value, expected):
+    assert StrftimeFormat(format_string).parse_datetime(value) == expected
 
 
 def test_now_jst(mocker):
