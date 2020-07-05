@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from pytest import raises
@@ -10,7 +10,6 @@ from preacher.core.interpretation import (
 )
 
 PKG = 'preacher.core.interpretation.value'
-NOW = datetime.now()
 
 
 def test_incomplete_value():
@@ -24,16 +23,21 @@ def test_incomplete_value():
 
 
 def test_relative_datetime_value_default(mocker):
-    mocker.patch(f'{PKG}.now', return_value=NOW)
+    now = datetime(2020, 1, 23, 12, 34, 56, 0, timezone.utc)
+    mocker.patch(f'{PKG}.now', return_value=now)
 
     delta = timedelta(seconds=1)
     value = RelativeDatetimeValue(delta=delta)
     resolved = value.resolve()
-    assert resolved == NOW + delta
+    assert resolved.value == now + delta
+    assert resolved.formatted == '2020-01-23T12:34:57+00:00'
 
 
 def test_relative_datetime_value_contextual():
+    now = datetime(2020, 12, 31, 1, 23, 45, 123456, timezone.utc)
+
     delta = timedelta(minutes=-1)
     value = RelativeDatetimeValue(delta)
-    resolved = value.resolve(ValueContext(origin_datetime=NOW))
-    assert resolved == NOW + delta
+    resolved = value.resolve(ValueContext(origin_datetime=now))
+    assert resolved.value == now + delta
+    assert resolved.formatted == '2020-12-31T01:22:45.123456+00:00'

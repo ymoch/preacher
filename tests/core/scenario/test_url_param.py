@@ -1,6 +1,7 @@
 from datetime import date, datetime, timezone
 from unittest.mock import NonCallableMock, sentinel
 
+from preacher.core.datetime import DateTimeWithFormat
 from preacher.core.interpretation import Value
 from preacher.core.scenario.url_param import resolve_url_params
 
@@ -25,6 +26,7 @@ def test_resolve_params_given_a_mapping():
             'str',
             date(2020, 12, 31),
             datetime(2020, 1, 23, 12, 34, 56, tzinfo=timezone.utc),
+            NonCallableMock(DateTimeWithFormat, formatted=sentinel.formatted),
             value,
         ]
     }
@@ -40,6 +42,7 @@ def test_resolve_params_given_a_mapping():
         'str',
         '2020-12-31',
         '2020-01-23T12:34:56+00:00',
+        sentinel.formatted,
         'sentinel.resolved_value',
     ]
 

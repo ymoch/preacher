@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from typing import Union, List, Mapping, Optional
 
+from preacher.core.datetime import DateTimeWithFormat
 from preacher.core.interpretation.value import Value, ValueContext
 
 UrlParamValue = Union[
@@ -11,12 +12,15 @@ UrlParamValue = Union[
     str,
     date,
     datetime,
+    DateTimeWithFormat,
     Value[None],
     Value[bool],
     Value[int],
     Value[float],
     Value[str],
+    Value[date],
     Value[datetime],
+    Value[DateTimeWithFormat],
 ]
 UrlParam = Union[UrlParamValue, List[UrlParamValue]]
 UrlParams = Union[str, Mapping[str, UrlParam]]
@@ -36,6 +40,8 @@ def resolve_url_param_value(
         return None
     if isinstance(value, bool):
         return 'true' if value else 'false'
+    if isinstance(value, DateTimeWithFormat):
+        return value.formatted
     if isinstance(value, date):
         return value.isoformat()
     return str(value)
