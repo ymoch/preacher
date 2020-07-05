@@ -64,5 +64,7 @@ def _ensure_datetime(obj: object) -> DateTimeWithFormat:
         return DateTimeWithFormat(obj)
 
     if not isinstance(obj, DateTimeWithFormat):
-        raise TypeError(f'Must be a datetime or DateTime, but given {obj}')
+        raise TypeError(
+            f'Must be a datetime, but given {obj.__class__}: {obj}',
+        )
     return obj
