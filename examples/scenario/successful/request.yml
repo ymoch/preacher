@@ -58,6 +58,9 @@ cases:
           - 2020-01-23T12:34:56
           - 2020-04-01 01:23:45 +09:00
           - !relative_datetime -6 hours
+          - !relative_datetime
+            delta: +1 day
+            format: '%Y-%m-%dT00:00:00Z'
     response:
       body:
         - describe: .args.key
@@ -78,6 +81,9 @@ cases:
               - all_of:
                   - be_before: now
                   - be_after: -12 hours
+              - all_of:
+                  - match_regexp: '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z'
+                  - be_after: now
 
   - label: Sends a POST request with a urlencoded body
     request:
@@ -128,7 +134,11 @@ cases:
           spam:
             - ham
             - egg
-          dt: !relative_datetime +1 second
+          dt:
+            - !relative_datetime +1 second
+            - !relative_datetime
+              delta: +1 day
+              format: '%Y-%m-%dT00:00:00Z'
     response:
       body:
         - describe: .method
@@ -147,7 +157,11 @@ cases:
                 - egg
         - describe: .json.dt
           should:
-            - be_after: now
+            - contain_exactly:
+                - be_after: now
+                - all_of:
+                    - match_regexp: '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z'
+                    - be_after: now
         - describe: .form
           should:
             - equal: {}
