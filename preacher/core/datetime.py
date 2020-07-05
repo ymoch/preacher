@@ -1,8 +1,6 @@
 """
 Datetime utilities for Preacher core.
 """
-from __future__ import annotations
-
 from abc import ABC
 from datetime import datetime, timedelta, timezone
 import time
@@ -60,13 +58,6 @@ class DateTimeWithFormat:
 
 def now() -> datetime:
     return datetime.now(_system_timezone())
-
-
-def parse_datetime(value: str) -> datetime:
-    try:
-        return aniso8601.parse_datetime(value)
-    except ValueError:
-        raise ValueError(f'An invalid datetime format: {value}')
 
 
 def _system_timezone() -> timezone:
