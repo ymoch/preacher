@@ -34,6 +34,18 @@ def test_iso8601_format_datetime(value, expected):
     assert ISO8601.format_datetime(value) == expected
 
 
+@mark.parametrize('value', [
+    '',
+    'XXX',
+    'XXXTYYY',
+    '2019-01-23',
+    # '2019-01-23T', raises IndexError
+])
+def test_iso8601_format_datetime_invalid(value):
+    with raises(ValueError):
+        ISO8601.parse_datetime(value)
+
+
 @mark.parametrize(('value', 'expected'), [
     ('1234-01-23T01:23:45', datetime(1234, 1, 23, 1, 23, 45)),
     (

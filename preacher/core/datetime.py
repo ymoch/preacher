@@ -26,7 +26,10 @@ class Iso8601Format(DateTimeFormat):
         return value.isoformat()
 
     def parse_datetime(self, value: str) -> datetime:
-        return aniso8601.parse_datetime(value)
+        try:
+            return aniso8601.parse_datetime(value)
+        except ValueError:
+            raise ValueError(f'An invalid datetime format: {value}')
 
 
 ISO8601 = Iso8601Format()
