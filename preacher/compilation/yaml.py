@@ -100,32 +100,16 @@ class _RelativeDatetime(_Resolvable):
         raise CompilationError('Invalid relative datetime value format')
 
 
-class _CustomSafeConstructor(SafeConstructor):
+class _Constructor(SafeConstructor):
     pass
 
 
-_CustomSafeConstructor.add_constructor(
-    '!include',
-    _Inclusion.from_yaml,
-)
-_CustomSafeConstructor.add_constructor(
-    '!argument',
-    _ArgumentValue.from_yaml,
-)
-_CustomSafeConstructor.add_constructor(
-    '!relative_datetime',
-    _RelativeDatetime.from_yaml,
-)
+_Constructor.add_constructor('!include', _Inclusion.from_yaml)
+_Constructor.add_constructor('!argument', _ArgumentValue.from_yaml)
+_Constructor.add_constructor('!relative_datetime', _RelativeDatetime.from_yaml)
 
 
-class _CustomSafeLoader(
-    Reader,
-    Scanner,
-    Parser,
-    Composer,
-    _CustomSafeConstructor,
-    Resolver,
-):
+class _Loader(Reader, Scanner, Parser, Composer, _Constructor, Resolver):
 
     def __init__(self, stream):
         Reader.__init__(self, stream)
@@ -143,7 +127,7 @@ def _resolve(obj: object, origin: PathLike) -> object:
 
 def load(io: TextIO, origin: PathLike = '.') -> object:
     try:
-        obj = yaml_load(io, Loader=_CustomSafeLoader)
+        obj = yaml_load(io, Loader=_Loader)
     except MarkedYAMLError as error:
         raise CompilationError.wrap(error)
 
@@ -164,7 +148,7 @@ def _yaml_load_all(io: TextIO):
     Wrap `yaml_load_all` to handle errors.
     """
     try:
-        for obj in yaml_load_all(io, Loader=_CustomSafeLoader):
+        for obj in yaml_load_all(io, Loader=_Loader):
             yield obj
     except MarkedYAMLError as error:
         raise CompilationError.wrap(error)
