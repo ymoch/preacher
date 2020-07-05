@@ -32,7 +32,7 @@ class Iso8601Format(DateTimeFormat):
 ISO8601 = Iso8601Format()
 
 
-class DateTime:
+class DateTimeWithFormat:
 
     def __init__(
         self,
@@ -53,10 +53,6 @@ class DateTime:
     @property
     def formatted(self) -> str:
         return self._fmt.format_datetime(self._value)
-
-    @staticmethod
-    def now(formatter: Optional[DateTimeFormat] = None) -> DateTime:
-        return DateTime(datetime.now(_system_timezone()), formatter)
 
 
 def now() -> datetime:

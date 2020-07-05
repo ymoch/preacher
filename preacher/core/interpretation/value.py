@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Generic, Optional, TypeVar
 
-from preacher.core.datetime import DateTime, now
+from preacher.core.datetime import DateTimeWithFormat, now
 
 T = TypeVar('T')
 
@@ -35,14 +35,17 @@ class StaticValue(Value[T]):
         return self._value
 
 
-class RelativeDatetimeValue(Value[DateTime]):
+class RelativeDatetimeValue(Value[DateTimeWithFormat]):
 
     def __init__(self, delta: timedelta):
         self._delta = delta
 
-    def resolve(self, context: Optional[ValueContext] = None) -> DateTime:
+    def resolve(
+        self,
+        context: Optional[ValueContext] = None,
+    ) -> DateTimeWithFormat:
         if not context:
             context = ValueContext()
 
         origin = context.origin_datetime or now()
-        return DateTime(origin + self._delta)
+        return DateTimeWithFormat(origin + self._delta)
