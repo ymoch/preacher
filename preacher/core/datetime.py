@@ -3,33 +3,60 @@ Datetime utilities for Preacher core.
 """
 from __future__ import annotations
 
+from abc import ABC
 from datetime import datetime, timedelta, timezone
 import time
+from typing import Optional
 
 import aniso8601
 
-_FORMAT_ISO8601 = 'iso8601'
+
+class DateTimeFormatter(ABC):
+
+    def format_datetime(self, value: datetime) -> str:
+        raise NotImplementedError()
+
+    def parse_datetime(self, value: str) -> datetime:
+        raise NotImplementedError()
+
+
+class Iso8601Formatter(DateTimeFormatter):
+
+    def format_datetime(self, value: datetime) -> str:
+        return value.isoformat()
+
+    def parse_datetime(self, value: str) -> datetime:
+        return aniso8601.parse_datetime(value)
+
+
+ISO8601 = Iso8601Formatter()
 
 
 class DateTime:
 
-    def __init__(self, value: datetime, format: str = _FORMAT_ISO8601):
+    def __init__(
+        self,
+        value: datetime,
+        formatter: Optional[DateTimeFormatter] = None,
+    ):
         self._value = value
-        self._format = format
+        self._formatter = formatter or ISO8601
 
     @property
     def value(self) -> datetime:
         return self._value
 
     @property
+    def formatter(self) -> DateTimeFormatter:
+        return self._formatter
+
+    @property
     def formatted(self) -> str:
-        if self._format == _FORMAT_ISO8601:
-            return self._value.isoformat()
-        return self._value.strftime(self._format)
+        return self._formatter.format_datetime(self._value)
 
     @staticmethod
-    def now(format: str = _FORMAT_ISO8601) -> DateTime:
-        return DateTime(datetime.now(_system_timezone()), format)
+    def now(formatter: Optional[DateTimeFormatter] = None) -> DateTime:
+        return DateTime(datetime.now(_system_timezone()), formatter)
 
 
 def now() -> datetime:

@@ -9,7 +9,7 @@ from preacher.core.hamcrest import after, before
 from preacher.core.scenario import Status
 from preacher.core.scenario.matcher import match
 
-PACKAGE = 'preacher.compilation.matcher'
+PKG = 'preacher.compilation.matcher'
 
 SUCCESS = Status.SUCCESS
 UNSTABLE = Status.UNSTABLE
@@ -172,15 +172,18 @@ def test_verification_with_datetime(
     expected_value,
     expected_factory,
 ):
-    matcher_ctor = mocker.patch(f'{PACKAGE}.ValueMatcher')
+    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcher')
     matcher_ctor.return_value = sentinel.matcher
-    value_ctor = mocker.patch(f'{PACKAGE}.StaticValue')
+    value_ctor = mocker.patch(f'{PKG}.StaticValue')
     value_ctor.return_value = sentinel.value
+    datetime_ctor = mocker.patch(f'{PKG}.DateTime')
+    datetime_ctor.return_value = sentinel.datetime
 
     actual = compile(obj)
     assert actual == sentinel.matcher
 
-    value_ctor.assert_called_once_with(expected_value)
+    datetime_ctor.assert_called_once_with(expected_value)
+    value_ctor.assert_called_once_with(sentinel.datetime)
     matcher_ctor.assert_called_once_with(expected_factory, sentinel.value)
 
 
@@ -194,9 +197,9 @@ def test_verification_with_timedelta(
     expected_value,
     expected_factory,
 ):
-    matcher_ctor = mocker.patch(f'{PACKAGE}.ValueMatcher')
+    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcher')
     matcher_ctor.return_value = sentinel.matcher
-    value_ctor = mocker.patch(f'{PACKAGE}.RelativeDatetimeValue')
+    value_ctor = mocker.patch(f'{PKG}.RelativeDatetimeValue')
     value_ctor.return_value = sentinel.value
 
     actual = compile(obj)

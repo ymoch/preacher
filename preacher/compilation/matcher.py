@@ -7,6 +7,7 @@ from typing import Any, Callable, Dict
 import hamcrest
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
+from preacher.core.datetime import DateTime
 from preacher.core.hamcrest import after, before
 from preacher.core.interpretation import (
     Value,
@@ -84,11 +85,11 @@ _MULTI_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., HamcrestMatcher]] = {
 }
 
 
-def _compile_relative_datetime_value(value: object) -> Value[Any]:
+def _compile_relative_datetime_value(value: object) -> Value[DateTime]:
     if isinstance(value, datetime):
         if not value.tzinfo:
             value = value.replace(tzinfo=timezone.utc)
-        return StaticValue(value)
+        return StaticValue(DateTime(value))
 
     delta = compile_timedelta(value)
     return RelativeDatetimeValue(delta)
