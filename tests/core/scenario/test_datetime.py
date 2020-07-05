@@ -23,10 +23,8 @@ def test_date_time_format_interface():
 
 
 @mark.parametrize(('value', 'expected'), [
-    (
-        datetime(2345, 12, 31, 23, 59, 59),
-        '2345-12-31T23:59:59',
-    ),
+    (datetime(2345, 12, 31), '2345-12-31T00:00:00'),
+    (datetime(2345, 12, 31, 23, 59, 59), '2345-12-31T23:59:59'),
     (
         datetime(2345, 12, 31, 23, 59, 59, 123456, tzinfo=timezone.utc),
         '2345-12-31T23:59:59.123456+00:00',
