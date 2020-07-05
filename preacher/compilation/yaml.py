@@ -23,9 +23,9 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.core.datetime import ISO8601, StrftimeFormat, DateTimeFormat
 from preacher.core.interpretation import RelativeDatetimeValue
 from .argument import ArgumentValue
+from .datetime import compile_datetime_format
 from .error import CompilationError
 from .timedelta import compile_timedelta
 from .util import run_recursively
@@ -89,11 +89,7 @@ class _RelativeDatetime(_Resolvable):
     def resolve(self, origin: PathLike) -> RelativeDatetimeValue:
         obj = self._obj
         delta = compile_timedelta(obj.get(_KEY_DELTA))
-        format_string = obj.get(_KEY_FORMAT)
-        if format_string is not None and format_string != 'iso8601':
-            fmt: DateTimeFormat = StrftimeFormat(format_string)
-        else:
-            fmt = ISO8601
+        fmt = compile_datetime_format(obj.get(_KEY_FORMAT))
         return RelativeDatetimeValue(delta, fmt)
 
     @staticmethod
