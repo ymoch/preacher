@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from hamcrest.core.string_description import StringDescription
 from pytest import mark, raises
 
+from preacher.core.datetime import DateTimeWithFormat
 from preacher.core.hamcrest import after, before
 
 ORIGIN = datetime(2019, 12, 15, 12, 34, 56, tzinfo=timezone.utc)
@@ -37,6 +38,9 @@ def test_datetime_matcher_invalid_validation(item):
     (ORIGIN, '2019-12-15T12:34:55Z', True, False),
     (ORIGIN, '2019-12-15T12:34:56Z', False, False),
     (ORIGIN, '2019-12-15T12:34:57Z', False, True),
+    (DateTimeWithFormat(ORIGIN), '2019-12-15T12:34:55Z', True, False),
+    (DateTimeWithFormat(ORIGIN), '2019-12-15T12:34:56Z', False, False),
+    (DateTimeWithFormat(ORIGIN), '2019-12-15T12:34:57Z', False, True),
 ])
 def test_datetime_matcher(value, item, before_expected, after_expected):
     matcher = before(ORIGIN)
