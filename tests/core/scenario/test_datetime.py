@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from unittest.mock import NonCallableMock
 
 from pytest import mark, raises
@@ -35,13 +35,18 @@ def test_iso8601_format_datetime(value, expected):
 
 
 @mark.parametrize(('value', 'expected'), [
+    ('1234-01-23T01:23:45', datetime(1234, 1, 23, 1, 23, 45)),
     (
-        '1234-01-23T01:23:45',
-        datetime(1234, 1, 23, 1, 23, 45),
+        '20190828T024543.477Z',
+        datetime(2019, 8, 28, 2, 45, 43, 477000, timezone.utc),
     ),
     (
         '1234-01-23T01:23:45.123456Z',
-        datetime(1234, 1, 23, 1, 23, 45, 123456, tzinfo=timezone.utc),
+        datetime(1234, 1, 23, 1, 23, 45, 123456, timezone.utc),
+    ),
+    (
+        '2019-08-09T02:45:43,477123-09:00',
+        datetime(2019, 8, 9, 2, 45, 43, 477123, timezone(timedelta(hours=-9))),
     ),
 ])
 def test_iso8601_parse_datetime(value, expected):
