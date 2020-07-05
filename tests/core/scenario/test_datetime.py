@@ -1,10 +1,10 @@
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import NonCallableMock
 
 from pytest import mark, raises
 
-from preacher.core.datetime import DateTimeFormat, now, parse_datetime
+from preacher.core.datetime import DateTimeFormat, ISO8601, now, parse_datetime
 
 
 def test_date_time_format_interface():
@@ -20,6 +20,34 @@ def test_date_time_format_interface():
         format.parse_datetime('str')
     with raises(NotImplementedError):
         format.format_datetime(datetime.now())
+
+
+@mark.parametrize(('value', 'expected'), [
+    (
+        datetime(2345, 12, 31, 23, 59, 59),
+        '2345-12-31T23:59:59',
+    ),
+    (
+        datetime(2345, 12, 31, 23, 59, 59, 123456, tzinfo=timezone.utc),
+        '2345-12-31T23:59:59.123456+00:00',
+    ),
+])
+def test_iso8601_format_datetime(value, expected):
+    assert ISO8601.format_datetime(value) == expected
+
+
+@mark.parametrize(('value', 'expected'), [
+    (
+        '1234-01-23T01:23:45',
+        datetime(1234, 1, 23, 1, 23, 45),
+    ),
+    (
+        '1234-01-23T01:23:45.123456Z',
+        datetime(1234, 1, 23, 1, 23, 45, 123456, tzinfo=timezone.utc),
+    ),
+])
+def test_iso8601_parse_datetime(value, expected):
+    assert ISO8601.parse_datetime(value) == expected
 
 
 def test_now_jst(mocker):
