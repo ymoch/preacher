@@ -15,49 +15,44 @@ ORIGIN = datetime(2019, 12, 15, 12, 34, 56, tzinfo=timezone.utc)
     complex(1, 2),
     'str',
 ])
-def test_before_invalid_creation(value):
+def test_datetime_matcher_invalid_creation(value):
     with raises(TypeError):
         before(value)
+    with raises(TypeError):
+        after(value)
 
 
 @mark.parametrize('item', [None, 1])
-def test_after_invalid_validation(item):
+def test_datetime_matcher_invalid_validation(item):
+    matcher = before(ORIGIN)
+    with raises(TypeError):
+        matcher.matches(item)
+
     matcher = after(ORIGIN)
     with raises(TypeError):
         matcher.matches(item)
 
 
-@mark.parametrize(('item', 'expected'), [
-    ('2019-12-15T12:34:55Z', True),
-    ('2019-12-15T12:34:56Z', False),
-    ('2019-12-15T12:34:57Z', False),
+@mark.parametrize(('value', 'item', 'before_expected', 'after_expected'), [
+    (ORIGIN, '2019-12-15T12:34:55Z', True, False),
+    (ORIGIN, '2019-12-15T12:34:56Z', False, False),
+    (ORIGIN, '2019-12-15T12:34:57Z', False, True),
 ])
-def test_before(item, expected):
+def test_datetime_matcher(value, item, before_expected, after_expected):
     matcher = before(ORIGIN)
-    assert matcher.matches(item) == expected
-
+    assert matcher.matches(item) == before_expected
     description = StringDescription()
     matcher.describe_to(description)
-    assert str(description).startswith('a value before <2019-12')
-
+    assert str(description).startswith('a value before <')
     description = StringDescription()
     matcher.describe_mismatch(item, description)
-    assert str(description).startswith('was <2019-12')
+    assert str(description).startswith('was <')
 
-
-@mark.parametrize('item, expected', [
-    ('2019-12-15T12:34:55Z', False),
-    ('2019-12-15T12:34:56Z', False),
-    ('2019-12-15T12:34:57Z', True),
-])
-def test_after(item, expected):
-    matcher = after(ORIGIN)
-    assert matcher.matches(item) == expected
-
+    matcher = after(value)
+    assert matcher.matches(item) == after_expected
     description = StringDescription()
     matcher.describe_to(description)
-    assert str(description).startswith('a value after <2019-12')
-
+    assert str(description).startswith('a value after <')
     description = StringDescription()
     matcher.describe_mismatch(item, description)
-    assert str(description).startswith('was <2019-12')
+    assert str(description).startswith('was <')
