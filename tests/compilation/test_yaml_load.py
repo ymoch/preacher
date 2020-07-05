@@ -124,6 +124,20 @@ def test_given_valid_relative_datetime():
     assert resolved.value == now - timedelta(hours=1)
 
 
+def test_given_valid_full_relative_datetime():
+    io = StringIO('''
+    !relative_datetime
+    delta: -1 minute
+    format: "%H:%M:%S"
+    ''')
+    actual = load(io)
+    assert isinstance(actual, RelativeDatetimeValue)
+
+    now = datetime(2020, 1, 23, 12, 34, 56)
+    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    assert resolved.formatted == '12:33:56'
+
+
 def test_given_datetime_that_is_offset_naive():
     io = StringIO('2020-04-01 01:23:45')
     actual = load(io)

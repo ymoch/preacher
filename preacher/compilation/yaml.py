@@ -3,12 +3,15 @@ from __future__ import annotations
 import glob
 import os
 import re
+from collections.abc import Mapping
 from typing import Iterator, TextIO, Union
 
 from yaml import (
+    BaseLoader,
+    Node,
+    MappingNode,
     YAMLObject,
     MarkedYAMLError,
-    Node,
     load as yaml_load,
     load_all as yaml_load_all,
 )
@@ -19,6 +22,7 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
+from preacher.core.datetime import ISO8601, StrftimeFormat, DateTimeFormat
 from preacher.core.interpretation import RelativeDatetimeValue
 from .argument import ArgumentValue
 from .error import CompilationError
@@ -28,6 +32,9 @@ from .util import run_recursively
 PathLike = Union[str, os.PathLike]
 
 WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
+
+_KEY_DELTA = 'delta'
+_KEY_FORMAT = 'format'
 
 
 class _Inclusion(YAMLObject):
@@ -72,20 +79,24 @@ class _ArgumentValue(YAMLObject):
 class _RelativeDatetime(YAMLObject):
     yaml_tag = '!relative_datetime'
 
-    def __init__(self, obj: object):
+    def __init__(self, obj: Mapping):
         self._obj = obj
 
     def resolve(self) -> RelativeDatetimeValue:
         obj = self._obj
-        if not isinstance(obj, str):
-            raise CompilationError(f'Must be a string, given {type(obj)}')
-
-        delta = compile_timedelta(obj)
-        return RelativeDatetimeValue(delta)
+        delta = compile_timedelta(obj.get(_KEY_DELTA))
+        format_string = obj.get(_KEY_FORMAT)
+        if format_string is not None and format_string != 'iso8601':
+            fmt: DateTimeFormat = StrftimeFormat(format_string)
+        else:
+            fmt = ISO8601
+        return RelativeDatetimeValue(delta, fmt)
 
     @classmethod
-    def from_yaml(cls, loader, node: Node) -> _RelativeDatetime:
-        return _RelativeDatetime(node.value)
+    def from_yaml(cls, loader: BaseLoader, node: Node) -> _RelativeDatetime:
+        if isinstance(node, MappingNode):
+            return _RelativeDatetime(loader.construct_mapping(node))
+        return _RelativeDatetime({_KEY_DELTA: node.value})
 
 
 class _CustomSafeConstructor(SafeConstructor):

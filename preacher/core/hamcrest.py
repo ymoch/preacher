@@ -55,7 +55,7 @@ def after(value: object) -> Matcher:
 
 def _ensure_str(obj: object) -> str:
     if not isinstance(obj, str):
-        raise TypeError(f'Must be a str, but given {obj.__class__}: {obj}')
+        raise TypeError(f'Must be a str, but given {type(obj)}: {obj}')
     return obj
 
 
@@ -64,7 +64,5 @@ def _ensure_datetime(obj: object) -> DateTimeWithFormat:
         return obj
 
     if not isinstance(obj, datetime):
-        raise TypeError(
-            f'Must be a datetime, but given {obj.__class__}: {obj}',
-        )
+        raise TypeError(f'Must be a datetime, but given {type(obj)}: {obj}')
     return DateTimeWithFormat(obj)
