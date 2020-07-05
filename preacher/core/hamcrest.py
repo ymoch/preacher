@@ -34,6 +34,7 @@ class _ConvertingMatcher(BaseMatcher):
 
 
 def before(value: object) -> Matcher:
+    """`value` should be a datetime or DateTimeWithFormat."""
     origin = _ensure_datetime(value)
     matcher = OrderingComparison(origin.value, operator.lt, 'before')
     return _ConvertingMatcher(
@@ -43,6 +44,7 @@ def before(value: object) -> Matcher:
 
 
 def after(value: object) -> Matcher:
+    """`value` should be a datetime or DateTimeWithFormat."""
     origin = _ensure_datetime(value)
     matcher = OrderingComparison(origin.value, operator.gt, 'after')
     return _ConvertingMatcher(
