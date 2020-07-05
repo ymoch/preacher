@@ -11,7 +11,7 @@ from typing import Optional
 import aniso8601
 
 
-class DateTimeFormatter(ABC):
+class DateTimeFormat(ABC):
 
     def format_datetime(self, value: datetime) -> str:
         raise NotImplementedError()
@@ -20,7 +20,7 @@ class DateTimeFormatter(ABC):
         raise NotImplementedError()
 
 
-class Iso8601Formatter(DateTimeFormatter):
+class Iso8601Format(DateTimeFormat):
 
     def format_datetime(self, value: datetime) -> str:
         return value.isoformat()
@@ -29,7 +29,7 @@ class Iso8601Formatter(DateTimeFormatter):
         return aniso8601.parse_datetime(value)
 
 
-ISO8601 = Iso8601Formatter()
+ISO8601 = Iso8601Format()
 
 
 class DateTime:
@@ -37,25 +37,25 @@ class DateTime:
     def __init__(
         self,
         value: datetime,
-        formatter: Optional[DateTimeFormatter] = None,
+        fmt: Optional[DateTimeFormat] = None,
     ):
         self._value = value
-        self._formatter = formatter or ISO8601
+        self._fmt = fmt or ISO8601
 
     @property
     def value(self) -> datetime:
         return self._value
 
     @property
-    def formatter(self) -> DateTimeFormatter:
-        return self._formatter
+    def fmt(self) -> DateTimeFormat:
+        return self._fmt
 
     @property
     def formatted(self) -> str:
-        return self._formatter.format_datetime(self._value)
+        return self._fmt.format_datetime(self._value)
 
     @staticmethod
-    def now(formatter: Optional[DateTimeFormatter] = None) -> DateTime:
+    def now(formatter: Optional[DateTimeFormat] = None) -> DateTime:
         return DateTime(datetime.now(_system_timezone()), formatter)
 
 
