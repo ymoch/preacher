@@ -26,7 +26,7 @@ def test_resolve_params_given_a_mapping():
             'str',
             date(2020, 12, 31),
             datetime(2020, 1, 23, 12, 34, 56, tzinfo=timezone.utc),
-            DateTimeWithFormat(datetime(1, 1, 1, 1, 1, 1, 1)),
+            NonCallableMock(DateTimeWithFormat, formatted=sentinel.formatted),
             value,
         ]
     }
@@ -42,7 +42,7 @@ def test_resolve_params_given_a_mapping():
         'str',
         '2020-12-31',
         '2020-01-23T12:34:56+00:00',
-        '0001-01-01T01:01:01.000001',
+        sentinel.formatted,
         'sentinel.resolved_value',
     ]
 
