@@ -6,11 +6,12 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.yaml import (
+    PathLike,
     _Resolvable,
     load,
     load_from_path,
     load_all,
-    load_all_from_path, PathLike,
+    load_all_from_path,
 )
 from preacher.core.interpretation import RelativeDatetimeValue, ValueContext
 
@@ -136,11 +137,7 @@ def test_given_valid_relative_datetime():
 
 
 def test_given_valid_full_relative_datetime():
-    io = StringIO('''
-    !relative_datetime
-    delta: -1 minute
-    format: "%H:%M:%S"
-    ''')
+    io = StringIO('!relative_datetime {delta: -1 minute, format: "%H:%M:%S"}')
     actual = load(io)
     assert isinstance(actual, RelativeDatetimeValue)
 
