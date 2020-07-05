@@ -60,11 +60,11 @@ def _ensure_str(obj: object) -> str:
 
 
 def _ensure_datetime(obj: object) -> DateTimeWithFormat:
-    if isinstance(obj, datetime):
-        return DateTimeWithFormat(obj)
+    if isinstance(obj, DateTimeWithFormat):
+        return obj
 
-    if not isinstance(obj, DateTimeWithFormat):
+    if not isinstance(obj, datetime):
         raise TypeError(
             f'Must be a datetime, but given {obj.__class__}: {obj}',
         )
-    return obj
+    return DateTimeWithFormat(obj)
