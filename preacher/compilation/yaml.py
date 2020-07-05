@@ -7,10 +7,10 @@ from collections.abc import Mapping
 from typing import Iterator, TextIO, Union
 
 from yaml import (
-    BaseLoader,
     Node,
     MappingNode,
-    YAMLObject,
+    ScalarNode,
+    BaseLoader,
     MarkedYAMLError,
     load as yaml_load,
     load_all as yaml_load_all,
@@ -37,8 +37,7 @@ _KEY_DELTA = 'delta'
 _KEY_FORMAT = 'format'
 
 
-class _Inclusion(YAMLObject):
-    yaml_tag = '!include'
+class _Inclusion:
 
     def __init__(self, obj: object):
         self._obj = obj
@@ -54,13 +53,12 @@ class _Inclusion(YAMLObject):
             return [load_from_path(p) for p in paths]
         return load_from_path(path)
 
-    @classmethod
-    def from_yaml(cls, loader, node: Node) -> _Inclusion:
+    @staticmethod
+    def from_yaml(_loader: BaseLoader, node: Node) -> _Inclusion:
         return _Inclusion(node.value)
 
 
-class _ArgumentValue(YAMLObject):
-    yaml_tag = '!argument'
+class _ArgumentValue:
 
     def __init__(self, obj: object):
         self._obj = obj
@@ -71,13 +69,12 @@ class _ArgumentValue(YAMLObject):
             raise CompilationError(f'Must be a key string, given {type(obj)}')
         return ArgumentValue(obj)
 
-    @classmethod
-    def from_yaml(cls, loader, node: Node) -> _ArgumentValue:
+    @staticmethod
+    def from_yaml(_loader: BaseLoader, node: Node) -> _ArgumentValue:
         return _ArgumentValue(node.value)
 
 
-class _RelativeDatetime(YAMLObject):
-    yaml_tag = '!relative_datetime'
+class _RelativeDatetime:
 
     def __init__(self, obj: Mapping):
         self._obj = obj
@@ -92,11 +89,13 @@ class _RelativeDatetime(YAMLObject):
             fmt = ISO8601
         return RelativeDatetimeValue(delta, fmt)
 
-    @classmethod
-    def from_yaml(cls, loader: BaseLoader, node: Node) -> _RelativeDatetime:
+    @staticmethod
+    def from_yaml(loader: BaseLoader, node: Node) -> _RelativeDatetime:
+        if isinstance(node, ScalarNode):
+            return _RelativeDatetime({_KEY_DELTA: node.value})
         if isinstance(node, MappingNode):
             return _RelativeDatetime(loader.construct_mapping(node))
-        return _RelativeDatetime({_KEY_DELTA: node.value})
+        raise CompilationError('Invalid relative datetime value format')
 
 
 class _CustomSafeConstructor(SafeConstructor):
@@ -104,15 +103,15 @@ class _CustomSafeConstructor(SafeConstructor):
 
 
 _CustomSafeConstructor.add_constructor(
-    _Inclusion.yaml_tag,
+    '!include',
     _Inclusion.from_yaml,
 )
 _CustomSafeConstructor.add_constructor(
-    _ArgumentValue.yaml_tag,
+    '!argument',
     _ArgumentValue.from_yaml,
 )
 _CustomSafeConstructor.add_constructor(
-    _RelativeDatetime.yaml_tag,
+    '!relative_datetime',
     _RelativeDatetime.from_yaml,
 )
 
