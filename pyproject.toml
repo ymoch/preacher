@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "preacher"
-version = "0.14.7"
-description = "A web API verification tool."
+version = "0.14.8"
+description = "Web API Verification without Coding."
 authors = ["Yu Mochizuki <ymoch.dev@gmail.com>"]
 readme = "README.md"
 homepage = "https://preacher.readthedocs.io/"
