@@ -125,9 +125,9 @@ def _resolve(obj: object, origin: PathLike) -> object:
     return obj
 
 
-def load(io: TextIO, origin: PathLike = '.') -> object:
+def load(stream: TextIO, origin: PathLike = '.') -> object:
     try:
-        obj = yaml_load(io, Loader=_Loader)
+        obj = yaml_load(stream, Loader=_Loader)
     except MarkedYAMLError as error:
         raise CompilationError.wrap(error)
 
@@ -143,21 +143,21 @@ def load_from_path(path: PathLike) -> object:
         raise CompilationError.wrap(error)
 
 
-def _yaml_load_all(io: TextIO):
+def _yaml_load_all(stream: TextIO):
     """
     Wrap `yaml_load_all` to handle errors.
     """
     try:
-        for obj in yaml_load_all(io, Loader=_Loader):
+        for obj in yaml_load_all(stream, Loader=_Loader):
             yield obj
     except MarkedYAMLError as error:
         raise CompilationError.wrap(error)
 
 
-def load_all(io: TextIO, origin: PathLike = '.') -> Iterator[object]:
+def load_all(stream: TextIO, origin: PathLike = '.') -> Iterator[object]:
     return (
         run_recursively(lambda o: _resolve(o, origin), obj)
-        for obj in _yaml_load_all(io)
+        for obj in _yaml_load_all(stream)
     )
 
 
