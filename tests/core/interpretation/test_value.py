@@ -4,11 +4,7 @@ from typing import Optional
 from pytest import raises
 
 from preacher.core.datetime import StrftimeFormat
-from preacher.core.interpretation import (
-    Value,
-    ValueContext,
-    RelativeDatetimeValue,
-)
+from preacher.core.interpretation import Value, ValueContext, RelativeDatetime
 
 PKG = 'preacher.core.interpretation.value'
 
@@ -28,7 +24,7 @@ def test_relative_datetime_value_default(mocker):
     mocker.patch(f'{PKG}.now', return_value=now)
 
     delta = timedelta(seconds=1)
-    value = RelativeDatetimeValue(delta=delta)
+    value = RelativeDatetime(delta=delta)
     resolved = value.resolve()
     assert resolved.value == now + delta
     assert resolved.formatted == '2020-01-23T12:34:57+00:00'
@@ -38,7 +34,7 @@ def test_relative_datetime_value_contextual():
     now = datetime(2020, 12, 31, 1, 23, 45, 123456, timezone.utc)
 
     delta = timedelta(minutes=-1)
-    value = RelativeDatetimeValue(delta, fmt=StrftimeFormat('%H:%M:%S'))
+    value = RelativeDatetime(delta, fmt=StrftimeFormat('%H:%M:%S'))
     resolved = value.resolve(ValueContext(origin_datetime=now))
     assert resolved.value == now + delta
     assert resolved.formatted == '01:22:45'

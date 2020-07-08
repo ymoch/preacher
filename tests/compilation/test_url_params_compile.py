@@ -4,11 +4,11 @@ from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.url_param import compile_url_params
-from preacher.core.interpretation import RelativeDatetimeValue
+from preacher.core.interpretation import RelativeDatetime
 
 DATE = date(2019, 12, 31)
 DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')
-RELATIVE_DATETIME_VALUE = RelativeDatetimeValue(timedelta(seconds=1))
+RELATIVE_DATETIME_VALUE = RelativeDatetime(timedelta(seconds=1))
 
 
 @mark.parametrize(('obj', 'expected_path'), [

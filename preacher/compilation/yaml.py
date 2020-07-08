@@ -23,7 +23,7 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.core.interpretation import RelativeDatetimeValue
+from preacher.core.interpretation import RelativeDatetime
 from .argument import ArgumentValue
 from .datetime import compile_datetime_format, compile_timedelta
 from .error import CompilationError
@@ -85,11 +85,11 @@ class _RelativeDatetime(_Resolvable):
     def __init__(self, obj: Mapping):
         self._obj = obj
 
-    def resolve(self, origin: PathLike) -> RelativeDatetimeValue:
+    def resolve(self, origin: PathLike) -> RelativeDatetime:
         obj = self._obj
         delta = compile_timedelta(obj.get(_KEY_DELTA))
         fmt = compile_datetime_format(obj.get(_KEY_FORMAT))
-        return RelativeDatetimeValue(delta, fmt)
+        return RelativeDatetime(delta, fmt)
 
     @staticmethod
     def from_yaml(loader: BaseLoader, node: Node) -> _RelativeDatetime:

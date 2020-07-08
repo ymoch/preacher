@@ -13,7 +13,7 @@ from preacher.compilation.yaml import (
     load_all,
     load_all_from_path,
 )
-from preacher.core.interpretation import RelativeDatetimeValue, ValueContext
+from preacher.core.interpretation import RelativeDatetime, ValueContext
 
 
 def test_resolvable_interface():
@@ -129,7 +129,7 @@ def test_given_invalid_relative_datetime(content):
 def test_given_valid_relative_datetime():
     io = StringIO('!relative_datetime -1 hour')
     actual = load(io)
-    assert isinstance(actual, RelativeDatetimeValue)
+    assert isinstance(actual, RelativeDatetime)
 
     now = datetime.now()
     resolved = actual.resolve(ValueContext(origin_datetime=now))
@@ -139,7 +139,7 @@ def test_given_valid_relative_datetime():
 def test_given_valid_full_relative_datetime():
     io = StringIO('!relative_datetime {delta: -1 minute, format: "%H:%M:%S"}')
     actual = load(io)
-    assert isinstance(actual, RelativeDatetimeValue)
+    assert isinstance(actual, RelativeDatetime)
 
     now = datetime(2020, 1, 23, 12, 34, 56)
     resolved = actual.resolve(ValueContext(origin_datetime=now))
