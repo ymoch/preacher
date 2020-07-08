@@ -5,7 +5,7 @@ from typing import Mapping
 
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util import map_compile
-from preacher.core.interpretation import RelativeDatetimeValue
+from preacher.core.interpretation import RelativeDatetime
 from preacher.core.scenario import UrlParams, UrlParam, UrlParamValue
 
 
@@ -22,7 +22,7 @@ def compile_url_param_value(value: object) -> UrlParamValue:
         return value
     if isinstance(value, date):
         return value
-    if isinstance(value, RelativeDatetimeValue):  # HACK: relax typing.
+    if isinstance(value, RelativeDatetime):  # HACK: relax typing.
         return value
     raise CompilationError(
         f'Not allowed type for a request parameter value: {value.__class__}'

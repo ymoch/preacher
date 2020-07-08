@@ -1,6 +1,6 @@
 from .error import InterpretationError
 from .type import require_type
-from .value import Value, ValueContext, StaticValue, RelativeDatetimeValue
+from .value import Value, ValueContext, StaticValue, RelativeDatetime
 
 __all__ = [
     'InterpretationError',
@@ -8,5 +8,5 @@ __all__ = [
     'Value',
     'ValueContext',
     'StaticValue',
-    'RelativeDatetimeValue',
+    'RelativeDatetime',
 ]

@@ -199,7 +199,7 @@ def test_verification_with_timedelta(
 ):
     matcher_ctor = mocker.patch(f'{PKG}.ValueMatcher')
     matcher_ctor.return_value = sentinel.matcher
-    value_ctor = mocker.patch(f'{PKG}.RelativeDatetimeValue')
+    value_ctor = mocker.patch(f'{PKG}.RelativeDatetime')
     value_ctor.return_value = sentinel.value
 
     actual = compile(obj)

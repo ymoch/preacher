@@ -12,7 +12,7 @@ from preacher.core.hamcrest import after, before
 from preacher.core.interpretation import (
     Value,
     StaticValue,
-    RelativeDatetimeValue,
+    RelativeDatetime,
     require_type
 )
 from preacher.core.scenario import (
@@ -94,7 +94,7 @@ def _compile_relative_datetime_value(
         return StaticValue(DatetimeWithFormat(value))
 
     delta = compile_timedelta(value)
-    return RelativeDatetimeValue(delta)
+    return RelativeDatetime(delta)
 
 
 _VALUE_FACTORY_MAP: Dict[str, Callable[[object], Value[Any]]] = {

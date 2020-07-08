@@ -38,7 +38,7 @@ class StaticValue(Value[T]):
         return self._value
 
 
-class RelativeDatetimeValue(Value[DatetimeWithFormat]):
+class RelativeDatetime(Value[DatetimeWithFormat]):
 
     def __init__(self, delta: timedelta, fmt: Optional[DatetimeFormat] = None):
         self._delta = delta
