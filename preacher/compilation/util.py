@@ -90,9 +90,8 @@ def run_recursively(func: Callable[[object], Any], obj) -> object:
     if isinstance(obj, Mapping):
         def _func(key: object, value: object) -> object:
             if not isinstance(key, str):
-                raise CompilationError(
-                    f'Key must be a string, given {type(key)}'
-                )
+                message = f'Key must be a string, given {type(key)}'
+                raise CompilationError(message)
             with on_key(key):
                 return run_recursively(func, value)
 

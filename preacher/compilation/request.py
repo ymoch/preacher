@@ -114,7 +114,6 @@ def _compile_method(obj: object) -> Method:
     key = compile_str(obj).upper()
     method = _METHOD_MAP.get(key)
     if not method:
-        raise CompilationError(
-            message=f'Must be in {list(_METHOD_MAP)}, but given: {obj}',
-        )
+        message = f'Must be in {list(_METHOD_MAP)}, but given: {obj}'
+        raise CompilationError(message)
     return method

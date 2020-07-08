@@ -41,7 +41,7 @@ def test_compile_and_replace_empty():
 
 def test_compile_and_replace_given_invalid_data(mocker):
     compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
-    compile_params.side_effect = CompilationError('m', path=[NamedNode('x')])
+    compile_params.side_effect = CompilationError('m', node=NamedNode('x'))
 
     default = UrlencodedRequestBodyCompiled(data=sentinel.original_data)
     with raises(CompilationError) as error_info:

@@ -76,10 +76,9 @@ def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
 
 
 def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
-    compile_params = mocker.patch(
-        f'{PACKAGE}.compile_url_params',
-        side_effect=CompilationError('message', path=[NamedNode('x')])
-    )
+    compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
+    compile_params.side_effect = CompilationError('msg', node=NamedNode('x'))
+
     with raises(CompilationError) as error_info:
         compiler.compile({'params': sentinel.params})
     assert error_info.value.path == [NamedNode('params'), NamedNode('x')]
@@ -88,10 +87,8 @@ def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
 
 
 def test_given_valid_params(compiler: RequestCompiler, mocker):
-    compile_params = mocker.patch(
-        f'{PACKAGE}.compile_url_params',
-        return_value=sentinel.compiled_params,
-    )
+    compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
+    compile_params.return_value = sentinel.compiled_params
 
     compiled = compiler.compile({'params': sentinel.params})
     assert compiled.params == sentinel.compiled_params
@@ -100,7 +97,7 @@ def test_given_valid_params(compiler: RequestCompiler, mocker):
 
 
 def test_given_invalid_body(compiler: RequestCompiler, body):
-    body.compile.side_effect = CompilationError('x', path=[IndexedNode(1)])
+    body.compile.side_effect = CompilationError('x', node=IndexedNode(1))
 
     with raises(CompilationError) as error_info:
         compiler.compile({'body': sentinel.body_obj})

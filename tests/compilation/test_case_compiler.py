@@ -51,10 +51,7 @@ def test_given_invalid_values(compiler: CaseCompiler, value, expected_path):
 
 
 def test_conditions_compilation_fails(compiler: CaseCompiler, desc):
-    desc.compile.side_effect = CompilationError(
-        message='message',
-        path=[NamedNode('foo')],
-    )
+    desc.compile.side_effect = CompilationError('msg', node=NamedNode('foo'))
     with raises(CompilationError) as error_info:
         compiler.compile({'when': 'xxx'})
     assert error_info.value.path == [
@@ -67,10 +64,7 @@ def test_conditions_compilation_fails(compiler: CaseCompiler, desc):
 
 
 def test_request_compilation_fails(compiler: CaseCompiler, req):
-    req.compile.side_effect = CompilationError(
-        message='message',
-        path=[NamedNode('foo')],
-    )
+    req.compile.side_effect = CompilationError('msg', node=NamedNode('foo'))
     with raises(CompilationError) as error_info:
         compiler.compile({'request': '/path'})
     assert error_info.value.path == [NamedNode('request'), NamedNode('foo')]
@@ -79,10 +73,7 @@ def test_request_compilation_fails(compiler: CaseCompiler, req):
 
 
 def test_response_compilation_fails(compiler: CaseCompiler, res):
-    res.compile.side_effect = CompilationError(
-        message='message',
-        path=[NamedNode('bar')],
-    )
+    res.compile.side_effect = CompilationError('msg', node=NamedNode('bar'))
     with raises(CompilationError) as error_info:
         compiler.compile({'response': 'res'})
     assert error_info.value.path == [NamedNode('response'), NamedNode('bar')]
