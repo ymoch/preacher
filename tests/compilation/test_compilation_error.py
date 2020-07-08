@@ -1,5 +1,3 @@
-from pytest import mark
-
 from preacher.compilation.error import (
     CompilationError,
     IndexedNode,
@@ -8,20 +6,23 @@ from preacher.compilation.error import (
 )
 
 
-@mark.parametrize('path, expected', [
-    ([], ''),
-    ([NamedNode('foo')], '.foo'),
-    ([IndexedNode(0)], '[0]'),
-    (
-        [
-            NamedNode('foo'),
-            IndexedNode(1),
-            IndexedNode(2),
-            NamedNode('bar'),
-        ],
-        '.foo[1][2].bar',
-    ),
-])
-def test_render_path(path, expected):
-    assert render_path(path) == expected
-    assert CompilationError('message', path=path).render_path() == expected
+def test_render_path():
+    error = CompilationError('message')
+    assert error.path == []
+    assert error.render_path() == ''
+    assert render_path(error.path) == ''
+
+    error = error.on_node(IndexedNode(1))
+    assert error.path == [IndexedNode(1)]
+    assert error.render_path() == '[1]'
+    assert render_path(error.path) == '[1]'
+
+    error = CompilationError('message', node=None, child=error)
+    assert error.path == [IndexedNode(1)]
+    assert error.render_path() == '[1]'
+    assert render_path(error.path) == '[1]'
+
+    error = error.on_node(NamedNode('foo'))
+    assert error.path == [NamedNode('foo'), IndexedNode(1)]
+    assert error.render_path() == '.foo[1]'
+    assert render_path(error.path) == '.foo[1]'

@@ -25,7 +25,7 @@ def test_map_compile_for_successful_func():
 
 
 def test_map_compile_for_failing_func():
-    child_error = CompilationError('message', path=[NamedNode('key')])
+    child_error = CompilationError('message', node=NamedNode('key'))
     failing_func = Mock(side_effect=[1, child_error, 2])
     results = map_compile(failing_func, [3, 4, 5])
     assert next(results) == 1

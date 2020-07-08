@@ -37,26 +37,31 @@ class CompilationError(Exception):
     def __init__(
         self,
         message: str,
-        path: Optional[Path] = None,
+        node: Optional[Node] = None,
+        child: Optional[CompilationError] = None,
         cause: Optional[Exception] = None,
     ):
         super().__init__(message)
         self._message = message
-        self._path = path or []
+        self._node = node
+        self._child = child
         self._cause = cause
 
-    @property
+    @property  # HACK should be cached.
     def path(self) -> Path:
-        return self._path
+        path = self._child.path if self._child else []
+        if self._node:
+            path = [self._node] + path
+        return path
 
     def render_path(self) -> str:
-        return render_path(self._path)
+        return render_path(self.path)
 
-    def of_parent(self, parent_path: Path) -> CompilationError:
+    def on_node(self, node: Node) -> CompilationError:
         return CompilationError(
             message=self._message,
-            path=parent_path + self.path,
-            cause=self._cause,
+            node=node,
+            child=self,
         )
 
     @staticmethod
@@ -69,7 +74,7 @@ def on_key(key: str) -> Iterator:
     try:
         yield
     except CompilationError as error:
-        raise error.of_parent([NamedNode(key)])
+        raise error.on_node(NamedNode(key))
 
 
 @contextmanager
@@ -77,4 +82,4 @@ def on_index(index: int) -> Iterator:
     try:
         yield
     except CompilationError as error:
-        raise error.of_parent([IndexedNode(index)])
+        raise error.on_node(IndexedNode(index))
