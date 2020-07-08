@@ -29,15 +29,10 @@ def test_resolvable_interface():
 @mark.parametrize('content, expected_message, expected_path', (
     ('!invalid foo', '!invalid', []),
     ('!include []', 'string', []),
-    ('!argument []', 'string', []),
     ('!include {}', 'string', []),
-    ('!argument {}', 'string', []),
     ('- !include {}', '', [IndexedNode(0)]),
-    ('- !argument {}', '', [IndexedNode(0)]),
     ('{key: !include {}}', '', [NamedNode('key')]),
-    ('{key: !argument {}}', '', [NamedNode('key')]),
     ('{key: [!include {}]}', '', [NamedNode('key'), IndexedNode(0)]),
-    ('{key: [!argument {}]}', '', [NamedNode('key'), IndexedNode(0)]),
 ))
 def test_given_invalid_content(content, expected_message, expected_path):
     io = StringIO(content)
@@ -100,19 +95,6 @@ def test_given_wildcard_inclusion(mocker):
     assert actual['parenthesis-only-opening'] == 'base/path/[.yml'
     assert actual['empty-parenthesis'] == 'base/path/[].yml'
     assert actual['filled-parenthesis'] == ['glob:base/path/[abc].yml:True']
-
-
-def test_given_argument():
-    io = StringIO('''
-    - !argument foo
-    - key: !argument bar
-    ''')
-
-    actual = load(io)
-    assert isinstance(actual, list)
-    assert actual[0].key == 'foo'
-    assert isinstance(actual[1], dict)
-    assert actual[1]['key'].key == 'bar'
 
 
 @mark.parametrize('content', [
