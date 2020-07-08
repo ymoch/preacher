@@ -31,16 +31,16 @@ def test_resolvable_interface():
     ('{key: [!argument {}]}', [NamedNode('key'), IndexedNode(0)]),
 ))
 def test_load_given_invalid_content(content, expected_path):
-    io = StringIO(content)
+    stream = StringIO(content)
     with raises(CompilationError) as error_info:
-        load(io)
+        load(stream)
     assert error_info.value.path == expected_path
 
 
 def test_load_all_given_invalid_value():
-    io = StringIO('!invalid')
+    stream = StringIO('!invalid')
     with raises(CompilationError):
-        next(load_all(io))
+        next(load_all(stream))
 
 
 @mark.parametrize('path, expected_origin', [

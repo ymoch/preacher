@@ -9,16 +9,16 @@ from preacher.core.interpretation import RelativeDatetime, ValueContext
 
 
 def test_given_datetime_that_is_offset_naive():
-    io = StringIO('2020-04-01 01:23:45')
-    actual = load(io)
+    stream = StringIO('2020-04-01 01:23:45')
+    actual = load(stream)
     assert isinstance(actual, datetime)
     assert actual == datetime(2020, 4, 1, 1, 23, 45)
     assert actual.tzinfo is None
 
 
 def test_given_datetime_that_is_offset_aware():
-    io = StringIO('2020-04-01 01:23:45 +09:00')
-    actual = load(io)
+    stream = StringIO('2020-04-01 01:23:45 +09:00')
+    actual = load(stream)
     assert isinstance(actual, datetime)
     assert (
         actual - datetime(2020, 3, 31, 16, 23, 45, tzinfo=timezone.utc)

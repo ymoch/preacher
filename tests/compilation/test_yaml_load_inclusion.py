@@ -12,14 +12,14 @@ from preacher.compilation.yaml import load
     ('!include {}', 'string'),
 ])
 def test_given_invalid_inclusion(content, expected_message):
-    io = StringIO(content)
+    stream = StringIO(content)
     with raises(CompilationError) as error_info:
-        load(io)
+        load(stream)
     assert expected_message in str(error_info.value)
 
 
 def test_given_recursive_inclusion(mocker):
-    io = StringIO('''
+    stream = StringIO('''
     list:
       - !include item.yml
       - key: !include value.yml
@@ -34,7 +34,7 @@ def test_given_recursive_inclusion(mocker):
     open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = lambda path: StringIO(answer_map[path])
 
-    actual = load(io, origin=os.path.join('base', 'dir'))
+    actual = load(stream, origin=os.path.join('base', 'dir'))
     assert actual == {
         'list': [
             'item',
@@ -50,7 +50,7 @@ def test_given_wildcard_inclusion(mocker):
         lambda path, recursive: iter([f'glob:{path}:{recursive}'])
     )
 
-    io = StringIO(r'''
+    stream = StringIO(r'''
     'asterisk': !include '*.yml'
     'double-asterisk': !include '**.yml'
     'question': !include '?.yml'
@@ -62,7 +62,7 @@ def test_given_wildcard_inclusion(mocker):
     open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = lambda path: StringIO(path)
 
-    actual = load(io, origin='base/path/')
+    actual = load(stream, origin='base/path/')
     assert isinstance(actual, dict)
     assert actual['asterisk'] == ['glob:base/path/*.yml:True']
     assert actual['double-asterisk'] == ['glob:base/path/**.yml:True']
