@@ -1,5 +1,5 @@
 from io import StringIO
-from unittest.mock import sentinel
+from unittest.mock import call
 
 from pytest import mark, raises
 
@@ -43,26 +43,22 @@ def test_load_all_given_invalid_value():
         next(load_all(stream))
 
 
-@mark.parametrize('path, expected_origin', [
-    ('scenario.yml', ''),
-    ('/scenario.yml', '/'),
-    ('/path/to/scenario.yml', '/path/to'),
-    ('./scenario.yml', '.'),
-    ('./path/to/scenario.yml', './path/to'),
-])
-def test_load_from_path(path, expected_origin, mocker):
-    content = StringIO('foo')
-    open_mock = mocker.patch('builtins.open', return_value=content)
+def test_load_from_path(mocker):
+    content = StringIO('!include inner/included.yml')
+    included_content = StringIO('foo')
 
-    load_mock = mocker.patch('preacher.compilation.yaml.load')
-    load_mock.return_value = sentinel.obj
+    open_mock = mocker.patch('builtins.open')
+    open_mock.side_effect = [content, included_content]
 
-    actual = load_from_path(path)
-    assert actual is sentinel.obj
+    actual = load_from_path('path/to/scenario.yml')
+    assert actual == 'foo'
 
     assert content.closed
-    open_mock.assert_called_once_with(path)
-    load_mock.assert_called_once_with(content, expected_origin)
+    assert included_content.closed
+    open_mock.assert_has_calls([
+        call('path/to/scenario.yml'),
+        call('path/to/inner/included.yml'),
+    ])
 
 
 def test_load_from_path_not_found(mocker):
