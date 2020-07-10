@@ -1,5 +1,5 @@
 from io import StringIO
-from unittest.mock import NonCallableMock, Mock, sentinel
+from unittest.mock import sentinel
 
 from pytest import mark, raises
 
@@ -51,11 +51,8 @@ def test_load_all_given_invalid_value():
     ('./path/to/scenario.yml', './path/to'),
 ])
 def test_load_from_path(path, expected_origin, mocker):
-    open_mock_entering = NonCallableMock(
-        __enter__=Mock(return_value=sentinel.io),
-        __exit__=Mock(),
-    )
-    open_mock = mocker.patch('builtins.open', return_value=open_mock_entering)
+    content = StringIO('foo')
+    open_mock = mocker.patch('builtins.open', return_value=content)
 
     load_mock = mocker.patch('preacher.compilation.yaml.load')
     load_mock.return_value = sentinel.obj
@@ -63,10 +60,9 @@ def test_load_from_path(path, expected_origin, mocker):
     actual = load_from_path(path)
     assert actual is sentinel.obj
 
-    open_mock_entering.__enter__.assert_called_once()
-    open_mock_entering.__exit__.assert_called_once()
+    assert content.closed
     open_mock.assert_called_once_with(path)
-    load_mock.assert_called_once_with(sentinel.io, expected_origin)
+    load_mock.assert_called_once_with(content, expected_origin)
 
 
 def test_load_from_path_not_found(mocker):
