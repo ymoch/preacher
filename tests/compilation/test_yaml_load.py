@@ -37,10 +37,23 @@ def test_load_given_invalid_content(content, expected_path):
     assert error_info.value.path == expected_path
 
 
-def test_load_all_given_invalid_value():
-    stream = StringIO('!invalid')
+def test_load_all_given_invalid_value(mocker):
+    stream = StringIO('1\n---\n!include inner/foo.yml\n---\n!x\n---\n2')
+    included_content = StringIO('foo')
+
+    open_mock = mocker.patch('builtins.open')
+    open_mock.return_value = included_content
+
+    actual = load_all(stream)
+    assert next(actual) == 1
+    assert next(actual) == 'foo'
     with raises(CompilationError):
-        next(load_all(stream))
+        next(actual)
+    with raises(StopIteration):
+        next(actual)
+
+    assert included_content.closed
+    open_mock.assert_has_calls([call('./inner/foo.yml')])
 
 
 def test_load_from_path_not_found(mocker):
