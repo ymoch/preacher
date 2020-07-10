@@ -53,7 +53,7 @@ def test_load_all(mocker):
         next(actual)
 
     assert included_content.closed
-    open_mock.assert_has_calls([call('./inner/foo.yml')])
+    open_mock.assert_called_once_with('./inner/foo.yml')
 
 
 def test_load_from_path_not_found(mocker):
