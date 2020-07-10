@@ -37,7 +37,7 @@ def test_load_given_invalid_content(content, expected_path):
     assert error_info.value.path == expected_path
 
 
-def test_load_all_given_invalid_value(mocker):
+def test_load_all(mocker):
     stream = StringIO('1\n---\n!include inner/foo.yml\n---\n!x\n---\n2')
     included_content = StringIO('foo')
 
