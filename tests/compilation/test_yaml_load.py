@@ -43,6 +43,12 @@ def test_load_all_given_invalid_value():
         next(load_all(stream))
 
 
+def test_load_from_path_not_found(mocker):
+    mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
+    with raises(CompilationError):
+        load_from_path('/////foo/bar/baz')
+
+
 def test_load_from_path(mocker):
     content = StringIO('!include inner/included.yml')
     included_content = StringIO('foo')
@@ -61,11 +67,12 @@ def test_load_from_path(mocker):
     ])
 
 
-def test_load_from_path_not_found(mocker):
+def test_load_all_from_path_not_found(mocker):
     mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
 
+    objs = load_all_from_path('/////foo/bar/baz')
     with raises(CompilationError):
-        load_from_path('/////foo/bar/baz')
+        next(objs)
 
 
 def test_load_all_from_path(mocker):
@@ -80,11 +87,3 @@ def test_load_all_from_path(mocker):
         next(actual)
 
     open_mock.assert_called_once_with('path/to/foo.yaml')
-
-
-def test_load_all_from_path_not_found(mocker):
-    mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
-
-    objs = load_all_from_path('/////foo/bar/baz')
-    with raises(CompilationError):
-        next(objs)
