@@ -50,7 +50,7 @@ def test_load_from_path_not_found(mocker):
 
 
 def test_load_from_path(mocker):
-    content = StringIO('!include inner/included.yml')
+    content = StringIO('!include inner/foo.yml')
     included_content = StringIO('foo')
 
     open_mock = mocker.patch('builtins.open')
@@ -63,7 +63,7 @@ def test_load_from_path(mocker):
     assert included_content.closed
     open_mock.assert_has_calls([
         call('path/to/scenario.yml'),
-        call('path/to/inner/included.yml'),
+        call('path/to/inner/foo.yml'),
     ])
 
 
@@ -76,14 +76,23 @@ def test_load_all_from_path_not_found(mocker):
 
 
 def test_load_all_from_path(mocker):
-    open_mock = mocker.patch('builtins.open')
-    open_mock.return_value = StringIO('1\n---\n2\n---\n!argument foo')
+    content = StringIO('1\n---\n!include inner/foo.yml\n---\n!x\n---\n2\n')
+    included_content = StringIO('foo')
 
-    actual = load_all_from_path('path/to/foo.yaml')
+    open_mock = mocker.patch('builtins.open')
+    open_mock.side_effect = [content, included_content]
+
+    actual = load_all_from_path('path/to/scenario.yml')
     assert next(actual) == 1
-    assert next(actual) == 2
-    assert next(actual).key == 'foo'
+    assert next(actual) == 'foo'
+    with raises(CompilationError):
+        next(actual)
     with raises(StopIteration):
         next(actual)
 
-    open_mock.assert_called_once_with('path/to/foo.yaml')
+    assert content.closed
+    assert included_content.closed
+    open_mock.assert_has_calls([
+        call('path/to/scenario.yml'),
+        call('path/to/inner/foo.yml'),
+    ])
