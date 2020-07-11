@@ -26,20 +26,21 @@ def test_given_datetime_that_is_offset_aware():
     assert actual.tzinfo
 
 
-@mark.parametrize('content', [
-    '!relative_datetime []',
-    '!relative_datetime {}',
-    '!relative_datetime invalid',
+@mark.parametrize(('content', 'expected_message'), [
+    ('!relative_datetime []', '", line 1, column 1'),
+    ('!relative_datetime {}', '", line 1, column 1'),
+    ('- !relative_datetime invalid', '", line 1, column 3'),
 ])
-def test_given_invalid_relative_datetime(content):
-    io = StringIO(content)
-    with raises(CompilationError):
-        load(io)
+def test_given_invalid_relative_datetime(content, expected_message):
+    stream = StringIO(content)
+    with raises(CompilationError) as error_info:
+        load(stream)
+    assert expected_message in str(error_info.value)
 
 
 def test_given_a_valid_relative_datetime():
-    io = StringIO('!relative_datetime -1 hour')
-    actual = load(io)
+    stream = StringIO('!relative_datetime -1 hour')
+    actual = load(stream)
     assert isinstance(actual, RelativeDatetime)
 
     now = datetime.now()
@@ -48,10 +49,10 @@ def test_given_a_valid_relative_datetime():
 
 
 def test_given_a_valid_full_relative_datetime():
-    io = StringIO('!relative_datetime {delta: -1 minute, format: "%H:%M:%S"}')
-    actual = load(io)
+    stream = StringIO('!relative_datetime {delta: -1 minute, format: "%M:%S"}')
+    actual = load(stream)
     assert isinstance(actual, RelativeDatetime)
 
     now = datetime(2020, 1, 23, 12, 34, 56)
     resolved = actual.resolve(ValueContext(origin_datetime=now))
-    assert resolved.formatted == '12:33:56'
+    assert resolved.formatted == '33:56'
