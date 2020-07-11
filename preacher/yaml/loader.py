@@ -6,13 +6,7 @@ import re
 from contextlib import contextmanager
 from typing import Iterator, TextIO, Union
 
-from yaml import (
-    Node,
-    BaseLoader,
-    MarkedYAMLError,
-    load as yaml_load,
-    load_all as yaml_load_all,
-)
+from yaml import Node, BaseLoader, MarkedYAMLError, load, load_all
 from yaml.composer import Composer
 from yaml.constructor import SafeConstructor
 from yaml.parser import Parser
@@ -58,7 +52,7 @@ class Loader:
     def load(self, stream: TextIO, origin: PathLike = '.') -> object:
         try:
             with self._on_origin(origin):
-                return yaml_load(stream, self._Loader)
+                return load(stream, self._Loader)
         except MarkedYAMLError as error:
             raise YamlError(cause=error)
 
@@ -73,7 +67,7 @@ class Loader:
     def load_all(self, stream: TextIO, origin: PathLike = '.') -> Iterator:
         try:
             with self._on_origin(origin):
-                yield from yaml_load_all(stream, self._Loader)
+                yield from load_all(stream, self._Loader)
         except MarkedYAMLError as error:
             raise YamlError(cause=error)
 
@@ -87,6 +81,7 @@ class Loader:
 
     def _include(self, loader: BaseLoader, node: Node) -> object:
         obj = loader.construct_scalar(node)
+
         with on_node(node):
             base = compile_str(obj)
             path = os.path.join(self._origin, base)
