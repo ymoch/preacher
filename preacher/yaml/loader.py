@@ -23,7 +23,7 @@ from yaml.scanner import Scanner
 from preacher.compilation.util import compile_str
 from .argument import construct_argument
 from .datetime import construct_relative_datetime
-from .error import YamlError
+from .error import YamlError, on_node
 
 PathLike = Union[str, os.PathLike]
 
@@ -86,13 +86,14 @@ class Loader:
             raise YamlError(cause=error)
 
     def _include(self, loader: BaseLoader, node: Node) -> object:
-        base = compile_str(loader.construct_scalar(node))
-
-        path = os.path.join(self._origin, base)
-        if WILDCARDS_REGEX.match(path):
-            paths = glob.iglob(path, recursive=True)
-            return [self.load_from_path(p) for p in paths]
-        return self.load_from_path(path)
+        obj = loader.construct_scalar(node)
+        with on_node(node):
+            base = compile_str(obj)
+            path = os.path.join(self._origin, base)
+            if WILDCARDS_REGEX.match(path):
+                paths = glob.iglob(path, recursive=True)
+                return [self.load_from_path(p) for p in paths]
+            return self.load_from_path(path)
 
     @contextmanager
     def _on_origin(self, origin: PathLike) -> Iterator:

@@ -4,8 +4,7 @@ from io import StringIO
 from pytest import mark, raises
 
 from preacher.core.interpretation import RelativeDatetime, ValueContext
-from preacher.yaml import load
-from preacher.yaml.error import YamlError
+from preacher.yaml import YamlError, load
 
 
 def test_given_datetime_that_is_offset_naive():

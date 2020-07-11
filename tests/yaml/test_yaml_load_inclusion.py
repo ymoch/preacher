@@ -3,7 +3,7 @@ from io import StringIO
 
 from pytest import mark, raises
 
-from preacher.yaml import load, YamlError
+from preacher.yaml import YamlError, load
 
 
 @mark.parametrize(('content', 'expected_message'), [
@@ -15,6 +15,20 @@ def test_given_invalid_inclusion(content, expected_message):
     with raises(YamlError) as error_info:
         load(stream)
     assert expected_message in str(error_info.value)
+
+
+def test_given_recursive_inclusion_error(mocker):
+    included_stream = StringIO('\n !foo')
+    open_mock = mocker.patch('builtins.open')
+    open_mock.return_value = included_stream
+
+    stream = StringIO('!include foo.yml')
+    with raises(YamlError) as error_info:
+        load(stream)
+    message = str(error_info.value)
+    assert '!foo' in message
+    assert '", line 1, column 1' in message
+    assert '", line 2, column 2' in message
 
 
 def test_given_recursive_inclusion(mocker):
