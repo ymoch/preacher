@@ -41,7 +41,6 @@ class CompilationError(Exception):
         child: Optional[CompilationError] = None,
         cause: Optional[Exception] = None,
     ):
-        super().__init__(message)
         self._message = message
         self._node = node
         self._child = child
@@ -64,9 +63,12 @@ class CompilationError(Exception):
             child=self,
         )
 
-    @staticmethod
-    def wrap(error: Exception) -> CompilationError:
-        return CompilationError(message=str(error), cause=error)
+    def __str__(self) -> str:
+        lines = [self._message]
+        path = self.path
+        if path:
+            lines.append(f'  in {render_path(path)}')
+        return '\n'.join(lines)
 
 
 @contextmanager
