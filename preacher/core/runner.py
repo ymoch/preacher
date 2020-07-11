@@ -44,5 +44,5 @@ class ScenarioRunner:
             status = status.merge(result.status)
             listener.on_scenario(result)
 
-        listener.on_end()
+        listener.on_end(status)
         return status

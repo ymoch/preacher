@@ -1,7 +1,7 @@
 from typing import List
 
 from preacher.core.response import Response
-from preacher.core.scenario import ScenarioListener, ScenarioResult
+from preacher.core.scenario import ScenarioListener, ScenarioResult, Status
 
 
 class Listener(ScenarioListener):
@@ -10,7 +10,7 @@ class Listener(ScenarioListener):
     Default implementations do nothing.
     """
 
-    def on_end(self) -> None:
+    def on_end(self, status: Status) -> None:
         pass
 
     def on_scenario(self, result: ScenarioResult) -> None:
@@ -33,6 +33,6 @@ class MergingListener(Listener):
         for listener in self._listeners:
             listener.on_scenario(result)
 
-    def on_end(self) -> None:
+    def on_end(self, status: Status) -> None:
         for listener in self._listeners:
-            listener.on_end()
+            listener.on_end(status)

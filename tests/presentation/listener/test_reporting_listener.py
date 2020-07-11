@@ -15,7 +15,7 @@ def reporter():
 
 def test_given_no_item(reporter):
     listener = ReportingListener(reporter)
-    listener.on_end()
+    listener.on_end(sentinel.status)
 
     reporter.export_response.assert_not_called()
     reporter.export_results.assert_called_once_with([])
@@ -28,7 +28,7 @@ def test_given_items(reporter):
     listener.on_response(sentinel.response2)
     listener.on_response(sentinel.response3)
     listener.on_scenario(sentinel.scenario2)
-    listener.on_end()
+    listener.on_end(sentinel.status)
 
     reporter.export_response.assert_has_calls([
         call(sentinel.response1),

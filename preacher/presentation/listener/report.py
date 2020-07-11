@@ -4,7 +4,7 @@ from typing import List
 
 from preacher.core.listener import Listener
 from preacher.core.response import Response
-from preacher.core.scenario import ScenarioResult
+from preacher.core.scenario import ScenarioResult, Status
 from preacher.presentation.report import Reporter
 
 
@@ -20,7 +20,7 @@ class ReportingListener(Listener):
     def on_scenario(self, result: ScenarioResult) -> None:
         self._results.append(result)
 
-    def on_end(self) -> None:
+    def on_end(self, status: Status) -> None:
         self._reporter.export_results(self._results)
 
     @staticmethod

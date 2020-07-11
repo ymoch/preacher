@@ -31,6 +31,6 @@ def test_on_scenario(merging_listener, listeners):
 
 
 def test_on_end(merging_listener, listeners):
-    merging_listener.on_end()
+    merging_listener.on_end(sentinel.status)
     for listener in listeners:
-        listener.on_end.assert_called_once_with()
+        listener.on_end.assert_called_once_with(sentinel.status)
