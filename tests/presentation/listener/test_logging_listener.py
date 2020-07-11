@@ -10,8 +10,10 @@ def test_on_scenario():
     reporter = MagicMock(Logger)
     listener = LoggingListener(reporter)
     listener.on_scenario(sentinel.result)
+    listener.on_end(sentinel.status)
 
     reporter.show_scenario_result.assert_called_once_with(sentinel.result)
+    reporter.show_status.assert_called_once_with(sentinel.status)
 
 
 @patch(f'{PACKAGE}.LoggingListener', return_value=sentinel.listener)

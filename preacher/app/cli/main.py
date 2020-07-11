@@ -7,33 +7,22 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import chain
 from typing import Iterable
 
-from preacher.compilation import (
-    create_compiler,
-    CompilationError,
-)
+from preacher.compilation import CompilationError, create_compiler
 from preacher.core.listener import MergingListener
 from preacher.core.runner import ScenarioRunner
 from preacher.presentation.listener import LoggingListener, ReportingListener
 from preacher.yaml import YamlError, load_all, load_all_from_path
-from .log import ColoredFormatter
+from .log import get_logger
 from .option import parse_args
 
-FORMATTER = ColoredFormatter()
-HANDLER = logging.StreamHandler()
-HANDLER.setFormatter(FORMATTER)
-LOGGER = logging.getLogger(__name__)
-LOGGER.addHandler(HANDLER)
+LOGGER = get_logger(__name__, logging.WARNING)
 
 
 def _main() -> bool:
     """Main."""
     args = parse_args(environ=os.environ)
 
-    level = args.level
-    HANDLER.setLevel(level)
-    LOGGER.setLevel(level)
-
-    app = ScenarioRunner(
+    runner = ScenarioRunner(
         base_url=args.url,
         retry=args.retry,
         delay=args.delay,
@@ -45,7 +34,7 @@ def _main() -> bool:
             load_all_from_path(path) for path in args.scenario
         )
     else:
-        objs = list(load_all(sys.stdin))
+        objs = load_all(sys.stdin)
 
     compiler = create_compiler()
     scenarios = (
@@ -54,12 +43,14 @@ def _main() -> bool:
     )
 
     listener = MergingListener()
-    listener.append(LoggingListener.from_logger(LOGGER))
+    listener.append(LoggingListener.from_logger(
+        get_logger(f'{__name__}.report', args.level)
+    ))
     if args.report:
         listener.append(ReportingListener.from_path(args.report))
 
     with ThreadPoolExecutor(args.concurrency) as executor:
-        status = app.run(executor, scenarios, listener=listener)
+        status = runner.run(executor, scenarios, listener=listener)
 
     return status.is_succeeded
 

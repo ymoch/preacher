@@ -44,8 +44,6 @@ class Logger:
             for subscenario in scenario.subscenarios.items:
                 self.show_scenario_result(subscenario)
 
-        self._log(level, '')
-
     def show_case_result(self, case: CaseResult) -> None:
         status = case.status
         level = _LEVEL_MAP[status]
@@ -103,6 +101,10 @@ class Logger:
         with self._nested():
             for idx, child in enumerate(verification.children):
                 self.show_verification(child, f'{child_label} {idx + 1}')
+
+    def show_status(self, status: Status) -> None:
+        level = _LEVEL_MAP[status]
+        self._log(level, '%s', status)
 
     def _log(self, level: int, message: str, *args) -> None:
         self._logger.log(level, self._indent + message, *args)
