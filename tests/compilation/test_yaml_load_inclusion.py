@@ -8,8 +8,8 @@ from preacher.compilation.yaml import load
 
 
 @mark.parametrize(('content', 'expected_message'), [
-    ('!include []', 'string'),
-    ('!include {}', 'string'),
+    ('!include []', '", line 1, column 1'),
+    ('!include {}', '", line 1, column 1'),
 ])
 def test_given_invalid_inclusion(content, expected_message):
     stream = StringIO(content)

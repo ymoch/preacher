@@ -7,8 +7,8 @@ from preacher.compilation.yaml import load
 
 
 @mark.parametrize(('content', 'expected_message'), [
-    ('!argument []', 'string'),
-    ('!argument {}', 'string'),
+    ('!argument []', '", line 1, column 1'),
+    ('!argument {}', '", line 1, column 1'),
 ])
 def test_given_invalid_arguments(content, expected_message):
     stream = StringIO(content)

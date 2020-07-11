@@ -3,10 +3,8 @@ from unittest.mock import call
 
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
+from preacher.compilation.error import CompilationError
 from preacher.compilation.yaml import (
-    PathLike,
-    _Resolvable,
     load,
     load_from_path,
     load_all,
@@ -14,27 +12,17 @@ from preacher.compilation.yaml import (
 )
 
 
-def test_resolvable_interface():
-    class _Incomplete(_Resolvable):
-        def resolve(self, origin: PathLike) -> object:
-            return super().resolve(origin)
-
-    resolvable = _Incomplete()
-    with raises(NotImplementedError):
-        resolvable.resolve('')
-
-
-@mark.parametrize(('content', 'expected_path'), (
-    ('!invalid', []),
-    ('- !argument {}', [IndexedNode(0)]),
-    ('{key: !argument []}', [NamedNode('key')]),
-    ('{key: [!argument {}]}', [NamedNode('key'), IndexedNode(0)]),
+@mark.parametrize(('content', 'expected_message'), (
+    ('!invalid', '", line 1, column 1'),
+    ('- !argument {}', '", line 1, column 3'),
+    ('\nkey: !argument []\n', '", line 2, column 6'),
+    ('key:\n- !argument {}', '", line 2, column 3'),
 ))
-def test_load_given_invalid_content(content, expected_path):
+def test_load_given_invalid_content(content, expected_message):
     stream = StringIO(content)
     with raises(CompilationError) as error_info:
         load(stream)
-    assert error_info.value.path == expected_path
+    assert expected_message in str(error_info.value)
 
 
 def test_load_all(mocker):

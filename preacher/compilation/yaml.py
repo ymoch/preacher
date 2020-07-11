@@ -3,9 +3,9 @@ from __future__ import annotations
 import glob
 import os
 import re
-from abc import ABC
-from collections.abc import Mapping
-from typing import Iterator, TextIO, Union
+from contextlib import contextmanager
+from datetime import timedelta
+from typing import Iterator, Optional, TextIO, Union
 
 from yaml import (
     Node,
@@ -23,11 +23,12 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
+from preacher.core.datetime import DatetimeFormat
 from preacher.core.interpretation import RelativeDatetime
 from .argument import ArgumentValue
 from .datetime import compile_datetime_format, compile_timedelta
 from .error import CompilationError
-from .util import run_recursively
+from .util import compile_str
 
 PathLike = Union[str, os.PathLike]
 
@@ -37,134 +38,149 @@ _KEY_DELTA = 'delta'
 _KEY_FORMAT = 'format'
 
 
-class _Resolvable(ABC):
+def _argument(loader: BaseLoader, node: Node) -> ArgumentValue:
+    obj = loader.construct_scalar(node)
+    with _on_node(node):
+        key = compile_str(obj)
+    return ArgumentValue(key)
 
-    def resolve(self, origin: PathLike) -> object:
-        raise NotImplementedError()
+
+def _relative_datetime(loader: BaseLoader, node: Node) -> RelativeDatetime:
+    if isinstance(node, ScalarNode):
+        return _relative_datetime_of_scalar(loader, node)
+    elif isinstance(node, MappingNode):
+        return _relative_datetime_of_mapping(loader, node)
+    else:
+        with _on_node(node):
+            raise CompilationError('Invalid relative datetime value format')
 
 
-class _Inclusion(_Resolvable):
+def _relative_datetime_of_scalar(
+    loader: BaseLoader,
+    node: ScalarNode,
+) -> RelativeDatetime:
+    obj = loader.construct_scalar(node)
+    with _on_node(node):
+        delta = compile_timedelta(obj)
+    return RelativeDatetime(delta)
 
-    def __init__(self, obj: object):
-        self._obj = obj
 
-    def resolve(self, origin: PathLike) -> object:
-        obj = self._obj
-        if not isinstance(obj, str):
-            raise CompilationError(f'Must be a string, given {type(obj)}')
+def _relative_datetime_of_mapping(
+    loader: BaseLoader,
+    node: MappingNode,
+) -> RelativeDatetime:
+    delta: Optional[timedelta] = None
+    format: Optional[DatetimeFormat] = None
 
-        path = os.path.join(origin, obj)
+    for key_node, value_node in node.value:
+        if key_node.value == _KEY_DELTA:
+            obj = loader.construct_scalar(value_node)
+            with _on_node(value_node):
+                delta = compile_timedelta(obj)
+            continue
+        if key_node.value == _KEY_FORMAT:
+            obj = loader.construct_scalar(value_node)
+            with _on_node(node):
+                format = compile_datetime_format(obj)
+            continue
+
+    return RelativeDatetime(delta, format)
+
+
+@contextmanager
+def _on_node(node: Node) -> Iterator:
+    try:
+        yield
+    except CompilationError as error:
+        mark = node.start_mark
+        msg = str(error)
+        msg += f'\n  on "{mark.name}", line {mark.line + 1}'
+        msg += f', column {mark.column + 1}'
+        raise CompilationError(msg, cause=error)
+
+
+class _YamlLoader:
+
+    def __init__(self):
+        self._origin = '.'
+
+        class _Ctor(SafeConstructor):
+            pass
+
+        _Ctor.add_constructor('!include', self._include)
+        _Ctor.add_constructor('!argument', _argument)
+        _Ctor.add_constructor('!relative_datetime', _relative_datetime)
+
+        class _MyLoader(Reader, Scanner, Parser, Composer, _Ctor, Resolver):
+            def __init__(self, stream):
+                Reader.__init__(self, stream)
+                Scanner.__init__(self)
+                Parser.__init__(self)
+                Composer.__init__(self)
+                SafeConstructor.__init__(self)
+
+        self._Loader = _MyLoader
+
+    def load(self, stream: TextIO, origin: PathLike = '.') -> object:
+        try:
+            with self._on_origin(origin):
+                return yaml_load(stream, self._Loader)
+        except MarkedYAMLError as error:
+            raise CompilationError.wrap(error)
+
+    def load_from_path(self, path: PathLike) -> object:
+        origin = os.path.dirname(path)
+        try:
+            with open(path) as stream:
+                return self.load(stream, origin)
+        except FileNotFoundError as error:
+            raise CompilationError.wrap(error)
+
+    def load_all(self, stream: TextIO, origin: PathLike = '.') -> Iterator:
+        try:
+            with self._on_origin(origin):
+                yield from yaml_load_all(stream, self._Loader)
+        except MarkedYAMLError as error:
+            raise CompilationError.wrap(error)
+
+    def load_all_from_path(self, path: PathLike) -> Iterator:
+        origin = os.path.dirname(path)
+        try:
+            with open(path) as stream:
+                yield from self.load_all(stream, origin)
+        except FileNotFoundError as error:
+            raise CompilationError.wrap(error)
+
+    def _include(self, loader: BaseLoader, node: Node) -> object:
+        base = compile_str(loader.construct_scalar(node))
+
+        path = os.path.join(self._origin, base)
         if WILDCARDS_REGEX.match(path):
             paths = glob.iglob(path, recursive=True)
             return [load_from_path(p) for p in paths]
         return load_from_path(path)
 
-    @staticmethod
-    def from_yaml(_loader: BaseLoader, node: Node) -> _Inclusion:
-        return _Inclusion(node.value)
-
-
-class _ArgumentValue(_Resolvable):
-
-    def __init__(self, obj: object):
-        self._obj = obj
-
-    def resolve(self, origin: PathLike) -> ArgumentValue:
-        obj = self._obj
-        if not isinstance(obj, str):
-            raise CompilationError(f'Must be a key string, given {type(obj)}')
-        return ArgumentValue(obj)
-
-    @staticmethod
-    def from_yaml(_loader: BaseLoader, node: Node) -> _ArgumentValue:
-        return _ArgumentValue(node.value)
-
-
-class _RelativeDatetime(_Resolvable):
-
-    def __init__(self, obj: Mapping):
-        self._obj = obj
-
-    def resolve(self, origin: PathLike) -> RelativeDatetime:
-        obj = self._obj
-        delta = compile_timedelta(obj.get(_KEY_DELTA))
-        fmt = compile_datetime_format(obj.get(_KEY_FORMAT))
-        return RelativeDatetime(delta, fmt)
-
-    @staticmethod
-    def from_yaml(loader: BaseLoader, node: Node) -> _RelativeDatetime:
-        if isinstance(node, ScalarNode):
-            return _RelativeDatetime({_KEY_DELTA: node.value})
-        if isinstance(node, MappingNode):
-            return _RelativeDatetime(loader.construct_mapping(node))
-        raise CompilationError('Invalid relative datetime value format')
-
-
-class _Constructor(SafeConstructor):
-    pass
-
-
-_Constructor.add_constructor('!include', _Inclusion.from_yaml)
-_Constructor.add_constructor('!argument', _ArgumentValue.from_yaml)
-_Constructor.add_constructor('!relative_datetime', _RelativeDatetime.from_yaml)
-
-
-class _Loader(Reader, Scanner, Parser, Composer, _Constructor, Resolver):
-
-    def __init__(self, stream):
-        Reader.__init__(self, stream)
-        Scanner.__init__(self)
-        Parser.__init__(self)
-        Composer.__init__(self)
-        SafeConstructor.__init__(self)
-
-
-def _resolve(obj: object, origin: PathLike) -> object:
-    if isinstance(obj, _Resolvable):
-        return obj.resolve(origin)
-    return obj
+    @contextmanager
+    def _on_origin(self, origin: PathLike) -> Iterator:
+        original = self._origin
+        self._origin = origin
+        try:
+            yield
+        finally:
+            self._origin = original
 
 
 def load(stream: TextIO, origin: PathLike = '.') -> object:
-    try:
-        obj = yaml_load(stream, Loader=_Loader)
-    except MarkedYAMLError as error:
-        raise CompilationError.wrap(error)
-
-    return run_recursively(lambda o: _resolve(o, origin), obj)
+    return _YamlLoader().load(stream, origin)
 
 
 def load_from_path(path: PathLike) -> object:
-    origin = os.path.dirname(path)
-    try:
-        with open(path) as f:
-            return load(f, origin)
-    except FileNotFoundError as error:
-        raise CompilationError.wrap(error)
+    return _YamlLoader().load_from_path(path)
 
 
-def _yaml_load_all(stream: TextIO):
-    """
-    Wrap `yaml_load_all` to handle errors.
-    """
-    try:
-        for obj in yaml_load_all(stream, Loader=_Loader):
-            yield obj
-    except MarkedYAMLError as error:
-        raise CompilationError.wrap(error)
+def load_all(stream: TextIO, origin: PathLike = '.') -> Iterator:
+    return _YamlLoader().load_all(stream, origin)
 
 
-def load_all(stream: TextIO, origin: PathLike = '.') -> Iterator[object]:
-    return (
-        run_recursively(lambda o: _resolve(o, origin), obj)
-        for obj in _yaml_load_all(stream)
-    )
-
-
-def load_all_from_path(path: str) -> Iterator[object]:
-    origin = os.path.dirname(path)
-    try:
-        with open(path) as f:
-            yield from load_all(f, origin=origin)
-    except FileNotFoundError as error:
-        raise CompilationError.wrap(error)
+def load_all_from_path(path: PathLike) -> Iterator:
+    return _YamlLoader().load_all_from_path(path)
