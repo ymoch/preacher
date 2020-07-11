@@ -5,10 +5,11 @@ YAML handling.
 from typing import TextIO, Iterator
 
 from .error import YamlError
-from .loader import PathLike, Loader
+from .loader import Loader, PathLike
 
 __all__ = [
     'YamlError',
+    'PathLike',
     'load',
     'load_from_path',
     'load_all',

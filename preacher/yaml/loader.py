@@ -1,4 +1,4 @@
-from __future__ import annotations
+"""YAML loaders."""
 
 import glob
 import os
@@ -21,7 +21,7 @@ from .error import YamlError, on_node
 
 PathLike = Union[str, os.PathLike]
 
-WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
+_WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
 
 
 class Loader:
@@ -85,7 +85,7 @@ class Loader:
         with on_node(node):
             base = compile_str(obj)
             path = os.path.join(self._origin, base)
-            if WILDCARDS_REGEX.match(path):
+            if _WILDCARDS_REGEX.match(path):
                 paths = glob.iglob(path, recursive=True)
                 return [self.load_from_path(p) for p in paths]
             return self.load_from_path(path)
