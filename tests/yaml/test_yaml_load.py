@@ -4,12 +4,7 @@ from unittest.mock import call
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.yaml import (
-    load,
-    load_from_path,
-    load_all,
-    load_all_from_path,
-)
+from preacher.yaml import load, load_from_path, load_all, load_all_from_path
 
 
 @mark.parametrize(('content', 'expected_message'), (

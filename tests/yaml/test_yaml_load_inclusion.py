@@ -4,7 +4,7 @@ from io import StringIO
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.yaml import load
+from preacher.yaml import load
 
 
 @mark.parametrize(('content', 'expected_message'), [

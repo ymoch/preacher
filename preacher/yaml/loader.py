@@ -23,12 +23,13 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
+from preacher.compilation.argument import ArgumentValue
+from preacher.compilation.datetime import compile_datetime_format, compile_timedelta
+from preacher.compilation.error import CompilationError
+from preacher.compilation.util import compile_str
 from preacher.core.datetime import DatetimeFormat
 from preacher.core.interpretation import RelativeDatetime
-from .argument import ArgumentValue
-from .datetime import compile_datetime_format, compile_timedelta
-from .error import CompilationError
-from .util import compile_str
+from preacher.yaml import load_from_path
 
 PathLike = Union[str, os.PathLike]
 
@@ -99,7 +100,7 @@ def _on_node(node: Node) -> Iterator:
         raise CompilationError(msg, cause=error)
 
 
-class _YamlLoader:
+class Loader:
 
     def __init__(self):
         self._origin = '.'
@@ -168,19 +169,3 @@ class _YamlLoader:
             yield
         finally:
             self._origin = original
-
-
-def load(stream: TextIO, origin: PathLike = '.') -> object:
-    return _YamlLoader().load(stream, origin)
-
-
-def load_from_path(path: PathLike) -> object:
-    return _YamlLoader().load_from_path(path)
-
-
-def load_all(stream: TextIO, origin: PathLike = '.') -> Iterator:
-    return _YamlLoader().load_all(stream, origin)
-
-
-def load_all_from_path(path: PathLike) -> Iterator:
-    return _YamlLoader().load_all_from_path(path)
