@@ -4,13 +4,10 @@ import glob
 import os
 import re
 from contextlib import contextmanager
-from datetime import timedelta
-from typing import Iterator, Optional, TextIO, Union
+from typing import Iterator, TextIO, Union
 
 from yaml import (
     Node,
-    MappingNode,
-    ScalarNode,
     BaseLoader,
     MarkedYAMLError,
     load as yaml_load,
@@ -23,71 +20,14 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.compilation.argument import ArgumentValue
-from preacher.compilation.datetime import (
-    compile_datetime_format,
-    compile_timedelta,
-)
 from preacher.compilation.util import compile_str
-from preacher.core.datetime import DatetimeFormat
-from preacher.core.interpretation import RelativeDatetime
-from .error import YamlError, on_node
+from .argument import construct_argument
+from .datetime import construct_relative_datetime
+from .error import YamlError
 
 PathLike = Union[str, os.PathLike]
 
 WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
-
-_KEY_DELTA = 'delta'
-_KEY_FORMAT = 'format'
-
-
-def _argument(loader: BaseLoader, node: Node) -> ArgumentValue:
-    obj = loader.construct_scalar(node)
-    with on_node(node):
-        key = compile_str(obj)
-    return ArgumentValue(key)
-
-
-def _relative_datetime(loader: BaseLoader, node: Node) -> RelativeDatetime:
-    if isinstance(node, ScalarNode):
-        return _relative_datetime_of_scalar(loader, node)
-    elif isinstance(node, MappingNode):
-        return _relative_datetime_of_mapping(loader, node)
-    else:
-        message = 'Invalid relative datetime value format'
-        raise YamlError(message, mark=node.start_mark)
-
-
-def _relative_datetime_of_scalar(
-    loader: BaseLoader,
-    node: ScalarNode,
-) -> RelativeDatetime:
-    obj = loader.construct_scalar(node)
-    with on_node(node):
-        delta = compile_timedelta(obj)
-    return RelativeDatetime(delta)
-
-
-def _relative_datetime_of_mapping(
-    loader: BaseLoader,
-    node: MappingNode,
-) -> RelativeDatetime:
-    delta: Optional[timedelta] = None
-    format: Optional[DatetimeFormat] = None
-
-    for key_node, value_node in node.value:
-        if key_node.value == _KEY_DELTA:
-            obj = loader.construct_scalar(value_node)
-            with on_node(value_node):
-                delta = compile_timedelta(obj)
-            continue
-        if key_node.value == _KEY_FORMAT:
-            obj = loader.construct_scalar(value_node)
-            with on_node(node):
-                format = compile_datetime_format(obj)
-            continue
-
-    return RelativeDatetime(delta, format)
 
 
 class Loader:
@@ -99,8 +39,11 @@ class Loader:
             pass
 
         _Ctor.add_constructor('!include', self._include)
-        _Ctor.add_constructor('!argument', _argument)
-        _Ctor.add_constructor('!relative_datetime', _relative_datetime)
+        _Ctor.add_constructor('!argument', construct_argument)
+        _Ctor.add_constructor(
+            '!relative_datetime',
+            construct_relative_datetime,
+        )
 
         class _MyLoader(Reader, Scanner, Parser, Composer, _Ctor, Resolver):
             def __init__(self, stream):
