@@ -3,9 +3,9 @@ from __future__ import annotations
 import glob
 import os
 import re
-from collections.abc import Mapping
 from contextlib import contextmanager
-from typing import Iterator, TextIO, Union
+from datetime import timedelta
+from typing import Iterator, Optional, TextIO, Union
 
 from yaml import (
     Node,
@@ -26,8 +26,9 @@ from yaml.scanner import Scanner
 from preacher.core.interpretation import RelativeDatetime
 from .argument import ArgumentValue
 from .datetime import compile_datetime_format, compile_timedelta
-from .error import CompilationError, on_key
+from .error import CompilationError
 from .util import compile_str
+from ..core.datetime import DatetimeFormat
 
 PathLike = Union[str, os.PathLike]
 
@@ -46,27 +47,44 @@ def _argument(loader: BaseLoader, node: Node) -> ArgumentValue:
 
 def _relative_datetime(loader: BaseLoader, node: Node) -> RelativeDatetime:
     if isinstance(node, ScalarNode):
-        print('scalar', node)
-        value = loader.construct_scalar(node)
-        with _on_node(node):
-            return _compile_relative_datetime({_KEY_DELTA: value})
+        return _relative_datetime_of_scalar(loader, node)
     elif isinstance(node, MappingNode):
-        print('mapping', node)
-        obj = loader.construct_mapping(node)
-        with _on_node(node):
-            return _compile_relative_datetime(obj)
+        return _relative_datetime_of_mapping(loader, node)
     else:
-        print('other', node)
         with _on_node(node):
             raise CompilationError('Invalid relative datetime value format')
 
 
-def _compile_relative_datetime(obj: Mapping) -> RelativeDatetime:
-    with on_key(_KEY_DELTA):
-        delta = compile_timedelta(obj.get(_KEY_DELTA))
-    with on_key(_KEY_FORMAT):
-        fmt = compile_datetime_format(obj.get(_KEY_FORMAT))
-    return RelativeDatetime(delta, fmt)
+def _relative_datetime_of_scalar(
+    loader: BaseLoader,
+    node: ScalarNode,
+) -> RelativeDatetime:
+    obj = loader.construct_scalar(node)
+    with _on_node(node):
+        delta = compile_timedelta(obj)
+    return RelativeDatetime(delta)
+
+
+def _relative_datetime_of_mapping(
+    loader: BaseLoader,
+    node: MappingNode,
+) -> RelativeDatetime:
+    delta: Optional[timedelta] = None
+    format: Optional[DatetimeFormat] = None
+
+    for key_node, value_node in node.value:
+        if key_node.value == _KEY_DELTA:
+            obj = loader.construct_scalar(value_node)
+            with _on_node(value_node):
+                delta = compile_timedelta(obj)
+            continue
+        if key_node.value == _KEY_FORMAT:
+            obj = loader.construct_scalar(value_node)
+            with _on_node(node):
+                format = compile_datetime_format(obj)
+            continue
+
+    return RelativeDatetime(delta, format)
 
 
 @contextmanager

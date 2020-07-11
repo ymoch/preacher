@@ -32,7 +32,7 @@ def compile_timedelta(obj: object) -> timedelta:
     """
     obj = compile_str(obj)
     normalized = obj.strip().lower()
-    if normalized == 'now':
+    if not normalized or normalized == 'now':
         return timedelta()
 
     match = TIMEDELTA_PATTERN.match(normalized)

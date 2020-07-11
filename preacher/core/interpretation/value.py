@@ -40,8 +40,12 @@ class StaticValue(Value[T]):
 
 class RelativeDatetime(Value[DatetimeWithFormat]):
 
-    def __init__(self, delta: timedelta, fmt: Optional[DatetimeFormat] = None):
-        self._delta = delta
+    def __init__(
+        self,
+        delta: Optional[timedelta] = None,
+        fmt: Optional[DatetimeFormat] = None,
+    ):
+        self._delta = delta or timedelta()
         self._fmt = fmt or ISO8601
 
     def resolve(

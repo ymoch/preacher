@@ -61,6 +61,7 @@ def test_compile_timedelta_given_an_invalid_format(value):
 
 
 @mark.parametrize('value, expected', (
+    ('', timedelta()),
     ('now', timedelta()),
     (' now ', timedelta()),
     ('0day', timedelta()),

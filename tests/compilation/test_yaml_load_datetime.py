@@ -28,8 +28,9 @@ def test_given_datetime_that_is_offset_aware():
 
 @mark.parametrize(('content', 'expected_message'), [
     ('!relative_datetime []', '", line 1, column 1'),
-    ('!relative_datetime {}', '", line 1, column 1'),
-    ('- !relative_datetime invalid', '", line 1, column 3'),
+    ('\n- !relative_datetime invalid', '", line 2, column 3'),
+    ('!relative_datetime {delta: invalid}', '", line 1, column 28'),
+    ('!relative_datetime {format: {}}', '", line 1, column 29')
 ])
 def test_given_invalid_relative_datetime(content, expected_message):
     stream = StringIO(content)
@@ -38,9 +39,17 @@ def test_given_invalid_relative_datetime(content, expected_message):
     assert expected_message in str(error_info.value)
 
 
-def test_given_a_valid_relative_datetime():
-    stream = StringIO('!relative_datetime -1 hour')
-    actual = load(stream)
+def test_given_an_empty_relative_datetime():
+    actual = load(StringIO('!relative_datetime'))
+    assert isinstance(actual, RelativeDatetime)
+
+    now = datetime.now()
+    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    assert resolved.value == now
+
+
+def test_given_a_valid_string_relative_datetime():
+    actual = load(StringIO('!relative_datetime -1 hour'))
     assert isinstance(actual, RelativeDatetime)
 
     now = datetime.now()
@@ -48,11 +57,25 @@ def test_given_a_valid_relative_datetime():
     assert resolved.value == now - timedelta(hours=1)
 
 
-def test_given_a_valid_full_relative_datetime():
-    stream = StringIO('!relative_datetime {delta: -1 minute, format: "%M:%S"}')
-    actual = load(stream)
+def test_given_an_empty_mapping_relative_datetime():
+    actual = load(StringIO('!relative_datetime {}'))
+    assert isinstance(actual, RelativeDatetime)
+
+    now = datetime.now()
+    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    assert resolved.value == now
+
+
+def test_given_a_filled_mapping_relative_datetime():
+    content = '\n'.join([
+        '!relative_datetime',
+        '  delta: -1 minute',
+        '  format: "%H:%M:%S"',
+        '  foo: bar',  # Invalid one will be ignored.
+    ])
+    actual = load(StringIO(content))
     assert isinstance(actual, RelativeDatetime)
 
     now = datetime(2020, 1, 23, 12, 34, 56)
     resolved = actual.resolve(ValueContext(origin_datetime=now))
-    assert resolved.formatted == '33:56'
+    assert resolved.formatted == '12:33:56'
