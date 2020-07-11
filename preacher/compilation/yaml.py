@@ -23,12 +23,12 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
+from preacher.core.datetime import DatetimeFormat
 from preacher.core.interpretation import RelativeDatetime
 from .argument import ArgumentValue
 from .datetime import compile_datetime_format, compile_timedelta
 from .error import CompilationError
 from .util import compile_str
-from ..core.datetime import DatetimeFormat
 
 PathLike = Union[str, os.PathLike]
 
