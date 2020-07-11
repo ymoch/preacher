@@ -10,7 +10,7 @@ from yaml import Mark, Node, MarkedYAMLError
 from preacher.compilation import CompilationError
 
 
-class YamlError:
+class YamlError(Exception):
 
     def __init__(
         self,
@@ -22,19 +22,13 @@ class YamlError:
         self._mark = mark
         self._cause = cause
 
-    @property
-    def message(self) -> Optional[str]:
-        if self._message is not None:
-            return self._message
-        if self._cause:
-            return str(self._cause)
-        return None
-
     def __str__(self) -> str:
         lines = []
-        message = self.message
-        if message is not None:
-            lines.append(message)
+
+        if self._message is not None:
+            lines.append(self._message)
+        if self._cause:
+            lines.append(str(self._cause))
         if self._mark:
             lines.append(str(self._mark))
         return '\n'.join(lines)
