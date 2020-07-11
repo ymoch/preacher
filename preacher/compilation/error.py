@@ -41,7 +41,6 @@ class CompilationError(Exception):
         child: Optional[CompilationError] = None,
         cause: Optional[Exception] = None,
     ):
-        super().__init__(message)
         self._message = message
         self._node = node
         self._child = child
@@ -63,6 +62,13 @@ class CompilationError(Exception):
             node=node,
             child=self,
         )
+
+    def __str__(self) -> str:
+        lines = [self._message]
+        path = self.path
+        if path:
+            lines.append(f'  in {render_path(path)}')
+        return '\n'.join(lines)
 
 
 @contextmanager

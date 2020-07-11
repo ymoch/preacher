@@ -74,8 +74,8 @@ def main():
         LOGGER.critical(error)
         sys.exit(2)
     except CompilationError as error:
-        LOGGER.critical('Compilation error on node: %s', error.render_path())
-        LOGGER.critical('%s', error)
+        LOGGER.critical('Compilation error')
+        LOGGER.critical(error)
         sys.exit(2)
     except Exception as error:
         LOGGER.exception('%s', error)
