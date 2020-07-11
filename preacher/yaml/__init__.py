@@ -1,8 +1,14 @@
+"""
+YAML handling.
+"""
+
 from typing import TextIO, Iterator
 
+from .error import YamlError
 from .loader import PathLike, Loader
 
 __all__ = [
+    'YamlError',
     'load',
     'load_from_path',
     'load_all',

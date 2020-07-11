@@ -3,8 +3,13 @@ from unittest.mock import call
 
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError
-from preacher.yaml import load, load_from_path, load_all, load_all_from_path
+from preacher.yaml import (
+    YamlError,
+    load,
+    load_from_path,
+    load_all,
+    load_all_from_path,
+)
 
 
 @mark.parametrize(('content', 'expected_message'), (
@@ -15,7 +20,7 @@ from preacher.yaml import load, load_from_path, load_all, load_all_from_path
 ))
 def test_load_given_invalid_content(content, expected_message):
     stream = StringIO(content)
-    with raises(CompilationError) as error_info:
+    with raises(YamlError) as error_info:
         load(stream)
     assert expected_message in str(error_info.value)
 
@@ -30,7 +35,7 @@ def test_load_all(mocker):
     actual = load_all(stream)
     assert next(actual) == 1
     assert next(actual) == 'foo'
-    with raises(CompilationError):
+    with raises(YamlError):
         next(actual)
     with raises(StopIteration):
         next(actual)
@@ -41,7 +46,7 @@ def test_load_all(mocker):
 
 def test_load_from_path_not_found(mocker):
     mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
-    with raises(CompilationError):
+    with raises(YamlError):
         load_from_path('/////foo/bar/baz')
 
 
@@ -67,7 +72,7 @@ def test_load_all_from_path_not_found(mocker):
     mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
 
     objs = load_all_from_path('/////foo/bar/baz')
-    with raises(CompilationError):
+    with raises(YamlError):
         next(objs)
 
 
@@ -81,7 +86,7 @@ def test_load_all_from_path(mocker):
     actual = load_all_from_path('path/to/scenario.yml')
     assert next(actual) == 1
     assert next(actual) == 'foo'
-    with raises(CompilationError):
+    with raises(YamlError):
         next(actual)
     with raises(StopIteration):
         next(actual)

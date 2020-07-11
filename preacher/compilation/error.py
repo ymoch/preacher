@@ -64,10 +64,6 @@ class CompilationError(Exception):
             child=self,
         )
 
-    @staticmethod
-    def wrap(error: Exception) -> CompilationError:
-        return CompilationError(message=str(error), cause=error)
-
 
 @contextmanager
 def on_key(key: str) -> Iterator:

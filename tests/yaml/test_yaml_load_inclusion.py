@@ -3,8 +3,7 @@ from io import StringIO
 
 from pytest import mark, raises
 
-from preacher.compilation.error import CompilationError
-from preacher.yaml import load
+from preacher.yaml import load, YamlError
 
 
 @mark.parametrize(('content', 'expected_message'), [
@@ -13,7 +12,7 @@ from preacher.yaml import load
 ])
 def test_given_invalid_inclusion(content, expected_message):
     stream = StringIO(content)
-    with raises(CompilationError) as error_info:
+    with raises(YamlError) as error_info:
         load(stream)
     assert expected_message in str(error_info.value)
 

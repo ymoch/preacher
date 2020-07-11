@@ -3,9 +3,9 @@ from io import StringIO
 
 from pytest import mark, raises
 
-from preacher.compilation import CompilationError
 from preacher.core.interpretation import RelativeDatetime, ValueContext
 from preacher.yaml import load
+from preacher.yaml.error import YamlError
 
 
 def test_given_datetime_that_is_offset_naive():
@@ -34,7 +34,7 @@ def test_given_datetime_that_is_offset_aware():
 ])
 def test_given_invalid_relative_datetime(content, expected_message):
     stream = StringIO(content)
-    with raises(CompilationError) as error_info:
+    with raises(YamlError) as error_info:
         load(stream)
     assert expected_message in str(error_info.value)
 
