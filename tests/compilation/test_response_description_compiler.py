@@ -1,4 +1,4 @@
-from unittest.mock import ANY, MagicMock, call, sentinel, patch
+from unittest.mock import ANY, NonCallableMock, call, sentinel, patch
 
 from pytest import fixture, mark, raises
 
@@ -11,7 +11,7 @@ from preacher.compilation.response_body import (
     ResponseBodyDescriptionCompiler,
 )
 
-PACKAGE = 'preacher.compilation.response'
+PKG = 'preacher.compilation.response'
 
 
 @fixture
@@ -25,37 +25,34 @@ def compiler(predicate, description, body) -> ResponseDescriptionCompiler:
 
 @fixture
 def predicate():
-    return MagicMock(
-        spec=PredicateCompiler,
-        compile=MagicMock(return_value=sentinel.predicate),
-    )
+    compiler = NonCallableMock(PredicateCompiler)
+    compiler.compile.return_value = sentinel.predicate
+    return compiler
 
 
 @fixture
 def description():
-    return MagicMock(
-        spec=DescriptionCompiler,
-        compile=MagicMock(return_value=sentinel.description)
-    )
+    compiler = NonCallableMock(DescriptionCompiler)
+    compiler.compile.return_value = sentinel.description
+    return compiler
 
 
 @fixture
 def body(body_of_default):
-    compiler = MagicMock(spec=ResponseBodyDescriptionCompiler)
+    compiler = NonCallableMock(ResponseBodyDescriptionCompiler)
     compiler.compile.return_value = sentinel.body_desc
     compiler.of_default.return_value = body_of_default
-
     return compiler
 
 
 @fixture
 def body_of_default():
-    compiler = MagicMock(spec=ResponseBodyDescriptionCompiler)
+    compiler = NonCallableMock(ResponseBodyDescriptionCompiler)
     compiler.compile.return_value = sentinel.sub_body_desc
     return compiler
 
 
-@mark.parametrize('obj, expected_path', (
+@mark.parametrize(('obj', 'expected_path'), (
     ('', []),
     ({'headers': 'str'}, [NamedNode('headers')]),
 ))
@@ -114,13 +111,13 @@ def test_given_filled_values(compiler, predicate, description, body):
 
 @fixture
 def initial_default():
-    initial_default = MagicMock(ResponseBodyDescriptionCompiled)
+    initial_default = NonCallableMock(ResponseBodyDescriptionCompiled)
     initial_default.replace.return_value = sentinel.new_default
     return initial_default
 
 
 @patch(
-    f'{PACKAGE}.ResponseDescriptionCompiler',
+    f'{PKG}.ResponseDescriptionCompiler',
     return_value=sentinel.compiler_of_default,
 )
 def test_given_hollow_default(
@@ -137,7 +134,7 @@ def test_given_hollow_default(
         default=initial_default,
     )
 
-    default = MagicMock(ResponseBodyDescriptionCompiled, body=None)
+    default = NonCallableMock(ResponseBodyDescriptionCompiled, body=None)
     compiler_of_default = compiler.of_default(default)
     assert compiler_of_default is sentinel.compiler_of_default
 
@@ -154,7 +151,7 @@ def test_given_hollow_default(
 
 
 @patch(
-    f'{PACKAGE}.ResponseDescriptionCompiler',
+    f'{PKG}.ResponseDescriptionCompiler',
     return_value=sentinel.compiler_of_default,
 )
 def test_given_filled_default(
@@ -172,10 +169,8 @@ def test_given_filled_default(
         default=initial_default,
     )
 
-    default = MagicMock(
-        spec=ResponseBodyDescriptionCompiled,
-        body=sentinel.default_body,
-    )
+    default = NonCallableMock(ResponseBodyDescriptionCompiled)
+    default.body = sentinel.default_body
     compiler_of_default = compiler.of_default(default)
     assert compiler_of_default is sentinel.compiler_of_default
 
