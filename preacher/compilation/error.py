@@ -36,7 +36,7 @@ class CompilationError(Exception):
 
     def __init__(
         self,
-        message: Optional[str] = None,
+        message: str,
         node: Optional[Node] = None,
         child: Optional[CompilationError] = None,
         cause: Optional[Exception] = None,
@@ -57,21 +57,17 @@ class CompilationError(Exception):
         return render_path(self.path)
 
     def on_node(self, node: Node) -> CompilationError:
-        return CompilationError(node=node, child=self)
+        return CompilationError(
+            message=self._message,
+            node=node,
+            child=self,
+        )
 
     def __str__(self) -> str:
-        lines = []
-
-        if self._message:
-            lines.append(self._message)
-
-        if self._child:
-            lines.append(str(self._child))
-
+        lines = [self._message]
         path = self.path
         if path:
             lines.append(f'  in {render_path(path)}')
-
         return '\n'.join(lines)
 
 
