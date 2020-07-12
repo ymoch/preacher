@@ -109,7 +109,7 @@ def _compile_taking_single_matcher(key: str, value: object) -> Matcher:
 
     if isinstance(value, str) or isinstance(value, Mapping):
         with on_key(key):
-            inner = compile(value)
+            inner = compile_matcher(value)
     else:
         inner = ValueMatcher(hamcrest.equal_to, StaticValue(value))
 
@@ -121,21 +121,20 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
 
     with on_key(key):
         value = compile_list(value)
-        inner_matchers = list(map_compile(compile, value))
+        inner_matchers = list(map_compile(compile_matcher, value))
 
     return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 
-def compile(obj: object) -> Matcher:
+def compile_matcher(obj: object) -> Matcher:
     if isinstance(obj, str):
         if obj in _STATIC_MATCHER_MAP:
             return _STATIC_MATCHER_MAP[obj]
 
     if isinstance(obj, Mapping):
         if len(obj) != 1:
-            raise CompilationError(
-                f'Must have only 1 element, but has {len(obj)}'
-            )
+            message = f'Must have only 1 element, but has {len(obj)}'
+            raise CompilationError(message)
 
         key, value = next(iter(obj.items()))
 

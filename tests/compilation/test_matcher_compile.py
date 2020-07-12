@@ -4,7 +4,7 @@ from unittest.mock import sentinel
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.matcher import compile
+from preacher.compilation.matcher import compile_matcher
 from preacher.core.hamcrest import after, before
 from preacher.core.scenario import Status
 from preacher.core.scenario.matcher import match
@@ -24,7 +24,7 @@ NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 ])
 def test_invalid_mapping(obj):
     with raises(CompilationError):
-        compile(obj)
+        compile_matcher(obj)
 
 
 @mark.parametrize(('obj', 'verified', 'expected_status'), [
@@ -159,7 +159,7 @@ def test_invalid_mapping(obj):
     ('anything', {'key': 'value'}, SUCCESS),
 ])
 def test_verification(obj, verified, expected_status):
-    assert match(compile(obj), verified).status == expected_status
+    assert match(compile_matcher(obj), verified).status == expected_status
 
 
 @mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
@@ -179,7 +179,7 @@ def test_verification_with_datetime(
     datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat')
     datetime_ctor.return_value = sentinel.datetime
 
-    actual = compile(obj)
+    actual = compile_matcher(obj)
     assert actual == sentinel.matcher
 
     datetime_ctor.assert_called_once_with(expected_value)
@@ -202,7 +202,7 @@ def test_verification_with_timedelta(
     value_ctor = mocker.patch(f'{PKG}.RelativeDatetime')
     value_ctor.return_value = sentinel.value
 
-    actual = compile(obj)
+    actual = compile_matcher(obj)
     assert actual == sentinel.matcher
 
     value_ctor.assert_called_once_with(expected_value)
