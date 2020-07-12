@@ -9,7 +9,7 @@ from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
 from preacher.compilation.scenario import ScenarioCompiler
 
-PACKAGE = 'preacher.compilation.scenario'
+PKG = 'preacher.compilation.scenario'
 
 
 @fixture
@@ -20,7 +20,7 @@ def compiler(description, case) -> ScenarioCompiler:
 @fixture
 def description():
     compiler = NonCallableMock(DescriptionCompiler)
-    compiler.compile = Mock(return_value=sentinel.description)
+    compiler.compile.return_value = sentinel.description
     return compiler
 
 
@@ -34,7 +34,7 @@ def case(case_of_default):
 @fixture
 def case_of_default(sub_case):
     compiler = NonCallableMock(CaseCompiler)
-    compiler.compile_fixed = Mock(return_value=sentinel.case)
+    compiler.compile_fixed.return_value = sentinel.case
     compiler.compile_default = Mock(return_value=sub_case)
     return compiler
 
@@ -42,7 +42,7 @@ def case_of_default(sub_case):
 @fixture
 def sub_case():
     compiler = NonCallableMock(CaseCompiler)
-    compiler.compile_fixed = Mock(return_value=sentinel.sub_case)
+    compiler.compile_fixed.return_value = sentinel.sub_case
     return compiler
 
 
@@ -65,7 +65,7 @@ def test_given_an_empty_object(
     case_of_default,
     mocker,
 ):
-    ctor = mocker.patch(f'{PACKAGE}.Scenario', return_value=sentinel.scenario)
+    ctor = mocker.patch(f'{PKG}.Scenario', return_value=sentinel.scenario)
 
     scenario = compiler.compile({})
 
@@ -90,7 +90,7 @@ def test_given_a_filled_object(
     sub_case,
     mocker,
 ):
-    ctor = mocker.patch(f'{PACKAGE}.Scenario', return_value=sentinel.scenario)
+    ctor = mocker.patch(f'{PKG}.Scenario', return_value=sentinel.scenario)
 
     scenario = compiler.compile(
         obj={
@@ -139,8 +139,8 @@ def test_given_a_filled_object(
 
 
 def test_given_empty_parameter(compiler: ScenarioCompiler, mocker):
-    ctor = mocker.patch(f'{PACKAGE}.Scenario', return_value=sentinel.scenario)
-    compile_parameter = mocker.patch(f'{PACKAGE}.compile_parameter')
+    ctor = mocker.patch(f'{PKG}.Scenario', return_value=sentinel.scenario)
+    compile_parameter = mocker.patch(f'{PKG}.compile_parameter')
 
     scenario = compiler.compile({'parameters': []})
     assert scenario is sentinel.scenario
@@ -150,7 +150,7 @@ def test_given_empty_parameter(compiler: ScenarioCompiler, mocker):
 
 
 def test_when_parameter_compilation_fails(compiler: ScenarioCompiler, mocker):
-    compile_parameter = mocker.patch(f'{PACKAGE}.compile_parameter')
+    compile_parameter = mocker.patch(f'{PKG}.compile_parameter')
     compile_parameter.side_effect = CompilationError('message')
 
     with raises(CompilationError) as error_info:
@@ -167,8 +167,8 @@ def test_given_filled_parameters(
     case_of_default,
     mocker,
 ):
-    ctor = mocker.patch(f'{PACKAGE}.Scenario', return_value=sentinel.scenario)
-    compile_parameter = mocker.patch(f'{PACKAGE}.compile_parameter')
+    ctor = mocker.patch(f'{PKG}.Scenario', return_value=sentinel.scenario)
+    compile_parameter = mocker.patch(f'{PKG}.compile_parameter')
     compile_parameter.side_effect = [
         Parameter(
             label='param1',

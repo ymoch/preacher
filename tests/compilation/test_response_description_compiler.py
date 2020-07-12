@@ -1,4 +1,4 @@
-from unittest.mock import ANY, NonCallableMock, call, sentinel, patch
+from unittest.mock import ANY, NonCallableMock, call, sentinel
 
 from pytest import fixture, mark, raises
 
@@ -116,17 +116,16 @@ def initial_default():
     return initial_default
 
 
-@patch(
-    f'{PKG}.ResponseDescriptionCompiler',
-    return_value=sentinel.compiler_of_default,
-)
 def test_given_hollow_default(
-    compiler_ctor,
+    mocker,
     predicate,
     description,
     body,
     initial_default,
 ):
+    compiler_ctor = mocker.patch(f'{PKG}.ResponseDescriptionCompiler')
+    compiler_ctor.return_value = sentinel.compiler_of_default
+
     compiler = ResponseDescriptionCompiler(
         predicate=predicate,
         description=description,
@@ -150,18 +149,17 @@ def test_given_hollow_default(
     assert default is sentinel.new_default
 
 
-@patch(
-    f'{PKG}.ResponseDescriptionCompiler',
-    return_value=sentinel.compiler_of_default,
-)
 def test_given_filled_default(
-    compiler_ctor,
+    mocker,
     predicate,
     description,
     body,
     body_of_default,
     initial_default,
 ):
+    compiler_ctor = mocker.patch(f'{PKG}.ResponseDescriptionCompiler')
+    compiler_ctor.return_value = sentinel.compiler_of_default
+
     compiler = ResponseDescriptionCompiler(
         predicate=predicate,
         description=description,
