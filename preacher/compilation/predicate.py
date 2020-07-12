@@ -1,7 +1,7 @@
 """Predicate compilation."""
 
 from preacher.core.scenario import Predicate, MatcherPredicate
-from .matcher import compile as compile_matcher
+from .matcher import compile_matcher
 
 
 class PredicateCompiler:
