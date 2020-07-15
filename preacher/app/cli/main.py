@@ -19,8 +19,7 @@ LOGGER = get_logger(__name__, logging.WARNING)
 REPORT_LOGGER_NAME = 'preacher-cli.report.logger'
 
 
-def _main() -> bool:
-    """Main."""
+def _main() -> None:
     args = parse_args(environ=os.environ)
 
     runner = ScenarioRunner(
@@ -53,14 +52,14 @@ def _main() -> bool:
     with ThreadPoolExecutor(args.concurrency) as executor:
         status = runner.run(executor, scenarios, listener=listener)
 
-    return status.is_succeeded
+    if not status.is_succeeded:
+        sys.exit(1)
 
 
 def main():
+    """Main."""
     try:
-        succeeded = _main()
-        if not succeeded:
-            sys.exit(1)
+        _main()
     except Exception as error:
         LOGGER.exception('%s', error)
         sys.exit(2)
