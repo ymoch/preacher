@@ -28,21 +28,13 @@ class ScenarioListener(CaseListener):
 @dataclass(frozen=True)
 class ScenarioResult(Statused):
     label: Optional[str] = None
+    status: Status = Status.SKIPPED
     message: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
     cases: StatusedList[CaseResult] = field(default_factory=StatusedList)
     subscenarios: StatusedList[ScenarioResult] = field(
         default_factory=StatusedList,
     )
-
-    @property
-    def status(self) -> Status:  # HACK: should be cached
-        if self.conditions.status == Status.UNSTABLE:
-            return Status.SKIPPED
-        if self.conditions.status == Status.FAILURE:
-            return Status.FAILURE
-
-        return merge_statuses([self.cases.status, self.subscenarios.status])
 
 
 class ScenarioTask(ABC):
@@ -71,6 +63,7 @@ class RunningScenarioTask(ScenarioTask):
         subscenarios = StatusedList([s.result() for s in self._subscenarios])
         return ScenarioResult(
             label=self._label,
+            status=merge_statuses([cases.status, subscenarios.status]),
             conditions=self._conditions,
             cases=cases,
             subscenarios=subscenarios,
@@ -133,9 +126,16 @@ class Scenario:
             for condition in self._conditions
         )
         if not conditions.status.is_succeeded:
-            return StaticScenarioTask(
-                ScenarioResult(label=self._label, conditions=conditions)
+            status = Status.SKIPPED
+            if conditions.status is Status.FAILURE:
+                status = Status.FAILURE
+
+            result = ScenarioResult(
+                label=self._label,
+                status=status,
+                conditions=conditions,
             )
+            return StaticScenarioTask(result)
 
         listener = listener or ScenarioListener()
 

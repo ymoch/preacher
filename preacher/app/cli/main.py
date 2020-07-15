@@ -7,15 +7,16 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import chain
 from typing import Iterable
 
-from preacher.compilation import CompilationError, create_compiler
+from preacher.compilation import create_compiler
 from preacher.core.listener import MergingListener
 from preacher.core.runner import ScenarioRunner
 from preacher.presentation.listener import LoggingListener, ReportingListener
-from preacher.yaml import YamlError, load_all, load_all_from_path
+from preacher.yaml import load_all, load_all_from_path
 from .log import get_logger
 from .option import parse_args
 
 LOGGER = get_logger(__name__, logging.WARNING)
+REPORT_LOGGER_NAME = 'preacher-cli.report.logger'
 
 
 def _main() -> bool:
@@ -44,7 +45,7 @@ def _main() -> bool:
 
     listener = MergingListener()
     listener.append(LoggingListener.from_logger(
-        get_logger(f'{__name__}.report', args.level)
+        get_logger(REPORT_LOGGER_NAME, args.level)
     ))
     if args.report:
         listener.append(ReportingListener.from_path(args.report))
@@ -60,14 +61,6 @@ def main():
         succeeded = _main()
         if not succeeded:
             sys.exit(1)
-    except YamlError as error:
-        LOGGER.critical('YAML loading error')
-        LOGGER.critical(error)
-        sys.exit(2)
-    except CompilationError as error:
-        LOGGER.critical('Compilation error')
-        LOGGER.critical(error)
-        sys.exit(2)
     except Exception as error:
         LOGGER.exception('%s', error)
         sys.exit(3)
