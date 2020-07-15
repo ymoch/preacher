@@ -63,4 +63,4 @@ def main():
             sys.exit(1)
     except Exception as error:
         LOGGER.exception('%s', error)
-        sys.exit(3)
+        sys.exit(2)
