@@ -1,4 +1,5 @@
-from unittest.mock import MagicMock, call, sentinel
+from typing import Iterable, Iterator
+from unittest.mock import Mock, NonCallableMock, call, sentinel
 
 from preacher.core.listener import Listener
 from preacher.core.runner import ScenarioRunner
@@ -13,20 +14,65 @@ def test_given_no_scenario():
     assert status == Status.SKIPPED
 
 
+def test_given_construction_failure():
+    class _Scenarios(Iterable[Scenario]):
+
+        def __init__(self):
+            self._count = 0
+
+        def __iter__(self) -> Iterator[Scenario]:
+            return self
+
+        def __next__(self) -> Scenario:
+            self._count += 1
+            if self._count == 2:
+                raise Exception('message')
+            if self._count > 3:
+                raise StopIteration()
+
+            successful_result = ScenarioResult(status=Status.SUCCESS)
+            successful_task = NonCallableMock(ScenarioTask)
+            successful_task.result.return_value = successful_result
+            successful = NonCallableMock(Scenario)
+            successful.submit.return_value = successful_task
+            return successful
+
+    runner = ScenarioRunner()
+    listener = NonCallableMock(Listener)
+    status = runner.run(sentinel.executor, _Scenarios(), listener)
+    assert status is Status.FAILURE
+
+    print(listener.on_scenario.call_args_list)
+
+    results = [c[0][0] for c in listener.on_scenario.call_args_list]
+    assert len(results) == 3
+
+    first_successful = results[0]
+    assert first_successful.status is Status.SUCCESS
+
+    construction_failure = results[1]
+    assert construction_failure.label == 'Not a constructed scenario'
+    assert construction_failure.status is Status.FAILURE
+    assert construction_failure.message == 'Exception: message'
+
+    second_successful = results[2]
+    assert second_successful.status is Status.SUCCESS
+
+
 def test_given_scenarios():
     results = [
-        MagicMock(ScenarioResult, status=Status.UNSTABLE),
-        MagicMock(ScenarioResult, status=Status.FAILURE),
+        ScenarioResult(status=Status.UNSTABLE),
+        ScenarioResult(status=Status.FAILURE),
     ]
     tasks = [
-        MagicMock(ScenarioTask, result=MagicMock(return_value=results[0])),
-        MagicMock(ScenarioTask, result=MagicMock(return_value=results[1])),
+        NonCallableMock(ScenarioTask, result=Mock(return_value=results[0])),
+        NonCallableMock(ScenarioTask, result=Mock(return_value=results[1])),
     ]
     scenarios = [
-        MagicMock(Scenario, submit=MagicMock(return_value=tasks[0])),
-        MagicMock(Scenario, submit=MagicMock(return_value=tasks[1])),
+        NonCallableMock(Scenario, submit=Mock(return_value=tasks[0])),
+        NonCallableMock(Scenario, submit=Mock(return_value=tasks[1])),
     ]
-    listener = MagicMock(Listener)
+    listener = NonCallableMock(Listener)
 
     runner = ScenarioRunner(
         base_url=sentinel.base_url,
