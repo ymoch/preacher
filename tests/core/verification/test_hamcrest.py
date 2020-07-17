@@ -4,7 +4,7 @@ from hamcrest.core.string_description import StringDescription
 from pytest import mark, raises
 
 from preacher.core.datetime import DatetimeWithFormat
-from preacher.core.hamcrest import after, before
+from preacher.core.verification.hamcrest import after, before
 
 ORIGIN = datetime(2019, 12, 15, 12, 34, 56, tzinfo=timezone.utc)
 
