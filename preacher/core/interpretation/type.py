@@ -1,9 +1,16 @@
+from functools import partial
 from typing import Callable, Type, TypeVar
 
 from .error import InterpretationError
 
 T = TypeVar("T")
 U = TypeVar("U")
+
+
+def _require_type(tp: Type[T], func: Callable[[T], U], value: object) -> U:
+    if not isinstance(value, tp):
+        raise InterpretationError(f"Argument 1 must be a {tp}")
+    return func(value)
 
 
 def require_type(tp: Type[T], func: Callable[[T], U]) -> Callable[[object], U]:
@@ -13,9 +20,4 @@ def require_type(tp: Type[T], func: Callable[[T], U]) -> Callable[[object], U]:
     when given an argument that is not an instance of `tp`,
     then throws `InterpretationError`.
     """
-    def _func(value: object) -> U:
-        if not isinstance(value, tp):
-            raise InterpretationError(f"Argument 1 must be a {tp}")
-        return func(value)
-
-    return _func
+    return partial(_require_type, tp, func)
