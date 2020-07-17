@@ -6,11 +6,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from preacher.core.scenario import Request, Method, UrlParams
-from .error import CompilationError, on_key
+from preacher.compilation.error import CompilationError, on_key
+from preacher.compilation.util import compile_str, compile_mapping, or_else
+from preacher.core.request import Request, Method, UrlParams
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
 from .url_param import compile_url_params
-from .util import compile_str, compile_mapping, or_else
 
 _KEY_METHOD = 'method'
 _KEY_PATH = 'path'

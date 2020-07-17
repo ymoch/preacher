@@ -3,7 +3,7 @@ from typing import Mapping
 
 from pytest import raises
 
-from preacher.core.response import Response, ResponseBody
+from preacher.core.request import Response, ResponseBody
 
 
 def test_incomplete_response_body():

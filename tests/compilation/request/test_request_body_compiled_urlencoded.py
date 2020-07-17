@@ -4,12 +4,12 @@ from pytest import raises
 
 from preacher.compilation import CompilationError
 from preacher.compilation.error import NamedNode
-from preacher.compilation.request_body import (
+from preacher.compilation.request.request_body import (
     RequestBodyCompiled,
     UrlencodedRequestBodyCompiled,
 )
 
-PACKAGE = 'preacher.compilation.request_body'
+PACKAGE = 'preacher.compilation.request.request_body'
 
 
 def test_replace_given_another_type():

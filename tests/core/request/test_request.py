@@ -5,11 +5,11 @@ from unittest.mock import NonCallableMock, Mock, sentinel
 import requests
 from pytest import fixture
 
-from preacher.core.scenario.request import Request, ResponseWrapper, Method
-from preacher.core.scenario.request_body import RequestBody
+from preacher.core.request.request import Request, ResponseWrapper, Method
+from preacher.core.request.request_body import RequestBody
 from preacher.core.value import ValueContext
 
-PACKAGE = 'preacher.core.scenario.request'
+PACKAGE = 'preacher.core.request.request'
 
 
 @fixture

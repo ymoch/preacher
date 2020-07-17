@@ -1,8 +1,8 @@
 from unittest.mock import sentinel
 
-from preacher.core.scenario.request_body import UrlencodedRequestBody
+from preacher.core.request.request_body import UrlencodedRequestBody
 
-PKG = 'preacher.core.scenario.request_body'
+PKG = 'preacher.core.request.request_body'
 
 
 def test(mocker):

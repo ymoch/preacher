@@ -5,10 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import List, Optional
 
+from preacher.compilation.request import RequestCompiler, RequestCompiled
 from preacher.core.scenario import Case, Description
 from .description import DescriptionCompiler
 from .error import on_key
-from .request import RequestCompiler, RequestCompiled
 from .response import (
     ResponseDescriptionCompiled,
     ResponseDescriptionCompiler,

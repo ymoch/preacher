@@ -3,14 +3,14 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
-from preacher.compilation.request_body import (
+from preacher.compilation.request.request_body import (
     RequestBodyCompiler,
     RequestBodyCompiled,
     UrlencodedRequestBodyCompiled,
     JsonRequestBodyCompiled,
 )
 
-PACKAGE = 'preacher.compilation.request_body'
+PACKAGE = 'preacher.compilation.request.request_body'
 
 
 @fixture

@@ -5,14 +5,14 @@ from dataclasses import dataclass, replace
 from typing import Mapping, Optional, Callable
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.url_param import compile_url_params
 from preacher.compilation.util import compile_mapping, compile_str
-from preacher.core.scenario import (
+from preacher.core.request import (
     RequestBody,
     UrlencodedRequestBody,
     UrlParams,
     JsonRequestBody,
 )
+from .url_param import compile_url_params
 
 _NOT_SPECIFIED = object()
 _KEY_TYPE = 'type'

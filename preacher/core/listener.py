@@ -1,6 +1,6 @@
 from typing import List
 
-from preacher.core.response import Response
+from preacher.core.request import Response
 from preacher.core.scenario import ScenarioListener, ScenarioResult, Status
 
 

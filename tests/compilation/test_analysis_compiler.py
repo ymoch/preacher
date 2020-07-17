@@ -4,7 +4,7 @@ from pytest import mark, raises
 
 from preacher.compilation.analysis import AnalysisCompiler
 from preacher.compilation.error import CompilationError
-from preacher.core.response import ResponseBody
+from preacher.core.request import ResponseBody
 
 
 @mark.parametrize('value, expected_suffix', (
