@@ -13,10 +13,8 @@ class Reporter:
         self._path = path
         self._responses_path = os.path.join(self._path, 'responses')
 
-        env = jinja2.Environment(
-            loader=jinja2.PackageLoader('preacher', 'resources/report/html'),
-            autoescape=jinja2.select_autoescape(['html', 'xml']),
-        )
+        loader = jinja2.PackageLoader('preacher', 'resources/report/html')
+        env = jinja2.Environment(loader=loader, autoescape=True)
         self._index_template = env.get_template('index.html')
         self._response_view_template = env.get_template('response-view.html')
 
