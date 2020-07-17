@@ -1,15 +1,13 @@
 from functools import partial
 from typing import Callable, Type, TypeVar
 
-from .error import InterpretationError
-
 T = TypeVar("T")
 U = TypeVar("U")
 
 
 def _require_type(tp: Type[T], func: Callable[[T], U], value: object) -> U:
     if not isinstance(value, tp):
-        raise InterpretationError(f"Argument 1 must be a {tp}")
+        raise TypeError(f"Argument 1 must be a {tp}")
     return func(value)
 
 
