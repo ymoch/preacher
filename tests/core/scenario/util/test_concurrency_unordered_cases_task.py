@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 from pytest import fixture
 
 from preacher.core.scenario.case import CaseResult, Case
-from preacher.core.scenario.status import Status
 from preacher.core.scenario.util.concurrency import UnorderedCasesTask
+from preacher.core.status import Status
 
 
 def submit(func, *args, **kwargs) -> Future:

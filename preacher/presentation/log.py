@@ -7,9 +7,9 @@ from preacher.core.scenario import (
     ScenarioResult,
     CaseResult,
     ResponseVerification,
-    Status,
     Verification,
 )
+from preacher.core.status import Status
 
 _LEVEL_MAP = {
     Status.SKIPPED: logging.DEBUG,

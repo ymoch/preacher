@@ -5,7 +5,7 @@ from typing import Iterable
 from requests import Session
 
 from preacher.core.scenario.case import Case, CaseResult
-from preacher.core.scenario.status import StatusedList
+from preacher.core.status import StatusedList
 
 
 class CasesTask(ABC):

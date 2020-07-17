@@ -4,7 +4,7 @@ from unittest.mock import Mock, NonCallableMock, call, sentinel
 from preacher.core.listener import Listener
 from preacher.core.runner import ScenarioRunner
 from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask
-from preacher.core.scenario.status import Status
+from preacher.core.status import Status
 
 
 def test_given_no_scenario():

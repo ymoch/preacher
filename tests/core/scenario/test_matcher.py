@@ -13,7 +13,7 @@ from preacher.core.scenario.matcher import (
     ValueContext,
     match,
 )
-from preacher.core.scenario.status import Status
+from preacher.core.status import Status
 
 PKG = 'preacher.core.scenario.matcher'
 

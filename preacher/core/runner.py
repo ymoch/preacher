@@ -2,8 +2,9 @@ from concurrent.futures import Executor
 from typing import Iterable, Optional, Iterator
 
 from .listener import Listener
-from .scenario import Scenario, ScenarioResult, ScenarioTask, Status
+from .scenario import Scenario, ScenarioResult, ScenarioTask
 from .scenario.scenario import StaticScenarioTask
+from .status import Status
 
 
 class ScenarioRunner:

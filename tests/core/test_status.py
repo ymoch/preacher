@@ -2,8 +2,7 @@ from typing import Iterable
 
 from pytest import mark, raises
 
-from preacher.core.scenario import Statused
-from preacher.core.scenario.status import Status, merge_statuses
+from preacher.core.status import Status, Statused, merge_statuses
 
 
 @mark.parametrize('status, expected', [

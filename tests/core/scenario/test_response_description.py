@@ -8,8 +8,8 @@ from preacher.core.scenario.description import Description
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response import ResponseDescription
 from preacher.core.scenario.response_body import ResponseBodyDescription
-from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
+from preacher.core.status import Status
 
 
 @fixture

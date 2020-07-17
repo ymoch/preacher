@@ -2,11 +2,11 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 
 from pytest import fixture
 
-from preacher.core.scenario import Extractor
 from preacher.core.scenario.description import Description
+from preacher.core.scenario.extraction import Extractor
 from preacher.core.scenario.predicate import Predicate
-from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
+from preacher.core.status import Status
 
 
 @fixture

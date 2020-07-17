@@ -13,7 +13,6 @@ from .predicate import Predicate, MatcherPredicate
 from .response import ResponseDescription, ResponseVerification
 from .response_body import ResponseBodyDescription
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
-from .status import Status, Statused, StatusedList
 from .type import require_type
 from .verification import Verification
 
@@ -44,9 +43,6 @@ __all__ = [
     'ScenarioTask',
     'ScenarioListener',
     'ScenarioResult',
-    'Status',
-    'Statused',
-    'StatusedList',
     'require_type',
     'Verification',
 ]

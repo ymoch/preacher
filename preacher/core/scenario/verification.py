@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Optional, Sequence
 
-from .status import Status, Statused, merge_statuses
+from preacher.core.status import Status, Statused, merge_statuses
 
 
 @dataclass(frozen=True)
