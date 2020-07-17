@@ -2,7 +2,6 @@ from unittest.mock import ANY, Mock, NonCallableMock, sentinel
 
 from pytest import mark
 
-from preacher.core.interpretation import ValueContext
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.request import Request
@@ -12,6 +11,7 @@ from preacher.core.scenario.response import (
 )
 from preacher.core.scenario.status import Status
 from preacher.core.scenario.verification import Verification
+from preacher.core.value import ValueContext
 
 PKG = 'preacher.core.scenario.case'
 

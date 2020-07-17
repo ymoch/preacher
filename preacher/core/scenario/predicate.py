@@ -5,7 +5,7 @@ Predicates, which tests a given value.
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from preacher.core.interpretation import ValueContext
+from preacher.core.value import ValueContext
 from .matcher import Matcher, match
 from .verification import Verification
 

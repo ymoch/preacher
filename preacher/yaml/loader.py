@@ -39,7 +39,7 @@ class Loader:
             construct_relative_datetime,
         )
 
-        class _MyLoader(Reader, Scanner, Parser, Composer, _Ctor, Resolver):
+        class _Loader(Reader, Scanner, Parser, Composer, _Ctor, Resolver):
             def __init__(self, stream):
                 Reader.__init__(self, stream)
                 Scanner.__init__(self)
@@ -47,7 +47,7 @@ class Loader:
                 Composer.__init__(self)
                 SafeConstructor.__init__(self)
 
-        self._Loader = _MyLoader
+        self._Loader = _Loader
 
     def load(self, stream: TextIO, origin: PathLike = '.') -> object:
         try:

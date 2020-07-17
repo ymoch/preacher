@@ -5,7 +5,7 @@ along the given predicates.
 
 from typing import List, Optional
 
-from preacher.core.interpretation import ValueContext
+from preacher.core.value import ValueContext
 from .analysis import Analyzer
 from .extraction import Extractor
 from .predicate import Predicate

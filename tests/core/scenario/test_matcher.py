@@ -4,16 +4,13 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from pytest import fixture, raises
 
-from preacher.core.interpretation import (
-    InterpretationError,
-    Value,
-    ValueContext,
-)
 from preacher.core.scenario.matcher import (
     Matcher,
     StaticMatcher,
     ValueMatcher,
     RecursiveMatcher,
+    Value,
+    ValueContext,
     match,
 )
 from preacher.core.scenario.status import Status
@@ -84,13 +81,13 @@ def test_recursive_matcher(hamcrest_factory):
     )
 
 
-def test_match_when_an_interpretation_error_occurs():
+def test_match_when_an_error_occurs():
     matcher = NonCallableMock(Matcher)
-    matcher.to_hamcrest.side_effect = InterpretationError('interpretation')
+    matcher.to_hamcrest.side_effect = TypeError('typing')
     verification = match(matcher, sentinel.actual, sentinel.context)
 
     assert verification.status == Status.FAILURE
-    assert verification.message == 'InterpretationError: interpretation'
+    assert verification.message == 'TypeError: typing'
     matcher.to_hamcrest.assert_called_once_with(sentinel.context)
 
 

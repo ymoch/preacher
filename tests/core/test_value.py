@@ -4,9 +4,9 @@ from typing import Optional
 from pytest import raises
 
 from preacher.core.datetime import StrftimeFormat
-from preacher.core.interpretation import Value, ValueContext, RelativeDatetime
+from preacher.core.value import Value, ValueContext, RelativeDatetime
 
-PKG = 'preacher.core.interpretation.value'
+PKG = 'preacher.core.value'
 
 
 def test_incomplete_value():

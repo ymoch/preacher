@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Callable, List, Optional
 
 from preacher.core.datetime import now
-from preacher.core.interpretation import ValueContext
+from preacher.core.value import ValueContext
 from .analysis import analyze_data_obj
 from .case import Case, CaseListener, CaseResult
 from .description import Description

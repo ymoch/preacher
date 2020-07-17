@@ -5,8 +5,8 @@ from typing import Mapping
 
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util import map_compile
-from preacher.core.interpretation import RelativeDatetime
 from preacher.core.scenario import UrlParams, UrlParam, UrlParamValue
+from preacher.core.value import RelativeDatetime
 
 
 def compile_url_param_value(value: object) -> UrlParamValue:
