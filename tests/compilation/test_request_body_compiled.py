@@ -4,7 +4,7 @@ from unittest.mock import sentinel
 from pytest import raises
 
 from preacher.compilation.request_body import RequestBodyCompiled
-from preacher.core.scenario import RequestBody
+from preacher.core.request import RequestBody
 
 
 def test_interface():

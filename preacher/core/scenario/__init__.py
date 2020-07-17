@@ -10,14 +10,11 @@ from .extraction import (
 )
 from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
-from .request import Request, Method
-from .request_body import RequestBody, UrlencodedRequestBody, JsonRequestBody
 from .response import ResponseDescription, ResponseVerification
 from .response_body import ResponseBodyDescription
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
 from .type import require_type
-from .url_param import UrlParam, UrlParams, UrlParamValue
 from .verification import Verification
 
 __all__ = [
@@ -40,11 +37,6 @@ __all__ = [
     'RecursiveMatcher',
     'Predicate',
     'MatcherPredicate',
-    'Request',
-    'Method',
-    'RequestBody',
-    'UrlencodedRequestBody',
-    'JsonRequestBody',
     'ResponseDescription',
     'ResponseVerification',
     'ResponseBodyDescription',
@@ -56,8 +48,5 @@ __all__ = [
     'Statused',
     'StatusedList',
     'require_type',
-    'UrlParam',
-    'UrlParams',
-    'UrlParamValue',
     'Verification',
 ]

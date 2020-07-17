@@ -7,7 +7,7 @@ from typing import Mapping, Optional, Callable
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.url_param import compile_url_params
 from preacher.compilation.util import compile_mapping, compile_str
-from preacher.core.scenario import (
+from preacher.core.request import (
     RequestBody,
     UrlencodedRequestBody,
     UrlParams,

@@ -2,8 +2,8 @@ from unittest.mock import Mock, NonCallableMock
 
 from pytest import fixture, raises
 
+from preacher.core.response import ResponseBody
 from preacher.core.scenario.analysis import analyze_xml_str
-from preacher.core.scenario.request import ResponseBody
 
 XML_VALUE = '''<?xml version="1.0" encoding="utf-8"?>
 <foo>

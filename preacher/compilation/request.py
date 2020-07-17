@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional
 
-from preacher.core.scenario import Request, Method, UrlParams
+from preacher.core.request import Request, Method, UrlParams
 from .error import CompilationError, on_key
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
 from .url_param import compile_url_params

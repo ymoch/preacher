@@ -2,7 +2,7 @@ from typing import Any, Optional
 
 from pytest import raises
 
-from preacher.core.scenario.request_body import RequestBody
+from preacher.core.request.request_body import RequestBody
 from preacher.core.value import ValueContext
 
 

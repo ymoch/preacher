@@ -5,7 +5,7 @@ from pytest import mark, raises, fixture
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.request import RequestCompiler, RequestCompiled
 from preacher.compilation.request_body import RequestBodyCompiler
-from preacher.core.scenario import Method
+from preacher.core.request import Method
 
 PACKAGE = 'preacher.compilation.request'
 
