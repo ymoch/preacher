@@ -1,11 +1,11 @@
 from unittest.mock import NonCallableMock, sentinel
 
-from preacher.compilation.request_body import (
+from preacher.compilation.request.request_body import (
     RequestBodyCompiled,
     JsonRequestBodyCompiled,
 )
 
-PACKAGE = 'preacher.compilation.request_body'
+PACKAGE = 'preacher.compilation.request.request_body'
 
 
 def test_replace():

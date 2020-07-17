@@ -3,11 +3,14 @@ from unittest.mock import NonCallableMock, sentinel
 from pytest import mark, raises, fixture
 
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
-from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.compilation.request_body import RequestBodyCompiler
+from preacher.compilation.request.request import (
+    RequestCompiler,
+    RequestCompiled,
+)
+from preacher.compilation.request.request_body import RequestBodyCompiler
 from preacher.core.request import Method
 
-PACKAGE = 'preacher.compilation.request'
+PACKAGE = 'preacher.compilation.request.request'
 
 
 @fixture

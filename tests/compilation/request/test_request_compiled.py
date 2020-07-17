@@ -1,10 +1,10 @@
 from unittest.mock import Mock, NonCallableMock, sentinel
 
-from preacher.compilation.request import RequestCompiled
-from preacher.compilation.request_body import RequestBodyCompiled
+from preacher.compilation.request.request import RequestCompiled
+from preacher.compilation.request.request_body import RequestBodyCompiled
 from preacher.core.request import Method
 
-PACKAGE = 'preacher.compilation.request'
+PACKAGE = 'preacher.compilation.request.request'
 
 
 def test_replace():

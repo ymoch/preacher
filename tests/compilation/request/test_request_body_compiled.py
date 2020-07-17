@@ -3,7 +3,7 @@ from unittest.mock import sentinel
 
 from pytest import raises
 
-from preacher.compilation.request_body import RequestBodyCompiled
+from preacher.compilation.request.request_body import RequestBodyCompiled
 from preacher.core.request import RequestBody
 
 
