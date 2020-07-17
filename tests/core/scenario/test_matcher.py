@@ -4,16 +4,14 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 from pytest import fixture, raises
 
-from preacher.core.interpretation import (
-    InterpretationError,
-    Value,
-    ValueContext,
-)
+from preacher.core.interpretation import InterpretationError
 from preacher.core.scenario.matcher import (
     Matcher,
     StaticMatcher,
     ValueMatcher,
     RecursiveMatcher,
+    Value,
+    ValueContext,
     match,
 )
 from preacher.core.scenario.status import Status

@@ -4,10 +4,10 @@ Response body description.
 
 from typing import List, Optional
 
-from preacher.core.interpretation import ValueContext
 from preacher.core.response import ResponseBody
 from .analysis import Analysis, analyze_json_str
 from .description import Description
+from .value import ValueContext
 from .verification import Verification, collect
 
 

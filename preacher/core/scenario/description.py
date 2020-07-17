@@ -5,10 +5,10 @@ along the given predicates.
 
 from typing import List, Optional
 
-from preacher.core.interpretation import ValueContext
 from .analysis import Analyzer
 from .extraction import Extractor
 from .predicate import Predicate
+from .value import ValueContext
 from .verification import Verification, collect
 
 

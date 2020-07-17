@@ -4,8 +4,8 @@ from unittest.mock import NonCallableMock, sentinel
 from pytest import mark
 
 from preacher.core.datetime import DatetimeWithFormat
-from preacher.core.interpretation import Value
 from preacher.core.scenario.request_body import JsonRequestBody
+from preacher.core.scenario.value import Value
 
 
 def test_content_type():

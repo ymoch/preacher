@@ -9,17 +9,15 @@ from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.hamcrest import after, before
-from preacher.core.interpretation import (
-    Value,
-    StaticValue,
-    RelativeDatetime,
-    require_type
-)
+from preacher.core.interpretation import require_type
 from preacher.core.scenario import (
     Matcher,
     StaticMatcher,
     ValueMatcher,
     RecursiveMatcher,
+    Value,
+    StaticValue,
+    RelativeDatetime,
 )
 from .error import CompilationError, on_key
 from .datetime import compile_timedelta
