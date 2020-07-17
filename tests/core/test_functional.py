@@ -1,4 +1,4 @@
-from preacher.core.functional import identify
+from preacher.core.util.functional import identify
 
 
 def test_identify():

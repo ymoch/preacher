@@ -2,9 +2,9 @@ from unittest.mock import Mock, NonCallableMock
 
 from pytest import fixture, mark, raises
 
-from preacher.core.functional import identify
 from preacher.core.scenario import Analyzer
 from preacher.core.scenario.extraction import JqExtractor, ExtractionError
+from preacher.core.util.functional import identify
 
 VALUE = {
     'foo': 'bar',

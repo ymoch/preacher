@@ -3,9 +3,9 @@ from unittest.mock import Mock, NonCallableMock
 from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark, raises
 
-from preacher.core.functional import identify
 from preacher.core.scenario import Analyzer
 from preacher.core.scenario.extraction import XPathExtractor, ExtractionError
+from preacher.core.util.functional import identify
 
 VALUE = '''
 <root>

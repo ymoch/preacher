@@ -4,7 +4,7 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.extraction import ExtractionCompiler
-from preacher.core.functional import identify
+from preacher.core.util.functional import identify
 
 MODULE = 'preacher.compilation.extraction'
 
