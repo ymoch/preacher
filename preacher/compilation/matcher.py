@@ -15,10 +15,8 @@ from preacher.core.scenario import (
     ValueMatcher,
     RecursiveMatcher,
     require_type,
-    Value,
-    StaticValue,
-    RelativeDatetime,
 )
+from preacher.core.value import Value, StaticValue, RelativeDatetime
 from .datetime import compile_timedelta
 from .error import CompilationError, on_key
 from .util import compile_list, map_compile

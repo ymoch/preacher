@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Union, List, Mapping, Optional
 
 from preacher.core.datetime import DatetimeWithFormat
-from .value import Value, ValueContext
+from preacher.core.value import Value, ValueContext
 
 UrlParamValue = Union[
     None,

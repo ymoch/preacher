@@ -11,13 +11,13 @@ from requests import Session
 
 from preacher.core.datetime import now
 from preacher.core.response import Response
+from preacher.core.value import ValueContext
 from .analysis import analyze_data_obj
 from .description import Description
 from .request import Request
 from .response import ResponseDescription, ResponseVerification
 from .status import Status, Statused, merge_statuses
 from .util.retry import retry_while_false
-from .value import ValueContext
 from .verification import Verification, collect
 
 

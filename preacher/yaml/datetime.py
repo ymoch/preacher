@@ -8,7 +8,7 @@ from preacher.compilation.datetime import (
     compile_datetime_format,
 )
 from preacher.core.datetime import DatetimeFormat
-from preacher.core.scenario import RelativeDatetime
+from preacher.core.value import RelativeDatetime
 from .error import YamlError, on_node
 
 _KEY_DELTA = 'delta'

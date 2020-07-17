@@ -10,8 +10,8 @@ from preacher.core.scenario.response import (
     ResponseVerification,
 )
 from preacher.core.scenario.status import Status
-from preacher.core.scenario.value import ValueContext
 from preacher.core.scenario.verification import Verification
+from preacher.core.value import ValueContext
 
 PKG = 'preacher.core.scenario.case'
 

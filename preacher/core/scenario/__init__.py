@@ -18,7 +18,6 @@ from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 from .status import Status, Statused, StatusedList
 from .type import require_type
 from .url_param import UrlParam, UrlParams, UrlParamValue
-from .value import Value, ValueContext, StaticValue, RelativeDatetime
 from .verification import Verification
 
 __all__ = [
@@ -60,9 +59,5 @@ __all__ = [
     'UrlParam',
     'UrlParams',
     'UrlParamValue',
-    'Value',
-    'ValueContext',
-    'StaticValue',
-    'RelativeDatetime',
     'Verification',
 ]

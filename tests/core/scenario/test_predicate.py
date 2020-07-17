@@ -4,8 +4,8 @@ from unittest.mock import sentinel
 from pytest import raises
 
 from preacher.core.scenario.predicate import MatcherPredicate, Predicate
-from preacher.core.scenario.value import ValueContext
 from preacher.core.scenario.verification import Verification
+from preacher.core.value import ValueContext
 
 PKG = 'preacher.core.scenario.predicate'
 

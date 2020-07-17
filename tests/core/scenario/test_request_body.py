@@ -3,7 +3,7 @@ from typing import Any, Optional
 from pytest import raises
 
 from preacher.core.scenario.request_body import RequestBody
-from preacher.core.scenario.value import ValueContext
+from preacher.core.value import ValueContext
 
 
 def test_request_body():

@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from preacher.core.functional import recursive_map
+from preacher.core.value import Value, ValueContext
 from .url_param import UrlParams, resolve_url_params
 from .util.serialization import to_serializable_value
-from .value import Value, ValueContext
 
 
 class RequestBody(ABC):

@@ -11,8 +11,8 @@ from preacher.core.scenario.scenario import (
 )
 from preacher.core.scenario.status import Status, StatusedList
 from preacher.core.scenario.util.concurrency import CasesTask
-from preacher.core.scenario.value import ValueContext
 from preacher.core.scenario.verification import Verification
+from preacher.core.value import ValueContext
 
 PKG = 'preacher.core.scenario.scenario'
 

@@ -9,12 +9,12 @@ from dataclasses import dataclass
 from typing import Callable, List, Mapping, Optional
 
 from preacher.core.response import Response
+from preacher.core.value import ValueContext
 from .analysis import Analyzer, JsonAnalyzer
 from .description import Description
 from .predicate import Predicate
 from .response_body import ResponseBodyDescription
 from .status import Status, merge_statuses
-from .value import ValueContext
 from .verification import Verification, collect
 
 

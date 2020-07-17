@@ -3,7 +3,7 @@ from io import StringIO
 
 from pytest import mark, raises
 
-from preacher.core.scenario import RelativeDatetime, ValueContext
+from preacher.core.value import ValueContext, RelativeDatetime
 from preacher.yaml import YamlError, load
 
 
