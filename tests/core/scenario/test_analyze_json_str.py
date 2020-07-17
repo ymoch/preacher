@@ -2,7 +2,7 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 
 from pytest import fixture, raises
 
-from preacher.core.response import ResponseBody
+from preacher.core.request import ResponseBody
 from preacher.core.scenario.analysis import analyze_json_str
 
 

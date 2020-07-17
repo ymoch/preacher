@@ -3,7 +3,7 @@ from unittest.mock import NonCallableMock, Mock, sentinel
 
 from pytest import mark, fixture
 
-from preacher.core.response import Response
+from preacher.core.request import Response
 from preacher.core.scenario.description import Description
 from preacher.core.scenario.predicate import Predicate
 from preacher.core.scenario.response import ResponseDescription

@@ -10,8 +10,7 @@ from typing import Optional, List
 from requests import Session
 
 from preacher.core.datetime import now
-from preacher.core.request import Request
-from preacher.core.response import Response
+from preacher.core.request import Request, Response
 from preacher.core.value import ValueContext
 from .analysis import analyze_data_obj
 from .description import Description

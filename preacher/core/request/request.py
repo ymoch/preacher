@@ -10,9 +10,9 @@ import requests
 
 from preacher import __version__ as _version
 from preacher.core.datetime import now
-from preacher.core.response import Response, ResponseBody
 from preacher.core.value import ValueContext
 from .request_body import RequestBody
+from .response import Response, ResponseBody
 from .url_param import UrlParams, resolve_url_params
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}

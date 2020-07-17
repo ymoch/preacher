@@ -10,7 +10,7 @@ from typing import Any, Callable, Mapping, TypeVar
 from lxml.etree import _Element as Element, XMLParser, fromstring
 
 from preacher.core.functional import recursive_map
-from preacher.core.response import ResponseBody
+from preacher.core.request.response import ResponseBody
 from preacher.core.util.serialization import to_serializable_value
 
 T = TypeVar('T')
