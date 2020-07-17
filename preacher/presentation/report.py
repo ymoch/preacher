@@ -15,7 +15,7 @@ class Reporter:
 
         env = jinja2.Environment(
             loader=jinja2.PackageLoader('preacher', 'resources/report/html'),
-            autoescape=jinja2.select_autoescape(['html', 'xml']),
+            autoescape=True,
         )
         self._index_template = env.get_template('index.html')
         self._response_view_template = env.get_template('response-view.html')
