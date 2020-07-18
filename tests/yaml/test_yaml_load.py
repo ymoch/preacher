@@ -3,7 +3,7 @@ from unittest.mock import call
 
 from pytest import mark, raises
 
-from preacher.yaml import (
+from preacher.yaml.loader import (
     YamlError,
     load,
     load_from_path,

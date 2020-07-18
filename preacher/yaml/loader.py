@@ -4,9 +4,10 @@ import glob
 import os
 import re
 from contextlib import contextmanager
-from typing import Iterator, TextIO, Union
+from typing import Iterator, TextIO
 
-from yaml import Node, BaseLoader, MarkedYAMLError, load, load_all
+from yaml import Node, BaseLoader, MarkedYAMLError
+from yaml import load as _load, load_all as _load_all
 from yaml.composer import Composer
 from yaml.constructor import SafeConstructor
 from yaml.parser import Parser
@@ -18,8 +19,6 @@ from preacher.compilation.util import compile_str
 from .argument import construct_argument
 from .datetime import construct_relative_datetime
 from .error import YamlError, on_node
-
-PathLike = Union[str, os.PathLike]
 
 _WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
 
@@ -49,14 +48,14 @@ class Loader:
 
         self._Loader = _Loader
 
-    def load(self, stream: TextIO, origin: PathLike = '.') -> object:
+    def load(self, stream: TextIO, origin: str = '.') -> object:
         try:
             with self._on_origin(origin):
-                return load(stream, self._Loader)
+                return _load(stream, self._Loader)
         except MarkedYAMLError as error:
             raise YamlError(cause=error)
 
-    def load_from_path(self, path: PathLike) -> object:
+    def load_from_path(self, path: str) -> object:
         origin = os.path.dirname(path)
         try:
             with open(path) as stream:
@@ -64,14 +63,14 @@ class Loader:
         except FileNotFoundError as error:
             raise YamlError(cause=error)
 
-    def load_all(self, stream: TextIO, origin: PathLike = '.') -> Iterator:
+    def load_all(self, stream: TextIO, origin: str = '.') -> Iterator:
         try:
             with self._on_origin(origin):
-                yield from load_all(stream, self._Loader)
+                yield from _load_all(stream, self._Loader)
         except MarkedYAMLError as error:
             raise YamlError(cause=error)
 
-    def load_all_from_path(self, path: PathLike) -> Iterator:
+    def load_all_from_path(self, path: str) -> Iterator:
         origin = os.path.dirname(path)
         try:
             with open(path) as stream:
@@ -91,10 +90,26 @@ class Loader:
             return self.load_from_path(path)
 
     @contextmanager
-    def _on_origin(self, origin: PathLike) -> Iterator:
+    def _on_origin(self, origin: str) -> Iterator:
         original = self._origin
         self._origin = origin
         try:
             yield
         finally:
             self._origin = original
+
+
+def load(stream: TextIO, origin: str = '.') -> object:
+    return Loader().load(stream, origin)
+
+
+def load_from_path(path: str) -> object:
+    return Loader().load_from_path(path)
+
+
+def load_all(stream: TextIO, origin: str = '.') -> Iterator:
+    return Loader().load_all(stream, origin)
+
+
+def load_all_from_path(path: str) -> Iterator:
+    return Loader().load_all_from_path(path)

@@ -27,11 +27,7 @@ _KEY_SUBSCENARIOS = 'subscenarios'
 
 class ScenarioCompiler:
 
-    def __init__(
-        self,
-        description: DescriptionCompiler,
-        case: CaseCompiler,
-    ):
+    def __init__(self, description: DescriptionCompiler, case: CaseCompiler):
         self._description = description
         self._case = case
 

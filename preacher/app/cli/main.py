@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import chain
 from typing import Iterable
 
-from preacher.compilation import create_compiler
+from preacher.compilation.scenario import create_scenario_compiler
 from preacher.core.scenario import ScenarioRunner, MergingListener
 from preacher.presentation.listener import LoggingListener, ReportingListener
 from preacher.yaml import load_all, load_all_from_path
@@ -35,7 +35,7 @@ def _main() -> None:
     else:
         objs = load_all(sys.stdin)
 
-    compiler = create_compiler()
+    compiler = create_scenario_compiler()
     scenarios = (
         compiler.compile(obj, arguments=args.argument)
         for obj in objs
