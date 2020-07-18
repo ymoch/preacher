@@ -107,6 +107,10 @@ class Scenario:
         self._cases = cases or []
         self._subscenarios = subscenarios or []
 
+    @property
+    def label(self) -> Optional[str]:
+        return self._label
+
     def submit(
         self,
         executor: Executor,

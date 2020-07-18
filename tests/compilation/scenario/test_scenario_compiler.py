@@ -245,3 +245,31 @@ def test_given_filled_parameters(
         call().compile_default({}),
         call().compile_default({}),
     ])
+
+
+def test_compile_flattening(compiler: ScenarioCompiler):
+    obj = [
+        [],
+        [
+            [{'label': 'foo'}],
+            {'label': ArgumentValue('arg')},
+            [[{'label': 1}]]
+        ],
+    ]
+
+    scenarios = compiler.compile_flattening(obj, {'arg': 'bar'})
+    assert next(scenarios).label == 'foo'
+    assert next(scenarios).label == 'bar'
+
+    with raises(CompilationError) as error_info:
+        next(scenarios)
+    assert error_info.value.path == [
+        IndexedNode(1),
+        IndexedNode(2),
+        IndexedNode(0),
+        IndexedNode(0),
+        NamedNode('label'),
+    ]
+
+    with raises(StopIteration):
+        next(scenarios)

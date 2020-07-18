@@ -37,9 +37,8 @@ def compile_flattening(
     func: Callable[[object], T],
     obj: object,
 ) -> Iterator[T]:
-    """
-    Compile while flattening object, which can be a nested list.
-    """
+    """Compile while flattening object, which can be a nested list."""
+
     if not isinstance(obj, list):
         yield func(obj)
         return
