@@ -1,11 +1,15 @@
 """Scenario compilation."""
 
-from typing import List, Optional, Mapping
+from functools import partial
+from typing import Iterator, List, Optional, Mapping
 
 from preacher.compilation.argument import Arguments, inject_arguments
 from preacher.compilation.error import on_key
 from preacher.compilation.parameter import Parameter, compile_parameter
-from preacher.compilation.util.functional import map_compile
+from preacher.compilation.util.functional import (
+    map_compile,
+    compile_flattening,
+)
 from preacher.compilation.util.type import (
     ensure_bool,
     ensure_optional_str,
@@ -99,6 +103,27 @@ class ScenarioCompiler:
             cases=cases,
             subscenarios=subscenarios,
         )
+
+    def compile_flattening(
+        self,
+        obj: object,
+        arguments: Optional[Arguments] = None,
+    ) -> Iterator[Scenario]:
+        """
+        Compile the given object into a scenario with flattening:
+        a nested object list results in a flattened scenario.
+
+        Args:
+            obj: A compiled object or a list.
+            arguments: Arguments to inject.
+        Returns:
+            A scenario iterator as the result of compilation.
+        Raises:
+            CompilationError: when the compilation fails for each iteration.
+        """
+
+        compile = partial(self.compile, arguments=arguments)
+        return compile_flattening(compile, obj)
 
     def _compile_conditions(self, obj: object):
         return list(map_compile(self._description.compile, ensure_list(obj)))

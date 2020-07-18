@@ -4,15 +4,13 @@ import logging
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
-from functools import partial
 from itertools import chain
 from typing import Iterable
 
 from preacher.compilation.scenario import create_scenario_compiler
-from preacher.compilation.util.functional import compile_flattening
+from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.scenario import ScenarioRunner, MergingListener
 from preacher.presentation.listener import LoggingListener, ReportingListener
-from preacher.yaml import load_all, load_all_from_path
 from .log import get_logger
 from .option import parse_args
 
@@ -38,9 +36,10 @@ def _main() -> None:
         objs = load_all(sys.stdin)
 
     compiler = create_scenario_compiler()
-    compile = partial(compiler.compile, arguments=args.argument)
-    scenario_groups = (compile_flattening(compile, obj) for obj in objs)
-    scenarios = chain.from_iterable(scenario_groups)
+    scenarios = chain.from_iterable(
+        compiler.compile_flattening(obj, arguments=args.argument)
+        for obj in objs
+    )
 
     listener = MergingListener()
     listener.append(LoggingListener.from_logger(
