@@ -92,7 +92,7 @@ class Request:
         self._params = params or {}
         self._body = body
 
-    def __call__(
+    def execute(
         self,
         base_url: str,
         timeout: Optional[float] = None,
@@ -100,7 +100,7 @@ class Request:
     ) -> Response:
         if session is None:
             with requests.Session() as new_session:
-                return self.__call__(
+                return self.execute(
                     base_url=base_url,
                     timeout=timeout,
                     session=new_session,

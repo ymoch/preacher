@@ -63,7 +63,7 @@ def test_given_bad_condition(condition_verifications, expected_status):
         NonCallableMock(Description, verify=Mock(return_value=v))
         for v in condition_verifications
     ]
-    request = Mock(Request)
+    request = NonCallableMock(Request)
     response = NonCallableMock(ResponseDescription)
     case = Case(
         label=sentinel.label,
@@ -76,13 +76,13 @@ def test_given_bad_condition(condition_verifications, expected_status):
     assert result.label is sentinel.label
     assert result.status is expected_status
 
-    request.assert_not_called()
+    request.execute.assert_not_called()
     response.verify.assert_not_called()
 
 
 def test_when_disabled():
-    request = Mock(Request)
-    response = Mock(ResponseDescription)
+    request = NonCallableMock(Request)
+    response = NonCallableMock(ResponseDescription)
     case = Case(
         label=sentinel.label,
         enabled=False,
@@ -93,14 +93,15 @@ def test_when_disabled():
     assert actual.label is sentinel.label
     assert actual.status is Status.SKIPPED
 
-    request.assert_not_called()
+    request.execute.assert_not_called()
     response.verify.assert_not_called()
 
 
 def test_when_the_request_fails(mocker):
     retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
 
-    request = Mock(side_effect=RuntimeError('message'))
+    request = NonCallableMock(Request)
+    request.execute.side_effect = RuntimeError('message')
     response = NonCallableMock(ResponseDescription)
     case = Case(label=sentinel.label, request=request, response=response)
 
@@ -114,7 +115,7 @@ def test_when_the_request_fails(mocker):
     assert result.execution.message == 'RuntimeError: message'
     assert result.response is None
 
-    request.assert_called_once_with(
+    request.execute.assert_called_once_with(
         sentinel.base_url,
         timeout=None,
         session=None,
@@ -129,16 +130,16 @@ def test_when_given_an_response(mocker):
     retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
 
     sentinel.response.starts = sentinel.starts
-    request = Mock(return_value=sentinel.response)
-    response = NonCallableMock(ResponseDescription, verify=Mock(
-        return_value=ResponseVerification(
-            response_id=sentinel.response_id,
-            status=Status.UNSTABLE,
-            status_code=Verification.succeed(),
-            headers=Verification.succeed(),
-            body=Verification(status=Status.UNSTABLE)
-        ),
-    ))
+    request = NonCallableMock(Request)
+    request.execute.return_value = sentinel.response
+    response = NonCallableMock(ResponseDescription)
+    response.verify.return_value = ResponseVerification(
+        response_id=sentinel.response_id,
+        status=Status.UNSTABLE,
+        status_code=Verification.succeed(),
+        headers=Verification.succeed(),
+        body=Verification(status=Status.UNSTABLE)
+    )
     case = Case(label=sentinel.label, request=request, response=response)
 
     listener = NonCallableMock(spec=CaseListener)
@@ -158,7 +159,7 @@ def test_when_given_an_response(mocker):
     assert result.response.status is Status.UNSTABLE
     assert result.response.body.status is Status.UNSTABLE
 
-    request.assert_called_with(
+    request.execute.assert_called_with(
         sentinel.base_url,
         timeout=sentinel.timeout,
         session=sentinel.session,

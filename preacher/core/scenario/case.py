@@ -134,7 +134,7 @@ class Case:
         session: Optional[Session],
     ) -> CaseResult:
         try:
-            response = self._request(
+            response = self._request.execute(
                 base_url,
                 timeout=timeout,
                 session=session,
