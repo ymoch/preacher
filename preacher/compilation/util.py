@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping
 from functools import partial
-from typing import Any, Callable, Iterable, Iterator, Optional, TypeVar
+from typing import Any, Callable, Iterable, Iterator, TypeVar
 
 from .error import CompilationError, on_key, on_index
 
@@ -31,12 +31,6 @@ def run_recursively(func: Callable[[object], Any], obj) -> object:
         _func = partial(run_recursively, func)
         return list(map_compile(_func, obj))
     return func(obj)
-
-
-def or_else(optional: Optional[T], default: T) -> T:
-    if optional is None:
-        return default
-    return optional
 
 
 def compile_flattening(

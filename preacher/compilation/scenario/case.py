@@ -12,8 +12,9 @@ from preacher.compilation.type import (
     compile_optional_str,
     compile_list,
     compile_mapping,
+    or_else,
 )
-from preacher.compilation.util import map_compile, or_else
+from preacher.compilation.util import map_compile
 from preacher.compilation.verification import (
     ResponseDescriptionCompiled,
     ResponseDescriptionCompiler,

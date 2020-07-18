@@ -1,8 +1,10 @@
 """Typing utilities."""
 
-from typing import Optional, Mapping
+from typing import Mapping, Optional, TypeVar
 
 from preacher.compilation.error import CompilationError
+
+T = TypeVar('T')
 
 
 def compile_bool(obj: object) -> bool:
@@ -82,3 +84,9 @@ def compile_mapping(obj: object) -> Mapping:
     if not isinstance(obj, Mapping):
         raise CompilationError(f'Must be a map, given {type(obj)}')
     return obj
+
+
+def or_else(optional: Optional[T], default: T) -> T:
+    if optional is None:
+        return default
+    return optional
