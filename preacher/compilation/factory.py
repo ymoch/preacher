@@ -1,12 +1,14 @@
 from .case import CaseCompiler
 from .request import RequestCompiler, RequestBodyCompiler
 from .scenario import ScenarioCompiler
-from .verification.analysis import AnalysisCompiler
-from .verification.description import DescriptionCompiler
-from .verification.extraction import ExtractionCompiler
-from .verification.predicate import PredicateCompiler
-from .verification.response import ResponseDescriptionCompiler
-from .verification.response_body import ResponseBodyDescriptionCompiler
+from .verification import (
+    AnalysisCompiler,
+    DescriptionCompiler,
+    ExtractionCompiler,
+    PredicateCompiler,
+    ResponseDescriptionCompiler,
+    ResponseBodyDescriptionCompiler,
+)
 
 
 def create_compiler() -> ScenarioCompiler:
