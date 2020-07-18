@@ -2,7 +2,7 @@ from io import StringIO
 
 from pytest import raises, mark
 
-from preacher.yaml.loader import YamlError, load
+from preacher.compilation.yaml import YamlError, load
 
 
 @mark.parametrize(('content', 'expected_message'), [

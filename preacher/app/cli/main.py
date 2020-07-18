@@ -8,9 +8,9 @@ from itertools import chain
 from typing import Iterable
 
 from preacher.compilation.scenario import create_scenario_compiler
+from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.scenario import ScenarioRunner, MergingListener
 from preacher.presentation.listener import LoggingListener, ReportingListener
-from preacher.yaml import load_all, load_all_from_path
 from .log import get_logger
 from .option import parse_args
 
