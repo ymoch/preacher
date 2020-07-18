@@ -5,8 +5,8 @@ from pytest import fixture
 from requests import Session
 
 from preacher.core.scenario.case import Case, CaseResult
-from preacher.core.scenario.status import Status
 from preacher.core.scenario.util.concurrency import OrderedCasesTask
+from preacher.core.status import Status
 
 PACKAGE = 'preacher.core.scenario.util.concurrency'
 

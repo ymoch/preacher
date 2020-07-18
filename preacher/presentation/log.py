@@ -3,13 +3,9 @@ import io
 import logging
 from typing import Iterator
 
-from preacher.core.scenario import (
-    ScenarioResult,
-    CaseResult,
-    ResponseVerification,
-    Status,
-    Verification,
-)
+from preacher.core.scenario import ScenarioResult, CaseResult
+from preacher.core.status import Status
+from preacher.core.verification import ResponseVerification, Verification
 
 _LEVEL_MAP = {
     Status.SKIPPED: logging.DEBUG,
