@@ -1,13 +1,14 @@
-from .request import create_request_compiler
-from .scenario import ScenarioCompiler, CaseCompiler
-from .verification import (
+from preacher.compilation.request import create_request_compiler
+from preacher.compilation.verification import (
     create_predicate_compiler,
     create_description_compiler,
     create_response_description_compiler
 )
+from .case import CaseCompiler
+from .scenario import ScenarioCompiler
 
 
-def create_compiler() -> ScenarioCompiler:
+def create_scenario_compiler() -> ScenarioCompiler:
     request = create_request_compiler()
 
     predicate = create_predicate_compiler()
@@ -22,9 +23,7 @@ def create_compiler() -> ScenarioCompiler:
         response=response,
         description=description,
     )
-    scenario_compiler = ScenarioCompiler(
+    return ScenarioCompiler(
         description=description,
         case=case,
     )
-
-    return scenario_compiler
