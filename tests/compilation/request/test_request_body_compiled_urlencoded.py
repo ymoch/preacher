@@ -2,8 +2,7 @@ from unittest.mock import NonCallableMock, sentinel
 
 from pytest import raises
 
-from preacher.compilation import CompilationError
-from preacher.compilation.error import NamedNode
+from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request.request_body import (
     RequestBodyCompiled,
     UrlencodedRequestBodyCompiled,
