@@ -6,13 +6,13 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.compilation.error import on_key
-from preacher.compilation.functional import map_compile
 from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.compilation.type import (
-    compile_bool,
-    compile_optional_str,
-    compile_list,
-    compile_mapping,
+from preacher.compilation.util.functional import map_compile
+from preacher.compilation.util.type import (
+    ensure_bool,
+    ensure_optional_str,
+    ensure_list,
+    ensure_mapping,
     or_else,
 )
 from preacher.compilation.verification import (
@@ -101,19 +101,19 @@ class CaseCompiler:
     def compile(self, obj: object) -> CaseCompiled:
         """`obj` should be a mapping."""
 
-        obj = compile_mapping(obj)
+        obj = ensure_mapping(obj)
         compiled = self._default
 
         label_obj = obj.get(_KEY_LABEL)
         with on_key(_KEY_LABEL):
-            label = compile_optional_str(label_obj)
+            label = ensure_optional_str(label_obj)
             # `label` is always replaced.
             compiled = replace(compiled, label=label)
 
         enabled_obj = obj.get(_KEY_ENABLED)
         if enabled_obj is not None:
             with on_key(_KEY_ENABLED):
-                enabled = compile_bool(enabled_obj)
+                enabled = ensure_bool(enabled_obj)
             compiled = replace(compiled, enabled=enabled)
 
         conditions_obj = obj.get(_KEY_CONDITIONS)
@@ -121,7 +121,7 @@ class CaseCompiler:
             with on_key(_KEY_CONDITIONS):
                 conditions = list(map_compile(
                     self._description.compile,
-                    compile_list(conditions_obj),
+                    ensure_list(conditions_obj),
                 ))
             compiled = replace(compiled, conditions=conditions)
 

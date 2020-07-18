@@ -15,7 +15,7 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.compilation.type import compile_str
+from preacher.compilation.util.type import ensure_str
 from .argument import construct_argument
 from .datetime import construct_relative_datetime
 from .error import YamlError, on_node
@@ -82,7 +82,7 @@ class Loader:
         obj = loader.construct_scalar(node)
 
         with on_node(node):
-            base = compile_str(obj)
+            base = ensure_str(obj)
             path = os.path.join(self._origin, base)
             if _WILDCARDS_REGEX.match(path):
                 paths = glob.iglob(path, recursive=True)

@@ -7,12 +7,12 @@ from preacher.compilation.error import CompilationError
 T = TypeVar('T')
 
 
-def compile_bool(obj: object) -> bool:
+def ensure_bool(obj: object) -> bool:
     """
-    Compile the given boolean object.
+    Ensure a boolean object.
 
     Args:
-        obj: A compiled object, which should be a `bool` value.
+        obj: An ensured object, which should be a `bool` value.
     Returns:
         The compiled value.
     Raises:
@@ -23,12 +23,12 @@ def compile_bool(obj: object) -> bool:
     return obj
 
 
-def compile_str(obj: object) -> str:
+def ensure_str(obj: object) -> str:
     """
-    Compile the given string object.
+    Ensure a string object.
 
     Args:
-        obj: A compiled object, which should be a `string` value.
+        obj: An ensured object, which should be a `string` value.
     Returns:
         The compiled value.
     Raises:
@@ -39,12 +39,12 @@ def compile_str(obj: object) -> str:
     return obj
 
 
-def compile_optional_str(obj: object) -> Optional[str]:
+def ensure_optional_str(obj: object) -> Optional[str]:
     """
-    Compile the given optional string object.
+    Compile an optional string object.
 
     Args:
-        obj: A compiled object, which should be a `string` value or `None`.
+        obj: An ensured object, which should be a `string` value or `None`.
     Returns:
         The compiled value.
     Raises:
@@ -52,16 +52,16 @@ def compile_optional_str(obj: object) -> Optional[str]:
     """
     if obj is None:
         return None
-    return compile_str(obj)
+    return ensure_str(obj)
 
 
-def compile_list(obj: object) -> list:
+def ensure_list(obj: object) -> list:
     """
-    Compile the given list object.
+    Ensure a list object.
     When given not a list, then this returns ``[it]``.
 
     Args:
-        obj: A compiled object.
+        obj: A ensured object.
     Returns:
         The compilation result.
     """
@@ -70,9 +70,9 @@ def compile_list(obj: object) -> list:
     return obj
 
 
-def compile_mapping(obj: object) -> Mapping:
+def ensure_mapping(obj: object) -> Mapping:
     """
-    Compile the given mapping object.
+    Ensure a mapping object.
 
     Args:
         obj: A compiled object, which should be a mapping.

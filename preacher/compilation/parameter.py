@@ -3,7 +3,7 @@ from typing import Optional
 
 from .argument import Arguments
 from .error import on_key
-from .type import compile_optional_str, compile_mapping
+from .util.type import ensure_optional_str, ensure_mapping
 
 _KEY_LABEL = 'label'
 _KEY_ARGUMENTS = 'args'
@@ -26,10 +26,10 @@ def compile_parameter(obj: object) -> Parameter:
     Raises:
         CompilationError: when the compilation fails.
     """
-    obj = compile_mapping(obj)
+    obj = ensure_mapping(obj)
 
     with on_key(_KEY_LABEL):
-        label = compile_optional_str(obj.get(_KEY_LABEL))
+        label = ensure_optional_str(obj.get(_KEY_LABEL))
     with on_key(_KEY_ARGUMENTS):
-        arguments = compile_mapping(obj.get(_KEY_ARGUMENTS, {}))
+        arguments = ensure_mapping(obj.get(_KEY_ARGUMENTS, {}))
     return Parameter(label=label, arguments=arguments)

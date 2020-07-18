@@ -9,8 +9,8 @@ from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.functional import map_compile
-from preacher.compilation.type import compile_list
+from preacher.compilation.util.functional import map_compile
+from preacher.compilation.util.type import ensure_list
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
 from preacher.core.verification import (
@@ -117,7 +117,7 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
     hamcrest_factory = _MULTI_MATCHERS_HAMCREST_MAP[key]
 
     with on_key(key):
-        value = compile_list(value)
+        value = ensure_list(value)
         inner_matchers = list(map_compile(compile_matcher, value))
 
     return RecursiveMatcher(hamcrest_factory, inner_matchers)

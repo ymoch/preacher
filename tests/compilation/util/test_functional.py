@@ -3,7 +3,7 @@ from unittest.mock import Mock, call
 from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
-from preacher.compilation.functional import (
+from preacher.compilation.util.functional import (
     map_compile,
     run_recursively,
     compile_flattening,

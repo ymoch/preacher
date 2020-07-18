@@ -1,8 +1,8 @@
 """Description compilation."""
 
 from preacher.compilation.error import on_key
-from preacher.compilation.functional import map_compile
-from preacher.compilation.type import compile_list, compile_mapping
+from preacher.compilation.util.functional import map_compile
+from preacher.compilation.util.type import ensure_list, ensure_mapping
 from preacher.core.verification import Description
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
@@ -24,13 +24,13 @@ class DescriptionCompiler:
     def compile(self, obj: object):
         """`obj` should be a mapping."""
 
-        obj = compile_mapping(obj)
+        obj = ensure_mapping(obj)
 
         extraction_obj = obj.get(_KEY_DESCRIBE)
         with on_key(_KEY_DESCRIBE):
             extractor = self._extraction.compile(extraction_obj)
 
-        predicate_objs = compile_list(obj.get(_KEY_SHOULD, []))
+        predicate_objs = ensure_list(obj.get(_KEY_SHOULD, []))
         with on_key(_KEY_SHOULD):
             predicates = list(map_compile(
                 self._predicate.compile,

@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 from typing import Optional
 
-from preacher.compilation.functional import run_recursively
+from .util.functional import run_recursively
 
 Arguments = Mapping
 

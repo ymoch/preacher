@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from functools import partial
 from typing import Any, Callable, Iterable, Iterator, TypeVar
 
-from .error import CompilationError, on_key, on_index
+from preacher.compilation.error import CompilationError, on_key, on_index
 
 T = TypeVar('T')
 U = TypeVar('U')

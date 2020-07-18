@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat
 from .error import CompilationError
-from .type import compile_str, compile_optional_str
+from .util.type import ensure_str, ensure_optional_str
 
 TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
 
@@ -17,7 +17,7 @@ def compile_datetime_format(obj: object) -> DatetimeFormat:
     Raises:
         CompilationError: When compilation fails.
     """
-    format_string = compile_optional_str(obj)
+    format_string = ensure_optional_str(obj)
     if format_string is None or format_string.lower() == 'iso8601':
         return ISO8601
     return StrftimeFormat(format_string)
@@ -30,7 +30,7 @@ def compile_timedelta(obj: object) -> timedelta:
     Raises:
         CompilationError: When compilation fails.
     """
-    obj = compile_str(obj)
+    obj = ensure_str(obj)
     normalized = obj.strip().lower()
     if not normalized or normalized == 'now':
         return timedelta()

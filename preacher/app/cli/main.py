@@ -8,8 +8,8 @@ from functools import partial
 from itertools import chain
 from typing import Iterable
 
-from preacher.compilation.functional import compile_flattening
 from preacher.compilation.scenario import create_scenario_compiler
+from preacher.compilation.util.functional import compile_flattening
 from preacher.core.scenario import ScenarioRunner, MergingListener
 from preacher.presentation.listener import LoggingListener, ReportingListener
 from preacher.yaml import load_all, load_all_from_path

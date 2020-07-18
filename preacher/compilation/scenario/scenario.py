@@ -4,13 +4,13 @@ from typing import List, Optional, Mapping
 
 from preacher.compilation.argument import Arguments, inject_arguments
 from preacher.compilation.error import on_key
-from preacher.compilation.functional import map_compile
 from preacher.compilation.parameter import Parameter, compile_parameter
-from preacher.compilation.type import (
-    compile_bool,
-    compile_optional_str,
-    compile_list,
-    compile_mapping,
+from preacher.compilation.util.functional import map_compile
+from preacher.compilation.util.type import (
+    ensure_bool,
+    ensure_optional_str,
+    ensure_list,
+    ensure_mapping,
 )
 from preacher.compilation.verification import DescriptionCompiler
 from preacher.core.scenario import Scenario, Case
@@ -48,17 +48,17 @@ class ScenarioCompiler:
             CompilationError: when the compilation fails.
         """
 
-        obj = compile_mapping(obj)
+        obj = ensure_mapping(obj)
         arguments = arguments or {}
 
         label_obj = inject_arguments(obj.get(_KEY_LABEL), arguments)
         with on_key(_KEY_LABEL):
-            label = compile_optional_str(label_obj)
+            label = ensure_optional_str(label_obj)
 
         parameters_obj = obj.get(_KEY_PARAMETERS)
         if parameters_obj is not None:
             with on_key(_KEY_PARAMETERS):
-                parameters_obj = compile_list(parameters_obj)
+                parameters_obj = ensure_list(parameters_obj)
                 parameters = list(
                     map_compile(compile_parameter, parameters_obj)
                 )
@@ -70,7 +70,7 @@ class ScenarioCompiler:
 
         ordered_obj = inject_arguments(obj.get(_KEY_ORDERED, True), arguments)
         with on_key(_KEY_ORDERED):
-            ordered = compile_bool(ordered_obj)
+            ordered = ensure_bool(ordered_obj)
 
         default_obj = inject_arguments(obj.get(_KEY_DEFAULT, {}), arguments)
         with on_key(_KEY_DEFAULT):
@@ -101,12 +101,12 @@ class ScenarioCompiler:
         )
 
     def _compile_conditions(self, obj: object):
-        return list(map_compile(self._description.compile, compile_list(obj)))
+        return list(map_compile(self._description.compile, ensure_list(obj)))
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
         return list(
-            map_compile(case_compiler.compile_fixed, compile_list(obj))
+            map_compile(case_compiler.compile_fixed, ensure_list(obj))
         )
 
     def _compile_subscenarios(
@@ -118,7 +118,7 @@ class ScenarioCompiler:
         compiler = ScenarioCompiler(description=self._description, case=case)
         return list(map_compile(
             lambda sub_obj: compiler.compile(sub_obj, arguments=arguments),
-            compile_list(obj),
+            ensure_list(obj),
         ))
 
     def _compile_parameterized(

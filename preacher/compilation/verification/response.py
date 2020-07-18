@@ -7,8 +7,8 @@ from dataclasses import dataclass, replace
 from typing import Optional, List
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.functional import map_compile
-from preacher.compilation.type import compile_mapping, or_else
+from preacher.compilation.util.functional import map_compile
+from preacher.compilation.util.type import ensure_mapping, or_else
 from preacher.core.verification import (
     ResponseDescription,
     Description,
@@ -71,7 +71,7 @@ class ResponseDescriptionCompiler:
     def compile(self, obj: object) -> ResponseDescriptionCompiled:
         """`obj` should be a mapping."""
 
-        obj = compile_mapping(obj)
+        obj = ensure_mapping(obj)
         compiled = self._default
 
         status_code_obj = obj.get(_KEY_STATUS_CODE)
