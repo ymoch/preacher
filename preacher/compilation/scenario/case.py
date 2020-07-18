@@ -6,6 +6,7 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.compilation.error import on_key
+from preacher.compilation.functional import map_compile
 from preacher.compilation.request import RequestCompiler, RequestCompiled
 from preacher.compilation.type import (
     compile_bool,
@@ -14,7 +15,6 @@ from preacher.compilation.type import (
     compile_mapping,
     or_else,
 )
-from preacher.compilation.util import map_compile
 from preacher.compilation.verification import (
     ResponseDescriptionCompiled,
     ResponseDescriptionCompiler,

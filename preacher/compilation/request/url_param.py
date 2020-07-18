@@ -4,7 +4,7 @@ from datetime import date
 from typing import Mapping
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util import map_compile
+from preacher.compilation.functional import map_compile
 from preacher.core.request import UrlParams, UrlParam, UrlParamValue
 from preacher.core.value import RelativeDatetime
 

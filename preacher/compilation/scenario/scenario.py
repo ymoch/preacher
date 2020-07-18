@@ -4,6 +4,7 @@ from typing import List, Optional, Mapping
 
 from preacher.compilation.argument import Arguments, inject_arguments
 from preacher.compilation.error import on_key
+from preacher.compilation.functional import map_compile
 from preacher.compilation.parameter import Parameter, compile_parameter
 from preacher.compilation.type import (
     compile_bool,
@@ -11,7 +12,6 @@ from preacher.compilation.type import (
     compile_list,
     compile_mapping,
 )
-from preacher.compilation.util import map_compile
 from preacher.compilation.verification import DescriptionCompiler
 from preacher.core.scenario import Scenario, Case
 from .case import CaseCompiler

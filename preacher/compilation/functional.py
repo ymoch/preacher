@@ -1,4 +1,4 @@
-"""Utilities for compilations."""
+"""Functional utilities for compilations."""
 
 from collections.abc import Mapping
 from functools import partial
