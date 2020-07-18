@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, sentinel
 
 from pytest import fixture
 
-from preacher.core.listener import Listener, MergingListener
+from preacher.core.scenario.listener import Listener, MergingListener
 
 
 @fixture

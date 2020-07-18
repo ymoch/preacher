@@ -1,8 +1,8 @@
 from typing import List
 
 from preacher.core.request import Response
-from preacher.core.scenario import ScenarioListener, ScenarioResult
 from preacher.core.status import Status
+from .scenario import ScenarioListener, ScenarioResult
 
 
 class Listener(ScenarioListener):

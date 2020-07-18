@@ -1,10 +1,14 @@
 from concurrent.futures import Executor
 from typing import Iterable, Optional, Iterator
 
+from preacher.core.status import Status
 from .listener import Listener
-from .scenario import Scenario, ScenarioResult, ScenarioTask
-from .scenario.scenario import StaticScenarioTask
-from .status import Status
+from .scenario import (
+    Scenario,
+    ScenarioResult,
+    ScenarioTask,
+    StaticScenarioTask,
+)
 
 
 class ScenarioRunner:

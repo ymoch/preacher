@@ -1,9 +1,13 @@
 from typing import Iterable, Iterator
 from unittest.mock import Mock, NonCallableMock, call, sentinel
 
-from preacher.core.listener import Listener
-from preacher.core.runner import ScenarioRunner
-from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask
+from preacher.core.scenario.listener import Listener
+from preacher.core.scenario.runner import ScenarioRunner
+from preacher.core.scenario.scenario import (
+    Scenario,
+    ScenarioResult,
+    ScenarioTask,
+)
 from preacher.core.status import Status
 
 
