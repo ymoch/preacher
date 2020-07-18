@@ -38,8 +38,6 @@ def test_iso8601_format_datetime(value, expected):
     '',
     'XXX',
     'XXXTYYY',
-    '20190123',
-    '2019-01-23',
     '2019-01-23T',
     '20190123T',
 ])
@@ -49,6 +47,8 @@ def test_iso8601_format_datetime_invalid(value):
 
 
 @mark.parametrize(('value', 'expected'), [
+    ('20190123', datetime(2019, 1, 23)),
+    ('2019-01-23', datetime(2019, 1, 23)),
     ('1234-01-23T01:23:45', datetime(1234, 1, 23, 1, 23, 45)),
     (
         '20190828T024543.477Z',

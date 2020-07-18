@@ -1,12 +1,13 @@
 """
 Datetime utilities for Preacher core.
 """
+
+import time
 from abc import ABC
 from datetime import datetime, timedelta, timezone
-import time
 from typing import Optional
 
-import aniso8601
+from dateutil.parser import isoparse
 
 
 class DatetimeFormat(ABC):
@@ -25,9 +26,9 @@ class Iso8601Format(DatetimeFormat):
 
     def parse_datetime(self, value: str) -> datetime:
         try:
-            return aniso8601.parse_datetime(value)
-        except (ValueError, IndexError):  # Raises IndexError for '12345678T'
-            raise ValueError(f'An invalid datetime format: {value}')
+            return isoparse(value)
+        except ValueError as error:
+            raise ValueError(f'An invalid ISO 8601 format: {value}', error)
 
 
 class StrftimeFormat(DatetimeFormat):
