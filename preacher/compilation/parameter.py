@@ -15,7 +15,7 @@ class Parameter:
     arguments: Arguments = field(default_factory=dict)
 
 
-def compile(obj: object) -> Parameter:
+def compile_parameter(obj: object) -> Parameter:
     """
     Compile a parameter.
 

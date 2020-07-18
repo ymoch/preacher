@@ -1,6 +1,5 @@
-from .case import CaseCompiler
 from .request import RequestCompiler, RequestBodyCompiler
-from .scenario import ScenarioCompiler
+from .scenario import ScenarioCompiler, CaseCompiler
 from .verification import (
     AnalysisCompiler,
     DescriptionCompiler,

@@ -3,13 +3,13 @@ from unittest.mock import Mock, NonCallableMock, call, sentinel
 from pytest import mark, raises, fixture
 
 from preacher.compilation.argument import ArgumentValue
-from preacher.compilation.case import CaseCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
-from preacher.compilation.scenario import ScenarioCompiler
-from preacher.compilation.verification.description import DescriptionCompiler
+from preacher.compilation.scenario.case import CaseCompiler
+from preacher.compilation.scenario.scenario import ScenarioCompiler
+from preacher.compilation.verification import DescriptionCompiler
 
-PKG = 'preacher.compilation.scenario'
+PKG = 'preacher.compilation.scenario.scenario'
 
 
 @fixture

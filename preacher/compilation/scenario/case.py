@@ -5,16 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import List, Optional
 
+from preacher.compilation.error import on_key
 from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.compilation.verification.response import (
-    ResponseDescriptionCompiled,
-    ResponseDescriptionCompiler,
-)
-from preacher.core.scenario import Case
-from preacher.core.verification import Description
-from preacher.compilation.verification.description import DescriptionCompiler
-from .error import on_key
-from .util import (
+from preacher.compilation.util import (
     compile_bool,
     compile_list,
     compile_mapping,
@@ -22,6 +15,13 @@ from .util import (
     map_compile,
     or_else,
 )
+from preacher.compilation.verification import (
+    ResponseDescriptionCompiled,
+    ResponseDescriptionCompiler,
+    DescriptionCompiler,
+)
+from preacher.core.scenario import Case
+from preacher.core.verification import Description
 
 _KEY_LABEL = 'label'
 _KEY_ENABLED = 'enabled'

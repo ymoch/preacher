@@ -2,19 +2,19 @@
 
 from typing import List, Optional, Mapping
 
-from preacher.compilation.verification.description import DescriptionCompiler
-from preacher.core.scenario import Scenario, Case
-from .argument import Arguments, inject_arguments
-from .case import CaseCompiler
-from .error import on_key
-from .parameter import Parameter, compile as compile_parameter
-from .util import (
+from preacher.compilation.argument import Arguments, inject_arguments
+from preacher.compilation.error import on_key
+from preacher.compilation.parameter import Parameter, compile_parameter
+from preacher.compilation.util import (
     map_compile,
     compile_bool,
     compile_optional_str,
     compile_list,
     compile_mapping,
 )
+from preacher.compilation.verification import DescriptionCompiler
+from preacher.core.scenario import Scenario, Case
+from .case import CaseCompiler
 
 _KEY_LABEL = 'label'
 _KEY_WHEN = 'when'
