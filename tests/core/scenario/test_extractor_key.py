@@ -2,8 +2,8 @@ from unittest.mock import Mock, NonCallableMock
 
 from pytest import fixture
 
-from preacher.core.scenario import Analyzer
-from preacher.core.scenario.extraction import KeyExtractor
+from preacher.core.verification.analysis import Analyzer
+from preacher.core.verification.extraction import KeyExtractor
 
 DICTIONARY = {
     'int': 1,

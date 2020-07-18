@@ -3,11 +3,11 @@ from unittest.mock import sentinel
 
 from pytest import raises
 
-from preacher.core.scenario.predicate import MatcherPredicate, Predicate
-from preacher.core.scenario.verification import Verification
 from preacher.core.value import ValueContext
+from preacher.core.verification.predicate import Predicate, MatcherPredicate
+from preacher.core.verification.verification import Verification
 
-PKG = 'preacher.core.scenario.predicate'
+PKG = 'preacher.core.verification.predicate'
 
 
 def test_predicate_interface():

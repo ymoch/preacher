@@ -8,7 +8,7 @@ from preacher.core.request import ResponseBody
 from preacher.core.value import ValueContext
 from .analysis import Analysis, analyze_json_str
 from .description import Description
-from .verification import Verification, collect
+from .verification import Verification, collect_verification
 
 
 class ResponseBodyDescription:
@@ -31,7 +31,7 @@ class ResponseBodyDescription:
         except Exception as error:
             return Verification.of_error(error)
 
-        return collect(
+        return collect_verification(
             description.verify(analyzer, context)
             for description in self._descriptions
         )

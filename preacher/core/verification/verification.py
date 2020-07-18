@@ -30,7 +30,7 @@ class Verification(Statused):
         )
 
 
-def collect(children: Iterable[Verification]) -> Verification:
+def collect_verification(children: Iterable[Verification]) -> Verification:
     children = list(children)
     status = merge_statuses(child.status for child in children)
     return Verification(status=status, children=children)

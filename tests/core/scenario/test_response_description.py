@@ -4,12 +4,12 @@ from unittest.mock import NonCallableMock, Mock, sentinel
 from pytest import mark, fixture
 
 from preacher.core.request import Response
-from preacher.core.scenario.description import Description
-from preacher.core.scenario.predicate import Predicate
-from preacher.core.scenario.response import ResponseDescription
-from preacher.core.scenario.response_body import ResponseBodyDescription
-from preacher.core.scenario.verification import Verification
 from preacher.core.status import Status
+from preacher.core.verification.description import Description
+from preacher.core.verification.predicate import Predicate
+from preacher.core.verification.response import ResponseDescription
+from preacher.core.verification.response_body import ResponseBodyDescription
+from preacher.core.verification.verification import Verification
 
 
 @fixture

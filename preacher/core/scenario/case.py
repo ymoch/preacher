@@ -14,11 +14,15 @@ from preacher.core.datetime import now
 from preacher.core.request import Request, Response
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
-from .analysis import analyze_data_obj
-from .description import Description
-from .response import ResponseDescription, ResponseVerification
+from preacher.core.verification import (
+    Description,
+    ResponseDescription,
+    ResponseVerification,
+    Verification,
+    analyze_data_obj,
+    collect_verification,
+)
 from .util.retry import retry_while_false
-from .verification import Verification, collect
 
 
 class CaseListener:
@@ -110,7 +114,7 @@ class Case:
         )
         context_analyzer = analyze_data_obj(context)
         value_context = ValueContext(origin_datetime=context.starts)
-        conditions = collect(
+        conditions = collect_verification(
             condition.verify(context_analyzer, value_context)
             for condition in self._conditions
         )

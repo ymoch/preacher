@@ -6,7 +6,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional, List
 
-from preacher.core.scenario import Description, Predicate, ResponseDescription
+from preacher.core.verification import (
+    ResponseDescription,
+    Description,
+    Predicate,
+)
 from .description import DescriptionCompiler
 from .error import CompilationError, on_key
 from .predicate import PredicateCompiler

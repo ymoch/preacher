@@ -6,7 +6,8 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.core.scenario import Case, Description
+from preacher.core.scenario import Case
+from preacher.core.verification import Description
 from .description import DescriptionCompiler
 from .error import on_key
 from .response import (

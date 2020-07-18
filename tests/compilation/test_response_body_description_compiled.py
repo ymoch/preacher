@@ -1,7 +1,7 @@
 from unittest.mock import patch, sentinel
 
 from preacher.compilation.response_body import ResponseBodyDescriptionCompiled
-from preacher.core.scenario import analyze_json_str
+from preacher.core.verification import analyze_json_str
 
 ctor_patch = patch(
     target='preacher.compilation.response_body.ResponseBodyDescription',

@@ -5,9 +5,9 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.matcher import compile_matcher
-from preacher.core.scenario.matcher import match
 from preacher.core.status import Status
 from preacher.core.verification.hamcrest import after, before
+from preacher.core.verification.matcher import match
 
 PKG = 'preacher.compilation.matcher'
 

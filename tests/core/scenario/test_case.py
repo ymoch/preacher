@@ -4,14 +4,14 @@ from pytest import mark
 
 from preacher.core.request.request import Request
 from preacher.core.scenario.case import Case, CaseListener
-from preacher.core.scenario.description import Description
-from preacher.core.scenario.response import (
-    ResponseDescription,
-    ResponseVerification,
-)
-from preacher.core.scenario.verification import Verification
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
+from preacher.core.verification import (
+    ResponseDescription,
+    ResponseVerification,
+    Description,
+    Verification,
+)
 
 PKG = 'preacher.core.scenario.case'
 

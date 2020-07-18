@@ -8,14 +8,14 @@ import hamcrest
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from preacher.core.datetime import DatetimeWithFormat
-from preacher.core.scenario import (
+from preacher.core.value import Value, StaticValue, RelativeDatetime
+from preacher.core.verification import (
     Matcher,
     StaticMatcher,
     ValueMatcher,
     RecursiveMatcher,
     require_type,
 )
-from preacher.core.value import Value, StaticValue, RelativeDatetime
 from preacher.core.verification.hamcrest import after, before
 from .datetime import compile_timedelta
 from .error import CompilationError, on_key

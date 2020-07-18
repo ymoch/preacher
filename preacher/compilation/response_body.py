@@ -4,11 +4,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import List, Optional
 
-from preacher.core.scenario import (
-    Analysis,
-    analyze_json_str,
+from preacher.core.verification import (
     ResponseBodyDescription,
     Description,
+    Analysis,
+    analyze_json_str,
 )
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler

@@ -2,8 +2,8 @@ from unittest.mock import NonCallableMock
 
 from pytest import raises
 
-from preacher.core.scenario.analysis import Analyzer
-from preacher.core.scenario.extraction import Extractor
+from preacher.core.verification.analysis import Analyzer
+from preacher.core.verification.extraction import Extractor
 
 
 def test_incomplete_extractor():

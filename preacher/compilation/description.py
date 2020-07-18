@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from preacher.core.scenario import Description
+from preacher.core.verification import Description
 from .error import on_key
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler

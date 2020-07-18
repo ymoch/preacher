@@ -1,9 +1,9 @@
 from unittest.mock import Mock, NonCallableMock, sentinel
 
-from preacher.core.scenario.description import Description
-from preacher.core.scenario.response_body import ResponseBodyDescription
-from preacher.core.scenario.verification import Verification
 from preacher.core.status import Status
+from preacher.core.verification.response_body import ResponseBodyDescription
+from preacher.core.verification.description import Description
+from preacher.core.verification.verification import Verification
 
 
 def test_given_invalid_body():
