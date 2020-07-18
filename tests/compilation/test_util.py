@@ -3,7 +3,11 @@ from unittest.mock import Mock, call
 from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
-from preacher.compilation.util import map_compile, run_recursively, compile_flattening
+from preacher.compilation.util import (
+    map_compile,
+    run_recursively,
+    compile_flattening,
+)
 from preacher.core.util.functional import identify
 
 
@@ -82,8 +86,8 @@ def test_compile_flattening_error():
         IndexedNode(0),
         NamedNode('x'),
     ]
-
-
+    with raises(StopIteration):
+        next(compiled)
 
 
 @mark.parametrize(('obj', 'expected'), [

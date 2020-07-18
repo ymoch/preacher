@@ -109,7 +109,10 @@ def or_else(optional: Optional[T], default: T) -> T:
     return optional
 
 
-def compile_flattening(func: Callable[[T], U], obj: object) -> Iterator[U]:
+def compile_flattening(
+    func: Callable[[object], T],
+    obj: object,
+) -> Iterator[T]:
     """
     Compile while flattening object, which can be a nested list.
     """
