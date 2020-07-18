@@ -1,7 +1,7 @@
 from yaml import BaseLoader, Node
 
 from preacher.compilation.argument import ArgumentValue
-from preacher.compilation.util import compile_str
+from preacher.compilation.type import compile_str
 from .error import on_node
 
 

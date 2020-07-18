@@ -7,14 +7,13 @@ from typing import List, Optional
 
 from preacher.compilation.error import on_key
 from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.compilation.util import (
+from preacher.compilation.type import (
     compile_bool,
+    compile_optional_str,
     compile_list,
     compile_mapping,
-    compile_optional_str,
-    map_compile,
-    or_else,
 )
+from preacher.compilation.util import map_compile, or_else
 from preacher.compilation.verification import (
     ResponseDescriptionCompiled,
     ResponseDescriptionCompiler,

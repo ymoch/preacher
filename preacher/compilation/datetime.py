@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat
 from .error import CompilationError
-from .util import compile_optional_str, compile_str
+from .type import compile_str, compile_optional_str
 
 TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
 

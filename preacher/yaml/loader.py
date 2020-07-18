@@ -15,7 +15,7 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.compilation.util import compile_str
+from preacher.compilation.type import compile_str
 from .argument import construct_argument
 from .datetime import construct_relative_datetime
 from .error import YamlError, on_node

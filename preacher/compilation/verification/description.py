@@ -1,11 +1,8 @@
 """Description compilation."""
 
 from preacher.compilation.error import on_key
-from preacher.compilation.util import (
-    compile_list,
-    compile_mapping,
-    map_compile,
-)
+from preacher.compilation.type import compile_list, compile_mapping
+from preacher.compilation.util import map_compile
 from preacher.core.verification import Description
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler

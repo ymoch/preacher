@@ -7,7 +7,8 @@ from dataclasses import dataclass, replace
 from typing import Optional
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util import compile_str, compile_mapping, or_else
+from preacher.compilation.type import compile_str, compile_mapping
+from preacher.compilation.util import or_else
 from preacher.core.request import Request, Method, UrlParams
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
 from .url_param import compile_url_params

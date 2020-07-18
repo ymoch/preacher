@@ -3,7 +3,7 @@ from typing import Optional
 
 from .argument import Arguments
 from .error import on_key
-from .util import compile_mapping, compile_optional_str
+from .type import compile_optional_str, compile_mapping
 
 _KEY_LABEL = 'label'
 _KEY_ARGUMENTS = 'args'

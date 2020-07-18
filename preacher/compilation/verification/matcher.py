@@ -9,7 +9,8 @@ from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
 from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util import compile_list, map_compile
+from preacher.compilation.type import compile_list
+from preacher.compilation.util import map_compile
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
 from preacher.core.verification import (
