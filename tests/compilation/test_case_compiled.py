@@ -2,7 +2,9 @@ from unittest.mock import NonCallableMock, sentinel
 
 from preacher.compilation.case import CaseCompiled
 from preacher.compilation.request import RequestCompiled
-from preacher.compilation.response import ResponseDescriptionCompiled
+from preacher.compilation.verification.response import (
+    ResponseDescriptionCompiled,
+)
 
 PACKAGE = 'preacher.compilation.case'
 

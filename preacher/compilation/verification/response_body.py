@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import List, Optional
 
+from preacher.compilation.error import CompilationError, on_key
+from preacher.compilation.util import map_compile, or_else
 from preacher.core.verification import (
     ResponseBodyDescription,
     Description,
@@ -12,8 +14,6 @@ from preacher.core.verification import (
 )
 from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
-from .error import CompilationError, on_key
-from .util import map_compile, or_else
 
 _KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'

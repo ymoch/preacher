@@ -2,16 +2,18 @@ from unittest.mock import ANY, NonCallableMock, call, sentinel
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode
-from preacher.compilation.predicate import PredicateCompiler
-from preacher.compilation.response import ResponseDescriptionCompiler
-from preacher.compilation.response_body import (
+from preacher.compilation.verification.description import DescriptionCompiler
+from preacher.compilation.verification.predicate import PredicateCompiler
+from preacher.compilation.verification.response import (
+    ResponseDescriptionCompiler,
+)
+from preacher.compilation.verification.response_body import (
     ResponseBodyDescriptionCompiled,
     ResponseBodyDescriptionCompiler,
 )
 
-PKG = 'preacher.compilation.response'
+PKG = 'preacher.compilation.verification.response'
 
 
 @fixture

@@ -6,19 +6,19 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional, List
 
+from preacher.compilation.error import CompilationError, on_key
+from preacher.compilation.util import compile_mapping, map_compile, or_else
 from preacher.core.verification import (
     ResponseDescription,
     Description,
     Predicate,
 )
 from .description import DescriptionCompiler
-from .error import CompilationError, on_key
 from .predicate import PredicateCompiler
 from .response_body import (
     ResponseBodyDescriptionCompiler,
     ResponseBodyDescriptionCompiled,
 )
-from .util import compile_mapping, map_compile, or_else
 
 _KEY_STATUS_CODE = 'status_code'
 _KEY_HEADERS = 'headers'

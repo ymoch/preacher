@@ -2,10 +2,10 @@
 
 from typing import List, Optional, Mapping
 
+from preacher.compilation.verification.description import DescriptionCompiler
 from preacher.core.scenario import Scenario, Case
 from .argument import Arguments, inject_arguments
 from .case import CaseCompiler
-from .description import DescriptionCompiler
 from .error import on_key
 from .parameter import Parameter, compile as compile_parameter
 from .util import (

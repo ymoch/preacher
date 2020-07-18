@@ -2,10 +2,10 @@ from unittest.mock import Mock, NonCallableMock, call, sentinel
 
 from pytest import fixture, raises
 
-from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
-from preacher.compilation.extraction import ExtractionCompiler
-from preacher.compilation.predicate import PredicateCompiler
+from preacher.compilation.verification.description import DescriptionCompiler
+from preacher.compilation.verification.extraction import ExtractionCompiler
+from preacher.compilation.verification.predicate import PredicateCompiler
 
 
 @fixture

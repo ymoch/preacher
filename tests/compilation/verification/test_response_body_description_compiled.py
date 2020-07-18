@@ -1,10 +1,15 @@
 from unittest.mock import patch, sentinel
 
-from preacher.compilation.response_body import ResponseBodyDescriptionCompiled
+from preacher.compilation.verification.response_body import (
+    ResponseBodyDescriptionCompiled,
+)
 from preacher.core.verification import analyze_json_str
 
+PKG = 'preacher.compilation.verification.response_body'
+
+
 ctor_patch = patch(
-    target='preacher.compilation.response_body.ResponseBodyDescription',
+    target=f'{PKG}.ResponseBodyDescription',
     return_value=sentinel.fixed,
 )
 

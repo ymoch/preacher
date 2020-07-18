@@ -6,14 +6,14 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.compilation.request import RequestCompiler, RequestCompiled
-from preacher.core.scenario import Case
-from preacher.core.verification import Description
-from .description import DescriptionCompiler
-from .error import on_key
-from .response import (
+from preacher.compilation.verification.response import (
     ResponseDescriptionCompiled,
     ResponseDescriptionCompiler,
 )
+from preacher.core.scenario import Case
+from preacher.core.verification import Description
+from preacher.compilation.verification.description import DescriptionCompiler
+from .error import on_key
 from .util import (
     compile_bool,
     compile_list,

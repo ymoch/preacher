@@ -1,16 +1,14 @@
-from datetime import datetime, timezone
 from unittest.mock import sentinel
 
-from preacher.compilation.predicate import PredicateCompiler
+from preacher.compilation.verification.predicate import PredicateCompiler
 
-PACKAGE = 'preacher.compilation.predicate'
-REQUEST_DATETIME = datetime(2019, 8, 28, tzinfo=timezone.utc)
+PKG = 'preacher.compilation.verification.predicate'
 
 
 def test_matcher_predicate(mocker):
-    compile_matcher = mocker.patch(f'{PACKAGE}.compile_matcher')
+    compile_matcher = mocker.patch(f'{PKG}.compile_matcher')
     compile_matcher.return_value = sentinel.matcher
-    predicate_ctor = mocker.patch(f'{PACKAGE}.MatcherPredicate')
+    predicate_ctor = mocker.patch(f'{PKG}.MatcherPredicate')
     predicate_ctor.return_value = sentinel.predicate
 
     predicate = PredicateCompiler().compile(sentinel.obj)

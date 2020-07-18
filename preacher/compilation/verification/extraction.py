@@ -3,6 +3,8 @@
 from collections.abc import Mapping
 from typing import Any, Callable
 
+from preacher.compilation.error import CompilationError, on_key
+from preacher.compilation.util import compile_bool, compile_str
 from preacher.core.util.functional import identify
 from preacher.core.verification import (
     Extractor,
@@ -10,8 +12,6 @@ from preacher.core.verification import (
     XPathExtractor,
     KeyExtractor,
 )
-from .error import CompilationError, on_key
-from .util import compile_bool, compile_str
 
 _CAST_FUNC_MAP = {
     'int': int,

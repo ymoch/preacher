@@ -4,10 +4,10 @@ from pytest import mark, raises, fixture
 
 from preacher.compilation.argument import ArgumentValue
 from preacher.compilation.case import CaseCompiler
-from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
 from preacher.compilation.scenario import ScenarioCompiler
+from preacher.compilation.verification.description import DescriptionCompiler
 
 PKG = 'preacher.compilation.scenario'
 

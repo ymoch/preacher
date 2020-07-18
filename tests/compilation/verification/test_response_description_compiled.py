@@ -1,14 +1,15 @@
 from unittest.mock import MagicMock, patch, sentinel
 
-from preacher.compilation.response import ResponseDescriptionCompiled
-from preacher.compilation.response_body import ResponseBodyDescriptionCompiled
-
-PACKAGE = 'preacher.compilation.response'
-
-ctor_patch = patch(
-    target=f'{PACKAGE}.ResponseDescription',
-    return_value=sentinel.fixed,
+from preacher.compilation.verification.response import (
+    ResponseDescriptionCompiled,
 )
+from preacher.compilation.verification.response_body import (
+    ResponseBodyDescriptionCompiled,
+)
+
+PKG = 'preacher.compilation.verification.response'
+
+ctor_patch = patch(f'{PKG}.ResponseDescription', return_value=sentinel.fixed)
 
 
 def test_replace():

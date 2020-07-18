@@ -2,11 +2,15 @@
 
 from typing import Optional
 
+from preacher.compilation.error import on_key
+from preacher.compilation.util import (
+    compile_list,
+    compile_mapping,
+    map_compile,
+)
 from preacher.core.verification import Description
-from .error import on_key
 from .extraction import ExtractionCompiler
 from .predicate import PredicateCompiler
-from .util import compile_list, compile_mapping, map_compile
 
 _KEY_DESCRIBE = 'describe'
 _KEY_SHOULD = 'should'

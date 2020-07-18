@@ -3,10 +3,10 @@ from unittest.mock import call
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
-from preacher.compilation.extraction import ExtractionCompiler
+from preacher.compilation.verification.extraction import ExtractionCompiler
 from preacher.core.util.functional import identify
 
-MODULE = 'preacher.compilation.extraction'
+PKG = 'preacher.compilation.verification.extraction'
 
 
 @mark.parametrize('value, expected_message, expected_path', (
@@ -82,6 +82,6 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
     ),
 ))
 def test_when_given_a_valid_value(value, expected_ctor, expected_call, mocker):
-    ctor = mocker.patch(f'{MODULE}.{expected_ctor}')
+    ctor = mocker.patch(f'{PKG}.{expected_ctor}')
     ExtractionCompiler().compile(value)
     ctor.assert_has_calls([expected_call])

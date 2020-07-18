@@ -2,15 +2,15 @@ from unittest.mock import ANY, MagicMock, call, sentinel, patch
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.analysis import AnalysisCompiler
-from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError
-from preacher.compilation.response_body import (
+from preacher.compilation.verification.analysis import AnalysisCompiler
+from preacher.compilation.verification.description import DescriptionCompiler
+from preacher.compilation.verification.response_body import (
     ResponseBodyDescriptionCompiled,
     ResponseBodyDescriptionCompiler,
 )
 
-PACKAGE = 'preacher.compilation.response_body'
+PKG = 'preacher.compilation.verification.response_body'
 
 
 @fixture
@@ -92,7 +92,7 @@ def test_given_a_mapping(compiler, analysis, description):
 
 
 @patch(
-    target=f'{PACKAGE}.ResponseBodyDescriptionCompiler',
+    target=f'{PKG}.ResponseBodyDescriptionCompiler',
     return_value=sentinel.compiler_of_default,
 )
 def test_of_default(compiler_ctor, analysis, description):

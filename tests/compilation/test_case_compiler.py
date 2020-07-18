@@ -3,12 +3,14 @@ from unittest.mock import ANY, NonCallableMock, sentinel
 from pytest import fixture, mark, raises
 
 from preacher.compilation.case import CaseCompiled, CaseCompiler
-from preacher.compilation.description import DescriptionCompiler
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.request import RequestCompiler
-from preacher.compilation.response import ResponseDescriptionCompiler
+from preacher.compilation.verification.description import DescriptionCompiler
+from preacher.compilation.verification.response import (
+    ResponseDescriptionCompiler,
+)
 
-PACKAGE = 'preacher.compilation.case'
+PKG = 'preacher.compilation.case'
 
 
 @fixture
@@ -120,7 +122,7 @@ def initial_default():
 
 
 def test_given_hollow_default(mocker, req, res, desc, initial_default):
-    ctor = mocker.patch(f'{PACKAGE}.CaseCompiler')
+    ctor = mocker.patch(f'{PKG}.CaseCompiler')
     ctor.return_value = sentinel.default_compiler
 
     compiler = CaseCompiler(req, res, desc, initial_default)
@@ -142,7 +144,7 @@ def test_given_hollow_default(mocker, req, res, desc, initial_default):
 
 
 def test_given_filled_default(mocker, req, res, desc, initial_default):
-    ctor = mocker.patch(f'{PACKAGE}.CaseCompiler')
+    ctor = mocker.patch(f'{PKG}.CaseCompiler')
     ctor.return_value = sentinel.default_compiler
 
     compiler = CaseCompiler(req, res, desc, initial_default)

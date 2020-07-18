@@ -7,6 +7,9 @@ from typing import Any, Callable, Dict
 import hamcrest
 from hamcrest.core.matcher import Matcher as HamcrestMatcher
 
+from preacher.compilation.datetime import compile_timedelta
+from preacher.compilation.error import CompilationError, on_key
+from preacher.compilation.util import compile_list, map_compile
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
 from preacher.core.verification import (
@@ -17,9 +20,6 @@ from preacher.core.verification import (
     require_type,
 )
 from preacher.core.verification.hamcrest import after, before
-from .datetime import compile_timedelta
-from .error import CompilationError, on_key
-from .util import compile_list, map_compile
 
 _STATIC_MATCHER_MAP = {
     # For objects.

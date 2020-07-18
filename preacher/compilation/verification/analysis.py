@@ -3,8 +3,8 @@ from preacher.core.verification import (
     analyze_json_str,
     analyze_xml_str,
 )
-from .error import CompilationError
-from .util import compile_str
+from preacher.compilation.error import CompilationError
+from preacher.compilation.util import compile_str
 
 _ANALYSIS_MAP = {
     'json': analyze_json_str,
