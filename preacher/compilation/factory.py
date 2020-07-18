@@ -1,34 +1,22 @@
 from .request import create_request_compiler
 from .scenario import ScenarioCompiler, CaseCompiler
 from .verification import (
-    AnalysisCompiler,
-    DescriptionCompiler,
-    ExtractionCompiler,
-    PredicateCompiler,
-    ResponseDescriptionCompiler,
-    ResponseBodyDescriptionCompiler,
+    create_predicate_compiler,
+    create_description_compiler,
+    create_response_description_compiler
 )
 
 
 def create_compiler() -> ScenarioCompiler:
     request = create_request_compiler()
 
-    extraction = ExtractionCompiler()
-    analysis = AnalysisCompiler()
-    predicate = PredicateCompiler()
-    description = DescriptionCompiler(
-        extraction=extraction,
-        predicate=predicate,
-    )
-    response_body_description = ResponseBodyDescriptionCompiler(
-        analysis=analysis,
-        description=description,
-    )
-    response = ResponseDescriptionCompiler(
+    predicate = create_predicate_compiler()
+    description = create_description_compiler(predicate=predicate)
+    response = create_response_description_compiler(
         predicate=predicate,
         description=description,
-        body=response_body_description,
     )
+
     case = CaseCompiler(
         request=request,
         response=response,
