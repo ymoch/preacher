@@ -1,4 +1,4 @@
-from .request import RequestCompiler, RequestBodyCompiler
+from .request import create_request_compiler
 from .scenario import ScenarioCompiler, CaseCompiler
 from .verification import (
     AnalysisCompiler,
@@ -11,8 +11,7 @@ from .verification import (
 
 
 def create_compiler() -> ScenarioCompiler:
-    request_body = RequestBodyCompiler()
-    request = RequestCompiler(body=request_body)
+    request = create_request_compiler()
 
     extraction = ExtractionCompiler()
     analysis = AnalysisCompiler()
