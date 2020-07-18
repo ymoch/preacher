@@ -107,3 +107,16 @@ def or_else(optional: Optional[T], default: T) -> T:
     if optional is None:
         return default
     return optional
+
+
+def compile_flattening(func: Callable[[T], U], obj: object) -> Iterator[U]:
+    """
+    Compile while flattening object, which can be a nested list.
+    """
+    if not isinstance(obj, list):
+        yield func(obj)
+        return
+
+    for idx, item in enumerate(obj):
+        with on_index(idx):
+            yield from compile_flattening(func, item)
