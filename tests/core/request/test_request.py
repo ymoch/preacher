@@ -38,7 +38,7 @@ def test_default_request(mocker, session):
     assert request.params == {}
     assert request.body is None
 
-    request('base-url')
+    request.execute('base-url')
     args, kwargs = session.request.call_args
     assert args == ('GET', 'base-url')
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
@@ -78,7 +78,7 @@ def test_request(mocker, session):
     assert request.params is sentinel.params
     assert request.body is body
 
-    response = request('base-url', timeout=5.0, session=session)
+    response = request.execute('base-url', timeout=5.0, session=session)
     assert isinstance(response, ResponseWrapper)
     assert response.id == 'id'
     assert response.elapsed == 1.23
@@ -117,14 +117,14 @@ def test_request_overwrites_default_headers(session):
         },
         body=body,
     )
-    request('base-url', session=session)
+    request.execute('base-url', session=session)
     kwargs = session.request.call_args[1]
     assert kwargs['headers']['User-Agent'] == sentinel.custom_user_agent
     assert kwargs['headers']['Content-Type'] == sentinel.custom_content_type
 
     # Doesn't change the state.
     request = Request(body=body)
-    request('base-url', session=session)
+    request.execute('base-url', session=session)
     kwargs = session.request.call_args[1]
     assert kwargs['headers']['User-Agent'].startswith('Preacher')
     assert kwargs['headers']['Content-Type'] is sentinel.content_type
