@@ -1,7 +1,5 @@
 """Description compilation."""
 
-from typing import Optional
-
 from preacher.compilation.error import on_key
 from preacher.compilation.util import (
     compile_list,
@@ -20,11 +18,11 @@ class DescriptionCompiler:
 
     def __init__(
         self,
-        extraction: Optional[ExtractionCompiler] = None,
-        predicate: Optional[PredicateCompiler] = None,
+        extraction: ExtractionCompiler,
+        predicate: PredicateCompiler,
     ):
-        self._extraction = extraction or ExtractionCompiler()
-        self._predicate = predicate or PredicateCompiler()
+        self._extraction = extraction
+        self._predicate = predicate
 
     def compile(self, obj: object):
         """`obj` should be a mapping."""
