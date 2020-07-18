@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from typing import Any, Callable
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util import compile_bool, compile_str
+from preacher.compilation.util.type import ensure_bool, ensure_str
 from preacher.core.util.functional import identify
 from preacher.core.verification import (
     Extractor,
@@ -39,7 +39,7 @@ class ExtractionCompiler:
 
         multiple_obj = obj.get(_KEY_MULTIPLE, False)
         with on_key(_KEY_MULTIPLE):
-            multiple = compile_bool(multiple_obj)
+            multiple = ensure_bool(multiple_obj)
 
         cast: Callable[[object], Any] = identify
         cast_obj = obj.get(_KEY_CAST_TO)
@@ -62,7 +62,7 @@ class ExtractionCompiler:
     def _compile_cast(obj: object) -> Callable[[object], Any]:
         """`obj` should be a string."""
 
-        key = compile_str(obj)
+        key = ensure_str(obj)
         cast = _CAST_FUNC_MAP.get(key)
         if not cast:
             raise CompilationError(f'Invalid value: {key}')

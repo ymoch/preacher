@@ -7,7 +7,7 @@ from dataclasses import dataclass, replace
 from typing import Optional
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util import compile_str, compile_mapping, or_else
+from preacher.compilation.util.type import ensure_str, ensure_mapping, or_else
 from preacher.core.request import Request, Method, UrlParams
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
 from .url_param import compile_url_params
@@ -64,7 +64,7 @@ class RequestCompiler:
         if isinstance(obj, str):
             return self.compile({_KEY_PATH: obj})
 
-        obj = compile_mapping(obj)
+        obj = ensure_mapping(obj)
         compiled = self._default
 
         method_obj = obj.get(_KEY_METHOD)
@@ -76,13 +76,13 @@ class RequestCompiler:
         path_obj = obj.get(_KEY_PATH)
         if path_obj is not None:
             with on_key(_KEY_PATH):
-                path = compile_str(path_obj)
+                path = ensure_str(path_obj)
             compiled = replace(compiled, path=path)
 
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
             with on_key(_KEY_HEADERS):
-                headers = compile_mapping(headers_obj)
+                headers = ensure_mapping(headers_obj)
             compiled = replace(compiled, headers=headers)
 
         params_obj = obj.get(_KEY_PARAMS)
@@ -111,7 +111,7 @@ class RequestCompiler:
 
 
 def _compile_method(obj: object) -> Method:
-    key = compile_str(obj).upper()
+    key = ensure_str(obj).upper()
     method = _METHOD_MAP.get(key)
     if not method:
         message = f'Must be in {list(_METHOD_MAP)}, but given: {obj}'

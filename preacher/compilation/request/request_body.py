@@ -5,7 +5,7 @@ from dataclasses import dataclass, replace
 from typing import Mapping, Optional, Callable
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util import compile_mapping, compile_str
+from preacher.compilation.util.type import ensure_str, ensure_mapping
 from preacher.core.request import (
     RequestBody,
     UrlencodedRequestBody,
@@ -102,13 +102,13 @@ class RequestBodyCompiler:
         )
 
     def compile(self, obj: object) -> RequestBodyCompiled:
-        obj = compile_mapping(obj)
+        obj = ensure_mapping(obj)
         compiled = self._default
 
         type_obj = obj.get(_KEY_TYPE)
         if type_obj is not None:
             with on_key(_KEY_TYPE):
-                key = compile_str(type_obj)
+                key = ensure_str(type_obj)
                 factory = _TYPE_FACTORY_MAP.get(key)
                 if not factory:
                     raise CompilationError(

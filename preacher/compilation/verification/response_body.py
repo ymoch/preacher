@@ -5,7 +5,8 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util import map_compile, or_else
+from preacher.compilation.util.functional import map_compile
+from preacher.compilation.util.type import or_else
 from preacher.core.verification import (
     ResponseBodyDescription,
     Description,
