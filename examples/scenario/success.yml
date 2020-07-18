@@ -1,4 +1,1 @@
-label: Successful test examples
-
-subscenarios:
-  !include successful/*.yml
+!include successful/*.yml

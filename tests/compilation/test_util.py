@@ -3,7 +3,11 @@ from unittest.mock import Mock, call
 from pytest import raises, mark
 
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
-from preacher.compilation.util import map_compile, run_recursively
+from preacher.compilation.util import (
+    map_compile,
+    run_recursively,
+    compile_flattening,
+)
 from preacher.core.util.functional import identify
 
 
@@ -60,3 +64,37 @@ def test_run_recursively_with_invalid_obj(obj, expected_path):
 ])
 def test_run_recursively_with_valid_obj(obj, expected):
     assert run_recursively(lambda x: x * 2, obj) == expected
+
+
+def test_compile_flattening_error():
+    def _compile(flag: bool) -> bool:
+        if not flag:
+            raise CompilationError('msg', node=NamedNode('x'))
+        return not flag
+
+    obj = [True, [[], [True, True, [False]]], True]
+    compiled = compile_flattening(_compile, obj)
+    assert not next(compiled)
+    assert not next(compiled)
+    assert not next(compiled)
+    with raises(CompilationError) as error_info:
+        next(compiled)
+    assert error_info.value.path == [
+        IndexedNode(1),
+        IndexedNode(1),
+        IndexedNode(2),
+        IndexedNode(0),
+        NamedNode('x'),
+    ]
+    with raises(StopIteration):
+        next(compiled)
+
+
+@mark.parametrize(('obj', 'expected'), [
+    ([], []),
+    ([[[]], [[[]]]], []),
+    (1, [2]),
+    ([1, [2, 3, [[4]]], [5, 6]], [2, 4, 6, 8, 10, 12])
+])
+def test_compile_flattening(obj, expected):
+    assert list(compile_flattening(lambda x: x * 2, obj)) == expected

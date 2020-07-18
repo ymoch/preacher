@@ -124,19 +124,37 @@ Minimally, a scenario should contain ``label`` and ``cases``.
       - ...
       - ...
 
-Only the top level YAML value can be a YAML stream,
+Only the top level YAML value can be a list,
+which will be flattened even if it is nested.
+
+.. code-block:: yaml
+
+    - label: The label of the 1st scenario
+      cases:
+        - ...
+    - - label: The label of the 2nd scenario
+        cases:
+          - ...
+      - label: The label of the 3rd scenario
+        cases:
+          - ...
+
+Only the top level YAML value can also be a YAML stream,
 which has zero or more documents.
 
 .. code-block:: yaml
 
     ---
-    label: The label of the first scenario
+    label: The label of the 1st scenario
     cases:
       - ...
     ---
-    label: The label of the second scenario
-    cases:
-      - ...
+    - label: The label of the 2nd scenario
+      cases:
+        - ...
+    - label: The label of the 3rd scenario
+      cases:
+        - ...
 
 .. _case:
 
