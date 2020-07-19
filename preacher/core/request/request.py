@@ -87,7 +87,6 @@ class ExecutionReport(Statused):
     status: Status = Status.SKIPPED
     starts: datetime = field(default_factory=now)
     request: Optional[PreparedRequest] = None
-    response_id: Optional[str] = None
     message: Optional[str] = None
 
 
@@ -155,8 +154,7 @@ class Request:
             return report, None
 
         report = replace(report, status=Status.SUCCESS)
-        id = _generate_id()
-        response = ResponseWrapper(id=id, res=res)
+        response = ResponseWrapper(id=_generate_id(), res=res)
         return report, response
 
     def _prepare_request(
