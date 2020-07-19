@@ -4,8 +4,13 @@ import logging
 import re
 import shlex
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
+from concurrent.futures import (
+    Executor,
+    ProcessPoolExecutor,
+    ThreadPoolExecutor,
+)
 from enum import Enum
-from typing import List, Mapping, Optional, Tuple
+from typing import Callable, List, Mapping, Optional, Tuple
 
 from yaml import safe_load
 from yaml.error import MarkedYAMLError
@@ -24,6 +29,10 @@ class Level(Enum):
 
 
 _LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
+_CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, Callable[[int], Executor]] = {
+    'process': ProcessPoolExecutor,
+    'thread': ThreadPoolExecutor,
+}
 
 
 _ENV_PREFIX = 'PREACHER_CLI_'
@@ -35,6 +44,7 @@ _ENV_DELAY = f'{_ENV_PREFIX}DELAY'
 _ENV_TIMEOUT = f'{_ENV_PREFIX}TIMEOUT'
 _ENV_CONCURRENCY = f'{_ENV_PREFIX}CONCURRENCY'
 _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
+_ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
 
 _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
     _ENV_BASE_URL: '',
@@ -45,6 +55,7 @@ _DEFAULT_ENV_MAP: Mapping[str, Optional[str]] = {
     _ENV_TIMEOUT: None,
     _ENV_CONCURRENCY: '1',
     _ENV_REPORT: None,
+    _ENV_CONCURRENT_EXECUTOR: 'process',
 }
 
 
@@ -81,6 +92,12 @@ def level(value: str) -> Level:
     if not result:
         raise ArgumentTypeError(f'invalid level: {value}')
     return result
+
+
+def concurrent_executor(value: str) -> str:
+    if value not in _CONCURRENT_EXECUTOR_FACTORY_MAP:
+        raise ArgumentTypeError(f'invalid concurrent executor: {value}')
+    return value
 
 
 def argument(value: str) -> Tuple[str, object]:
@@ -168,6 +185,13 @@ def parse_args(
         default=defaults[_ENV_CONCURRENCY],
     )
     parser.add_argument(
+        '-C', '--concurrent-executor',
+        type=concurrent_executor,
+        choices=list(_CONCURRENT_EXECUTOR_FACTORY_MAP.keys()),
+        help='set the concurrent executor',
+        default=defaults[_ENV_CONCURRENT_EXECUTOR],
+    )
+    parser.add_argument(
         '-R', '--report',
         metavar='dir',
         help='report directory',
@@ -187,5 +211,9 @@ def parse_args(
         except ValueError as error:
             raise RuntimeError(f'Failed to parse {_ENV_ARGUMENT}: {error}')
     args.argument = dict(arguments)
+
+    args.concurrent_executor_factory = (
+        _CONCURRENT_EXECUTOR_FACTORY_MAP[args.concurrent_executor]
+    )
 
     return args
