@@ -14,9 +14,7 @@ class Reporter:
         self._responses_path = os.path.join(self._path, 'responses')
 
         loader = jinja2.PackageLoader('preacher', 'resources/report/html')
-        env = jinja2.Environment(loader=loader, autoescape=True)
-        self._index_template = env.get_template('index.html')
-        self._response_view_template = env.get_template('response-view.html')
+        self._env = jinja2.Environment(loader=loader, autoescape=True)
 
         self._initialize()
 
@@ -31,13 +29,14 @@ class Reporter:
     ) -> None:
         name = f'{response.id}.html'
         path = os.path.join(self._responses_path, name)
+
+        template = self._env.get_template('response-view.html')
         with open(path, 'w') as f:
-            self._response_view_template.stream(
-                execution=execution,
-                response=response,
-            ).dump(f)
+            template.stream(execution=execution, response=response).dump(f)
 
     def export_results(self, results: Iterable[ScenarioResult]) -> None:
         html_path = os.path.join(self._path, 'index.html')
+
+        template = self._env.get_template('index.html')
         with open(html_path, 'w') as f:
-            self._index_template.stream(scenarios=results).dump(f)
+            template.stream(scenarios=results).dump(f)
