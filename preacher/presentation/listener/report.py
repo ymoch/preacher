@@ -21,7 +21,7 @@ class ReportingListener(Listener):
     ) -> None:
         if not response:
             return
-        self._reporter.export_execution(execution, response)
+        self._reporter.export_response(execution, response)
 
     def on_scenario(self, result: ScenarioResult) -> None:
         self._results.append(result)

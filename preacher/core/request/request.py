@@ -159,26 +159,6 @@ class Request:
         response = ResponseWrapper(id=id, res=res)
         return report, response
 
-    @property
-    def method(self) -> Method:
-        return self._method
-
-    @property
-    def path(self) -> str:
-        return self._path
-
-    @property
-    def headers(self) -> Mapping:
-        return self._headers
-
-    @property
-    def params(self) -> UrlParams:
-        return self._params
-
-    @property
-    def body(self) -> Optional[RequestBody]:
-        return self._body
-
     def _prepare_request(
         self,
         base_url: str,

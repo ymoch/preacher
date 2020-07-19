@@ -40,12 +40,6 @@ def test_default_request(mocker, session):
     mocker.patch('requests.Session', return_value=session)
 
     request = Request()
-    assert request.method is Method.GET
-    assert request.path == ''
-    assert request.headers == {}
-    assert request.params == {}
-    assert request.body is None
-
     report, _res = request.execute('http://base-url.org')
     assert report.request.method == 'GET'
     assert report.request.url == 'http://base-url.org/'
@@ -118,12 +112,6 @@ def test_when_request_succeeds(mocker, session, body):
         params=sentinel.params,
         body=body,
     )
-    assert request.method is Method.POST
-    assert request.path == '/path'
-    assert request.headers == {'k1': 'v1'}
-    assert request.params is sentinel.params
-    assert request.body is body
-
     report, response = request.execute(
         'https://a.com',
         timeout=5.0,
