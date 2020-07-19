@@ -84,7 +84,7 @@ class PreparedRequest:
     method: str
     url: str
     headers: Mapping[str, str]
-    body: str
+    body: Optional[str]
 
 
 @dataclass(frozen=True)
@@ -147,10 +147,10 @@ class Request:
             return report, None
 
         report = replace(report, request=PreparedRequest(
-            method=prepped.method,
-            url=prepped.url,
+            method=prepped.method or '',
+            url=prepped.url or '',
             headers=prepped.headers,
-            body=prepped.body,
+            body=prepped.body,  # type: ignore
         ))
         try:
             res = session.send(prepped, timeout=timeout)
