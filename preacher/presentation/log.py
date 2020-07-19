@@ -3,6 +3,7 @@ import io
 import logging
 from typing import Iterator
 
+from preacher.core.request import ExecutionReport
 from preacher.core.scenario import ScenarioResult, CaseResult
 from preacher.core.status import Status
 from preacher.core.verification import ResponseVerification, Verification
@@ -47,14 +48,20 @@ class Logger:
         label = case.label or 'Not labeled case'
         self._log(level, '%s: %s', label, status)
         with self._nested():
-            self.show_verification(
-                verification=case.execution,
-                label='Execution',
-            )
+            self.show_execution(case.execution)
 
             response = case.response
             if response:
                 self.show_response_verification(response)
+
+    def show_execution(self, execution: ExecutionReport) -> None:
+        status = execution.status
+        level = _LEVEL_MAP[status]
+
+        self._log(level, 'Execution: %s', status)
+        if execution.message:
+            with self._nested():
+                self._multi_line_message(level, execution.message)
 
     def show_response_verification(
         self,

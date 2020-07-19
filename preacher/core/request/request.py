@@ -2,14 +2,17 @@
 
 import uuid
 from copy import copy
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from enum import Enum
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Tuple, Union
 
 import requests
 
 from preacher import __version__ as _version
 from preacher.core.datetime import now
+from preacher.core.status import Status, Statused
+from preacher.core.util.error import to_message
 from preacher.core.value import ValueContext
 from .request_body import RequestBody
 from .response import Response, ResponseBody
@@ -41,19 +44,14 @@ class ResponseBodyWrapper(ResponseBody):
 
 class ResponseWrapper(Response):
 
-    def __init__(self, id: str, starts: datetime, res: requests.Response):
+    def __init__(self, id: str, res: requests.Response):
         self._id = id
-        self._starts = starts
         self._res = res
         self._body = ResponseBodyWrapper(self._res)
 
     @property
     def id(self) -> str:
         return self._id
-
-    @property
-    def starts(self) -> datetime:
-        return self._starts
 
     @property
     def elapsed(self) -> float:
@@ -74,6 +72,22 @@ class ResponseWrapper(Response):
     @property
     def body(self) -> ResponseBody:
         return self._body
+
+
+@dataclass
+class PreparedRequest:
+    method: str
+    url: str
+    headers: Mapping[str, str]
+    body: Union[None, str, bytes]
+
+
+@dataclass(frozen=True)
+class ExecutionReport(Statused):
+    status: Status = Status.SKIPPED
+    starts: datetime = field(default_factory=now)
+    request: Optional[PreparedRequest] = None
+    message: Optional[str] = None
 
 
 class Request:
@@ -97,7 +111,18 @@ class Request:
         base_url: str,
         timeout: Optional[float] = None,
         session: Optional[requests.Session] = None,
-    ) -> Response:
+    ) -> Tuple[ExecutionReport, Optional[Response]]:
+        """
+        Executes a request.
+
+        Args:
+            base_url: A base URL.
+            timeout: The timeout in seconds. ``None`` means no timeout.
+            session: A session object to execute.
+        Returns:
+            A tuple of execution report and response.
+            When there is no response, the response will be ``None``.
+        """
         if session is None:
             with requests.Session() as new_session:
                 return self.execute(
@@ -107,7 +132,37 @@ class Request:
                 )
 
         starts = now()
-        context = ValueContext(origin_datetime=now())
+        report = ExecutionReport(starts=starts)
+        try:
+            prepped = self._prepare_request(base_url, starts)
+        except Exception as error:
+            message = to_message(error)
+            report = replace(report, status=Status.FAILURE, message=message)
+            return report, None
+
+        report = replace(report, request=PreparedRequest(
+            method=prepped.method or '',
+            url=prepped.url or '',
+            headers=prepped.headers,
+            body=prepped.body,
+        ))
+        try:
+            res = session.send(prepped, timeout=timeout)
+        except Exception as error:
+            message = to_message(error)
+            report = replace(report, status=Status.UNSTABLE, message=message)
+            return report, None
+
+        report = replace(report, status=Status.SUCCESS)
+        response = ResponseWrapper(id=_generate_id(), res=res)
+        return report, response
+
+    def _prepare_request(
+        self,
+        base_url: str,
+        starts: datetime,
+    ) -> requests.PreparedRequest:
+        context = ValueContext(origin_datetime=starts)
 
         url = base_url + self._path
         headers = copy(_DEFAULT_HEADERS)
@@ -121,32 +176,15 @@ class Request:
         headers.update(self._headers)
         params = resolve_url_params(self._params, context)
 
-        res = session.request(
-            str(self._method.value),
-            url,
+        req = requests.Request(
+            method=self._method.value,
+            url=url,
             headers=headers,
-            params=params,  # type: ignore
+            params=params,
             data=data,
-            timeout=timeout,
         )
-        return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)
+        return req.prepare()
 
-    @property
-    def method(self) -> Method:
-        return self._method
 
-    @property
-    def path(self) -> str:
-        return self._path
-
-    @property
-    def headers(self) -> Mapping:
-        return self._headers
-
-    @property
-    def params(self) -> UrlParams:
-        return self._params
-
-    @property
-    def body(self) -> Optional[RequestBody]:
-        return self._body
+def _generate_id() -> str:
+    return str(uuid.uuid4())

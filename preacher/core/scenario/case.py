@@ -11,7 +11,7 @@ from typing import Optional, List
 from requests import Session
 
 from preacher.core.datetime import now
-from preacher.core.request import Request, Response
+from preacher.core.request import Request, Response, ExecutionReport
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
 from preacher.core.verification import (
@@ -31,14 +31,12 @@ class CaseListener:
     Default implementations do nothing.
     """
 
-    def on_response(self, response: Response) -> None:
+    def on_execution(
+        self,
+        execution: ExecutionReport,
+        response: Optional[Response],
+    ) -> None:
         pass
-
-
-@dataclass(frozen=True)
-class RequestReport:
-    request: Request = field(default_factory=Request)
-    result: Verification = field(default_factory=Verification)
 
 
 @dataclass(frozen=True)
@@ -48,8 +46,7 @@ class CaseResult(Statused):
     """
     label: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
-    request: Request = field(default_factory=Request)
-    execution: Verification = field(default_factory=Verification)
+    execution: ExecutionReport = field(default_factory=ExecutionReport)
     response: Optional[ResponseVerification] = None
 
     @property
@@ -133,29 +130,23 @@ class Case:
         listener: CaseListener,
         session: Optional[Session],
     ) -> CaseResult:
-        try:
-            response = self._request.execute(
-                base_url,
-                timeout=timeout,
-                session=session,
-            )
-        except Exception as error:
-            return CaseResult(
-                label=self._label,
-                request=self._request,
-                execution=Verification.of_error(error),
-            )
-        listener.on_response(response)
+        execution, response = self._request.execute(
+            base_url,
+            timeout=timeout,
+            session=session,
+        )
+        listener.on_execution(execution, response)
 
-        execution_verification = Verification.succeed()
+        if not response:
+            return CaseResult(label=self._label, execution=execution)
+
         response_verification = self._response.verify(
             response,
-            ValueContext(origin_datetime=response.starts),
+            ValueContext(origin_datetime=execution.starts),
         )
         return CaseResult(
             label=self._label,
-            request=self._request,
-            execution=execution_verification,
+            execution=execution,
             response=response_verification,
         )
 

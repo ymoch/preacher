@@ -19,9 +19,12 @@ def merging_listener(listeners) -> MergingListener:
 
 
 def test_on_response(merging_listener, listeners):
-    merging_listener.on_response(sentinel.response)
+    merging_listener.on_execution(sentinel.execution, sentinel.response)
     for listener in listeners:
-        listener.on_response.assert_called_once_with(sentinel.response)
+        listener.on_execution.assert_called_once_with(
+            sentinel.execution,
+            sentinel.response,
+        )
 
 
 def test_on_scenario(merging_listener, listeners):

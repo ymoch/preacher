@@ -1,5 +1,5 @@
 {% from "./macros/conditions.html" import show_conditions %}
-{% from "./macros/request.html" import show_request %}
+{% from "./macros/execution.html" import show_execution %}
 {% from "./macros/response.html" import show_response %}
 {% from "./macros/verification.html" import show_verification %}
 
@@ -11,9 +11,8 @@
     </a>
     <div class="accordion-content" data-tab-content>
       <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-        {{ show_request(item.request) }}
         {{ show_conditions(item.conditions) }}
-        {{ show_verification('Execution', item.execution) }}
+        {{ show_execution(item.execution) }}
         {% if item.response %}
           {{ show_response(item.response) }}
         {% endif %}
