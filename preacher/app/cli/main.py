@@ -3,7 +3,6 @@
 import logging
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from itertools import chain
 from typing import Iterable
 
@@ -48,7 +47,7 @@ def _main() -> None:
     if args.report:
         listener.append(ReportingListener.from_path(args.report))
 
-    with ThreadPoolExecutor(args.concurrency) as executor:
+    with args.concurrent_executor_factory(args.concurrency) as executor:
         status = runner.run(executor, scenarios, listener=listener)
 
     if not status.is_succeeded:

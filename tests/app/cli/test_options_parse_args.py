@@ -1,4 +1,5 @@
 import logging
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
 from pytest import mark, raises
 
@@ -32,6 +33,8 @@ def test_show_and_exit(argv):
     ['--timeout', '0.0', 'scenario.yml'],
     ['-c', 'foo', 'scenario.yml'],
     ['--concurrency', '0', 'scenario.yml'],
+    ['-C', 'foo', 'scenario.yml'],
+    ['--concurrent-executor', 'bar', 'scenario.yml'],
 ])
 def test_invalid_argv(argv):
     with raises(SystemExit) as ex_info:
@@ -56,6 +59,7 @@ def test_invalid_argument_environ(environ):
     {'PREACHER_CLI_DELAY': 'foo'},
     {'PREACHER_CLI_TIMEOUT': 'foo'},
     {'PREACHER_CLI_CONCURRENCY': 'foo'},
+    {'PREACHER_CLI_CONCURRENT_EXECUTOR': 'foo'},
 ])
 def test_invalid_environ(environ):
     with raises(SystemExit) as ex_info:
@@ -74,6 +78,7 @@ def test_invalid_environ(environ):
         'PREACHER_CLI_DELAY': '',
         'PREACHER_CLI_TIMEOUT': '',
         'PREACHER_CLI_CONCURRENCY': '',
+        'PREACHER_CLI_CONCURRENT_EXECUTOR': '',
     },
 ])
 def test_default(environ):
@@ -85,6 +90,8 @@ def test_default(environ):
     assert args.delay == 0.1
     assert args.timeout is None
     assert args.concurrency == 1
+    assert args.concurrent_executor == 'process'
+    assert args.concurrent_executor_factory is ProcessPoolExecutor
     assert args.report is None
     assert args.scenario == ['scenario.yml']
 
@@ -99,6 +106,7 @@ def test_valid_argv():
             '--delay', '2.5',
             '--timeout', '3.5',
             '--concurrency', '4',
+            '--concurrent-executor', 'thread',
             '--report', 'report/',
             'scenario1.yml', 'scenario2.yml',
         ],
@@ -110,6 +118,7 @@ def test_valid_argv():
             'PREACHER_CLI_DELAY': 'foo',
             'PREACHER_CLI_TIMEOUT': 'foo',
             'PREACHER_CLI_CONCURRENCY': 'foo',
+            'PREACHER_CLI_CONCURRENT_EXECUTOR': 'foo',
         },
     )
     assert args.url == 'https://your-domain.com/api'
@@ -124,6 +133,8 @@ def test_valid_argv():
     assert args.delay == 2.5
     assert args.timeout == 3.5
     assert args.concurrency == 4
+    assert args.concurrent_executor == 'thread'
+    assert args.concurrent_executor_factory is ThreadPoolExecutor
     assert args.report == 'report/'
     assert args.scenario == ['scenario1.yml', 'scenario2.yml']
 
@@ -139,6 +150,7 @@ def test_valid_environ():
             'PREACHER_CLI_DELAY': '1.2',
             'PREACHER_CLI_TIMEOUT': '3.4',
             'PREACHER_CLI_CONCURRENCY': '5',
+            'PREACHER_CLI_CONCURRENT_EXECUTOR': 'thread',
             'PREACHER_CLI_REPORT': 'reports/',
         },
     )
@@ -149,5 +161,7 @@ def test_valid_environ():
     assert args.delay == 1.2
     assert args.timeout == 3.4
     assert args.concurrency == 5
+    assert args.concurrent_executor == 'thread'
+    assert args.concurrent_executor_factory is ThreadPoolExecutor
     assert args.report == 'reports/'
     assert args.scenario == ['scenario.yml']
