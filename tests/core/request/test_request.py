@@ -65,6 +65,24 @@ def test_default_request(mocker, session):
     session.__exit__.assert_called_once()
 
 
+def test_when_request_preparation_fails(mocker, session):
+    mocker.patch(f'{PKG}.now', return_value=sentinel.now)
+
+    req = NonCallableMock(requests.Request)
+    req.prepare.side_effect = RuntimeError("msg")
+    mocker.patch('requests.Request', return_value=req)
+
+    request = Request()
+    execution, response = request.execute('base-url', session=session)
+
+    assert execution.status is Status.FAILURE
+    assert execution.starts is sentinel.now
+    assert execution.request is None
+    assert execution.message == 'RuntimeError: msg'
+
+    session.send.assert_not_called()
+
+
 def test_when_request_succeeds(mocker, session, body):
     now = mocker.patch(f'{PKG}.now', return_value=sentinel.now)
 
