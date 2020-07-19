@@ -146,7 +146,6 @@ def test_when_request_succeeds(mocker, session, body):
     assert response.headers == {'header-name': 'Header-Value'}
     assert response.body.text == sentinel.text
     assert response.body.content == sentinel.content
-    assert response.starts == sentinel.now
 
     uuid4.assert_called()
     now.assert_called()

@@ -142,7 +142,7 @@ class Case:
 
         response_verification = self._response.verify(
             response,
-            ValueContext(origin_datetime=response.starts),
+            ValueContext(origin_datetime=execution.starts),
         )
         return CaseResult(
             label=self._label,

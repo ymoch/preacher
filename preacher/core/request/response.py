@@ -1,7 +1,6 @@
 """Response."""
 
 from abc import ABC, abstractmethod
-from datetime import datetime
 from typing import Mapping
 
 
@@ -23,11 +22,6 @@ class Response(ABC):
     @property
     @abstractmethod
     def id(self) -> str:
-        raise NotImplementedError()
-
-    @property
-    @abstractmethod
-    def starts(self) -> datetime:
         raise NotImplementedError()
 
     @property

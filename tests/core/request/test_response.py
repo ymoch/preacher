@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Mapping
 
 from pytest import raises
@@ -34,10 +33,6 @@ def test_incomplete_response():
             return super().id
 
         @property
-        def starts(self) -> datetime:
-            return super().starts
-
-        @property
         def elapsed(self) -> float:
             return super().elapsed
 
@@ -56,8 +51,6 @@ def test_incomplete_response():
     response = _IncompleteResponse()
     with raises(NotImplementedError):
         print(response.id)
-    with raises(NotImplementedError):
-        print(response.starts)
     with raises(NotImplementedError):
         print(response.elapsed)
     with raises(NotImplementedError):

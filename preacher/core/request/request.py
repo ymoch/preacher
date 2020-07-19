@@ -44,19 +44,14 @@ class ResponseBodyWrapper(ResponseBody):
 
 class ResponseWrapper(Response):
 
-    def __init__(self, id: str, starts: datetime, res: requests.Response):
+    def __init__(self, id: str, res: requests.Response):
         self._id = id
-        self._starts = starts
         self._res = res
         self._body = ResponseBodyWrapper(self._res)
 
     @property
     def id(self) -> str:
         return self._id
-
-    @property
-    def starts(self) -> datetime:
-        return self._starts
 
     @property
     def elapsed(self) -> float:
@@ -92,6 +87,7 @@ class ExecutionReport(Statused):
     status: Status = Status.SKIPPED
     starts: datetime = field(default_factory=now)
     request: Optional[PreparedRequest] = None
+    response_id: Optional[str] = None
     message: Optional[str] = None
 
 
@@ -160,7 +156,7 @@ class Request:
 
         report = replace(report, status=Status.SUCCESS)
         id = _generate_id()
-        response = ResponseWrapper(id=id, starts=starts, res=res)
+        response = ResponseWrapper(id=id, res=res)
         return report, response
 
     @property

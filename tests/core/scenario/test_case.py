@@ -131,9 +131,7 @@ def test_when_given_no_response(mocker):
 def test_when_given_an_response(mocker):
     retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
 
-    sentinel.response.starts = sentinel.starts
-
-    execution = ExecutionReport(status=Status.SUCCESS)
+    execution = ExecutionReport(status=Status.SUCCESS, starts=sentinel.starts)
     request = NonCallableMock(Request)
     request.execute.return_value = (execution, sentinel.response)
 
