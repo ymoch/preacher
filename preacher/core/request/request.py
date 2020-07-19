@@ -2,14 +2,16 @@
 
 import uuid
 from copy import copy
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Tuple
 
 import requests
 
 from preacher import __version__ as _version
 from preacher.core.datetime import now
+from preacher.core.status import Status, Statused
 from preacher.core.value import ValueContext
 from .request_body import RequestBody
 from .response import Response, ResponseBody
@@ -76,6 +78,21 @@ class ResponseWrapper(Response):
         return self._body
 
 
+@dataclass
+class PreparedRequest:
+    method: str
+    url: str
+    headers: Mapping[str, str]
+    body: str
+
+
+@dataclass(frozen=True)
+class ExecutionReport(Statused):
+    status: Status = Status.SKIPPED
+    request: Optional[PreparedRequest] = None
+    message: Optional[str] = None
+
+
 class Request:
 
     def __init__(
@@ -97,7 +114,7 @@ class Request:
         base_url: str,
         timeout: Optional[float] = None,
         session: Optional[requests.Session] = None,
-    ) -> Response:
+    ) -> Tuple[ExecutionReport, Optional[Response]]:
         if session is None:
             with requests.Session() as new_session:
                 return self.execute(
@@ -128,11 +145,34 @@ class Request:
             params=params,
             data=data,
         )
-        prepared = req.prepare()
-        res = session.send(prepared, timeout=timeout)
+        try:
+            prepped = req.prepare()
+        except Exception as error:
+            report = ExecutionReport(
+                status=Status.FAILURE,
+                message=f'{error.__class__.__name__}: {error}'
+            )
+            return report, None
 
-        id = _generate_id()
-        return ResponseWrapper(id=id, starts=starts, res=res)
+        prepared = PreparedRequest(
+            method=prepped.method,
+            url=prepped.url,
+            headers=prepped.headers,
+            body=prepped.body,
+        )
+        try:
+            res = session.send(prepared, timeout=timeout)
+        except Exception as error:
+            report = ExecutionReport(
+                status=Status.UNSTABLE,
+                request=prepared,
+                message=f'{error.__class__.__name__}: {error}'
+            )
+            return report, None
+
+        report = ExecutionReport(status=Status.SUCCESS, request=prepared)
+        response = ResponseWrapper(id=_generate_id(), starts=starts, res=res)
+        return report, response
 
     @property
     def method(self) -> Method:
