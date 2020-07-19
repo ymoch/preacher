@@ -2,7 +2,7 @@ from unittest.mock import ANY, Mock, NonCallableMock, sentinel
 
 from pytest import mark
 
-from preacher.core.request.request import Request
+from preacher.core.request.request import Request, ExecutionReport
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
@@ -38,6 +38,23 @@ def test_default_construction(mocker):
 
     request_ctor.assert_called_once_with()
     response_ctor.assert_called_once_with()
+
+
+def test_when_disabled():
+    request = NonCallableMock(Request)
+    response = NonCallableMock(ResponseDescription)
+    case = Case(
+        label=sentinel.label,
+        enabled=False,
+        request=request,
+        response=response
+    )
+    actual = case.run()
+    assert actual.label is sentinel.label
+    assert actual.status is Status.SKIPPED
+
+    request.execute.assert_not_called()
+    response.verify.assert_not_called()
 
 
 @mark.parametrize(('condition_verifications', 'expected_status'), [
@@ -80,28 +97,12 @@ def test_given_bad_condition(condition_verifications, expected_status):
     response.verify.assert_not_called()
 
 
-def test_when_disabled():
-    request = NonCallableMock(Request)
-    response = NonCallableMock(ResponseDescription)
-    case = Case(
-        label=sentinel.label,
-        enabled=False,
-        request=request,
-        response=response
-    )
-    actual = case.run()
-    assert actual.label is sentinel.label
-    assert actual.status is Status.SKIPPED
-
-    request.execute.assert_not_called()
-    response.verify.assert_not_called()
-
-
-def test_when_the_request_fails(mocker):
+def test_when_given_no_response(mocker):
     retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
 
+    execution = ExecutionReport(status=Status.FAILURE)
     request = NonCallableMock(Request)
-    request.execute.side_effect = RuntimeError('message')
+    request.execute.return_value = (execution, None)
     response = NonCallableMock(ResponseDescription)
     case = Case(label=sentinel.label, request=request, response=response)
 
@@ -110,9 +111,7 @@ def test_when_the_request_fails(mocker):
 
     assert result.label is sentinel.label
     assert result.status is Status.FAILURE
-    assert result.request is request
-    assert result.execution.status is Status.FAILURE
-    assert result.execution.message == 'RuntimeError: message'
+    assert result.execution is execution
     assert result.response is None
 
     request.execute.assert_called_once_with(
@@ -130,16 +129,21 @@ def test_when_given_an_response(mocker):
     retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
 
     sentinel.response.starts = sentinel.starts
+
+    execution = ExecutionReport(status=Status.SUCCESS)
     request = NonCallableMock(Request)
-    request.execute.return_value = sentinel.response
-    response = NonCallableMock(ResponseDescription)
-    response.verify.return_value = ResponseVerification(
+    request.execute.return_value = (execution, sentinel.response)
+
+    response_verification = ResponseVerification(
         response_id=sentinel.response_id,
         status=Status.UNSTABLE,
         status_code=Verification.succeed(),
         headers=Verification.succeed(),
         body=Verification(status=Status.UNSTABLE)
     )
+    response = NonCallableMock(ResponseDescription)
+    response.verify.return_value = response_verification
+
     case = Case(label=sentinel.label, request=request, response=response)
 
     listener = NonCallableMock(spec=CaseListener)
@@ -154,10 +158,8 @@ def test_when_given_an_response(mocker):
 
     assert result.label is sentinel.label
     assert result.status is Status.UNSTABLE
-    assert result.request is request
-    assert result.execution.status is Status.SUCCESS
-    assert result.response.status is Status.UNSTABLE
-    assert result.response.body.status is Status.UNSTABLE
+    assert result.execution is execution
+    assert result.response is response_verification
 
     request.execute.assert_called_with(
         sentinel.base_url,

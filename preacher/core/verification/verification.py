@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Iterable, Optional, Sequence
 
 from preacher.core.status import Status, Statused, merge_statuses
+from preacher.core.util.error import to_message
 
 
 @dataclass(frozen=True)
@@ -24,10 +25,7 @@ class Verification(Statused):
 
     @staticmethod
     def of_error(error: Exception) -> Verification:
-        return Verification(
-            status=Status.FAILURE,
-            message=f'{error.__class__.__name__}: {error}',
-        )
+        return Verification(status=Status.FAILURE, message=to_message(error))
 
 
 def collect_verification(children: Iterable[Verification]) -> Verification:

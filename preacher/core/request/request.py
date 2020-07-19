@@ -5,7 +5,7 @@ from copy import copy
 from dataclasses import dataclass, field, replace
 from datetime import datetime
 from enum import Enum
-from typing import Mapping, Optional, Tuple
+from typing import Mapping, Optional, Tuple, Union
 
 import requests
 
@@ -84,7 +84,7 @@ class PreparedRequest:
     method: str
     url: str
     headers: Mapping[str, str]
-    body: Optional[str]
+    body: Union[None, str, bytes]
 
 
 @dataclass(frozen=True)
@@ -127,7 +127,6 @@ class Request:
         Returns:
             A tuple of execution report and response.
             When there is no response, the response will be ``None``.
-
         """
         if session is None:
             with requests.Session() as new_session:
@@ -150,7 +149,7 @@ class Request:
             method=prepped.method or '',
             url=prepped.url or '',
             headers=prepped.headers,
-            body=prepped.body,  # type: ignore
+            body=prepped.body,
         ))
         try:
             res = session.send(prepped, timeout=timeout)
