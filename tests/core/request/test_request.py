@@ -1,6 +1,6 @@
 import uuid
 from datetime import timedelta
-from unittest.mock import NonCallableMock, Mock, sentinel
+from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 
 import requests
 from pytest import fixture
@@ -9,7 +9,7 @@ from preacher.core.request.request import Request, ResponseWrapper, Method
 from preacher.core.request.request_body import RequestBody
 from preacher.core.value import ValueContext
 
-PACKAGE = 'preacher.core.request.request'
+PKG = 'preacher.core.request.request'
 
 
 @fixture
@@ -21,11 +21,18 @@ def session():
     response.text = sentinel.text
     response.content = sentinel.content
 
-    session = NonCallableMock(requests.Session)
-    session.__enter__ = Mock(return_value=session)
-    session.__exit__ = Mock()
-    session.request = Mock(return_value=response)
+    session = NonCallableMagicMock(requests.Session)
+    session.__enter__.return_value = session
+    session.send.return_value = response
     return session
+
+
+@fixture
+def body():
+    mock = NonCallableMock(RequestBody)
+    mock.content_type = 'application/x-www-form-urlencoded'
+    mock.resolve.return_value = {'x': 'y', 'name': ['東京', '京都']}
+    return mock
 
 
 def test_default_request(mocker, session):
@@ -38,32 +45,29 @@ def test_default_request(mocker, session):
     assert request.params == {}
     assert request.body is None
 
-    request.execute('base-url')
-    args, kwargs = session.request.call_args
-    assert args == ('GET', 'base-url')
-    assert kwargs['headers']['User-Agent'].startswith('Preacher')
-    assert kwargs['params'] == {}
-    assert kwargs['data'] is None
+    request.execute('http://base-url.org')
+
+    args, kwargs = session.send.call_args
+    req: requests.PreparedRequest = args[0]
+    assert req.method == 'GET'
+    assert req.url == 'http://base-url.org/'
+    assert req.headers['User-Agent'].startswith('Preacher')
+    assert req.body is None
     assert kwargs['timeout'] is None
 
     session.__enter__.assert_called_once()
     session.__exit__.assert_called_once()
 
 
-def test_request(mocker, session):
-    now = mocker.patch(f'{PACKAGE}.now', return_value=sentinel.now)
+def test_request(mocker, session, body):
+    now = mocker.patch(f'{PKG}.now', return_value=sentinel.now)
 
-    uuid_obj = NonCallableMock(uuid.UUID, __str__=Mock(return_value="id"))
+    uuid_obj = NonCallableMagicMock(uuid.UUID)
+    uuid_obj.__str__.return_value = "id"
     uuid4 = mocker.patch('uuid.uuid4', return_value=uuid_obj)
 
-    resolve_params = mocker.patch(
-        f'{PACKAGE}.resolve_url_params',
-        return_value=sentinel.resolved_params,
-    )
-
-    body = NonCallableMock(RequestBody)
-    body.content_type = sentinel.content_type
-    body.resolve = Mock(return_value=sentinel.data)
+    resolve_params = mocker.patch(f'{PKG}.resolve_url_params')
+    resolve_params.return_value = {'name': '東京', 'a': ['b', 'c']}
 
     request = Request(
         method=Method.POST,
@@ -78,7 +82,7 @@ def test_request(mocker, session):
     assert request.params is sentinel.params
     assert request.body is body
 
-    response = request.execute('base-url', timeout=5.0, session=session)
+    response = request.execute('https://a.com', timeout=5.0, session=session)
     assert isinstance(response, ResponseWrapper)
     assert response.id == 'id'
     assert response.elapsed == 1.23
@@ -95,37 +99,33 @@ def test_request(mocker, session):
     resolve_params.assert_called_once_with(sentinel.params, expected_context)
     body.resolve.assert_called_once_with(expected_context)
 
-    args, kwargs = session.request.call_args
-    assert args == ('POST', 'base-url/path')
-    assert kwargs['headers']['User-Agent'].startswith('Preacher')
-    assert kwargs['headers']['k1'].startswith('v1')
-    assert kwargs['headers']['Content-Type'] is sentinel.content_type
-    assert kwargs['params'] is sentinel.resolved_params
-    assert kwargs['data'] is sentinel.data
+    args, kwargs = session.send.call_args
+    req: requests.PreparedRequest = args[0]
+    assert req.method == 'POST'
+    assert req.url == 'https://a.com/path?name=%E6%9D%B1%E4%BA%AC&a=b&a=c'
+    assert req.headers['Content-Type'] == 'application/x-www-form-urlencoded'
+    assert req.headers['User-Agent'].startswith('Preacher')
+    assert req.headers['k1'] == 'v1'
+    assert req.body == 'x=y&name=%E6%9D%B1%E4%BA%AC&name=%E4%BA%AC%E9%83%BD'
     assert kwargs['timeout'] == 5.0
 
 
-def test_request_overwrites_default_headers(session):
-    body = NonCallableMock(RequestBody)
-    body.content_type = sentinel.content_type
-    body.resolve = Mock(return_value=sentinel.data)
-
+def test_request_overwrites_default_headers(session, body):
     request = Request(
         headers={
-            'User-Agent': sentinel.custom_user_agent,
-            'Content-Type': sentinel.custom_content_type,
+            'User-Agent': 'custom-user-agent',
+            'Content-Type': 'custom-content-type',
         },
         body=body,
     )
-    request.execute('base-url', session=session)
-    kwargs = session.request.call_args[1]
-    assert kwargs['headers']['User-Agent'] == sentinel.custom_user_agent
-    assert kwargs['headers']['Content-Type'] == sentinel.custom_content_type
+    request.execute('https://base-url.net', session=session)
+    req: requests.PreparedRequest = session.send.call_args[0][0]
+    assert req.headers['User-Agent'] == 'custom-user-agent'
+    assert req.headers['Content-Type'] == 'custom-content-type'
 
     # Doesn't change the state.
     request = Request(body=body)
-    request.execute('base-url', session=session)
-    kwargs = session.request.call_args[1]
-    assert kwargs['headers']['User-Agent'].startswith('Preacher')
-    assert kwargs['headers']['Content-Type'] is sentinel.content_type
-    assert kwargs['timeout'] is None
+    request.execute('https://base-url.net', session=session)
+    req: requests.PreparedRequest = session.send.call_args[0][0]
+    assert req.headers['User-Agent'].startswith('Preacher')
+    assert req.headers['Content-Type'] == 'application/x-www-form-urlencoded'

@@ -121,15 +121,18 @@ class Request:
         headers.update(self._headers)
         params = resolve_url_params(self._params, context)
 
-        res = session.request(
-            str(self._method.value),
-            url,
+        req = requests.Request(
+            method=self._method.value,
+            url=url,
             headers=headers,
-            params=params,  # type: ignore
+            params=params,
             data=data,
-            timeout=timeout,
         )
-        return ResponseWrapper(id=str(uuid.uuid4()), starts=starts, res=res)
+        prepared = req.prepare()
+        res = session.send(prepared, timeout=timeout)
+
+        id = _generate_id()
+        return ResponseWrapper(id=id, starts=starts, res=res)
 
     @property
     def method(self) -> Method:
@@ -150,3 +153,7 @@ class Request:
     @property
     def body(self) -> Optional[RequestBody]:
         return self._body
+
+
+def _generate_id() -> str:
+    return str(uuid.uuid4())
