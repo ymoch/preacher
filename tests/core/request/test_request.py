@@ -46,14 +46,19 @@ def test_default_request(mocker, session):
     assert request.params == {}
     assert request.body is None
 
-    request.execute('http://base-url.org')
+    report, _res = request.execute('http://base-url.org')
+    assert report.request.method == 'GET'
+    assert report.request.url == 'http://base-url.org/'
+    assert report.request.headers['User-Agent'].startswith('Preacher')
+    assert report.request.body is None
 
     args, kwargs = session.send.call_args
-    req: requests.PreparedRequest = args[0]
-    assert req.method == 'GET'
-    assert req.url == 'http://base-url.org/'
-    assert req.headers['User-Agent'].startswith('Preacher')
-    assert req.body is None
+    prepped = args[0]
+    assert isinstance(prepped, requests.PreparedRequest)
+    assert prepped.method == 'GET'
+    assert prepped.url == 'http://base-url.org/'
+    assert prepped.headers['User-Agent'].startswith('Preacher')
+    assert prepped.body is None
     assert kwargs['timeout'] is None
 
     session.__enter__.assert_called_once()
@@ -115,7 +120,8 @@ def test_when_request_succeeds(mocker, session, body):
     body.resolve.assert_called_once_with(expected_context)
 
     args, kwargs = session.send.call_args
-    prepped: requests.PreparedRequest = args[0]
+    prepped = args[0]
+    assert isinstance(prepped, requests.PreparedRequest)
     assert prepped.method == 'POST'
     assert prepped.url == 'https://a.com/path?name=%E4%BA%AC&a=b&a=c'
     assert prepped.headers['Content-Type'] == 'text/plain'
@@ -137,9 +143,10 @@ def test_request_overwrites_default_headers(session, body):
     assert report.request
     assert report.request.headers['User-Agent'] == 'custom-user-agent'
     assert report.request.headers['Content-Type'] == 'custom-content-type'
-    req: requests.PreparedRequest = session.send.call_args[0][0]
-    assert req.headers['User-Agent'] == 'custom-user-agent'
-    assert req.headers['Content-Type'] == 'custom-content-type'
+    prepped = session.send.call_args[0][0]
+    assert isinstance(prepped, requests.PreparedRequest)
+    assert prepped.headers['User-Agent'] == 'custom-user-agent'
+    assert prepped.headers['Content-Type'] == 'custom-content-type'
 
     # Doesn't change the state.
     request = Request(body=body)
@@ -147,6 +154,7 @@ def test_request_overwrites_default_headers(session, body):
     assert report.request
     assert report.request.headers['User-Agent'].startswith('Preacher')
     assert report.request.headers['Content-Type'] == 'text/plain'
-    req: requests.PreparedRequest = session.send.call_args[0][0]
-    assert req.headers['User-Agent'].startswith('Preacher')
-    assert req.headers['Content-Type'] == 'text/plain'
+    prepped = session.send.call_args[0][0]
+    assert isinstance(prepped, requests.PreparedRequest)
+    assert prepped.headers['User-Agent'].startswith('Preacher')
+    assert prepped.headers['Content-Type'] == 'text/plain'

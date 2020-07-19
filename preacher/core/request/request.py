@@ -16,6 +16,7 @@ from preacher.core.value import ValueContext
 from .request_body import RequestBody
 from .response import Response, ResponseBody
 from .url_param import UrlParams, resolve_url_params
+from ..util.error import to_message
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
@@ -115,6 +116,18 @@ class Request:
         timeout: Optional[float] = None,
         session: Optional[requests.Session] = None,
     ) -> Tuple[ExecutionReport, Optional[Response]]:
+        """
+        Executes a request.
+
+        Args:
+            base_url: A base URL.
+            timeout: The timeout in seconds. ``None`` means no timeout.
+            session: A session object to execute.
+        Returns:
+            A tuple of execution report and response.
+            When there is no response, the response will be ``None``.
+
+        """
         if session is None:
             with requests.Session() as new_session:
                 return self.execute(
@@ -124,34 +137,11 @@ class Request:
                 )
 
         starts = now()
-        context = ValueContext(origin_datetime=now())
-
-        url = base_url + self._path
-        headers = copy(_DEFAULT_HEADERS)
-
-        data = None
-        if self._body:
-            content_type = self._body.content_type
-            headers['Content-Type'] = content_type
-            data = self._body.resolve(context)
-
-        headers.update(self._headers)
-        params = resolve_url_params(self._params, context)
-
-        req = requests.Request(
-            method=self._method.value,
-            url=url,
-            headers=headers,
-            params=params,
-            data=data,
-        )
         try:
-            prepped = req.prepare()
+            prepped = self._prepare_request(base_url, starts)
         except Exception as error:
-            report = ExecutionReport(
-                status=Status.FAILURE,
-                message=f'{error.__class__.__name__}: {error}'
-            )
+            message = to_message(error)
+            report = ExecutionReport(status=Status.FAILURE, message=message)
             return report, None
 
         prepared = PreparedRequest(
@@ -161,12 +151,12 @@ class Request:
             body=prepped.body,
         )
         try:
-            res = session.send(prepared, timeout=timeout)
+            res = session.send(prepped, timeout=timeout)
         except Exception as error:
             report = ExecutionReport(
                 status=Status.UNSTABLE,
                 request=prepared,
-                message=f'{error.__class__.__name__}: {error}'
+                message=to_message(error),
             )
             return report, None
 
@@ -193,6 +183,34 @@ class Request:
     @property
     def body(self) -> Optional[RequestBody]:
         return self._body
+
+    def _prepare_request(
+        self,
+        base_url: str,
+        starts: datetime,
+    ) -> requests.PreparedRequest:
+        context = ValueContext(origin_datetime=starts)
+
+        url = base_url + self._path
+        headers = copy(_DEFAULT_HEADERS)
+
+        data = None
+        if self._body:
+            content_type = self._body.content_type
+            headers['Content-Type'] = content_type
+            data = self._body.resolve(context)
+
+        headers.update(self._headers)
+        params = resolve_url_params(self._params, context)
+
+        req = requests.Request(
+            method=self._method.value,
+            url=url,
+            headers=headers,
+            params=params,
+            data=data,
+        )
+        return req.prepare()
 
 
 def _generate_id() -> str:

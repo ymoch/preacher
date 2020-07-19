@@ -133,19 +133,22 @@ class Case:
         listener: CaseListener,
         session: Optional[Session],
     ) -> CaseResult:
-        try:
-            response = self._request.execute(
-                base_url,
-                timeout=timeout,
-                session=session,
-            )
-        except Exception as error:
+        execution, response = self._request.execute(
+            base_url,
+            timeout=timeout,
+            session=session,
+        )
+        listener.on_response(response)
+
+        if not response:
             return CaseResult(
                 label=self._label,
-                request=self._request,
-                execution=Verification.of_error(error),
+                request=self.request,
+                execution=Verification(
+                    status=execution.status,
+                    message=execution.message,
+                )
             )
-        listener.on_response(response)
 
         execution_verification = Verification.succeed()
         response_verification = self._response.verify(
