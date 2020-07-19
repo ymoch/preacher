@@ -2,7 +2,7 @@
 
 import uuid
 from copy import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from enum import Enum
 from typing import Mapping, Optional, Tuple
@@ -12,11 +12,11 @@ import requests
 from preacher import __version__ as _version
 from preacher.core.datetime import now
 from preacher.core.status import Status, Statused
+from preacher.core.util.error import to_message
 from preacher.core.value import ValueContext
 from .request_body import RequestBody
 from .response import Response, ResponseBody
 from .url_param import UrlParams, resolve_url_params
-from ..util.error import to_message
 
 _DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
 
@@ -90,6 +90,7 @@ class PreparedRequest:
 @dataclass(frozen=True)
 class ExecutionReport(Statused):
     status: Status = Status.SKIPPED
+    starts: datetime = field(default_factory=now)
     request: Optional[PreparedRequest] = None
     message: Optional[str] = None
 
@@ -137,31 +138,30 @@ class Request:
                 )
 
         starts = now()
+        report = ExecutionReport(starts=starts)
         try:
             prepped = self._prepare_request(base_url, starts)
         except Exception as error:
             message = to_message(error)
-            report = ExecutionReport(status=Status.FAILURE, message=message)
+            report = replace(report, status=Status.FAILURE, message=message)
             return report, None
 
-        prepared = PreparedRequest(
+        report = replace(report, request=PreparedRequest(
             method=prepped.method,
             url=prepped.url,
             headers=prepped.headers,
             body=prepped.body,
-        )
+        ))
         try:
             res = session.send(prepped, timeout=timeout)
         except Exception as error:
-            report = ExecutionReport(
-                status=Status.UNSTABLE,
-                request=prepared,
-                message=to_message(error),
-            )
+            message = to_message(error)
+            report = replace(report, status=Status.UNSTABLE, message=message)
             return report, None
 
-        report = ExecutionReport(status=Status.SUCCESS, request=prepared)
-        response = ResponseWrapper(id=_generate_id(), starts=starts, res=res)
+        report = replace(report, status=Status.SUCCESS)
+        id = _generate_id()
+        response = ResponseWrapper(id=id, starts=starts, res=res)
         return report, response
 
     @property

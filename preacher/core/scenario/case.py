@@ -11,7 +11,7 @@ from typing import Optional, List
 from requests import Session
 
 from preacher.core.datetime import now
-from preacher.core.request import Request, Response
+from preacher.core.request import Request, Response, ExecutionReport
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
 from preacher.core.verification import (
@@ -36,20 +36,13 @@ class CaseListener:
 
 
 @dataclass(frozen=True)
-class RequestReport:
-    request: Request = field(default_factory=Request)
-    result: Verification = field(default_factory=Verification)
-
-
-@dataclass(frozen=True)
 class CaseResult(Statused):
     """
     Results for the test cases.
     """
     label: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
-    request: Request = field(default_factory=Request)
-    execution: Verification = field(default_factory=Verification)
+    execution: ExecutionReport = field(default_factory=ExecutionReport)
     response: Optional[ResponseVerification] = None
 
     @property
@@ -138,27 +131,18 @@ class Case:
             timeout=timeout,
             session=session,
         )
-        listener.on_response(response)
 
         if not response:
-            return CaseResult(
-                label=self._label,
-                request=self.request,
-                execution=Verification(
-                    status=execution.status,
-                    message=execution.message,
-                )
-            )
+            return CaseResult(label=self._label, execution=execution)
+        listener.on_response(response)
 
-        execution_verification = Verification.succeed()
         response_verification = self._response.verify(
             response,
             ValueContext(origin_datetime=response.starts),
         )
         return CaseResult(
             label=self._label,
-            request=self._request,
-            execution=execution_verification,
+            execution=execution,
             response=response_verification,
         )
 

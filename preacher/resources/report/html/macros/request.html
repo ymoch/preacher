@@ -4,11 +4,11 @@
   <dl>
     <div class="grid-x">
       <dt class="cell small-4 medium-2 large-1">Method</dt>
-      <dd class="cell small-8 medium-10 large-11">{{ request.method.value }}</dd>
+      <dd class="cell small-8 medium-10 large-11">{{ request.method }}</dd>
     </div>
     <div class="grid-x">
-      <dt class="cell small-4 medium-2 large-1">Path</dt>
-      <dd class="cell small-8 medium-10 large-11">{{ request.path }}</dd>
+      <dt class="cell small-4 medium-2 large-1">URL</dt>
+      <dd class="cell small-8 medium-10 large-11">{{ request.url }}</dd>
     </div>
     {% if request.headers %}
       <div class="grid-x">
@@ -16,10 +16,10 @@
         <dd class="cell small-8 medium-10 large-11">{{ show_headers(request.headers) }}</dd>
       </div>
     {% endif %}
-    {% if request.params %}
+    {% if request.body %}
       <div class="grid-x">
-        <dt class="cell small-4 medium-2 large-1">Params</dt>
-        <dd class="cell small-8 medium-10 large-11">{{ request.params }}</dd>
+        <dt class="cell small-4 medium-2 large-1">Body</dt>
+        <dd class="cell small-8 medium-10 large-11"><pre>{{ request.body }}</pre></dd>
       </div>
     {% endif %}
   </dl>
