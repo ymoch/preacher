@@ -3,7 +3,7 @@ from typing import Iterable
 
 import jinja2
 
-from preacher.core.request import Response
+from preacher.core.request import Response, ExecutionReport
 from preacher.core.scenario import ScenarioResult
 
 
@@ -24,11 +24,18 @@ class Reporter:
         os.makedirs(self._path, exist_ok=True)
         os.makedirs(self._responses_path, exist_ok=True)
 
-    def export_response(self, response: Response) -> None:
+    def export_execution(
+        self,
+        execution: ExecutionReport,
+        response: Response,
+    ) -> None:
         name = f'{response.id}.html'
         path = os.path.join(self._responses_path, name)
         with open(path, 'w') as f:
-            self._response_view_template.stream(response=response).dump(f)
+            self._response_view_template.stream(
+                execution=execution,
+                response=response,
+            ).dump(f)
 
     def export_results(self, results: Iterable[ScenarioResult]) -> None:
         html_path = os.path.join(self._path, 'index.html')
