@@ -83,6 +83,24 @@ def test_when_request_preparation_fails(mocker, session):
     session.send.assert_not_called()
 
 
+def test_when_request_fails(mocker, session):
+    mocker.patch(f'{PKG}.now', return_value=sentinel.now)
+    session.send.side_effect = RuntimeError('msg')
+
+    request = Request()
+    execution, response = request.execute('http://base.org/', session=session)
+
+    assert execution.status is Status.UNSTABLE
+    assert execution.starts is sentinel.now
+    assert execution.request.method == 'GET'
+    assert execution.request.url == 'http://base.org/'
+    assert execution.request.headers['User-Agent'].startswith('Preacher')
+    assert execution.request.body is None
+    assert execution.message == 'RuntimeError: msg'
+
+    session.send.assert_called_once()
+
+
 def test_when_request_succeeds(mocker, session, body):
     now = mocker.patch(f'{PKG}.now', return_value=sentinel.now)
 
