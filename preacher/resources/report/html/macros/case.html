@@ -1,28 +1,7 @@
 {% from "./macros/conditions.html" import show_conditions %}
-{% from "./macros/request.html" import show_request %}
+{% from "./macros/execution.html" import show_execution %}
 {% from "./macros/response.html" import show_response %}
 {% from "./macros/verification.html" import show_verification %}
-
-{% macro show_execution(item) %}
-  <li class="accordion-item status-{{ item.status }}" data-accordion-item>
-    <a href="#" class="accordion-title">
-      <span class="badge status-{{ item.status }}">{{ item.status }}</span>
-      Execution
-    </a>
-
-    <div class="accordion-content" data-tab-content>
-      {% if item.request %}
-        {{ show_request(item.request) }}
-      {% endif %}
-
-      {% if not item.message %}
-        No message.
-      {% else %}
-        <pre>{{ item.message }}</pre>
-      {% endif %}
-  </div>
-</li>
-{% endmacro %}
 
 {% macro show_case(item) %}
   <li class="accordion-item status-{{ item.status }}" data-accordion-item>
