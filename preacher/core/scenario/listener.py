@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Optional
 
-from preacher.core.request import Response
+from preacher.core.request import Response, ExecutionReport
 from preacher.core.status import Status
 from .scenario import ScenarioListener, ScenarioResult
 
@@ -26,9 +26,13 @@ class MergingListener(Listener):
     def append(self, listener: Listener) -> None:
         self._listeners.append(listener)
 
-    def on_response(self, response: Response) -> None:
+    def on_execution(
+        self,
+        execution: ExecutionReport,
+        response: Optional[Response],
+    ) -> None:
         for listener in self._listeners:
-            listener.on_response(response)
+            listener.on_execution(execution, response)
 
     def on_scenario(self, result: ScenarioResult) -> None:
         for listener in self._listeners:

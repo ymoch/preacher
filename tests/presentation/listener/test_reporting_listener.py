@@ -23,10 +23,11 @@ def test_given_no_item(reporter):
 
 def test_given_items(reporter):
     listener = ReportingListener(reporter)
-    listener.on_response(sentinel.response1)
+    listener.on_execution(sentinel.execution1, sentinel.response1)
     listener.on_scenario(sentinel.scenario1)
-    listener.on_response(sentinel.response2)
-    listener.on_response(sentinel.response3)
+    listener.on_execution(sentinel.execution2, sentinel.response2)
+    listener.on_execution(sentinel.execution_none, None)
+    listener.on_execution(sentinel.execution3, sentinel.response3)
     listener.on_scenario(sentinel.scenario2)
     listener.on_end(sentinel.status)
 
@@ -43,7 +44,7 @@ def test_given_items(reporter):
 
 @patch(f'{PACKAGE}.ReportingListener', return_value=sentinel.listener)
 @patch(f'{PACKAGE}.Reporter', return_value=sentinel.reporter)
-def test_from_logger(reporter_ctor, listener_ctor):
+def test_from_path(reporter_ctor, listener_ctor):
     listener = ReportingListener.from_path(sentinel.path)
     assert listener is sentinel.listener
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
-from preacher.core.request import Response
+from preacher.core.request import Response, ExecutionReport
 from preacher.core.scenario import ScenarioResult, Listener
 from preacher.core.status import Status
 from preacher.presentation.report import Reporter
@@ -14,7 +14,13 @@ class ReportingListener(Listener):
         self._reporter = reporter
         self._results: List[ScenarioResult] = []
 
-    def on_response(self, response: Response) -> None:
+    def on_execution(
+        self,
+        execution: ExecutionReport,
+        response: Optional[Response],
+    ) -> None:
+        if not response:
+            return
         self._reporter.export_response(response)
 
     def on_scenario(self, result: ScenarioResult) -> None:

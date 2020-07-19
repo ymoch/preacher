@@ -31,7 +31,11 @@ class CaseListener:
     Default implementations do nothing.
     """
 
-    def on_response(self, response: Response) -> None:
+    def on_execution(
+        self,
+        execution: ExecutionReport,
+        response: Optional[Response],
+    ) -> None:
         pass
 
 
@@ -131,10 +135,10 @@ class Case:
             timeout=timeout,
             session=session,
         )
+        listener.on_execution(execution, response)
 
         if not response:
             return CaseResult(label=self._label, execution=execution)
-        listener.on_response(response)
 
         response_verification = self._response.verify(
             response,

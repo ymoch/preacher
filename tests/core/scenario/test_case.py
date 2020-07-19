@@ -21,7 +21,7 @@ def _retry(func, *_args, **_kwargs):
 
 
 def test_case_listener():
-    CaseListener().on_response(sentinel.response)
+    CaseListener().on_execution(sentinel.execution, sentinel.response)
 
 
 def test_default_construction(mocker):
@@ -88,13 +88,16 @@ def test_given_bad_condition(condition_verifications, expected_status):
         request=request,
         response=response,
     )
-    result = case.run()
+
+    listener = NonCallableMock(CaseListener)
+    result = case.run(listener=listener)
 
     assert result.label is sentinel.label
     assert result.status is expected_status
 
     request.execute.assert_not_called()
     response.verify.assert_not_called()
+    listener.on_execution.assert_not_called()
 
 
 def test_when_given_no_response(mocker):
@@ -122,7 +125,7 @@ def test_when_given_no_response(mocker):
     response.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
 
-    listener.on_response.assert_not_called()
+    listener.on_execution.assert_called_once_with(execution, None)
 
 
 def test_when_given_an_response(mocker):
@@ -171,4 +174,4 @@ def test_when_given_an_response(mocker):
         ValueContext(origin_datetime=sentinel.starts),
     )
     retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay)
-    listener.on_response.assert_called_once_with(sentinel.response)
+    listener.on_execution.assert_called_once_with(execution, sentinel.response)
