@@ -3,7 +3,7 @@ from unittest.mock import NonCallableMock
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.verification.analysis import AnalysisCompiler
+from preacher.compilation.extraction.analysis import AnalysisCompiler
 from preacher.core.request import ResponseBody
 
 

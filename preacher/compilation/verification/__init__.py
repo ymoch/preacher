@@ -1,6 +1,5 @@
-from .analysis import AnalysisCompiler
+from preacher.compilation.extraction.analysis import AnalysisCompiler
 from .description import DescriptionCompiler
-from .extraction import ExtractionCompiler
 from .factory import (
     create_predicate_compiler,
     create_description_compiler,
