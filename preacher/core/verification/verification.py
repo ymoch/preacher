@@ -27,8 +27,8 @@ class Verification(Statused):
     def of_error(error: Exception) -> Verification:
         return Verification(status=Status.FAILURE, message=to_message(error))
 
-
-def collect_verification(children: Iterable[Verification]) -> Verification:
-    children = list(children)
-    status = merge_statuses(child.status for child in children)
-    return Verification(status=status, children=children)
+    @staticmethod
+    def collect(children: Iterable[Verification]) -> Verification:
+        children = list(children)
+        status = merge_statuses(child.status for child in children)
+        return Verification(status=status, children=children)

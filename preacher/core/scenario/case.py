@@ -20,7 +20,6 @@ from preacher.core.verification import (
     ResponseDescription,
     ResponseVerification,
     Verification,
-    collect_verification,
 )
 from .util.retry import retry_while_false
 
@@ -111,7 +110,7 @@ class Case:
         )
         context_analyzer = analyze_data_obj(context)
         value_context = ValueContext(origin_datetime=context.starts)
-        conditions = collect_verification(
+        conditions = Verification.collect(
             condition.verify(context_analyzer, value_context)
             for condition in self._conditions
         )

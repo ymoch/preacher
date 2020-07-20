@@ -8,7 +8,7 @@ from typing import List, Optional
 from preacher.core.extraction import Analyzer, Extractor
 from preacher.core.value import ValueContext
 from .predicate import Predicate
-from .verification import Verification, collect_verification
+from .verification import Verification
 
 
 class Description:
@@ -27,7 +27,7 @@ class Description:
         except Exception as error:
             return Verification.of_error(error)
 
-        return collect_verification(
+        return Verification.collect(
             predicate.verify(verified_value, context)
             for predicate in self._predicates
         )

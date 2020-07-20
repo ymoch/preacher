@@ -15,7 +15,7 @@ from preacher.core.value import ValueContext
 from .description import Description
 from .predicate import Predicate
 from .response_body import ResponseBodyDescription
-from .verification import Verification, collect_verification
+from .verification import Verification
 
 
 @dataclass(frozen=True)
@@ -76,7 +76,7 @@ class ResponseDescription:
         code: int,
         context: Optional[ValueContext],
     ) -> Verification:
-        return collect_verification(
+        return Verification.collect(
             predicate.verify(code, context)
             for predicate in self._status_code
         )
@@ -87,7 +87,7 @@ class ResponseDescription:
         context: Optional[ValueContext],
     ) -> Verification:
         analyzer = self._analyze_headers(headers)
-        return collect_verification(
+        return Verification.collect(
             description.verify(analyzer, context)
             for description in self._headers
         )
