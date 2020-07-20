@@ -7,8 +7,8 @@ import jq
 from lxml.etree import _Element as Element, XPathEvalError
 
 from preacher.core.util.functional import identify
-from .error import ExtractionError
 from .analysis import Analyzer
+from .error import ExtractionError
 
 T = TypeVar('T')
 
