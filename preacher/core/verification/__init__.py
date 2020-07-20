@@ -6,7 +6,7 @@ from .predicate import Predicate, MatcherPredicate
 from .response import ResponseDescription, ResponseVerification
 from .response_body import ResponseBodyDescription
 from .type import require_type
-from .verification import Verification, collect_verification
+from .verification import Verification
 
 __all__ = [
     'Description',
@@ -21,5 +21,4 @@ __all__ = [
     'ResponseBodyDescription',
     'require_type',
     'Verification',
-    'collect_verification',
 ]
