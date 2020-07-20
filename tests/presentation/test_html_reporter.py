@@ -16,6 +16,7 @@ from preacher.core.scenario import ScenarioResult, CaseResult
 from preacher.core.status import Status, StatusedList
 from preacher.core.verification import Verification, ResponseVerification
 from preacher.presentation.html import HtmlReporter
+from . import FILLED_SCENARIO_RESULTS
 
 
 @dataclass
@@ -63,6 +64,7 @@ def test_export_execution(path):
 
 @mark.parametrize('results', [
     [],
+    FILLED_SCENARIO_RESULTS,
     [
         ScenarioResult(),
         ScenarioResult(
