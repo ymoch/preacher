@@ -1,3 +1,8 @@
+"""
+Tests only that the whole process is run.
+Styles should be checked independently.
+"""
+
 import os
 from dataclasses import dataclass, field
 from tempfile import TemporaryDirectory

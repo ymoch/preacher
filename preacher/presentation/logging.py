@@ -31,10 +31,10 @@ class LoggingReporter:
 
         message = scenario.message
         if message:
-            with self._nested():
+            with self._nesting():
                 self._multi_line_message(level, message)
 
-        with self._nested():
+        with self._nesting():
             for case in scenario.cases.items:
                 self.show_case_result(case)
 
@@ -47,7 +47,7 @@ class LoggingReporter:
 
         label = case.label or 'Not labeled case'
         self._log(level, '%s: %s', label, status)
-        with self._nested():
+        with self._nesting():
             self.show_execution(case.execution)
 
             response = case.response
@@ -60,7 +60,7 @@ class LoggingReporter:
 
         self._log(level, 'Execution: %s', status)
         if execution.message:
-            with self._nested():
+            with self._nesting():
                 self._multi_line_message(level, execution.message)
 
     def show_response_verification(
@@ -71,7 +71,7 @@ class LoggingReporter:
         status = verification.status
         level = _LEVEL_MAP[status]
         self._log(level, '%s: %s', label, status)
-        with self._nested():
+        with self._nesting():
             self.show_verification(
                 verification=verification.status_code,
                 label='Status Code',
@@ -98,10 +98,10 @@ class LoggingReporter:
         self._log(level, '%s: %s', label, status)
         message = verification.message
         if message:
-            with self._nested():
+            with self._nesting():
                 self._multi_line_message(level, message)
 
-        with self._nested():
+        with self._nesting():
             for idx, child in enumerate(verification.children):
                 self.show_verification(child, f'{child_label} {idx + 1}')
 
@@ -117,7 +117,7 @@ class LoggingReporter:
             self._log(level, line.rstrip())
 
     @contextlib.contextmanager
-    def _nested(self) -> Iterator[None]:
+    def _nesting(self) -> Iterator[None]:
         original = self._indent
         self._indent += '..'
         yield

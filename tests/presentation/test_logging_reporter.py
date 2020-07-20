@@ -1,3 +1,8 @@
+"""
+Tests only that the whole process is run.
+Styles should be checked independently.
+"""
+
 import logging
 from unittest.mock import NonCallableMock
 
