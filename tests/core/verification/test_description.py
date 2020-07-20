@@ -4,7 +4,7 @@ from pytest import fixture
 
 from preacher.core.status import Status
 from preacher.core.verification.description import Description
-from preacher.core.verification.extraction import Extractor
+from preacher.core.extraction.extraction import Extractor
 from preacher.core.verification.predicate import Predicate
 from preacher.core.verification.verification import Verification
 

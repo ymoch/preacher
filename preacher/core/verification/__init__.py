@@ -1,20 +1,20 @@
 """Verification."""
 
-from .analysis import (
+from preacher.core.extraction.analysis import (
     Analyzer,
     Analysis,
     analyze_json_str,
     analyze_xml_str,
     analyze_data_obj,
 )
-from .description import Description
-from .extraction import (
+from preacher.core.extraction.extraction import (
     Extractor,
     JqExtractor,
     XPathExtractor,
     KeyExtractor,
     ExtractionError,
 )
+from .description import Description
 from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
 from .response import ResponseDescription, ResponseVerification
