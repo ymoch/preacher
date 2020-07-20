@@ -25,7 +25,7 @@ def _run_cases_in_order(
             kwargs['session'] = session
             return _run_cases_in_order(cases, *args, **kwargs)
 
-    return StatusedList([case.run(*args, **kwargs) for case in cases])
+    return StatusedList.collect(case.run(*args, **kwargs) for case in cases)
 
 
 class OrderedCasesTask(CasesTask):
@@ -63,4 +63,4 @@ class UnorderedCasesTask(CasesTask):
         ]
 
     def result(self) -> StatusedList[CaseResult]:
-        return StatusedList([f.result() for f in self._futures])
+        return StatusedList.collect(f.result() for f in self._futures)

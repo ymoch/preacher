@@ -57,3 +57,9 @@ class StatusedList(Generic[StatusedType], Statused):
     @property
     def status(self) -> Status:  # HACK: should be cached
         return merge_statuses(item.status for item in self.items)
+
+    @staticmethod
+    def collect(
+        iterable: Iterable[StatusedType],
+    ) -> StatusedList[StatusedType]:
+        return StatusedList(list(iterable))
