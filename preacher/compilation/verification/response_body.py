@@ -5,15 +5,14 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.compilation.error import CompilationError, on_key
+from preacher.compilation.extraction import AnalysisCompiler
 from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import or_else
+from preacher.core.extraction import Analysis, analyze_json_str
 from preacher.core.verification import (
     ResponseBodyDescription,
     Description,
-    Analysis,
-    analyze_json_str,
 )
-from .analysis import AnalysisCompiler
 from .description import DescriptionCompiler
 
 _KEY_ANALYSIS = 'analyze_as'

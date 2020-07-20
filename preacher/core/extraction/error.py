@@ -1,0 +1,2 @@
+class ExtractionError(RuntimeError):
+    pass

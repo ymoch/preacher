@@ -1,7 +1,9 @@
 from typing import Optional
 
-from .analysis import AnalysisCompiler
-from .extraction import ExtractionCompiler
+from preacher.compilation.extraction import (
+    AnalysisCompiler,
+    ExtractionCompiler,
+)
 from .description import DescriptionCompiler
 from .predicate import PredicateCompiler
 from .response import ResponseDescriptionCompiler

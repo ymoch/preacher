@@ -3,7 +3,7 @@ from unittest.mock import ANY, MagicMock, call, sentinel, patch
 from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.verification.analysis import AnalysisCompiler
+from preacher.compilation.extraction import AnalysisCompiler
 from preacher.compilation.verification.description import DescriptionCompiler
 from preacher.compilation.verification.response_body import (
     ResponseBodyDescriptionCompiled,

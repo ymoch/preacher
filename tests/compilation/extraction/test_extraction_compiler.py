@@ -3,10 +3,10 @@ from unittest.mock import call
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
-from preacher.compilation.verification.extraction import ExtractionCompiler
+from preacher.compilation.extraction.extraction import ExtractionCompiler
 from preacher.core.util.functional import identify
 
-PKG = 'preacher.compilation.verification.extraction'
+PKG = 'preacher.compilation.extraction.extraction'
 
 
 @mark.parametrize('value, expected_message, expected_path', (

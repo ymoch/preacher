@@ -8,12 +8,9 @@ from lxml.etree import _Element as Element, XPathEvalError
 
 from preacher.core.util.functional import identify
 from .analysis import Analyzer
+from .error import ExtractionError
 
 T = TypeVar('T')
-
-
-class ExtractionError(RuntimeError):
-    pass
 
 
 class Extractor(ABC):

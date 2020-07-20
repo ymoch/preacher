@@ -9,12 +9,12 @@ from datetime import datetime
 from typing import Callable, List, Optional
 
 from preacher.core.datetime import now
+from preacher.core.extraction import analyze_data_obj
 from preacher.core.status import Status, Statused, StatusedList, merge_statuses
 from preacher.core.value import ValueContext
 from preacher.core.verification import (
     Description,
     Verification,
-    analyze_data_obj,
     collect_verification,
 )
 from .case import Case, CaseListener, CaseResult

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from preacher.core.verification.analysis import analyze_data_obj
-from preacher.core.verification.extraction import JqExtractor
+from preacher.core.extraction.analysis import analyze_data_obj
+from preacher.core.extraction.extraction import JqExtractor
 
 
 def test_analyze_data_obj():

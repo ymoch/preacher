@@ -4,7 +4,7 @@ from unittest.mock import Mock
 from lxml.etree import _Element as Element
 from pytest import raises
 
-from preacher.core.verification.analysis import Analyzer
+from preacher.core.extraction.analysis import Analyzer
 
 T = TypeVar('T')
 
