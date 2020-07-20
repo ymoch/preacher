@@ -9,12 +9,12 @@ from preacher.core.extraction.analysis import (
     analyze_xml_str,
     analyze_data_obj,
 )
+from preacher.core.extraction.error import ExtractionError
 from preacher.core.extraction.extraction import (
     Extractor,
     JqExtractor,
     XPathExtractor,
     KeyExtractor,
-    ExtractionError,
 )
 
 __all__ = [
@@ -25,9 +25,9 @@ __all__ = [
     'analyze_json_str',
     'analyze_xml_str',
     'analyze_data_obj',
+    'ExtractionError',
     'Extractor',
     'JqExtractor',
     'XPathExtractor',
     'KeyExtractor',
-    'ExtractionError',
 ]

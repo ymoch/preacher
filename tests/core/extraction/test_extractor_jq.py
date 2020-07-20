@@ -3,7 +3,8 @@ from unittest.mock import Mock, NonCallableMock
 from pytest import fixture, mark, raises
 
 from preacher.core.extraction.analysis import Analyzer
-from preacher.core.extraction.extraction import JqExtractor, ExtractionError
+from preacher.core.extraction.error import ExtractionError
+from preacher.core.extraction.extraction import JqExtractor
 from preacher.core.util.functional import identify
 
 VALUE = {

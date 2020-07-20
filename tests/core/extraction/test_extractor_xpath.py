@@ -4,10 +4,8 @@ from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark, raises
 
 from preacher.core.extraction.analysis import Analyzer
-from preacher.core.extraction.extraction import (
-    XPathExtractor,
-    ExtractionError,
-)
+from preacher.core.extraction.error import ExtractionError
+from preacher.core.extraction.extraction import XPathExtractor
 from preacher.core.util.functional import identify
 
 VALUE = '''
