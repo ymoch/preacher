@@ -4,7 +4,7 @@ Response body description.
 
 from typing import List, Optional
 
-from preacher.core.extraction.analysis import Analysis, analyze_json_str
+from preacher.core.extraction import Analysis, analyze_json_str
 from preacher.core.request import ResponseBody
 from preacher.core.value import ValueContext
 from .description import Description

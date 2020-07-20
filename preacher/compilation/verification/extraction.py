@@ -5,13 +5,13 @@ from typing import Any, Callable
 
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_bool, ensure_str
-from preacher.core.util.functional import identify
-from preacher.core.verification import (
+from preacher.core.extraction.extraction import (
     Extractor,
     JqExtractor,
     XPathExtractor,
     KeyExtractor,
 )
+from preacher.core.util.functional import identify
 
 _CAST_FUNC_MAP = {
     'int': int,

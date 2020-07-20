@@ -3,7 +3,7 @@ from unittest.mock import patch, sentinel
 from preacher.compilation.verification.response_body import (
     ResponseBodyDescriptionCompiled,
 )
-from preacher.core.verification import analyze_json_str
+from preacher.core.extraction import analyze_json_str
 
 PKG = 'preacher.compilation.verification.response_body'
 

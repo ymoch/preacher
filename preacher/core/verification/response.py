@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Callable, List, Mapping, Optional
 
-from preacher.core.extraction.analysis import Analyzer, JsonAnalyzer
+from preacher.core.extraction import Analyzer, JsonAnalyzer
 from preacher.core.request import Response
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext

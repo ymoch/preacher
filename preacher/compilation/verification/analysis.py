@@ -1,6 +1,6 @@
 from preacher.compilation.error import CompilationError
 from preacher.compilation.util.type import ensure_str
-from preacher.core.verification import (
+from preacher.core.extraction.analysis import (
     Analysis,
     analyze_json_str,
     analyze_xml_str,
