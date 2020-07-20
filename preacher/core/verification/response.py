@@ -5,11 +5,11 @@ and the body.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, List, Mapping, Optional
 
 from preacher.core.request import Response
-from preacher.core.status import Status, merge_statuses
+from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
 from .analysis import Analyzer, JsonAnalyzer
 from .description import Description
@@ -19,12 +19,12 @@ from .verification import Verification, collect_verification
 
 
 @dataclass(frozen=True)
-class ResponseVerification:
+class ResponseVerification(Statused):
     response_id: str
-    status: Status
-    status_code: Verification
-    headers: Verification
-    body: Verification
+    status: Status = Status.SKIPPED
+    status_code: Verification = field(default_factory=Verification)
+    headers: Verification = field(default_factory=Verification)
+    body: Verification = field(default_factory=Verification)
 
 
 class ResponseDescription:
