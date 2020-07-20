@@ -7,7 +7,7 @@ from preacher.core.request import Response, ExecutionReport
 from preacher.core.scenario import ScenarioResult
 
 
-class Reporter:
+class HtmlReporter:
 
     def __init__(self, path):
         self._path = path

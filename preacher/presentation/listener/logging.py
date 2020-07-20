@@ -4,12 +4,12 @@ import logging
 
 from preacher.core.scenario import ScenarioResult, Listener
 from preacher.core.status import Status
-from preacher.presentation.log import Logger
+from preacher.presentation.logging import LoggingReporter
 
 
-class LoggingListener(Listener):
+class LoggingReportingListener(Listener):
 
-    def __init__(self, reporter: Logger):
+    def __init__(self, reporter: LoggingReporter):
         self._reporter = reporter
 
     def on_scenario(self, result: ScenarioResult) -> None:
@@ -19,6 +19,6 @@ class LoggingListener(Listener):
         self._reporter.show_status(status)
 
     @staticmethod
-    def from_logger(logger: logging.Logger) -> LoggingListener:
-        reporter = Logger(logger)
-        return LoggingListener(reporter)
+    def from_logger(logger: logging.Logger) -> LoggingReportingListener:
+        reporter = LoggingReporter(logger)
+        return LoggingReportingListener(reporter)

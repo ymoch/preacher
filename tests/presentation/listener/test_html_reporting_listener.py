@@ -1,20 +1,20 @@
-from unittest.mock import MagicMock, call, patch, sentinel
+from unittest.mock import NonCallableMock, call, patch, sentinel
 
 from pytest import fixture
 
-from preacher.presentation.listener import ReportingListener
-from preacher.presentation.report import Reporter
+from preacher.presentation.html import HtmlReporter
+from preacher.presentation.listener import HtmlReportingListener
 
-PACKAGE = 'preacher.presentation.listener.report'
+PKG = 'preacher.presentation.listener.html'
 
 
 @fixture
 def reporter():
-    return MagicMock(Reporter)
+    return NonCallableMock(HtmlReporter)
 
 
 def test_given_no_item(reporter):
-    listener = ReportingListener(reporter)
+    listener = HtmlReportingListener(reporter)
     listener.on_end(sentinel.status)
 
     reporter.export_response.assert_not_called()
@@ -22,7 +22,7 @@ def test_given_no_item(reporter):
 
 
 def test_given_items(reporter):
-    listener = ReportingListener(reporter)
+    listener = HtmlReportingListener(reporter)
     listener.on_execution(sentinel.execution1, sentinel.response1)
     listener.on_scenario(sentinel.scenario1)
     listener.on_execution(sentinel.execution2, sentinel.response2)
@@ -42,10 +42,10 @@ def test_given_items(reporter):
     ])
 
 
-@patch(f'{PACKAGE}.ReportingListener', return_value=sentinel.listener)
-@patch(f'{PACKAGE}.Reporter', return_value=sentinel.reporter)
+@patch(f'{PKG}.HtmlReportingListener', return_value=sentinel.listener)
+@patch(f'{PKG}.HtmlReporter', return_value=sentinel.reporter)
 def test_from_path(reporter_ctor, listener_ctor):
-    listener = ReportingListener.from_path(sentinel.path)
+    listener = HtmlReportingListener.from_path(sentinel.path)
     assert listener is sentinel.listener
 
     reporter_ctor.assert_called_once_with(sentinel.path)

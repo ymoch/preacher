@@ -9,7 +9,10 @@ from typing import Iterable
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.scenario import ScenarioRunner, MergingListener
-from preacher.presentation.listener import LoggingListener, ReportingListener
+from preacher.presentation.listener import (
+    HtmlReportingListener,
+    LoggingReportingListener,
+)
 from .log import get_logger
 from .option import parse_args
 
@@ -41,11 +44,11 @@ def _main() -> None:
     )
 
     listener = MergingListener()
-    listener.append(LoggingListener.from_logger(
+    listener.append(LoggingReportingListener.from_logger(
         get_logger(REPORT_LOGGER_NAME, args.level)
     ))
     if args.report:
-        listener.append(ReportingListener.from_path(args.report))
+        listener.append(HtmlReportingListener.from_path(args.report))
 
     with args.concurrent_executor_factory(args.concurrency) as executor:
         status = runner.run(executor, scenarios, listener=listener)

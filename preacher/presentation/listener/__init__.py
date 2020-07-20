@@ -1,7 +1,7 @@
-from .log import LoggingListener
-from .report import ReportingListener
+from .html import HtmlReportingListener
+from .logging import LoggingReportingListener
 
 __all__ = [
-    'LoggingListener',
-    'ReportingListener',
+    'HtmlReportingListener',
+    'LoggingReportingListener',
 ]
