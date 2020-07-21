@@ -2,6 +2,7 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 
 from pytest import fixture, mark, raises
 
+from preacher.compilation.argument import Argument
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request.request_body import (
     RequestBodyCompiler,
@@ -21,7 +22,7 @@ def default_body():
 
 
 @fixture
-def compiler(default_body):
+def compiler(default_body) -> RequestBodyCompiler:
     return RequestBodyCompiler(default=default_body)
 
 
@@ -41,21 +42,28 @@ def test_compile_empty(compiler, default_body):
     assert compiled is sentinel.default_result
 
 
-@mark.parametrize(('type_key', 'expected_replacer'), [
+@mark.parametrize(('type_key', 'expected'), [
     ('urlencoded', UrlencodedRequestBodyCompiled()),
     ('json', JsonRequestBodyCompiled()),
 ])
-def test_given_type(compiler, default_body, type_key, expected_replacer):
+def test_given_type(
+    compiler: RequestBodyCompiler,
+    default_body,
+    type_key,
+    expected,
+):
     replaced_body = NonCallableMock(RequestBodyCompiled)
     replaced_body.compile_and_replace = Mock(return_value=sentinel.new_result)
     default_body.replace = Mock(return_value=replaced_body)
 
-    obj = {'type': type_key, 'foo': 'bar'}
-    compiled = compiler.compile(obj)
+    obj = {'type': Argument('type'), 'foo': Argument('foo')}
+    compiled = compiler.compile(obj, {'type': type_key, 'foo': 'bar'})
     assert compiled is sentinel.new_result
 
-    default_body.replace.assert_called_once_with(expected_replacer)
-    replaced_body.compile_and_replace.assert_called_once_with(obj)
+    default_body.replace.assert_called_once_with(expected)
+    replaced_body.compile_and_replace.assert_called_once_with(
+        {'type': type_key, 'foo': 'bar'}
+    )
 
 
 def test_of_default(compiler: RequestBodyCompiler, default_body, mocker):
