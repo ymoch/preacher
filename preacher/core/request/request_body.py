@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from preacher.core.util.functional import recursive_map
-from preacher.core.util.serialization import to_serializable_value
+from preacher.core.util.serialization import to_serializable
 from preacher.core.value import Value, ValueContext
 from .url_param import UrlParams, resolve_url_params
 
@@ -49,7 +49,7 @@ class JsonRequestBody(RequestBody):
                     _resolve_value,
                     _resolve_value(obj.resolve(context)),
                 )
-            return to_serializable_value(obj)
+            return to_serializable(obj)
 
         resolved = recursive_map(_resolve_value, self._data)
         return json.dumps(resolved, separators=(',', ':'))
