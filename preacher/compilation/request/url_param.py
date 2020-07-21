@@ -69,9 +69,7 @@ def compile_url_params(
 
     compiled = {}
     for key, value in obj.items():
-        if not isinstance(key, str):
-            message = f'A parameter key must be a string, given {key}'
-            raise CompilationError(message)
+        assert isinstance(key, str)  # Satisfied in injecting arguments.
         with on_key(key):
             compiled[key] = compile_url_param(value)
     return compiled
