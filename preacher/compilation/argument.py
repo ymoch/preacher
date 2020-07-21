@@ -6,7 +6,7 @@ from .util.functional import run_recursively
 Arguments = Mapping
 
 
-class ArgumentValue:
+class Argument:
 
     def __init__(self, key: str):
         self._key = key
@@ -21,7 +21,7 @@ class ArgumentValue:
 
 
 def _inject_arguments(obj: object, arguments: Optional[Arguments]) -> object:
-    if isinstance(obj, ArgumentValue):
+    if isinstance(obj, Argument):
         return obj.apply_arguments(arguments)
     return obj
 

@@ -1,8 +1,9 @@
 """URL parameters compilation."""
 
 from datetime import date
-from typing import Mapping
+from typing import Mapping, Optional
 
+from preacher.compilation.argument import Arguments, inject_arguments
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.functional import map_compile
 from preacher.core.request import UrlParams, UrlParam, UrlParamValue
@@ -43,18 +44,32 @@ def compile_url_param(value: object) -> UrlParam:
         )
 
 
-def compile_url_params(params: object) -> UrlParams:
-    if isinstance(params, str):
-        return params
+def compile_url_params(
+    obj: object,
+    arguments: Optional[Arguments] = None,
+) -> UrlParams:
+    """
+    Compiles an object into URL parameters.
 
-    if not isinstance(params, Mapping):
-        raise CompilationError('Must be a string or a map')
+    Args:
+        obj: A compiled object, which should be a mapping or a string.
+        arguments: Arguments to inject.
+    Returns:
+        The result of compilation.
+    Raises:
+        CompilationError: when compilation fails.
+    """
+    obj = inject_arguments(obj, arguments)
+
+    if isinstance(obj, str):
+        return obj
+
+    if not isinstance(obj, Mapping):
+        raise CompilationError('Must be a mapping or a string')
+
     compiled = {}
-    for key, value in params.items():
-        if not isinstance(key, str):
-            raise CompilationError(
-                f'A parameter key must be a string, given {key}'
-            )
+    for key, value in obj.items():
+        assert isinstance(key, str)  # Satisfied in injecting arguments.
         with on_key(key):
             compiled[key] = compile_url_param(value)
     return compiled

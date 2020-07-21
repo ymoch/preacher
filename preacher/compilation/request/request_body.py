@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, replace
 from typing import Mapping, Optional, Callable
 
+from preacher.compilation.argument import Arguments, inject_arguments
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_str, ensure_mapping
 from preacher.core.request import (
@@ -101,7 +102,24 @@ class RequestBodyCompiler:
             default or UrlencodedRequestBodyCompiled()
         )
 
-    def compile(self, obj: object) -> RequestBodyCompiled:
+    def compile(
+        self,
+        obj: object,
+        arguments: Optional[Arguments] = None,
+    ) -> RequestBodyCompiled:
+        """
+        Compiles an object into an intermediate request body.
+
+        Args:
+            obj: A compiled object, which should be a mapping.
+            arguments: Arguments to inject.
+        Returns:
+            The result of compilation.
+        Raises:
+            CompilationError: when compilation fails.
+        """
+
+        obj = inject_arguments(obj, arguments)
         obj = ensure_mapping(obj)
         compiled = self._default
 
@@ -120,4 +138,14 @@ class RequestBodyCompiler:
         return compiled.compile_and_replace(obj)
 
     def of_default(self, default: RequestBodyCompiled) -> RequestBodyCompiler:
+        """
+        Creates a new compiler
+        that is configured of the default request body.
+
+        Args:
+            default: A default request body.
+        Returns:
+            A new compiler.
+        """
+
         return RequestBodyCompiler(default=self._default.replace(default))

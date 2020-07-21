@@ -2,7 +2,7 @@ from unittest.mock import Mock, NonCallableMock, call, sentinel
 
 from pytest import mark, raises, fixture
 
-from preacher.compilation.argument import ArgumentValue
+from preacher.compilation.argument import Argument
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.parameter import Parameter
 from preacher.compilation.scenario.case import CaseCompiler
@@ -94,17 +94,17 @@ def test_given_a_filled_object(
 
     scenario = compiler.compile(
         obj={
-            'label': ArgumentValue('arg1'),
+            'label': Argument('arg1'),
             'ordered': False,
-            'default': {'a': ArgumentValue('arg2')},
-            'when': {'b': ArgumentValue('arg3')},
-            'cases': [{}, {'c': ArgumentValue('arg4')}],
+            'default': {'a': Argument('arg2')},
+            'when': {'b': Argument('arg3')},
+            'cases': [{}, {'c': Argument('arg4')}],
             'subscenarios': [
                 {
-                    'label': ArgumentValue('arg5'),
+                    'label': Argument('arg5'),
                     'ordered': True,
-                    'default': {'d': ArgumentValue('arg6')},
-                    'cases': [{'e': ArgumentValue('arg7')}]
+                    'default': {'d': Argument('arg6')},
+                    'cases': [{'e': Argument('arg7')}]
                 },
             ],
         },
@@ -182,13 +182,13 @@ def test_given_filled_parameters(
 
     scenario = compiler.compile(
         obj={
-            'label': ArgumentValue('original_label'),
-            'ordered': ArgumentValue('ordered'),
+            'label': Argument('original_label'),
+            'ordered': Argument('ordered'),
             'parameters': [sentinel.param_obj1, sentinel.param_obj2],
-            'default': {'foo': ArgumentValue('foo')},
-            'when': [{'foo': ArgumentValue('foo')}],
-            'cases': [{'spam': ArgumentValue('spam')}],
-            'subscenarios': [{'label': ArgumentValue('spam')}]
+            'default': {'foo': Argument('foo')},
+            'when': [{'foo': Argument('foo')}],
+            'cases': [{'spam': Argument('spam')}],
+            'subscenarios': [{'label': Argument('spam')}]
         },
         arguments={'original_label': 'original', 'spam': 'ham'},
     )
@@ -250,11 +250,7 @@ def test_given_filled_parameters(
 def test_compile_flattening(compiler: ScenarioCompiler):
     obj = [
         [],
-        [
-            [{'label': 'foo'}],
-            {'label': ArgumentValue('arg')},
-            [[{'label': 1}]]
-        ],
+        [[{'label': 'foo'}], {'label': Argument('arg')}, [[{'label': 1}]]],
     ]
 
     scenarios = compiler.compile_flattening(obj, {'arg': 'bar'})
