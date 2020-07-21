@@ -2,6 +2,7 @@ from unittest.mock import NonCallableMock, sentinel
 
 from pytest import mark, raises, fixture
 
+from preacher.compilation.argument import Argument
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
 from preacher.compilation.request.request import (
     RequestCompiler,
@@ -65,7 +66,9 @@ def test_given_an_empty_mapping(compiler: RequestCompiler):
     ('Delete', Method.DELETE),
 ])
 def test_given_a_valid_method(compiler: RequestCompiler, method_obj, expected):
-    compiled = compiler.compile({'method': method_obj})
+    obj = {'method': Argument('method')}
+    arguments = {'method': method_obj}
+    compiled = compiler.compile(obj, arguments)
     assert compiled.method is expected
 
 
@@ -74,7 +77,9 @@ def test_given_a_valid_method(compiler: RequestCompiler, method_obj, expected):
     {'name1': 'value1', 'name2': 'value2'},
 ])
 def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
-    compiled = compiler.compile({'headers': headers_obj})
+    obj = {'headers': Argument('headers')}
+    arguments = {'headers': headers_obj}
+    compiled = compiler.compile(obj, arguments)
     assert compiled.headers == headers_obj
 
 
@@ -86,17 +91,17 @@ def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
         compiler.compile({'params': sentinel.params})
     assert error_info.value.path == [NamedNode('params'), NamedNode('x')]
 
-    compile_params.assert_called_once_with(sentinel.params)
+    compile_params.assert_called_once_with(sentinel.params, None)
 
 
 def test_given_valid_params(compiler: RequestCompiler, mocker):
     compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
     compile_params.return_value = sentinel.compiled_params
 
-    compiled = compiler.compile({'params': sentinel.params})
+    compiled = compiler.compile({'params': sentinel.params}, sentinel.args)
     assert compiled.params == sentinel.compiled_params
 
-    compile_params.assert_called_once_with(sentinel.params)
+    compile_params.assert_called_once_with(sentinel.params, sentinel.args)
 
 
 def test_given_invalid_body(compiler: RequestCompiler, body):
@@ -106,20 +111,20 @@ def test_given_invalid_body(compiler: RequestCompiler, body):
         compiler.compile({'body': sentinel.body_obj})
     assert error_info.value.path == [NamedNode('body'), IndexedNode(1)]
 
-    body.compile.assert_called_once_with(sentinel.body_obj)
+    body.compile.assert_called_once_with(sentinel.body_obj, None)
 
 
 def test_given_valid_body(compiler: RequestCompiler, body):
     body.compile.return_value = sentinel.body
 
-    compiled = compiler.compile({'body': sentinel.body_obj})
+    compiled = compiler.compile({'body': sentinel.body_obj}, sentinel.args)
     assert compiled.body is sentinel.body
 
-    body.compile.assert_called_once_with(sentinel.body_obj)
+    body.compile.assert_called_once_with(sentinel.body_obj, sentinel.args)
 
 
 def test_given_a_string(compiler: RequestCompiler):
-    compiled = compiler.compile('/path')
+    compiled = compiler.compile(Argument('path'), {'path': '/path'})
     assert compiled.method is sentinel.default_method
     assert compiled.path == '/path'
     assert compiled.headers is sentinel.default_headers

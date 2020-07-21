@@ -6,6 +6,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional
 
+from preacher.compilation.argument import (
+    Argument,
+    Arguments,
+    inject_arguments,
+)
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_str, ensure_mapping, or_else
 from preacher.core.request import Request, Method, UrlParams
@@ -58,11 +63,27 @@ class RequestCompiler:
         self._body = body
         self._default = default or RequestCompiled()
 
-    def compile(self, obj) -> RequestCompiled:
-        """`obj` should be a mapping or a string."""
+    def compile(
+        self,
+        obj: object,
+        arguments: Optional[Arguments] = None,
+    ) -> RequestCompiled:
+        """
+        Compiles an object into an intermediate request.
+
+        Args:
+            obj: A compiled object, which should be a mapping or a string.
+            arguments: Arguments to inject.
+        Returns:
+            The result of compilation.
+        Raises:
+            CompilationError: when compilation fails.
+        """
+        if isinstance(obj, Argument):
+            obj = inject_arguments(obj, arguments)
 
         if isinstance(obj, str):
-            return self.compile({_KEY_PATH: obj})
+            return self.compile({_KEY_PATH: obj}, arguments)
 
         obj = ensure_mapping(obj)
         compiled = self._default
@@ -70,31 +91,34 @@ class RequestCompiler:
         method_obj = obj.get(_KEY_METHOD)
         if method_obj is not None:
             with on_key(_KEY_METHOD):
+                method_obj = inject_arguments(method_obj, arguments)
                 method = _compile_method(method_obj)
             compiled = replace(compiled, method=method)
 
         path_obj = obj.get(_KEY_PATH)
         if path_obj is not None:
             with on_key(_KEY_PATH):
+                path_obj = inject_arguments(path_obj, arguments)
                 path = ensure_str(path_obj)
             compiled = replace(compiled, path=path)
 
         headers_obj = obj.get(_KEY_HEADERS)
         if headers_obj is not None:
             with on_key(_KEY_HEADERS):
+                headers_obj = inject_arguments(headers_obj, arguments)
                 headers = ensure_mapping(headers_obj)
             compiled = replace(compiled, headers=headers)
 
         params_obj = obj.get(_KEY_PARAMS)
         if params_obj is not None:
             with on_key(_KEY_PARAMS):
-                params = compile_url_params(params_obj)
+                params = compile_url_params(params_obj, arguments)
             compiled = replace(compiled, params=params)
 
         body_obj = obj.get(_KEY_BODY)
         if body_obj is not None:
             with on_key(_KEY_BODY):
-                body = self._body.compile(body_obj)
+                body = self._body.compile(body_obj, arguments)
             compiled = replace(compiled, body=body)
 
         return compiled
