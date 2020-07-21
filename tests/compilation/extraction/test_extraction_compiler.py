@@ -4,7 +4,6 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.extraction.extraction import ExtractionCompiler
-from preacher.core.util.functional import identify
 
 PKG = 'preacher.compilation.extraction.extraction'
 
@@ -28,17 +27,17 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
     (
         '.foo',
         'JqExtractor',
-        call('.foo', multiple=False, cast=identify)
+        call('.foo', multiple=False, cast=None)
     ),
     (
         {'jq': '.foo'},
         'JqExtractor',
-        call('.foo', multiple=False, cast=identify),
+        call('.foo', multiple=False, cast=None),
     ),
     (
         {'jq': '.foo', 'xpath': 'bar', 'key': 'baz'},
         'JqExtractor',
-        call('.foo', multiple=False, cast=identify),
+        call('.foo', multiple=False, cast=None),
     ),
     (
         {'jq': '.bar', 'multiple': False, 'cast_to': 'int'},
@@ -53,17 +52,17 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
     (
         {'xpath': './foo'},
         'XPathExtractor',
-        call('./foo', multiple=False, cast=identify),
+        call('./foo', multiple=False, cast=None),
     ),
     (
         {'xpath': './foo', 'key': 'bar'},
         'XPathExtractor',
-        call('./foo', multiple=False, cast=identify),
+        call('./foo', multiple=False, cast=None),
     ),
     (
         {'xpath': './foo', 'multiple': False},
         'XPathExtractor',
-        call('./foo', multiple=False, cast=identify),
+        call('./foo', multiple=False, cast=None),
     ),
     (
         {'xpath': './foo', 'multiple': True, 'cast_to': 'string'},
@@ -73,7 +72,7 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
     (
         {'key': 'foo'},
         'KeyExtractor',
-        call('foo', cast=identify),
+        call('foo', cast=None),
     ),
     (
         {'key': 'bar', 'multiple': True, 'cast_to': 'float'},

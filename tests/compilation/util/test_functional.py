@@ -8,7 +8,6 @@ from preacher.compilation.util.functional import (
     run_recursively,
     compile_flattening,
 )
-from preacher.core.util.functional import identify
 
 
 def succeeds(arg):
@@ -16,7 +15,7 @@ def succeeds(arg):
 
 
 def test_map_compile_for_empty_list():
-    results = map_compile(identify, [])
+    results = map_compile(lambda x: x, [])
     with raises(StopIteration):
         next(results)
 

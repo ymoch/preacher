@@ -6,7 +6,6 @@ from pytest import fixture, mark, raises
 from preacher.core.extraction.analysis import Analyzer
 from preacher.core.extraction.error import ExtractionError
 from preacher.core.extraction.extraction import XPathExtractor
-from preacher.core.util.functional import identify
 
 VALUE = '''
 <root>
@@ -57,19 +56,19 @@ def test_extract_default(query, expected, analyzer):
 
 
 @mark.parametrize('query, multiple, cast, expected', (
-    ('/root/xxx', False, identify, None),
-    ('/root/foo', False, identify, 'foo-text'),
-    ('./foo[1]', False, identify, 'foo-text'),
-    ('//foo[@id="foo1"]', False, identify, 'foo-text'),
-    ('.//foo[2]/bar', False, identify, 'text'),
-    ('//baz/@attr', False, identify, 'baz-attr'),
-    ('/root/xxx', True, identify, None),
-    ('/root/foo', True, identify, ['foo-text', '\n        ']),
-    ('./foo/bar', True, identify, ['text']),
-    ('./foo/bar', True, identify, ['text']),
-    ('./number', False, identify, '10'),
+    ('/root/xxx', False, None, None),
+    ('/root/foo', False, None, 'foo-text'),
+    ('./foo[1]', False, None, 'foo-text'),
+    ('//foo[@id="foo1"]', False, None, 'foo-text'),
+    ('.//foo[2]/bar', False, None, 'text'),
+    ('//baz/@attr', False, None, 'baz-attr'),
+    ('/root/xxx', True, None, None),
+    ('/root/foo', True, None, ['foo-text', '\n        ']),
+    ('./foo/bar', True, None, ['text']),
+    ('./foo/bar', True, None, ['text']),
+    ('./number', False, None, '10'),
     ('./number', False, int, 10),
-    ('./numbers/value', True, identify, ['1', '2']),
+    ('./numbers/value', True, None, ['1', '2']),
     ('./numbers/value', True, int, [1, 2]),
 ))
 def test_extract(query, multiple, cast, expected, analyzer):

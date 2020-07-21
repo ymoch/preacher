@@ -1,7 +1,7 @@
 """Extraction compilation."""
 
 from collections.abc import Mapping
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_bool, ensure_str
@@ -11,7 +11,6 @@ from preacher.core.extraction.extraction import (
     XPathExtractor,
     KeyExtractor,
 )
-from preacher.core.util.functional import identify
 
 _CAST_FUNC_MAP = {
     'int': int,
@@ -41,7 +40,7 @@ class ExtractionCompiler:
         with on_key(_KEY_MULTIPLE):
             multiple = ensure_bool(multiple_obj)
 
-        cast: Callable[[object], Any] = identify
+        cast: Optional[Callable[[object], Any]] = None
         cast_obj = obj.get(_KEY_CAST_TO)
         if cast_obj is not None:
             with on_key(_KEY_CAST_TO):

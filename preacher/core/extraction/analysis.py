@@ -11,7 +11,7 @@ from lxml.etree import _Element as Element, XMLParser, fromstring
 
 from preacher.core.request.response import ResponseBody
 from preacher.core.util.functional import recursive_map
-from preacher.core.util.serialization import to_serializable_value
+from preacher.core.util.serialization import to_serializable
 
 T = TypeVar('T')
 
@@ -78,7 +78,7 @@ def analyze_xml_str(body: ResponseBody) -> Analyzer:
 
 
 def analyze_data_obj(obj) -> Analyzer:
-    return JsonAnalyzer(recursive_map(to_serializable_value, asdict(obj)))
+    return JsonAnalyzer(recursive_map(to_serializable, asdict(obj)))
 
 
 Analysis = Callable[[ResponseBody], Analyzer]
