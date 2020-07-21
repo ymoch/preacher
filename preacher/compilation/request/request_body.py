@@ -121,7 +121,6 @@ class RequestBodyCompiler:
 
         obj = inject_arguments(obj, arguments)
         obj = ensure_mapping(obj)
-        print(obj)
         compiled = self._default
 
         type_obj = obj.get(_KEY_TYPE)
