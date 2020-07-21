@@ -1,5 +1,6 @@
 from unittest.mock import sentinel
 
+from preacher.compilation.argument import Argument
 from preacher.compilation.verification.predicate import PredicateCompiler
 
 PKG = 'preacher.compilation.verification.predicate'
@@ -11,7 +12,8 @@ def test_matcher_predicate(mocker):
     predicate_ctor = mocker.patch(f'{PKG}.MatcherPredicate')
     predicate_ctor.return_value = sentinel.predicate
 
-    predicate = PredicateCompiler().compile(sentinel.obj)
+    compiler = PredicateCompiler()
+    predicate = compiler.compile(Argument('obj'), {'obj': sentinel.obj})
     assert predicate == sentinel.predicate
 
     compile_matcher.assert_called_once_with(sentinel.obj)
