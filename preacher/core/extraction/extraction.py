@@ -6,7 +6,7 @@ from typing import Any, Callable, List, Optional, TypeVar
 import jq
 from lxml.etree import _Element as Element, XPathEvalError
 
-from preacher.core.util.functional import identify
+from preacher.core.util.functional import identity
 from .analysis import Analyzer
 from .error import ExtractionError
 
@@ -34,7 +34,7 @@ class JqExtractor(Extractor):
     ):
         self._query = query
         self._multiple = multiple
-        self._cast = cast or identify
+        self._cast = cast or identity
 
     def extract(self, analyzer: Analyzer) -> object:
         try:
@@ -62,7 +62,7 @@ class XPathExtractor(Extractor):
     ):
         self._query = query
         self._multiple = multiple
-        self._cast = cast or identify
+        self._cast = cast or identity
 
     def extract(self, analyzer: Analyzer) -> object:
         elements = analyzer.xpath(self._extract)
@@ -96,7 +96,7 @@ class KeyExtractor(Extractor):
         cast: Optional[Callable[[object], Any]] = None,
     ):
         self._key = key
-        self._cast = cast or identify
+        self._cast = cast or identity
 
     def extract(self, analyzer: Analyzer) -> object:
         return self._cast(
