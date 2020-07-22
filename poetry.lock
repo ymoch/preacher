@@ -65,7 +65,7 @@ python-versions = "*"
 version = "3.0.4"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Composable command line interface toolkit"
 name = "click"
 optional = false
@@ -431,6 +431,18 @@ pytest = ">=3.5"
 
 [[package]]
 category = "dev"
+description = "pytest plugin to run the mccabe code complexity checker."
+name = "pytest-mccabe"
+optional = false
+python-versions = "*"
+version = "1.0"
+
+[package.dependencies]
+mccabe = "*"
+pytest = ">=3.6.0"
+
+[[package]]
+category = "dev"
 description = "Thin-wrapper around the mock package for easier use with pytest"
 name = "pytest-mock"
 optional = false
@@ -760,7 +772,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "9529b233f53f76342f4dfc96e5d7f83a20351565a86c17f7a5145fe6c2b54626"
+content-hash = "1ad3add918228b027ac02e4685e548c6e7015e4eb41be3df5c6796314822d976"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1049,6 +1061,10 @@ pytest-cov = [
 pytest-flake8 = [
     {file = "pytest-flake8-1.0.6.tar.gz", hash = "sha256:1b82bb58c88eb1db40524018d3fcfd0424575029703b4e2d8e3ee873f2b17027"},
     {file = "pytest_flake8-1.0.6-py2.py3-none-any.whl", hash = "sha256:2e91578ecd9b200066f99c1e1de0f510fbb85bcf43712d46ea29fe47607cc234"},
+]
+pytest-mccabe = [
+    {file = "pytest-mccabe-1.0.tar.gz", hash = "sha256:02c9c1e9d02f0522d659809e1e7bf74e3e8fa7fb74eb55f177afb4701c8d9a4c"},
+    {file = "pytest_mccabe-1.0-py2.py3-none-any.whl", hash = "sha256:16b9bccafb52c052307503733aa287a10cb6f57273ca07470c5bd9127d011af3"},
 ]
 pytest-mock = [
     {file = "pytest-mock-3.2.0.tar.gz", hash = "sha256:7122d55505d5ed5a6f3df940ad174b3f606ecae5e9bc379569cdcbd4cd9d2b83"},
