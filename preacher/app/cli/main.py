@@ -18,7 +18,7 @@ from preacher.presentation.listener import (
     HtmlReportingListener,
     LoggingReportingListener,
 )
-from .log import get_logger
+from .logging import get_logger
 from .option import (
     LEVEL_CHOICES,
     CONCURRENT_EXECUTOR_CHOICES,
