@@ -1,7 +1,7 @@
 import sys
 from concurrent.futures import Executor
 from itertools import chain
-from logging import DEBUG, INFO, WARNING, Logger
+from logging import DEBUG, INFO, WARNING, Logger, StreamHandler, getLogger
 from typing import Sequence, Optional, Callable, Iterator
 
 from preacher.compilation.argument import Arguments
@@ -12,9 +12,9 @@ from preacher.presentation.listener import (
     LoggingReportingListener,
     HtmlReportingListener,
 )
-from .logging import get_logger
+from .logging import ColoredFormatter
 
-REPORT_LOGGER_NAME = 'preacher-cli.report.logger'
+REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
 
 def app(
@@ -22,7 +22,7 @@ def app(
     base_url: str,
     arguments: Arguments,
     level: int,
-    report_dir_path: Optional[str],
+    report_dir: Optional[str],
     retry: int,
     delay: float,
     timeout: Optional[float],
@@ -30,20 +30,33 @@ def app(
     executor_factory: Callable[[int], Executor],
     verbosity: int,
 ):
-    logging_level = _select_level(verbosity)
-    logger = get_logger(__name__, logging_level)
+    logger = _create_system_logger(verbosity=verbosity)
 
-    logger.info('Paths: %s', paths)
-    logger.info('Arguments: %s', arguments)
-    logger.info('Base URL: %s', base_url)
-    logger.info('Logging Level: %d', level)
-    logger.info('Reporting directory path: %s', report_dir_path)
-    logger.info('Max retry count: %d', retry)
-    logger.info('Delay between attempts in seconds: %s', delay)
-    logger.info('Timeout in seconds: %s', timeout)
-    logger.info('Concurrency: %s', concurrency)
-    logger.info('Executor: %s', executor_factory)
-    logger.info("Verbosity: %d", verbosity)
+    logger.debug(
+        'Running condition\n'
+        '  Paths: %s\n'
+        '  Arguments: %s\n'
+        '  Base URL: %s\n'
+        '  Logging report level: %d\n'
+        '  Reporting directory path: %s\n'
+        '  Max retry count: %d\n'
+        '  Delay between attempts in seconds: %s\n'
+        '  Timeout in seconds: %s\n'
+        '  Concurrency: %s\n'
+        '  Executor: %s\n'
+        '  Verbosity: %d',
+        paths,
+        arguments,
+        base_url,
+        level,
+        report_dir,
+        retry,
+        delay,
+        timeout,
+        concurrency,
+        executor_factory,
+        verbosity
+    )
 
     objs = _load_objs(paths, logger=logger)
     compiler = create_scenario_compiler()
@@ -58,7 +71,7 @@ def app(
         delay=delay,
         timeout=timeout
     )
-    listener = _create_listener(level, report_dir_path)
+    listener = _create_listener(level, report_dir)
     try:
         logger.info("Start running scenarios.")
         with executor_factory(concurrency) as executor:
@@ -70,6 +83,18 @@ def app(
 
     if not status.is_succeeded:
         sys.exit(1)
+
+
+def _create_system_logger(name: str = __name__, verbosity: int = 0) -> Logger:
+    level = _select_level(verbosity)
+
+    handler = StreamHandler()
+    handler.setLevel(level)
+    handler.setFormatter(ColoredFormatter(fmt='[%(levelname)s] %(message)s'))
+    logger = getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+    return logger
 
 
 def _select_level(verbosity: int) -> int:
@@ -90,7 +115,12 @@ def _load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
 def _create_listener(level: int, report_dir: Optional[str]) -> Listener:
     merging = MergingListener()
 
-    logger = get_logger(REPORT_LOGGER_NAME, level)
+    handler = StreamHandler(stream=sys.stdout)
+    handler.setLevel(level)
+    handler.setFormatter(ColoredFormatter())
+    logger = getLogger(REPORT_LOGGER_NAME)
+    logger.setLevel(level)
+    logger.addHandler(handler)
     merging.append(LoggingReportingListener.from_logger(logger))
 
     if report_dir:

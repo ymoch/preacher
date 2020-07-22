@@ -72,7 +72,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     default='success',
 )
 @option(
-    'report_dir_path',
+    'report_dir',
     '-R',
     '--report',
     help='set the report directory',
@@ -142,7 +142,7 @@ def main(
     base_url: str,
     arguments: Arguments,
     level: int,
-    report_dir_path: Optional[str],
+    report_dir: Optional[str],
     retry: int,
     delay: float,
     timeout: Optional[float],
@@ -156,7 +156,7 @@ def main(
         base_url=base_url,
         arguments=arguments,
         level=level,
-        report_dir_path=report_dir_path,
+        report_dir=report_dir,
         retry=retry,
         delay=delay,
         timeout=timeout,
