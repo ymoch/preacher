@@ -19,7 +19,12 @@ from unittest.mock import (
 from pytest import fixture, raises, mark
 
 from preacher.app.cli.app import REPORT_LOGGER_NAME
-from preacher.app.cli.app import app, create_system_logger, create_listener
+from preacher.app.cli.app import (
+    app,
+    create_system_logger,
+    load_objs,
+    create_listener,
+)
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -168,6 +173,17 @@ def test_unexpected_error_occurs(mocker, base_dir):
 def test_create_system_logger(verbosity, expected_level):
     logger = create_system_logger(verbosity=verbosity)
     assert logger.getEffectiveLevel() == expected_level
+
+
+def test_load_objs_empty(mocker):
+    mocker.patch('sys.stdin', StringIO('baz'))
+
+    logger = NonCallableMock(logging.Logger)
+    objs = load_objs((), logger)
+
+    assert next(objs) == 'baz'
+    with raises(StopIteration):
+        next(objs)
 
 
 @mark.parametrize(('level', 'expected_logging_level'), [
