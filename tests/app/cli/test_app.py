@@ -18,7 +18,8 @@ from unittest.mock import (
 
 from pytest import fixture, raises, mark
 
-from preacher.app.cli.app import app, REPORT_LOGGER_NAME
+from preacher.app.cli.app import REPORT_LOGGER_NAME
+from preacher.app.cli.app import app, create_system_logger, create_listener
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -128,10 +129,7 @@ def test_simple(mocker, base_dir, compiler):
     runner.run.side_effect = _run_scenarios
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    app(
-        paths=(),
-        level=logging.ERROR,
-    )
+    app()
 
     compiler.compile_flattening.assert_called_once_with('baz', arguments={})
     runner.run.assert_called()
@@ -143,10 +141,7 @@ def test_not_succeeds(mocker, base_dir, executor_factory):
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     with raises(SystemExit) as error_info:
-        app(
-            paths=(os.path.join(base_dir, 'empty.yml'),),
-            level=logging.DEBUG,
-        )
+        app(paths=(os.path.join(base_dir, 'empty.yml'),))
     assert error_info.value.code == 1
 
 
@@ -156,10 +151,7 @@ def test_unexpected_error_occurs(mocker, base_dir):
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     with raises(SystemExit) as error_info:
-        app(
-            paths=(os.path.join(base_dir, 'empty.yml'),),
-            level=logging.DEBUG,
-        )
+        app(paths=(os.path.join(base_dir, 'empty.yml'),))
     assert error_info.value.code == 3
 
 
@@ -169,14 +161,25 @@ def test_unexpected_error_occurs(mocker, base_dir):
     (2, logging.DEBUG),
     (3, logging.DEBUG),
 ])
-def test_verbosity(mocker, verbosity, expected_level):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.return_value = Status.SKIPPED
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+def test_create_system_logger(verbosity, expected_level):
+    logger = create_system_logger(verbosity=verbosity)
+    assert logger.getEffectiveLevel() == expected_level
 
-    app(
-        paths=(),
-        level=logging.DEBUG,
-        verbosity=verbosity,
-    )
-    assert logging.getLogger(PKG).getEffectiveLevel() == expected_level
+
+@mark.parametrize(('level', 'expected_logging_level'), [
+    (Status.SKIPPED, logging.DEBUG),
+    (Status.SUCCESS, logging.INFO),
+    (Status.UNSTABLE, logging.WARNING),
+    (Status.FAILURE, logging.ERROR),
+])
+def test_create_listener_logging_level(level, expected_logging_level):
+    create_listener(level=level)
+
+    logging_level = logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
+    assert logging_level == expected_logging_level
+
+
+def test_create_listener_report_dir(base_dir):
+    report_dir = os.path.join(base_dir, 'report')
+    create_listener(report_dir=report_dir)
+    assert os.path.isdir(report_dir)

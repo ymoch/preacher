@@ -117,7 +117,10 @@ def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
     return chain.from_iterable(load_all_from_path(path) for path in paths)
 
 
-def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
+def create_listener(
+    level: Status = Status.SUCCESS,
+    report_dir: Optional[str] = None,
+) -> Listener:
     merging = MergingListener()
 
     logging_level = _status_to_logging_level(level)
