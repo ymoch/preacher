@@ -1,7 +1,6 @@
 """Preacher CLI."""
 
 import logging
-import os
 import sys
 from concurrent.futures import Executor
 from itertools import chain
@@ -27,16 +26,10 @@ from .option import (
     executor_factory_callback,
     level_callback,
     positive_float_callback,
-    parse_args,
 )
 
 LOGGER = get_logger(__name__, logging.WARNING)
 REPORT_LOGGER_NAME = 'preacher-cli.report.logger'
-
-
-def main_legacy():
-    """Main."""
-    parse_args(environ=os.environ)
 
 
 _ENV_PREFIX = 'PREACHER_CLI_'
@@ -47,15 +40,14 @@ _ENV_RETRY = f'{_ENV_PREFIX}RETRY'
 _ENV_DELAY = f'{_ENV_PREFIX}DELAY'
 _ENV_TIMEOUT = f'{_ENV_PREFIX}TIMEOUT'
 _ENV_CONCURRENCY = f'{_ENV_PREFIX}CONCURRENCY'
-_ENV_REPORT = f'{_ENV_PREFIX}REPORT'
 _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
+_ENV_REPORT = f'{_ENV_PREFIX}REPORT'
 
 
 @click.command()
 @click.argument(
     'paths',
     metavar='path',
-    required=True,
     nargs=-1,
     type=click.Path(exists=True),
 )
@@ -111,6 +103,7 @@ _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
     help='set the delay between attempts in seconds',
     metavar='sec',
     type=click.FloatRange(min=0.0),
+    envvar=_ENV_DELAY,
     default=0.1,
 )
 @click.option(
@@ -120,6 +113,7 @@ _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
     help='set the delay between attempts in seconds',
     metavar='sec',
     type=click.FloatRange(min=0.0),
+    envvar=_ENV_TIMEOUT,
     callback=positive_float_callback
 )
 @click.option(
@@ -128,8 +122,8 @@ _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
     '--concurrency',
     help='set the concurrency',
     metavar='num',
-    envvar=_ENV_CONCURRENCY,
     type=IntRange(min=1),
+    envvar=_ENV_CONCURRENCY,
     default=1,
 )
 @click.option(
@@ -137,6 +131,7 @@ _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
     '--concurrent-executor',
     help='set the concurrent executor',
     type=click.Choice(CONCURRENT_EXECUTOR_CHOICES, case_sensitive=False),
+    envvar=_ENV_CONCURRENT_EXECUTOR,
     default='process',
     callback=executor_factory_callback,
 )
@@ -166,6 +161,8 @@ def main(
     Preacher CLI application.
     """
 
+    print('foo')
+
     logging_level = logging.WARNING
     if verbosity:
         logging_level = logging.INFO
@@ -190,7 +187,7 @@ def main(
             load_all_from_path(path) for path in paths
         )
     else:
-        objs = iter([load_all(sys.stdin)])
+        objs = load_all(sys.stdin)
 
     compiler = create_scenario_compiler()
     scenarios = chain.from_iterable(

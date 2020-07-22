@@ -16,7 +16,6 @@ classifiers = [
 
 [tool.poetry.scripts]
 preacher-cli = "preacher.app.cli.main:main"
-preacher-cli-legacy = "preacher.app.cli.main:main_legacy"
 
 [tool.poetry.dependencies]
 python = "^3.7"
