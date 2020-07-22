@@ -1,13 +1,25 @@
 import logging
+import os
 from concurrent.futures.process import ProcessPoolExecutor
 from concurrent.futures.thread import ThreadPoolExecutor
+from tempfile import TemporaryDirectory
 
 from click.testing import CliRunner
-from pytest import mark
+from pytest import fixture, mark
 
 from preacher.app.cli.main import main
 
 PKG = 'preacher.app.cli.main'
+
+
+@fixture
+def base_dir():
+    with TemporaryDirectory() as path:
+        with open(os.path.join(path, 'foo.yml'), 'w') as f:
+            f.write('foo')
+        with open(os.path.join(path, 'bar.yml'), 'w') as f:
+            f.write('bar')
+        yield path
 
 
 @mark.parametrize('args', [
@@ -62,7 +74,8 @@ def test_given_invalid_options(args):
 def test_default(mocker, env):
     app = mocker.patch(f'{PKG}.app')
 
-    CliRunner().invoke(main, env=env)
+    result = CliRunner().invoke(main, env=env)
+    assert result.exit_code == 0
     app.assert_called_once_with(
         paths=(),
         base_url='',
@@ -78,7 +91,7 @@ def test_default(mocker, env):
     )
 
 
-def test_arguments(mocker):
+def test_arguments(mocker, base_dir):
     app = mocker.patch(f'{PKG}.app')
 
     args = (
@@ -88,15 +101,15 @@ def test_arguments(mocker):
         '--argument', 'baz=1.2',
         '--argument', 'spam=[ham,eggs]',
         '--level', 'unstable',
-        '--report', 'report/',
+        '--report', os.path.join(base_dir, 'report'),
         '--retry', '5',
         '--delay', '2.5',
         '--timeout', '3.5',
         '--concurrency', '4',
         '--executor', 'thread',
         '--verbose',
-        'foo.yml',
-        'bar.yml',
+        os.path.join(base_dir, 'foo.yml'),
+        os.path.join(base_dir, 'bar.yml'),
     )
     env = {
         'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
@@ -108,10 +121,14 @@ def test_arguments(mocker):
         'PREACHER_CLI_CONCURRENCY': 'foo',
         'PREACHER_CLI_CONCURRENT_EXECUTOR': 'foo',
     }
-    CliRunner().invoke(main, args=args, env=env)
+    result = CliRunner().invoke(main, args=args, env=env)
+    assert result.exit_code == 0
     app.assert_called_once_with(
-        paths=('foo.yml', 'bar.yml'),
-        base_url='https://my-domain.com/api',
+        paths=(
+            os.path.join(base_dir, 'foo.yml'),
+            os.path.join(base_dir, 'bar.yml'),
+        ),
+        base_url='https://your-domain.com/api',
         arguments={
             'foo': None,
             'bar': 1,
@@ -119,7 +136,7 @@ def test_arguments(mocker):
             'spam': ['ham', 'eggs'],
         },
         level=logging.WARNING,
-        report_dir_path='report/',
+        report_dir_path=os.path.join(base_dir, 'report'),
         retry=5,
         delay=2.5,
         timeout=3.5,
@@ -143,7 +160,8 @@ def test_environ(mocker):
         'PREACHER_CLI_CONCURRENT_EXECUTOR': 'thread',
         'PREACHER_CLI_REPORT': 'reports/',
     }
-    CliRunner().invoke(main, env=env)
+    result = CliRunner().invoke(main, env=env)
+    assert result.exit_code == 0
     app.assert_called_once_with(
         paths=(),
         base_url='https://my-domain.com/api',
