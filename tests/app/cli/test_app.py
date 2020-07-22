@@ -82,7 +82,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         ),
         base_url=sentinel.base_url,
         arguments=sentinel.args,
-        level=logging.WARNING,
+        level=Status.UNSTABLE,
         report_dir=os.path.join(base_dir, 'report'),
         retry=sentinel.retry,
         delay=sentinel.delay,

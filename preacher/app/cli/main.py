@@ -16,6 +16,7 @@ from click import (
 
 from preacher import __version__ as _version
 from preacher.compilation.argument import Arguments
+from preacher.core.status import Status
 from .app import app
 from .option import (
     ArgumentType,
@@ -141,7 +142,7 @@ def main(
     paths: Sequence[str],
     base_url: str,
     arguments: Arguments,
-    level: int,
+    level: Status,
     report_dir: Optional[str],
     retry: int,
     delay: float,

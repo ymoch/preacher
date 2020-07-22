@@ -1,13 +1,15 @@
 import sys
 from concurrent.futures import Executor, ProcessPoolExecutor
 from itertools import chain
-from logging import DEBUG, INFO, WARNING, Logger, StreamHandler, getLogger
+from logging import Logger, StreamHandler, getLogger
+from logging import DEBUG, INFO, WARNING, ERROR
 from typing import Sequence, Optional, Callable, Iterator
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
+from preacher.core.status import Status
 from preacher.presentation.listener import (
     LoggingReportingListener,
     HtmlReportingListener,
@@ -18,10 +20,10 @@ REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
 
 def app(
-    level: int,
     paths: Optional[Sequence[str]] = None,
     base_url: str = '',
     arguments: Optional[Arguments] = None,
+    level: Status = Status.SUCCESS,
     report_dir: Optional[str] = None,
     delay: float = 0.1,
     retry: int = 0,
@@ -41,7 +43,7 @@ def app(
         '  Paths: %s\n'
         '  Arguments: %s\n'
         '  Base URL: %s\n'
-        '  Logging report level: %d\n'
+        '  Logging report level: %s\n'
         '  Reporting directory path: %s\n'
         '  Max retry count: %d\n'
         '  Delay between attempts in seconds: %s\n'
@@ -90,8 +92,7 @@ def app(
 
 
 def create_system_logger(name: str = __name__, verbosity: int = 0) -> Logger:
-    level = _select_level(verbosity)
-
+    level = _verbosity_to_logging_level(verbosity)
     handler = StreamHandler()
     handler.setLevel(level)
     handler.setFormatter(ColoredFormatter(fmt='[%(levelname)s] %(message)s'))
@@ -101,7 +102,7 @@ def create_system_logger(name: str = __name__, verbosity: int = 0) -> Logger:
     return logger
 
 
-def _select_level(verbosity: int) -> int:
+def _verbosity_to_logging_level(verbosity: int) -> int:
     if verbosity > 1:
         return DEBUG
     if verbosity > 0:
@@ -116,14 +117,15 @@ def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
     return chain.from_iterable(load_all_from_path(path) for path in paths)
 
 
-def create_listener(level: int, report_dir: Optional[str]) -> Listener:
+def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     merging = MergingListener()
 
+    logging_level = _status_to_logging_level(level)
     handler = StreamHandler(stream=sys.stdout)
-    handler.setLevel(level)
+    handler.setLevel(logging_level)
     handler.setFormatter(ColoredFormatter())
     logger = getLogger(REPORT_LOGGER_NAME)
-    logger.setLevel(level)
+    logger.setLevel(logging_level)
     logger.addHandler(handler)
     merging.append(LoggingReportingListener.from_logger(logger))
 
@@ -131,3 +133,13 @@ def create_listener(level: int, report_dir: Optional[str]) -> Listener:
         merging.append(HtmlReportingListener.from_path(report_dir))
 
     return merging
+
+
+def _status_to_logging_level(level: Status) -> int:
+    if level is Status.SKIPPED:
+        return DEBUG
+    if level is Status.SUCCESS:
+        return INFO
+    if level is Status.UNSTABLE:
+        return WARNING
+    return ERROR
