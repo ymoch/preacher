@@ -20,11 +20,9 @@ from preacher.presentation.listener import (
 )
 from .logging import get_logger
 from .option import (
-    LEVEL_CHOICES,
-    CONCURRENT_EXECUTOR_CHOICES,
+    LevelType,
+    ExecutorFactoryType,
     arguments_callback,
-    level_callback,
-    executor_factory_callback,
     positive_float_callback,
 )
 
@@ -73,10 +71,9 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     '-l',
     '--level',
     help='show only above or equal to this level',
-    type=click.Choice(LEVEL_CHOICES, case_sensitive=False),
+    type=LevelType(),
     envvar=_ENV_LEVEL,
     default='success',
-    callback=level_callback,
 )
 @click.option(
     'report_dir_path',
@@ -130,10 +127,9 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     'executor_factory',
     '--concurrent-executor',
     help='set the concurrent executor',
-    type=click.Choice(CONCURRENT_EXECUTOR_CHOICES, case_sensitive=False),
+    type=ExecutorFactoryType(),
     envvar=_ENV_CONCURRENT_EXECUTOR,
     default='process',
-    callback=executor_factory_callback,
 )
 @click.option(
     'verbosity',

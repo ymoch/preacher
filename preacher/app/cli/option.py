@@ -10,7 +10,7 @@ from concurrent.futures import (
 from enum import IntEnum
 from typing import Callable, Iterable, Mapping, Optional, Tuple, Union
 
-from click import Context, Option, BadParameter, Parameter
+from click import Context, Option, BadParameter, Parameter, ParamType, Choice
 from yaml import safe_load
 from yaml.error import MarkedYAMLError
 
@@ -34,7 +34,39 @@ _CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, Callable[[int], Executor]] = {
 }
 
 LEVEL_CHOICES = tuple(_LEVEL_MAP.keys())
-CONCURRENT_EXECUTOR_CHOICES = tuple(_CONCURRENT_EXECUTOR_FACTORY_MAP.keys())
+
+
+class LevelType(ParamType):
+
+    _choice = Choice(tuple(_LEVEL_MAP.keys()), case_sensitive=False)
+
+    def get_metavar(self, param):
+        return self._choice.get_metavar(param)
+
+    def get_missing_message(self, param):
+        return self._choice.get_missing_message(param)
+
+    def convert(self, value, param, ctx):
+        key = self._choice.convert(value, param, ctx)
+        return _LEVEL_MAP[key.lower()].value
+
+
+class ExecutorFactoryType(ParamType):
+
+    _choice = Choice(
+        tuple(_CONCURRENT_EXECUTOR_FACTORY_MAP.keys()),
+        case_sensitive=False,
+    )
+
+    def get_metavar(self, param):
+        return self._choice.get_metavar(param)
+
+    def get_missing_message(self, param):
+        return self._choice.get_missing_message(param)
+
+    def convert(self, value, param, ctx):
+        key = self._choice.convert(value, param, ctx)
+        return _CONCURRENT_EXECUTOR_FACTORY_MAP[key.lower()]
 
 
 def arguments_callback(
@@ -43,14 +75,6 @@ def arguments_callback(
     value: Iterable[str],
 ) -> Arguments:
     return dict(_parse_argument(v) for v in value)
-
-
-def level_callback(
-    _context: Context,
-    _option_or_parameter: Union[Option, Parameter],
-    value: str,
-) -> int:
-    return _LEVEL_MAP[value].value
 
 
 def positive_float_callback(
@@ -64,14 +88,6 @@ def positive_float_callback(
     if value <= 0.0:
         raise BadParameter(f'must be positive, given {value}')
     return value
-
-
-def executor_factory_callback(
-    _context: Context,
-    _option_or_parameter: Union[Option, Parameter],
-    value: str,
-) -> Callable[[int], Executor]:
-    return _CONCURRENT_EXECUTOR_FACTORY_MAP[value.lower()]
 
 
 def _parse_argument(value: str) -> Tuple[str, object]:
