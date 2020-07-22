@@ -177,7 +177,7 @@ def test_create_system_logger(verbosity, expected_level):
     (Status.FAILURE, logging.ERROR),
 ])
 def test_create_listener_logging_level(level, expected_logging_level):
-    create_listener(level=level)
+    create_listener(level=level, report_dir=None)
 
     logging_level = logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
     assert logging_level == expected_logging_level
@@ -185,5 +185,5 @@ def test_create_listener_logging_level(level, expected_logging_level):
 
 def test_create_listener_report_dir(base_dir):
     report_dir = os.path.join(base_dir, 'report')
-    create_listener(report_dir=report_dir)
+    create_listener(level=Status.FAILURE, report_dir=report_dir)
     assert os.path.isdir(report_dir)

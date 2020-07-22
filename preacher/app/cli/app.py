@@ -1,8 +1,8 @@
 import sys
 from concurrent.futures import Executor, ProcessPoolExecutor
 from itertools import chain
-from logging import Logger, StreamHandler, getLogger
 from logging import DEBUG, INFO, WARNING, ERROR
+from logging import Logger, StreamHandler, getLogger
 from typing import Sequence, Optional, Callable, Iterator
 
 from preacher.compilation.argument import Arguments
@@ -91,7 +91,7 @@ def app(
         sys.exit(1)
 
 
-def create_system_logger(verbosity: int = 0) -> Logger:
+def create_system_logger(verbosity: int) -> Logger:
     level = _verbosity_to_logging_level(verbosity)
     handler = StreamHandler()
     handler.setLevel(level)
@@ -117,10 +117,7 @@ def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
     return chain.from_iterable(load_all_from_path(path) for path in paths)
 
 
-def create_listener(
-    level: Status = Status.SUCCESS,
-    report_dir: Optional[str] = None,
-) -> Listener:
+def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     merging = MergingListener()
 
     logging_level = _status_to_logging_level(level)
