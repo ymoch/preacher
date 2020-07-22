@@ -89,7 +89,6 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         timeout=sentinel.timeout,
         concurrency=sentinel.concurrency,
         executor_factory=executor_factory,
-        verbosity=0,
     )
 
     executor.__exit__.assert_called_once()
@@ -111,7 +110,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
     assert os.path.isdir(os.path.join(base_dir, 'report'))
 
 
-def test_simple(mocker, base_dir, compiler, executor_factory):
+def test_simple(mocker, base_dir, compiler):
     mocker.patch('sys.stdin', StringIO('baz'))
 
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
@@ -131,22 +130,10 @@ def test_simple(mocker, base_dir, compiler, executor_factory):
 
     app(
         paths=(),
-        base_url=sentinel.base_url,
-        arguments=sentinel.args,
         level=logging.ERROR,
-        report_dir=None,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=None,
-        concurrency=sentinel.concurrency,
-        executor_factory=executor_factory,
-        verbosity=0,
     )
 
-    compiler.compile_flattening.assert_called_once_with(
-        'baz',
-        arguments=sentinel.args,
-    )
+    compiler.compile_flattening.assert_called_once_with('baz', arguments={})
     runner.run.assert_called()
 
 
@@ -158,21 +145,12 @@ def test_not_succeeds(mocker, base_dir, executor_factory):
     with raises(SystemExit) as error_info:
         app(
             paths=(os.path.join(base_dir, 'empty.yml'),),
-            base_url=sentinel.base_url,
-            arguments=sentinel.args,
             level=logging.DEBUG,
-            report_dir=None,
-            retry=sentinel.retry,
-            delay=sentinel.delay,
-            timeout=None,
-            concurrency=sentinel.concurrency,
-            executor_factory=executor_factory,
-            verbosity=0,
         )
     assert error_info.value.code == 1
 
 
-def test_unexpected_error_occurs(mocker, base_dir, executor_factory):
+def test_unexpected_error_occurs(mocker, base_dir):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
@@ -180,16 +158,7 @@ def test_unexpected_error_occurs(mocker, base_dir, executor_factory):
     with raises(SystemExit) as error_info:
         app(
             paths=(os.path.join(base_dir, 'empty.yml'),),
-            base_url=sentinel.base_url,
-            arguments=sentinel.args,
             level=logging.DEBUG,
-            report_dir=None,
-            retry=sentinel.retry,
-            delay=sentinel.delay,
-            timeout=None,
-            concurrency=sentinel.concurrency,
-            executor_factory=executor_factory,
-            verbosity=0,
         )
     assert error_info.value.code == 3
 
@@ -200,22 +169,14 @@ def test_unexpected_error_occurs(mocker, base_dir, executor_factory):
     (2, logging.DEBUG),
     (3, logging.DEBUG),
 ])
-def test_verbosity(mocker, executor_factory, verbosity, expected_level):
+def test_verbosity(mocker, verbosity, expected_level):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.return_value = Status.SKIPPED
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     app(
         paths=(),
-        base_url=sentinel.base_url,
-        arguments=sentinel.args,
         level=logging.DEBUG,
-        report_dir=None,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=None,
-        concurrency=sentinel.concurrency,
-        executor_factory=executor_factory,
         verbosity=verbosity,
     )
     assert logging.getLogger(PKG).getEffectiveLevel() == expected_level

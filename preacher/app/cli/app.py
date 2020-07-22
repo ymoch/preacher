@@ -1,5 +1,5 @@
 import sys
-from concurrent.futures import Executor
+from concurrent.futures import Executor, ProcessPoolExecutor
 from itertools import chain
 from logging import DEBUG, INFO, WARNING, Logger, StreamHandler, getLogger
 from typing import Sequence, Optional, Callable, Iterator
@@ -18,18 +18,22 @@ REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
 
 def app(
-    paths: Sequence[str],
-    base_url: str,
-    arguments: Arguments,
     level: int,
-    report_dir: Optional[str],
-    retry: int,
-    delay: float,
-    timeout: Optional[float],
-    concurrency: int,
-    executor_factory: Callable[[int], Executor],
-    verbosity: int,
+    paths: Optional[Sequence[str]] = None,
+    base_url: str = '',
+    arguments: Optional[Arguments] = None,
+    report_dir: Optional[str] = None,
+    delay: float = 0.1,
+    retry: int = 0,
+    timeout: Optional[float] = None,
+    concurrency: int = 1,
+    executor_factory: Callable[[int], Executor] = ProcessPoolExecutor,
+    verbosity: int = 0,
 ):
+    # Fill default.
+    paths = paths or ()
+    arguments = arguments or {}
+
     logger = create_system_logger(verbosity=verbosity)
 
     logger.debug(
