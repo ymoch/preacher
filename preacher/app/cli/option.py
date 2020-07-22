@@ -50,10 +50,7 @@ def level(
     _option_or_parameter: Union[Option, Parameter],
     value: str,
 ) -> int:
-    level = _LEVEL_MAP.get(value)
-    if not level:
-        raise BadParameter(f'invalid level: {value}')
-    return level.value
+    return _LEVEL_MAP[value].value
 
 
 def positive_float(
@@ -74,10 +71,7 @@ def executor_factory(
     _option_or_parameter: Union[Option, Parameter],
     value: str,
 ) -> Callable[[int], Executor]:
-    executor = _CONCURRENT_EXECUTOR_FACTORY_MAP.get(value.lower())
-    if not executor:
-        raise BadParameter(f'Invalid concurrent executor: {value}')
-    return executor
+    return _CONCURRENT_EXECUTOR_FACTORY_MAP[value.lower()]
 
 
 def _parse_argument(value: str) -> Tuple[str, object]:
