@@ -1,27 +1,13 @@
-"""
-Tests only arguments and that whole process is run.
-Styles should be checked independently.
-"""
 import logging
 import os
-from concurrent.futures import Executor
-from io import StringIO
+from concurrent.futures.process import ProcessPoolExecutor
+from concurrent.futures.thread import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
-from typing import Iterable, Optional
-from unittest.mock import (
-    Mock,
-    NonCallableMock,
-    NonCallableMagicMock,
-    call,
-    sentinel,
-)
 
-from pytest import fixture, raises, mark
+from click.testing import CliRunner
+from pytest import fixture, mark
 
-from preacher.app.cli.main import REPORT_LOGGER_NAME, app
-from preacher.compilation.scenario import ScenarioCompiler
-from preacher.core.scenario import Scenario, ScenarioRunner, Listener
-from preacher.core.status import Status
+from preacher.app.cli.main import main
 
 PKG = 'preacher.app.cli.main'
 
@@ -33,189 +19,159 @@ def base_dir():
             f.write('foo')
         with open(os.path.join(path, 'bar.yml'), 'w') as f:
             f.write('bar')
-        with open(os.path.join(path, 'empty.yml'), 'w') as f:
-            f.write('[]')
         yield path
 
 
-@fixture
-def compiler():
-    compiler = NonCallableMock(ScenarioCompiler)
-    compiler.compile_flattening.return_value = [sentinel.scenario]
-    return compiler
+@mark.parametrize('args', [
+    ['-h'],
+    ['--help'],
+    ['-v'],
+    ['--version'],
+])
+def test_show_and_exit(args):
+    result = CliRunner().invoke(main, args)
+    print(result)
+    assert result.exit_code == 0
 
 
-@fixture
-def executor():
-    executor = NonCallableMagicMock(Executor)
-    executor.__enter__.return_value = executor
-    return executor
+@mark.parametrize('args', [
+    ['-a', ''],
+    ['--argument', 'foo'],
+    ['--argument', 'foo=['],
+    ['--argument', 'foo=!include file.yml'],
+    ['-l', 'foo'],
+    ['--level', 'bar'],
+    ['-r', 'foo'],
+    ['--retry', '-1'],
+    ['-d', 'foo'],
+    ['--delay', '-0.1'],
+    ['-t', 'foo'],
+    ['--timeout', '0.0'],
+    ['-c', 'foo'],
+    ['--concurrency', '0'],
+    ['-C', 'foo'],
+    ['--concurrent-executor', 'foo'],
+])
+def test_given_invalid_options(args):
+    runner = CliRunner()
+    result = runner.invoke(main, args)
+    assert result.exit_code == 2
 
 
-@fixture
-def executor_factory(executor):
-    return Mock(return_value=executor)
+@mark.parametrize('env', [
+    {},
+    {
+        'PREACHER_CLI_BASE_URL': '',
+        'PREACHER_CLI_ARGUMENT': '',
+        'PREACHER_CLI_LEVEL': '',
+        'PREACHER_CLI_RETRY': '',
+        'PREACHER_CLI_DELAY': '',
+        'PREACHER_CLI_TIMEOUT': '',
+        'PREACHER_CLI_CONCURRENCY': '',
+        'PREACHER_CLI_CONCURRENT_EXECUTOR': '',
+    },
+])
+def test_default(mocker, env):
+    app = mocker.patch(f'{PKG}.app')
+
+    result = CliRunner().invoke(main, env=env)
+    assert result.exit_code == 0
+    app.assert_called_once_with(
+        paths=(),
+        base_url='',
+        arguments={},
+        level=logging.INFO,
+        report_dir_path=None,
+        retry=0,
+        delay=0.1,
+        timeout=None,
+        concurrency=1,
+        executor_factory=ProcessPoolExecutor,
+        verbosity=0,
+    )
 
 
-def test_normal(mocker, base_dir, compiler, executor, executor_factory):
-    compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
-    compiler_ctor.return_value = compiler
+def test_arguments(mocker, base_dir):
+    app = mocker.patch(f'{PKG}.app')
 
-    def _run_scenarios(
-        xtor: Executor,
-        scenarios: Iterable[Scenario],
-        listener: Optional[Listener] = None,
-    ) -> Status:
-        assert xtor is executor
-        assert list(scenarios) == [sentinel.scenario] * 2
-        assert listener
-        return Status.SUCCESS
-
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = _run_scenarios
-    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
-
-    app(
+    args = (
+        '--base-url', 'https://your-domain.com/api',
+        '-a', 'foo=',
+        '--argument', 'bar=1',
+        '--argument', 'baz=1.2',
+        '--argument', 'spam=[ham,eggs]',
+        '--level', 'unstable',
+        '--report', os.path.join(base_dir, 'report'),
+        '--retry', '5',
+        '--delay', '2.5',
+        '--timeout', '3.5',
+        '--concurrency', '4',
+        '--executor', 'thread',
+        '--verbose',
+        os.path.join(base_dir, 'foo.yml'),
+        os.path.join(base_dir, 'bar.yml'),
+    )
+    env = {
+        'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
+        'PREACHER_CLI_ARGUMENT': 'foo',
+        'PREACHER_CLI_LEVEL': 'foo',
+        'PREACHER_CLI_RETRY': 'foo',
+        'PREACHER_CLI_DELAY': 'foo',
+        'PREACHER_CLI_TIMEOUT': 'foo',
+        'PREACHER_CLI_CONCURRENCY': 'foo',
+        'PREACHER_CLI_CONCURRENT_EXECUTOR': 'foo',
+    }
+    result = CliRunner().invoke(main, args=args, env=env)
+    assert result.exit_code == 0
+    app.assert_called_once_with(
         paths=(
             os.path.join(base_dir, 'foo.yml'),
             os.path.join(base_dir, 'bar.yml'),
         ),
-        base_url=sentinel.base_url,
-        arguments=sentinel.args,
+        base_url='https://your-domain.com/api',
+        arguments={
+            'foo': None,
+            'bar': 1,
+            'baz': 1.2,
+            'spam': ['ham', 'eggs'],
+        },
         level=logging.WARNING,
         report_dir_path=os.path.join(base_dir, 'report'),
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=sentinel.timeout,
-        concurrency=sentinel.concurrency,
-        executor_factory=executor_factory,
-        verbosity=0,
+        retry=5,
+        delay=2.5,
+        timeout=3.5,
+        concurrency=4,
+        executor_factory=ThreadPoolExecutor,
+        verbosity=1,
     )
 
-    executor.__exit__.assert_called_once()
-    compiler.compile_flattening.assert_has_calls([
-        call('foo', arguments=sentinel.args),
-        call('bar', arguments=sentinel.args),
-    ])
-    runner_ctor.assert_called_once_with(
-        base_url=sentinel.base_url,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=sentinel.timeout,
-    )
-    assert logging.getLogger(PKG).getEffectiveLevel() == logging.WARNING
-    assert (
-        logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
-        == logging.WARNING
-    )
-    assert os.path.isdir(os.path.join(base_dir, 'report'))
 
+def test_environ(mocker):
+    app = mocker.patch(f'{PKG}.app')
 
-def test_simple(mocker, base_dir, compiler, executor_factory):
-    mocker.patch('sys.stdin', StringIO('baz'))
-
-    compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
-    compiler_ctor.return_value = compiler
-
-    def _run_scenarios(
-        executor: Executor,
-        scenarios: Iterable[Scenario],
-        listener: Optional[Listener] = None,
-    ) -> Status:
-        assert list(scenarios) == [sentinel.scenario]
-        return Status.SUCCESS
-
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = _run_scenarios
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
-
-    app(
+    env = {
+        'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
+        'PREACHER_CLI_ARGUMENT': 'foo=1 bar=" baz " spam="ham\'""eggs"',
+        'PREACHER_CLI_LEVEL': 'failure',
+        'PREACHER_CLI_RETRY': '10',
+        'PREACHER_CLI_DELAY': '1.2',
+        'PREACHER_CLI_TIMEOUT': '3.4',
+        'PREACHER_CLI_CONCURRENCY': '5',
+        'PREACHER_CLI_CONCURRENT_EXECUTOR': 'thread',
+        'PREACHER_CLI_REPORT': 'reports/',
+    }
+    result = CliRunner().invoke(main, env=env)
+    assert result.exit_code == 0
+    app.assert_called_once_with(
         paths=(),
-        base_url=sentinel.base_url,
-        arguments=sentinel.args,
+        base_url='https://my-domain.com/api',
+        arguments={'foo': 1, 'bar': 'baz', 'spam': 'ham\'eggs'},
         level=logging.ERROR,
-        report_dir_path=None,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=None,
-        concurrency=sentinel.concurrency,
-        executor_factory=executor_factory,
+        report_dir_path='reports/',
+        retry=10,
+        delay=1.2,
+        timeout=3.4,
+        concurrency=5,
+        executor_factory=ThreadPoolExecutor,
         verbosity=0,
     )
-
-    compiler.compile_flattening.assert_called_once_with(
-        'baz',
-        arguments=sentinel.args,
-    )
-    runner.run.assert_called()
-
-
-def test_not_succeeds(mocker, base_dir, executor_factory):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.return_value = Status.UNSTABLE
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
-
-    with raises(SystemExit) as error_info:
-        app(
-            paths=(os.path.join(base_dir, 'empty.yml'),),
-            base_url=sentinel.base_url,
-            arguments=sentinel.args,
-            level=logging.DEBUG,
-            report_dir_path=None,
-            retry=sentinel.retry,
-            delay=sentinel.delay,
-            timeout=None,
-            concurrency=sentinel.concurrency,
-            executor_factory=executor_factory,
-            verbosity=0,
-        )
-    assert error_info.value.code == 1
-
-
-def test_unexpected_error_occurs(mocker, base_dir, executor_factory):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = RuntimeError
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
-
-    with raises(SystemExit) as error_info:
-        app(
-            paths=(os.path.join(base_dir, 'empty.yml'),),
-            base_url=sentinel.base_url,
-            arguments=sentinel.args,
-            level=logging.DEBUG,
-            report_dir_path=None,
-            retry=sentinel.retry,
-            delay=sentinel.delay,
-            timeout=None,
-            concurrency=sentinel.concurrency,
-            executor_factory=executor_factory,
-            verbosity=0,
-        )
-    assert error_info.value.code == 3
-
-
-@mark.parametrize(('verbosity', 'expected_level'), [
-    (0, logging.WARNING),
-    (1, logging.INFO),
-    (2, logging.DEBUG),
-    (3, logging.DEBUG),
-])
-def test_verbosity(mocker, executor_factory, verbosity, expected_level):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.return_value = Status.SKIPPED
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
-
-    app(
-        paths=(),
-        base_url=sentinel.base_url,
-        arguments=sentinel.args,
-        level=logging.DEBUG,
-        report_dir_path=None,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=None,
-        concurrency=sentinel.concurrency,
-        executor_factory=executor_factory,
-        verbosity=verbosity,
-    )
-    assert logging.getLogger(PKG).getEffectiveLevel() == expected_level
