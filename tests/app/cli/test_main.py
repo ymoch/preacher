@@ -34,42 +34,6 @@ def base_dir():
         yield path
 
 
-@mark.parametrize('args', [
-    ['-h'],
-    ['--help'],
-    ['-v'],
-    ['--version'],
-])
-def test_show_and_exit(args):
-    result = CliRunner().invoke(main, args)
-    print(result)
-    assert result.exit_code == 0
-
-
-@mark.parametrize('args', [
-    ['-a', ''],
-    ['--argument', 'foo'],
-    ['--argument', 'foo=['],
-    ['--argument', 'foo=!include file.yml'],
-    ['-l', 'foo'],
-    ['--level', 'bar'],
-    ['-r', 'foo'],
-    ['--retry', '-1'],
-    ['-d', 'foo'],
-    ['--delay', '-0.1'],
-    ['-t', 'foo'],
-    ['--timeout', '0.0'],
-    ['-c', 'foo'],
-    ['--concurrency', '0'],
-    ['-C', 'foo'],
-    ['--concurrent-executor', 'foo'],
-])
-def test_given_invalid_options(args):
-    runner = CliRunner()
-    result = runner.invoke(main, args)
-    assert result.exit_code == 2
-
-
 @mark.parametrize('env', [
     {},
     {
@@ -129,7 +93,7 @@ def test_arguments(mocker, base_dir):
         '--delay', '2.5',
         '--timeout', '3.5',
         '--concurrency', '4',
-        '--concurrent-executor', 'thread',
+        '--executor', 'thread',
         '--report', os.path.join(base_dir, 'report/'),
         '-VV',
         os.path.join(base_dir, 'foo.yml'),
@@ -247,4 +211,4 @@ def test_when_fails_unexpectedly(mocker):
     runner_ctor.return_value = runner
 
     result = CliRunner().invoke(main, input='[]')
-    assert result.exit_code == 2
+    assert result.exit_code == 3
