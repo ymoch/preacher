@@ -37,7 +37,7 @@ LEVEL_CHOICES = tuple(_LEVEL_MAP.keys())
 CONCURRENT_EXECUTOR_CHOICES = tuple(_CONCURRENT_EXECUTOR_FACTORY_MAP.keys())
 
 
-def arguments(
+def arguments_callback(
     _context: Context,
     _option_or_parameter: Union[Option, Parameter],
     value: Iterable[str],
@@ -45,7 +45,7 @@ def arguments(
     return dict(_parse_argument(v) for v in value)
 
 
-def level(
+def level_callback(
     _context: Context,
     _option_or_parameter: Union[Option, Parameter],
     value: str,
@@ -53,7 +53,7 @@ def level(
     return _LEVEL_MAP[value].value
 
 
-def positive_float(
+def positive_float_callback(
     _context: Context,
     _option_or_parameter: Union[Option, Parameter],
     value: Optional[float],
@@ -66,7 +66,7 @@ def positive_float(
     return value
 
 
-def executor_factory(
+def executor_factory_callback(
     _context: Context,
     _option_or_parameter: Union[Option, Parameter],
     value: str,

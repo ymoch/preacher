@@ -22,10 +22,10 @@ from .logging import get_logger
 from .option import (
     LEVEL_CHOICES,
     CONCURRENT_EXECUTOR_CHOICES,
-    arguments,
-    level,
-    executor_factory,
-    positive_float,
+    arguments_callback,
+    level_callback,
+    executor_factory_callback,
+    positive_float_callback,
 )
 
 LOGGER = get_logger(__name__, logging.WARNING)
@@ -66,7 +66,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     help='scenario arguments in format "NAME=VALUE"',
     envvar=_ENV_ARGUMENT,
     multiple=True,
-    callback=arguments,
+    callback=arguments_callback,
 )
 @click.option(
     'level',
@@ -76,7 +76,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     type=click.Choice(LEVEL_CHOICES, case_sensitive=False),
     envvar=_ENV_LEVEL,
     default='success',
-    callback=level,
+    callback=level_callback,
 )
 @click.option(
     'report_dir_path',
@@ -114,7 +114,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     metavar='sec',
     type=click.FloatRange(min=0.0),
     envvar=_ENV_TIMEOUT,
-    callback=positive_float
+    callback=positive_float_callback,
 )
 @click.option(
     'concurrency',
@@ -133,7 +133,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     type=click.Choice(CONCURRENT_EXECUTOR_CHOICES, case_sensitive=False),
     envvar=_ENV_CONCURRENT_EXECUTOR,
     default='process',
-    callback=executor_factory,
+    callback=executor_factory_callback,
 )
 @click.option(
     'verbosity',
