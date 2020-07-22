@@ -237,3 +237,13 @@ def test_environ(mocker, base_dir):
         delay=1.2,
         timeout=3.4,
     )
+
+
+def test_when_fails_unexpectedly(mocker):
+    runner = NonCallableMock(ScenarioRunner)
+    runner.run.side_effect = RuntimeError
+    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner')
+    runner_ctor.return_value = runner
+
+    result = CliRunner().invoke(main, [], input='[]')
+    assert result.exit_code == 2
