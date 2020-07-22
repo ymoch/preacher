@@ -1,4 +1,3 @@
-import logging
 import os
 from concurrent.futures.process import ProcessPoolExecutor
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -8,6 +7,7 @@ from click.testing import CliRunner
 from pytest import fixture, mark
 
 from preacher.app.cli.main import main
+from preacher.core.status import Status
 
 PKG = 'preacher.app.cli.main'
 
@@ -80,8 +80,8 @@ def test_default(mocker, env):
         paths=(),
         base_url='',
         arguments={},
-        level=logging.INFO,
-        report_dir_path=None,
+        level=Status.SUCCESS,
+        report_dir=None,
         retry=0,
         delay=0.1,
         timeout=None,
@@ -135,8 +135,8 @@ def test_arguments(mocker, base_dir):
             'baz': 1.2,
             'spam': ['ham', 'eggs'],
         },
-        level=logging.WARNING,
-        report_dir_path=os.path.join(base_dir, 'report'),
+        level=Status.UNSTABLE,
+        report_dir=os.path.join(base_dir, 'report'),
         retry=5,
         delay=2.5,
         timeout=3.5,
@@ -166,8 +166,8 @@ def test_environ(mocker):
         paths=(),
         base_url='https://my-domain.com/api',
         arguments={'foo': 1, 'bar': 'baz', 'spam': 'ham\'eggs'},
-        level=logging.ERROR,
-        report_dir_path='reports/',
+        level=Status.FAILURE,
+        report_dir='reports/',
         retry=10,
         delay=1.2,
         timeout=3.4,

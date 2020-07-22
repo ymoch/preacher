@@ -41,17 +41,3 @@ class ColoredFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         style_func = _STYLE_FUNC_MAP.get(record.levelno, _default)
         return style_func(super().format(record))
-
-
-def get_logger(name: str, level: int) -> logging.Logger:
-    formatter = ColoredFormatter()
-
-    handler = logging.StreamHandler()
-    handler.setLevel(level)
-    handler.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.addHandler(handler)
-    logger.setLevel(level)
-
-    return logger

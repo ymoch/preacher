@@ -18,7 +18,8 @@ from unittest.mock import (
 
 from pytest import fixture, raises, mark
 
-from preacher.app.cli.app import app, REPORT_LOGGER_NAME
+from preacher.app.cli.app import REPORT_LOGGER_NAME
+from preacher.app.cli.app import app, create_system_logger, create_listener
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -58,6 +59,12 @@ def executor_factory(executor):
 
 
 def test_normal(mocker, base_dir, compiler, executor, executor_factory):
+    logger_ctor = mocker.patch(f'{PKG}.create_system_logger')
+    logger_ctor.return_value = NonCallableMock(logging.Logger)
+
+    listener_ctor = mocker.patch(f'{PKG}.create_listener')
+    listener_ctor.return_value = sentinel.listener
+
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
     compiler_ctor.return_value = compiler
 
@@ -68,7 +75,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
     ) -> Status:
         assert xtor is executor
         assert list(scenarios) == [sentinel.scenario] * 2
-        assert listener
+        assert listener is sentinel.listener
         return Status.SUCCESS
 
     runner = NonCallableMock(ScenarioRunner)
@@ -82,14 +89,14 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         ),
         base_url=sentinel.base_url,
         arguments=sentinel.args,
-        level=logging.WARNING,
-        report_dir_path=os.path.join(base_dir, 'report'),
+        level=sentinel.level,
+        report_dir=sentinel.report_dir,
         retry=sentinel.retry,
         delay=sentinel.delay,
         timeout=sentinel.timeout,
         concurrency=sentinel.concurrency,
         executor_factory=executor_factory,
-        verbosity=0,
+        verbosity=sentinel.verbosity
     )
 
     executor.__exit__.assert_called_once()
@@ -97,21 +104,18 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         call('foo', arguments=sentinel.args),
         call('bar', arguments=sentinel.args),
     ])
+
+    logger_ctor.assert_called_once_with(sentinel.verbosity)
     runner_ctor.assert_called_once_with(
         base_url=sentinel.base_url,
         retry=sentinel.retry,
         delay=sentinel.delay,
         timeout=sentinel.timeout,
     )
-    assert logging.getLogger(PKG).getEffectiveLevel() == logging.WARNING
-    assert (
-        logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
-        == logging.WARNING
-    )
-    assert os.path.isdir(os.path.join(base_dir, 'report'))
+    listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
 
 
-def test_simple(mocker, base_dir, compiler, executor_factory):
+def test_simple(mocker, base_dir, compiler):
     mocker.patch('sys.stdin', StringIO('baz'))
 
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
@@ -129,24 +133,9 @@ def test_simple(mocker, base_dir, compiler, executor_factory):
     runner.run.side_effect = _run_scenarios
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    app(
-        paths=(),
-        base_url=sentinel.base_url,
-        arguments=sentinel.args,
-        level=logging.ERROR,
-        report_dir_path=None,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=None,
-        concurrency=sentinel.concurrency,
-        executor_factory=executor_factory,
-        verbosity=0,
-    )
+    app()
 
-    compiler.compile_flattening.assert_called_once_with(
-        'baz',
-        arguments=sentinel.args,
-    )
+    compiler.compile_flattening.assert_called_once_with('baz', arguments={})
     runner.run.assert_called()
 
 
@@ -156,41 +145,17 @@ def test_not_succeeds(mocker, base_dir, executor_factory):
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     with raises(SystemExit) as error_info:
-        app(
-            paths=(os.path.join(base_dir, 'empty.yml'),),
-            base_url=sentinel.base_url,
-            arguments=sentinel.args,
-            level=logging.DEBUG,
-            report_dir_path=None,
-            retry=sentinel.retry,
-            delay=sentinel.delay,
-            timeout=None,
-            concurrency=sentinel.concurrency,
-            executor_factory=executor_factory,
-            verbosity=0,
-        )
+        app(paths=(os.path.join(base_dir, 'empty.yml'),))
     assert error_info.value.code == 1
 
 
-def test_unexpected_error_occurs(mocker, base_dir, executor_factory):
+def test_unexpected_error_occurs(mocker, base_dir):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     with raises(SystemExit) as error_info:
-        app(
-            paths=(os.path.join(base_dir, 'empty.yml'),),
-            base_url=sentinel.base_url,
-            arguments=sentinel.args,
-            level=logging.DEBUG,
-            report_dir_path=None,
-            retry=sentinel.retry,
-            delay=sentinel.delay,
-            timeout=None,
-            concurrency=sentinel.concurrency,
-            executor_factory=executor_factory,
-            verbosity=0,
-        )
+        app(paths=(os.path.join(base_dir, 'empty.yml'),))
     assert error_info.value.code == 3
 
 
@@ -200,22 +165,25 @@ def test_unexpected_error_occurs(mocker, base_dir, executor_factory):
     (2, logging.DEBUG),
     (3, logging.DEBUG),
 ])
-def test_verbosity(mocker, executor_factory, verbosity, expected_level):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.return_value = Status.SKIPPED
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+def test_create_system_logger(verbosity, expected_level):
+    logger = create_system_logger(verbosity=verbosity)
+    assert logger.getEffectiveLevel() == expected_level
 
-    app(
-        paths=(),
-        base_url=sentinel.base_url,
-        arguments=sentinel.args,
-        level=logging.DEBUG,
-        report_dir_path=None,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=None,
-        concurrency=sentinel.concurrency,
-        executor_factory=executor_factory,
-        verbosity=verbosity,
-    )
-    assert logging.getLogger(PKG).getEffectiveLevel() == expected_level
+
+@mark.parametrize(('level', 'expected_logging_level'), [
+    (Status.SKIPPED, logging.DEBUG),
+    (Status.SUCCESS, logging.INFO),
+    (Status.UNSTABLE, logging.WARNING),
+    (Status.FAILURE, logging.ERROR),
+])
+def test_create_listener_logging_level(level, expected_logging_level):
+    create_listener(level=level, report_dir=None)
+
+    logging_level = logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
+    assert logging_level == expected_logging_level
+
+
+def test_create_listener_report_dir(base_dir):
+    report_dir = os.path.join(base_dir, 'report')
+    create_listener(level=Status.FAILURE, report_dir=report_dir)
+    assert os.path.isdir(report_dir)
