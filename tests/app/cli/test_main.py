@@ -16,7 +16,7 @@ from unittest.mock import (
     sentinel,
 )
 
-from pytest import fixture, raises
+from pytest import fixture, raises, mark
 
 from preacher.app.cli.main import REPORT_LOGGER_NAME, app
 from preacher.compilation.scenario import ScenarioCompiler
@@ -103,7 +103,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         delay=sentinel.delay,
         timeout=sentinel.timeout,
     )
-    assert logging.getLogger(__name__).getEffectiveLevel() == logging.WARNING
+    assert logging.getLogger(PKG).getEffectiveLevel() == logging.WARNING
     assert (
         logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
         == logging.WARNING
@@ -192,3 +192,30 @@ def test_unexpected_error_occurs(mocker, base_dir, executor_factory):
             verbosity=0,
         )
     assert error_info.value.code == 3
+
+
+@mark.parametrize(('verbosity', 'expected_level'), [
+    (0, logging.WARNING),
+    (1, logging.INFO),
+    (2, logging.DEBUG),
+    (3, logging.DEBUG),
+])
+def test_verbosity(mocker, executor_factory, verbosity, expected_level):
+    runner = NonCallableMock(ScenarioRunner)
+    runner.run.return_value = Status.SKIPPED
+    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+
+    app(
+        paths=(),
+        base_url=sentinel.base_url,
+        arguments=sentinel.args,
+        level=logging.DEBUG,
+        report_dir_path=None,
+        retry=sentinel.retry,
+        delay=sentinel.delay,
+        timeout=None,
+        concurrency=sentinel.concurrency,
+        executor_factory=executor_factory,
+        verbosity=verbosity,
+    )
+    assert logging.getLogger(PKG).getEffectiveLevel() == expected_level
