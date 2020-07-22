@@ -84,8 +84,6 @@ def test_given_invalid_options(args):
     },
 ])
 def test_default(mocker, env):
-    args = ()
-
     def _run_scenarios(
         executor: Executor,
         scenarios: Iterable[Scenario],
@@ -106,7 +104,7 @@ def test_default(mocker, env):
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
     compiler_ctor.return_value = compiler
 
-    result = CliRunner().invoke(main, args, input='[]', env=env)
+    result = CliRunner().invoke(main, input='[]', env=env)
     assert result.exit_code == 1
 
     compiler.compile_flattening.assert_called_once_with([], arguments={})
@@ -248,5 +246,5 @@ def test_when_fails_unexpectedly(mocker):
     runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner')
     runner_ctor.return_value = runner
 
-    result = CliRunner().invoke(main, [], input='[]')
+    result = CliRunner().invoke(main, input='[]')
     assert result.exit_code == 2
