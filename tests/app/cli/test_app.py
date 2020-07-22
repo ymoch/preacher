@@ -59,6 +59,9 @@ def executor_factory(executor):
 
 
 def test_normal(mocker, base_dir, compiler, executor, executor_factory):
+    logger_ctor = mocker.patch(f'{PKG}.create_system_logger')
+    logger_ctor.return_value = NonCallableMock(logging.Logger)
+
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
 
@@ -93,6 +96,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         timeout=sentinel.timeout,
         concurrency=sentinel.concurrency,
         executor_factory=executor_factory,
+        verbosity=sentinel.verbosity
     )
 
     executor.__exit__.assert_called_once()
@@ -100,14 +104,15 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         call('foo', arguments=sentinel.args),
         call('bar', arguments=sentinel.args),
     ])
-    listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
+
+    logger_ctor.assert_called_once_with(sentinel.verbosity)
     runner_ctor.assert_called_once_with(
         base_url=sentinel.base_url,
         retry=sentinel.retry,
         delay=sentinel.delay,
         timeout=sentinel.timeout,
     )
-    assert logging.getLogger(PKG).getEffectiveLevel() == logging.WARNING
+    listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
 
 
 def test_simple(mocker, base_dir, compiler):

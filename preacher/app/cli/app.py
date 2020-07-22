@@ -36,7 +36,7 @@ def app(
     paths = paths or ()
     arguments = arguments or {}
 
-    logger = create_system_logger(verbosity=verbosity)
+    logger = create_system_logger(verbosity)
 
     logger.debug(
         'Running condition\n'
@@ -91,12 +91,12 @@ def app(
         sys.exit(1)
 
 
-def create_system_logger(name: str = __name__, verbosity: int = 0) -> Logger:
+def create_system_logger(verbosity: int = 0) -> Logger:
     level = _verbosity_to_logging_level(verbosity)
     handler = StreamHandler()
     handler.setLevel(level)
     handler.setFormatter(ColoredFormatter(fmt='[%(levelname)s] %(message)s'))
-    logger = getLogger(name)
+    logger = getLogger(__name__)
     logger.setLevel(level)
     logger.addHandler(handler)
     return logger
