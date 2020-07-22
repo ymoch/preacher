@@ -63,6 +63,7 @@ def app(
             load_all_from_path(path) for path in paths
         )
     else:
+        logger.info('Load scenarios from stdin.')
         objs = load_all(sys.stdin)
 
     compiler = create_scenario_compiler()
