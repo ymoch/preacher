@@ -118,6 +118,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         timeout=sentinel.timeout,
     )
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
+    executor_factory.assert_called_once_with(sentinel.concurrency)
 
 
 def test_simple(mocker, base_dir, compiler):
@@ -176,12 +177,13 @@ def test_create_system_logger(verbosity, expected_level):
 
 
 def test_load_objs_empty(mocker):
-    mocker.patch('sys.stdin', StringIO('baz'))
+    mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
 
     logger = NonCallableMock(logging.Logger)
     objs = load_objs((), logger)
 
-    assert next(objs) == 'baz'
+    assert next(objs) == 'foo'
+    assert next(objs) == 'bar'
     with raises(StopIteration):
         next(objs)
 
