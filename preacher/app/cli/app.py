@@ -30,7 +30,7 @@ def app(
     executor_factory: Callable[[int], Executor],
     verbosity: int,
 ):
-    logger = _create_system_logger(verbosity=verbosity)
+    logger = create_system_logger(verbosity=verbosity)
 
     logger.debug(
         'Running condition\n'
@@ -58,7 +58,7 @@ def app(
         verbosity
     )
 
-    objs = _load_objs(paths, logger=logger)
+    objs = load_objs(paths, logger=logger)
     compiler = create_scenario_compiler()
     scenarios = chain.from_iterable(
         compiler.compile_flattening(obj, arguments=arguments)
@@ -71,7 +71,7 @@ def app(
         delay=delay,
         timeout=timeout
     )
-    listener = _create_listener(level, report_dir)
+    listener = create_listener(level, report_dir)
     try:
         logger.info("Start running scenarios.")
         with executor_factory(concurrency) as executor:
@@ -85,7 +85,7 @@ def app(
         sys.exit(1)
 
 
-def _create_system_logger(name: str = __name__, verbosity: int = 0) -> Logger:
+def create_system_logger(name: str = __name__, verbosity: int = 0) -> Logger:
     level = _select_level(verbosity)
 
     handler = StreamHandler()
@@ -105,14 +105,14 @@ def _select_level(verbosity: int) -> int:
     return WARNING
 
 
-def _load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
+def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
     if not paths:
         logger.info('Load scenarios from stdin.')
         return load_all(sys.stdin)
     return chain.from_iterable(load_all_from_path(path) for path in paths)
 
 
-def _create_listener(level: int, report_dir: Optional[str]) -> Listener:
+def create_listener(level: int, report_dir: Optional[str]) -> Listener:
     merging = MergingListener()
 
     handler = StreamHandler(stream=sys.stdout)
