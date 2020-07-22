@@ -1,9 +1,9 @@
 """Preacher CLI."""
 
-import logging
 import sys
 from concurrent.futures import Executor
 from itertools import chain
+from logging import Logger, WARNING, INFO, DEBUG
 from typing import Iterator, Sequence, Callable, Optional
 
 from click import (
@@ -66,14 +66,7 @@ def app(
     logger.info('Executor: %s', executor_factory)
     logger.info("Verbosity: %d", verbosity)
 
-    if paths:
-        objs: Iterator[object] = chain.from_iterable(
-            load_all_from_path(path) for path in paths
-        )
-    else:
-        logger.info('Load scenarios from stdin.')
-        objs = load_all(sys.stdin)
-
+    objs = _load_objs(paths, logger=logger)
     compiler = create_scenario_compiler()
     scenarios = chain.from_iterable(
         compiler.compile_flattening(obj, arguments=arguments)
@@ -108,10 +101,17 @@ def app(
 
 def _select_level(verbosity: int) -> int:
     if verbosity > 1:
-        return logging.DEBUG
+        return DEBUG
     if verbosity > 0:
-        return logging.INFO
-    return logging.WARNING
+        return INFO
+    return WARNING
+
+
+def _load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
+    if not paths:
+        logger.info('Load scenarios from stdin.')
+        return load_all(sys.stdin)
+    return chain.from_iterable(load_all_from_path(path) for path in paths)
 
 
 _ENV_PREFIX = 'PREACHER_CLI_'
