@@ -42,6 +42,7 @@ def base_dir():
 ])
 def test_show_and_exit(args):
     result = CliRunner().invoke(main, args)
+    print(result)
     assert result.exit_code == 0
 
 
@@ -194,7 +195,7 @@ def test_environ(mocker, base_dir):
     args = [os.path.join(base_dir, 'foo.yml')]
     env = {
         'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
-        'PREACHER_CLI_ARGUMENT': 'foo=1 spam="ham\'eggs"',
+        'PREACHER_CLI_ARGUMENT': 'foo=1 bar=" baz " spam="ham\'""eggs"',
         'PREACHER_CLI_LEVEL': 'failure',
         'PREACHER_CLI_RETRY': '10',
         'PREACHER_CLI_DELAY': '1.2',
@@ -203,6 +204,7 @@ def test_environ(mocker, base_dir):
         'PREACHER_CLI_CONCURRENT_EXECUTOR': 'thread',
         'PREACHER_CLI_REPORT': 'reports/',
     }
+    expected_arguments = {'foo': 1, 'bar': 'baz', 'spam': 'ham\'eggs'}
 
     def _run_scenarios(
         executor: Executor,
@@ -225,11 +227,12 @@ def test_environ(mocker, base_dir):
     compiler_ctor.return_value = compiler
 
     result = CliRunner().invoke(main, args, env=env)
+    print(result.stdout)
     assert result.exit_code == 0
 
     compiler.compile_flattening.assert_called_once_with(
         'foo',
-        arguments={'foo': 1, 'spam': "ham'eggs"},
+        arguments=expected_arguments,
     )
     runner_ctor.assert_called_once_with(
         base_url='https://my-domain.com/api',

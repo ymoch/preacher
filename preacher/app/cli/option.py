@@ -2,6 +2,7 @@
 
 import logging
 import re
+import shlex
 from concurrent.futures import (
     Executor,
     ProcessPoolExecutor,
@@ -10,7 +11,15 @@ from concurrent.futures import (
 from enum import IntEnum
 from typing import Callable, Iterable, Mapping, Optional, Tuple, Union
 
-from click import Context, Option, BadParameter, Parameter, ParamType, Choice
+from click import (
+    Choice,
+    Context,
+    BadParameter,
+    Parameter,
+    ParamType,
+    Option,
+    STRING,
+)
 from yaml import safe_load
 from yaml.error import MarkedYAMLError
 
@@ -36,9 +45,23 @@ _CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, Callable[[int], Executor]] = {
 LEVEL_CHOICES = tuple(_LEVEL_MAP.keys())
 
 
+class ArgumentType(ParamType):
+
+    _base = STRING
+    name = _base.name
+
+    def convert(self, value, param, ctx):
+        exp = self._base.convert(value, param, ctx)
+        return _parse_argument(exp)
+
+    def split_envvar_value(self, rv):
+        return shlex.split(rv)
+
+
 class LevelType(ParamType):
 
     _choice = Choice(tuple(_LEVEL_MAP.keys()), case_sensitive=False)
+    name = _choice.name
 
     def get_metavar(self, param):
         return self._choice.get_metavar(param)
@@ -57,6 +80,7 @@ class ExecutorFactoryType(ParamType):
         tuple(_CONCURRENT_EXECUTOR_FACTORY_MAP.keys()),
         case_sensitive=False,
     )
+    name = _choice.name
 
     def get_metavar(self, param):
         return self._choice.get_metavar(param)
@@ -69,12 +93,12 @@ class ExecutorFactoryType(ParamType):
         return _CONCURRENT_EXECUTOR_FACTORY_MAP[key.lower()]
 
 
-def arguments_callback(
+def pairs_callback(
     _context: Context,
     _option_or_parameter: Union[Option, Parameter],
-    value: Iterable[str],
+    value: Iterable[Tuple[str, object]],
 ) -> Arguments:
-    return dict(_parse_argument(v) for v in value)
+    return dict(value)
 
 
 def positive_float_callback(

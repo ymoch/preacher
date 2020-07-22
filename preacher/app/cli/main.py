@@ -20,9 +20,10 @@ from preacher.presentation.listener import (
 )
 from .logging import get_logger
 from .option import (
+    ArgumentType,
     LevelType,
     ExecutorFactoryType,
-    arguments_callback,
+    pairs_callback,
     positive_float_callback,
 )
 
@@ -62,9 +63,10 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     '-a',
     '--argument',
     help='scenario arguments in format "NAME=VALUE"',
+    type=ArgumentType(),
     envvar=_ENV_ARGUMENT,
     multiple=True,
-    callback=arguments_callback,
+    callback=pairs_callback,
 )
 @click.option(
     'level',
