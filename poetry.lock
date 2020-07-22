@@ -278,7 +278,7 @@ dmypy = ["psutil (>=4.0)"]
 [[package]]
 category = "dev"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "mypy-extensions"
 optional = false
 python-versions = "*"
@@ -428,6 +428,18 @@ version = "1.0.6"
 [package.dependencies]
 flake8 = ">=3.5"
 pytest = ">=3.5"
+
+[[package]]
+category = "dev"
+description = "pytest plugin to run the mccabe code complexity checker."
+name = "pytest-mccabe"
+optional = false
+python-versions = "*"
+version = "1.0"
+
+[package.dependencies]
+mccabe = "*"
+pytest = ">=3.6.0"
 
 [[package]]
 category = "dev"
@@ -684,7 +696,7 @@ version = "6.0.4"
 [[package]]
 category = "dev"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "typed-ast"
 optional = false
 python-versions = "*"
@@ -693,7 +705,7 @@ version = "1.4.1"
 [[package]]
 category = "dev"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\""
+marker = "python_version >= \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version >= \"3.8\")"
 name = "typing-extensions"
 optional = false
 python-versions = "*"
@@ -749,7 +761,7 @@ watchdog = ["watchdog"]
 [[package]]
 category = "dev"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\""
+marker = "python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\" or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"3.5\" and python_version < \"3.8\" or python_version < \"3.8\")"
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -760,7 +772,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "26295032e457540184a5720d25c420cf826f0809f1fb0df35620a4ace9d656f1"
+content-hash = "1ad3add918228b027ac02e4685e548c6e7015e4eb41be3df5c6796314822d976"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1049,6 +1061,10 @@ pytest-cov = [
 pytest-flake8 = [
     {file = "pytest-flake8-1.0.6.tar.gz", hash = "sha256:1b82bb58c88eb1db40524018d3fcfd0424575029703b4e2d8e3ee873f2b17027"},
     {file = "pytest_flake8-1.0.6-py2.py3-none-any.whl", hash = "sha256:2e91578ecd9b200066f99c1e1de0f510fbb85bcf43712d46ea29fe47607cc234"},
+]
+pytest-mccabe = [
+    {file = "pytest-mccabe-1.0.tar.gz", hash = "sha256:02c9c1e9d02f0522d659809e1e7bf74e3e8fa7fb74eb55f177afb4701c8d9a4c"},
+    {file = "pytest_mccabe-1.0-py2.py3-none-any.whl", hash = "sha256:16b9bccafb52c052307503733aa287a10cb6f57273ca07470c5bd9127d011af3"},
 ]
 pytest-mock = [
     {file = "pytest-mock-3.2.0.tar.gz", hash = "sha256:7122d55505d5ed5a6f3df940ad174b3f606ecae5e9bc379569cdcbd4cd9d2b83"},

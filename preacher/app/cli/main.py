@@ -127,7 +127,8 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
 )
 @click.option(
     'executor_factory',
-    '--concurrent-executor',
+    '-E',
+    '--executor',
     help='set the concurrent executor',
     type=ExecutorFactoryType(),
     envvar=_ENV_CONCURRENT_EXECUTOR,
@@ -155,19 +156,11 @@ def main(
     executor_factory: Callable[[int], Executor],
     verbosity: int,
 ):
-    """
-    Preacher CLI application.
-    """
+    """Preacher CLI: Web API Verification without Coding"""
 
-    print('foo')
-
-    logging_level = logging.WARNING
-    if verbosity:
-        logging_level = logging.INFO
-    if verbosity > 1:
-        logging_level = logging.DEBUG
-
+    logging_level = _select_level(verbosity)
     logger = get_logger(__name__, logging_level)
+
     logger.info('Paths: %s', paths)
     logger.info('Arguments: %s', arguments)
     logger.info('Base URL: %s', base_url)
@@ -217,3 +210,11 @@ def main(
 
     if not status.is_succeeded:
         sys.exit(1)
+
+
+def _select_level(verbosity: int) -> int:
+    if verbosity > 1:
+        return logging.DEBUG
+    if verbosity > 0:
+        return logging.INFO
+    return logging.WARNING
