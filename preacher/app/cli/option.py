@@ -9,16 +9,18 @@ from concurrent.futures import (
     ProcessPoolExecutor,
     ThreadPoolExecutor,
 )
-from enum import Enum
-from typing import Callable, List, Mapping, Optional, Tuple
+from enum import IntEnum
+from typing import Callable, Iterable, List, Mapping, Optional, Tuple, Union
 
+from click import Context, Option, BadParameter, Parameter
 from yaml import safe_load
 from yaml.error import MarkedYAMLError
 
 from preacher import __version__ as _version
+from preacher.compilation.argument import Arguments
 
 
-class Level(Enum):
+class Level(IntEnum):
     SKIPPED = logging.DEBUG
     SUCCESS = logging.INFO
     UNSTABLE = logging.WARN
@@ -33,7 +35,6 @@ _CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, Callable[[int], Executor]] = {
     'process': ProcessPoolExecutor,
     'thread': ThreadPoolExecutor,
 }
-
 
 _ENV_PREFIX = 'PREACHER_CLI_'
 _ENV_BASE_URL = f'{_ENV_PREFIX}BASE_URL'
@@ -217,3 +218,64 @@ def parse_args(
     )
 
     return args
+
+
+LEVEL_CHOICES = tuple(_LEVEL_MAP.keys())
+CONCURRENT_EXECUTOR_CHOICES = tuple(_CONCURRENT_EXECUTOR_FACTORY_MAP.keys())
+
+
+def arguments_callback(
+    _context: Context,
+    _option_or_parameter: Union[Option, Parameter],
+    value: Iterable[str],
+) -> Arguments:
+    return dict(_parse_argument(v) for v in value)
+
+
+def level_callback(
+    _context: Context,
+    _option_or_parameter: Union[Option, Parameter],
+    value: str,
+) -> int:
+    level = _LEVEL_MAP.get(value)
+    if not level:
+        raise BadParameter(f'invalid level: {value}')
+    return level.value
+
+
+def positive_float_callback(
+    _context: Context,
+    _option_or_parameter: Union[Option, Parameter],
+    value: Optional[float],
+) -> Optional[float]:
+    if value is None:
+        return value
+
+    if value <= 0.0:
+        raise BadParameter(f'must be positive, given {value}')
+    return value
+
+
+def executor_factory_callback(
+    _context: Context,
+    _option_or_parameter: Union[Option, Parameter],
+    value: str,
+) -> Callable[[int], Executor]:
+    executor = _CONCURRENT_EXECUTOR_FACTORY_MAP.get(value.lower())
+    if not executor:
+        raise BadParameter(f'Invalid concurrent executor: {value}')
+    return executor
+
+
+def _parse_argument(value: str) -> Tuple[str, object]:
+    match = re.match(r'^([^=]+)=(.*)$', value)
+    if not match:
+        raise BadParameter(f'Invalid format argument: {value}')
+
+    key = match.group(1)
+    try:
+        value = safe_load(match.group(2))
+    except MarkedYAMLError as error:
+        raise BadParameter(f'Invalid YAML format: {value}\n{error}')
+
+    return key, value
