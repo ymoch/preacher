@@ -6,8 +6,16 @@ from concurrent.futures import Executor
 from itertools import chain
 from typing import Iterator, Sequence, Callable, Optional
 
-import click
-from click import IntRange
+from click import (
+    IntRange,
+    FloatRange,
+    Path,
+    command,
+    argument,
+    option,
+    help_option,
+    version_option
+)
 
 from preacher import __version__ as _version
 from preacher.compilation.argument import Arguments
@@ -118,14 +126,14 @@ _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
 _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
 
 
-@click.command()
-@click.argument(
+@command()
+@argument(
     'paths',
     metavar='path',
     nargs=-1,
-    type=click.Path(exists=True),
+    type=Path(exists=True),
 )
-@click.option(
+@option(
     'base_url',
     '-u',
     '--base-url',
@@ -133,7 +141,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     envvar=_ENV_BASE_URL,
     default='',
 )
-@click.option(
+@option(
     'arguments',
     '-a',
     '--argument',
@@ -143,7 +151,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     multiple=True,
     callback=pairs_callback,
 )
-@click.option(
+@option(
     'level',
     '-l',
     '--level',
@@ -152,15 +160,15 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     envvar=_ENV_LEVEL,
     default='success',
 )
-@click.option(
+@option(
     'report_dir_path',
     '-R',
     '--report',
     help='set the report directory',
-    type=click.Path(file_okay=False, writable=True),
+    type=Path(file_okay=False, writable=True),
     envvar=_ENV_REPORT,
 )
-@click.option(
+@option(
     'retry',
     '-r',
     '--retry',
@@ -170,27 +178,27 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     envvar=_ENV_RETRY,
     default=0,
 )
-@click.option(
+@option(
     'delay',
     '-d',
     '--delay',
     help='set the delay between attempts in seconds',
     metavar='sec',
-    type=click.FloatRange(min=0.0),
+    type=FloatRange(min=0.0),
     envvar=_ENV_DELAY,
     default=0.1,
 )
-@click.option(
+@option(
     'timeout',
     '-t',
     '--timeout',
     help='set the delay between attempts in seconds',
     metavar='sec',
-    type=click.FloatRange(min=0.0),
+    type=FloatRange(min=0.0),
     envvar=_ENV_TIMEOUT,
     callback=positive_float_callback,
 )
-@click.option(
+@option(
     'concurrency',
     '-c',
     '--concurrency',
@@ -200,7 +208,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     envvar=_ENV_CONCURRENCY,
     default=1,
 )
-@click.option(
+@option(
     'executor_factory',
     '-E',
     '--executor',
@@ -209,15 +217,15 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     envvar=_ENV_CONCURRENT_EXECUTOR,
     default='process',
 )
-@click.option(
+@option(
     'verbosity',
     '-V',
     '--verbose',
     help='make logging more verbose',
     count=True,
 )
-@click.help_option('-h', '--help')
-@click.version_option(_version, '-v', '--version')
+@help_option('-h', '--help')
+@version_option(_version, '-v', '--version')
 def main(
     paths: Sequence[str],
     base_url: str,
