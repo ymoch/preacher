@@ -20,7 +20,7 @@ REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
 
 def app(
-    paths: Optional[Sequence[str]] = None,
+    paths: Sequence[str] = (),
     base_url: str = '',
     arguments: Optional[Arguments] = None,
     level: Status = Status.SUCCESS,
@@ -33,7 +33,6 @@ def app(
     verbosity: int = 0,
 ):
     # Fill default.
-    paths = paths or ()
     arguments = arguments or {}
 
     logger = create_system_logger(verbosity)
