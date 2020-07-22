@@ -59,6 +59,9 @@ def executor_factory(executor):
 
 
 def test_normal(mocker, base_dir, compiler, executor, executor_factory):
+    listener_ctor = mocker.patch(f'{PKG}.create_listener')
+    listener_ctor.return_value = sentinel.listener
+
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
     compiler_ctor.return_value = compiler
 
@@ -69,7 +72,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
     ) -> Status:
         assert xtor is executor
         assert list(scenarios) == [sentinel.scenario] * 2
-        assert listener
+        assert listener is sentinel.listener
         return Status.SUCCESS
 
     runner = NonCallableMock(ScenarioRunner)
@@ -83,8 +86,8 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         ),
         base_url=sentinel.base_url,
         arguments=sentinel.args,
-        level=Status.UNSTABLE,
-        report_dir=os.path.join(base_dir, 'report'),
+        level=sentinel.level,
+        report_dir=sentinel.report_dir,
         retry=sentinel.retry,
         delay=sentinel.delay,
         timeout=sentinel.timeout,
@@ -97,6 +100,7 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         call('foo', arguments=sentinel.args),
         call('bar', arguments=sentinel.args),
     ])
+    listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
     runner_ctor.assert_called_once_with(
         base_url=sentinel.base_url,
         retry=sentinel.retry,
@@ -104,11 +108,6 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         timeout=sentinel.timeout,
     )
     assert logging.getLogger(PKG).getEffectiveLevel() == logging.WARNING
-    assert (
-        logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
-        == logging.WARNING
-    )
-    assert os.path.isdir(os.path.join(base_dir, 'report'))
 
 
 def test_simple(mocker, base_dir, compiler):
