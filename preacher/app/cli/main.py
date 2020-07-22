@@ -9,7 +9,7 @@ from typing import Iterator, Sequence, Callable
 import click
 from click import IntRange
 
-from preacher import __version__ as _VERSION
+from preacher import __version__ as _version
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
@@ -22,10 +22,10 @@ from .log import get_logger
 from .option import (
     LEVEL_CHOICES,
     CONCURRENT_EXECUTOR_CHOICES,
-    arguments_callback,
-    executor_factory_callback,
-    level_callback,
-    positive_float_callback,
+    arguments,
+    level,
+    executor_factory,
+    positive_float,
 )
 
 LOGGER = get_logger(__name__, logging.WARNING)
@@ -66,7 +66,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     help='scenario arguments in format "NAME=VALUE"',
     envvar=_ENV_ARGUMENT,
     multiple=True,
-    callback=arguments_callback,
+    callback=arguments,
 )
 @click.option(
     'level',
@@ -76,7 +76,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     type=click.Choice(LEVEL_CHOICES, case_sensitive=False),
     envvar=_ENV_LEVEL,
     default='success',
-    callback=level_callback,
+    callback=level,
 )
 @click.option(
     'report_dir_path',
@@ -114,7 +114,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     metavar='sec',
     type=click.FloatRange(min=0.0),
     envvar=_ENV_TIMEOUT,
-    callback=positive_float_callback
+    callback=positive_float
 )
 @click.option(
     'concurrency',
@@ -133,7 +133,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     type=click.Choice(CONCURRENT_EXECUTOR_CHOICES, case_sensitive=False),
     envvar=_ENV_CONCURRENT_EXECUTOR,
     default='process',
-    callback=executor_factory_callback,
+    callback=executor_factory,
 )
 @click.option(
     'verbosity',
@@ -143,7 +143,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     count=True,
 )
 @click.help_option('-h', '--help')
-@click.version_option(_VERSION, '-v', '--version')
+@click.version_option(_version, '-v', '--version')
 def main(
     paths: Sequence[str],
     base_url: str,
