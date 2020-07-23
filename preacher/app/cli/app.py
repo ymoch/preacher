@@ -120,7 +120,7 @@ def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     merging = MergingListener()
 
     logging_level = _status_to_logging_level(level)
-    handler = StreamHandler(stream=sys.stdout)
+    handler = StreamHandler(sys.stdout)
     handler.setLevel(logging_level)
     handler.setFormatter(ColoredFormatter())
     logger = getLogger(REPORT_LOGGER_NAME)
