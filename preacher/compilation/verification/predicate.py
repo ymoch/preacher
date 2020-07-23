@@ -1,11 +1,12 @@
 """Predicate compilation."""
 
-from preacher.core.verification import Predicate, MatcherPredicate
-from .matcher import compile_matcher
+from preacher.core.verification.matcher import HamcrestWrappingPredicate
+from preacher.core.verification.predicate import Predicate
+from .matcher import compile_hamcrest_factory
 
 
 class PredicateCompiler:
 
     def compile(self, obj: object) -> Predicate:
-        matcher = compile_matcher(obj)
-        return MatcherPredicate(matcher)
+        factory = compile_hamcrest_factory(obj)
+        return HamcrestWrappingPredicate(factory)

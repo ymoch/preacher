@@ -7,24 +7,12 @@ from pytest import fixture, raises
 from preacher.core.status import Status
 from preacher.core.value import Value, ValueContext
 from preacher.core.verification.matcher import HamcrestFactory
-from preacher.core.verification.matcher import HamcrestWrappingMatcher
-from preacher.core.verification.matcher import Matcher
+from preacher.core.verification.matcher import HamcrestWrappingPredicate
 from preacher.core.verification.matcher import RecursiveHamcrestFactory
 from preacher.core.verification.matcher import StaticHamcrestFactory
 from preacher.core.verification.matcher import ValueHamcrestFactory
-from preacher.core.verification.verification import Verification
 
 PKG = 'preacher.core.verification.matcher'
-
-
-def test_matcher_interface():
-    class _Incomplete(Matcher):
-        def match(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
-            return super().match(actual, context)
-
-    matcher = _Incomplete()
-    with raises(NotImplementedError):
-        matcher.match(sentinel.actual, None)
 
 
 def test_hamcrest_factory_interface():
@@ -91,45 +79,45 @@ def factory():
 
 
 @fixture
-def matcher(factory):
-    return HamcrestWrappingMatcher(factory)
+def predicate(factory):
+    return HamcrestWrappingPredicate(factory)
 
 
-def test_match_when_an_error_occurs(matcher, factory):
+def test_match_when_an_error_occurs(predicate, factory):
     factory.create.side_effect = TypeError('typing')
 
-    verification = matcher.match(sentinel.actual, sentinel.context)
+    verification = predicate.verify(sentinel.actual, sentinel.context)
     assert verification.status == Status.FAILURE
     assert verification.message == 'TypeError: typing'
     factory.create.assert_called_once_with(sentinel.context)
 
 
-def test_match_when_an_error_occurs_on_assertion(mocker, matcher, factory):
+def test_match_when_an_error_occurs_on_assertion(mocker, predicate, factory):
     assert_that = mocker.patch(f'{PKG}.assert_that')
     assert_that.side_effect = RuntimeError('message')
 
-    verification = matcher.match(sentinel.actual, sentinel.context)
+    verification = predicate.verify(sentinel.actual, sentinel.context)
     assert verification.status == Status.FAILURE
     assert verification.message == 'RuntimeError: message'
     factory.create.assert_called_once_with(sentinel.context)
     assert_that.assert_called_once_with(sentinel.actual, sentinel.hamcrest)
 
 
-def test_match_when_assertion_fails(mocker, matcher, factory):
+def test_match_when_assertion_fails(mocker, predicate, factory):
     assert_that = mocker.patch(f'{PKG}.assert_that')
     assert_that.side_effect = AssertionError('message')
 
-    verification = matcher.match(sentinel.actual)
+    verification = predicate.verify(sentinel.actual)
     assert verification.status == Status.UNSTABLE
     assert verification.message == 'message'
     factory.create.assert_called_once_with(None)
     assert_that.assert_called_once_with(sentinel.actual, sentinel.hamcrest)
 
 
-def test_match_when_the_assertion_succeeds(mocker, matcher, factory):
+def test_match_when_the_assertion_succeeds(mocker, predicate, factory):
     assert_that = mocker.patch(f'{PKG}.assert_that')
 
-    verification = matcher.match(sentinel.actual)
+    verification = predicate.verify(sentinel.actual)
     assert verification.status == Status.SUCCESS
     factory.create.assert_called_once_with(None)
     assert_that.assert_called_once_with(sentinel.actual, sentinel.hamcrest)

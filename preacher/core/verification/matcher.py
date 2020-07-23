@@ -6,30 +6,23 @@ from abc import ABC, abstractmethod
 from typing import Callable, Generic, List, Optional, TypeVar
 
 from hamcrest import assert_that
-from hamcrest.core.matcher import Matcher as HamcrestMatcher
+from hamcrest.core.matcher import Matcher
 
 from preacher.core.status import Status
 from preacher.core.value import Value, ValueContext
+from .predicate import Predicate
 from .verification import Verification
 
 T = TypeVar('T')
 
 
-class Matcher(ABC):
-    """Matcher interfaces."""
-
-    @abstractmethod
-    def match(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
-        raise NotImplementedError()
-
-
-class HamcrestWrappingMatcher(Matcher):
+class HamcrestWrappingPredicate(Predicate):
     """Matcher implemented by hamcrest matchers."""
 
     def __init__(self, factory: HamcrestFactory):
         self._factory = factory
 
-    def match(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
+    def verify(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
         try:
             hamcrest_matcher = self._factory.create(context)
             assert_that(actual, hamcrest_matcher)
@@ -45,26 +38,26 @@ class HamcrestWrappingMatcher(Matcher):
 class HamcrestFactory(ABC):
 
     @abstractmethod
-    def create(self, context: Optional[ValueContext] = None) -> HamcrestMatcher:
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
         raise NotImplementedError()
 
 
 class StaticHamcrestFactory(HamcrestFactory):
 
-    def __init__(self, hamcrest: HamcrestMatcher):
+    def __init__(self, hamcrest: Matcher):
         self._hamcrest = hamcrest
 
-    def create(self, context: Optional[ValueContext] = None) -> HamcrestMatcher:
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
         return self._hamcrest
 
 
 class ValueHamcrestFactory(HamcrestFactory, Generic[T]):
 
-    def __init__(self, hamcrest_factory: Callable[..., HamcrestMatcher], value: Value[T]):
+    def __init__(self, hamcrest_factory: Callable[..., Matcher], value: Value[T]):
         self._hamcrest_factory = hamcrest_factory
         self._value = value
 
-    def create(self, context: Optional[ValueContext] = None) -> HamcrestMatcher:
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
         resolved_value = self._value.resolve(context)
         return self._hamcrest_factory(resolved_value)
 
@@ -73,13 +66,13 @@ class RecursiveHamcrestFactory(HamcrestFactory):
 
     def __init__(
         self,
-        hamcrest_factory: Callable[..., HamcrestMatcher],
+        hamcrest_factory: Callable[..., Matcher],
         inner_matchers: List[HamcrestFactory],
     ):
         self._hamcrest_factory = hamcrest_factory
         self._inner_matchers = inner_matchers
 
-    def create(self, context: Optional[ValueContext] = None) -> HamcrestMatcher:
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
         inner_hamcrest_matchers = (
             inner_matcher.create(context)
             for inner_matcher in self._inner_matchers

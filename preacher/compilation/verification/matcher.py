@@ -13,14 +13,12 @@ from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
-from preacher.core.verification import Matcher
 from preacher.core.verification import HamcrestFactory
+from preacher.core.verification import RecursiveHamcrestFactory
 from preacher.core.verification import StaticHamcrestFactory
 from preacher.core.verification import ValueHamcrestFactory
-from preacher.core.verification import RecursiveHamcrestFactory
 from preacher.core.verification import require_type
 from preacher.core.verification.hamcrest import after, before
-from preacher.core.verification.matcher import HamcrestWrappingMatcher
 
 _STATIC_MATCHER_MAP = {
     # For objects.
@@ -149,8 +147,3 @@ def compile_hamcrest_factory(obj: object) -> HamcrestFactory:
             return _compile_taking_multi_matchers(key, value)
 
     return ValueHamcrestFactory(hamcrest.equal_to, StaticValue(obj))
-
-
-def compile_matcher(obj: object) -> Matcher:
-    factory = compile_hamcrest_factory(obj)
-    return HamcrestWrappingMatcher(factory)
