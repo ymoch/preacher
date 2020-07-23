@@ -14,7 +14,7 @@ from preacher.compilation.util.type import ensure_list
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
 from preacher.core.verification import (
-    Matcher,
+    HamcrestFactory,
     StaticMatcher,
     ValueMatcher,
     RecursiveMatcher,
@@ -101,7 +101,7 @@ _VALUE_FACTORY_MAP: Dict[str, Callable[[object], Value[Any]]] = {
 _DEFAULT_VALUE_FACTORY: Callable[[object], Value[Any]] = StaticValue
 
 
-def _compile_taking_single_matcher(key: str, value: object) -> Matcher:
+def _compile_taking_single_matcher(key: str, value: object) -> HamcrestFactory:
     hamcrest_factory = _SINGLE_MATCHER_HAMCREST_MAP[key]
 
     if isinstance(value, str) or isinstance(value, Mapping):
@@ -113,7 +113,7 @@ def _compile_taking_single_matcher(key: str, value: object) -> Matcher:
     return RecursiveMatcher(hamcrest_factory, [inner])
 
 
-def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
+def _compile_taking_multi_matchers(key: str, value: object) -> HamcrestFactory:
     hamcrest_factory = _MULTI_MATCHERS_HAMCREST_MAP[key]
 
     with on_key(key):
@@ -123,7 +123,7 @@ def _compile_taking_multi_matchers(key: str, value: object) -> Matcher:
     return RecursiveMatcher(hamcrest_factory, inner_matchers)
 
 
-def compile_matcher(obj: object) -> Matcher:
+def compile_matcher(obj: object) -> HamcrestFactory:
     if isinstance(obj, str):
         if obj in _STATIC_MATCHER_MAP:
             return _STATIC_MATCHER_MAP[obj]

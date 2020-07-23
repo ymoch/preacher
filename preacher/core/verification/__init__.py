@@ -1,7 +1,7 @@
 """Verification."""
 
 from .description import Description
-from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
+from .matcher import HamcrestFactory, StaticMatcher, ValueMatcher, RecursiveMatcher
 from .predicate import Predicate, MatcherPredicate
 from .response import ResponseDescription, ResponseVerification
 from .response_body import ResponseBodyDescription
@@ -10,7 +10,7 @@ from .verification import Verification
 
 __all__ = [
     'Description',
-    'Matcher',
+    'HamcrestFactory',
     'StaticMatcher',
     'ValueMatcher',
     'RecursiveMatcher',
