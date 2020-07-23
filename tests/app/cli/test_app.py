@@ -69,7 +69,7 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     listener_ctor.return_value = sentinel.listener
 
     compiler = NonCallableMock(ScenarioCompiler)
-    compiler.compile_flattening.return_value = iter([sentinel.scenarios])
+    compiler.compile_flattening.return_value = iter([sentinel.scenario])
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
     compiler_ctor.return_value = compiler
 
@@ -79,7 +79,7 @@ def test_normal(mocker, base_dir, executor, executor_factory):
         listener: Optional[Listener],
     ) -> Status:
         assert executor_ is executor
-        assert list(scenarios) == [sentinel.scenarios]
+        assert list(scenarios) == [sentinel.scenario]
         assert listener is sentinel.listener
         return Status.SUCCESS
 
