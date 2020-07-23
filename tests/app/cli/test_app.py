@@ -113,30 +113,34 @@ def test_normal(mocker, base_dir, executor, executor_factory):
         delay=sentinel.delay,
         timeout=sentinel.timeout,
     )
-    runner.run.assert_called_once()
-    executor.__exit__.assert_called_once()
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
     executor_factory.assert_called_once_with(sentinel.concurrency)
+    runner.run.assert_called_once()
+    executor.__exit__.assert_called_once()
 
 
-def test_not_succeeds(mocker, base_dir, executor_factory):
+def test_not_succeeds(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.return_value = Status.UNSTABLE
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     with raises(SystemExit) as error_info:
-        app(paths=(os.path.join(base_dir, 'empty.yml'),))
+        app(executor_factory=executor_factory)
     assert error_info.value.code == 1
 
+    executor.__exit__.assert_called_once()
 
-def test_unexpected_error_occurs(mocker, base_dir):
+
+def test_unexpected_error_occurs(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     with raises(SystemExit) as error_info:
-        app(paths=(os.path.join(base_dir, 'empty.yml'),))
+        app(executor_factory=executor_factory)
     assert error_info.value.code == 3
+
+    executor.__exit__.assert_called_once()
 
 
 @mark.parametrize(('verbosity', 'expected_level'), [
