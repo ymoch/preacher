@@ -28,29 +28,21 @@ class _ConvertingMatcher(BaseMatcher):
 
     def describe_mismatch(self, item, mismatch_description):
         converted_item = self._convert(item)
-        mismatch_description.append_text('was ').append_description_of(
-            converted_item
-        )
+        mismatch_description.append_text('was ').append_description_of(converted_item)
 
 
 def before(value: object) -> Matcher:
     """`value` should be a datetime or DateTimeWithFormat."""
     origin = _ensure_datetime(value)
     matcher = OrderingComparison(origin.value, operator.lt, 'before')
-    return _ConvertingMatcher(
-        matcher,
-        lambda obj: origin.fmt.parse_datetime(_ensure_str(obj)),
-    )
+    return _ConvertingMatcher(matcher, lambda obj: origin.fmt.parse_datetime(_ensure_str(obj)))
 
 
 def after(value: object) -> Matcher:
     """`value` should be a datetime or DateTimeWithFormat."""
     origin = _ensure_datetime(value)
     matcher = OrderingComparison(origin.value, operator.gt, 'after')
-    return _ConvertingMatcher(
-        matcher,
-        lambda obj: origin.fmt.parse_datetime(_ensure_str(obj)),
-    )
+    return _ConvertingMatcher(matcher, lambda obj: origin.fmt.parse_datetime(_ensure_str(obj)))
 
 
 def _ensure_str(obj: object) -> str:
