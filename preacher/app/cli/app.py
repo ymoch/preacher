@@ -63,7 +63,7 @@ def app(
         verbosity
     )
 
-    objs = load_objs(paths, logger=logger)
+    objs = load_objs(paths, logger)
     compiler = create_scenario_compiler()
     scenarios = chain.from_iterable(
         compiler.compile_flattening(obj, arguments=arguments)

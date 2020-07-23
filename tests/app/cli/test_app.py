@@ -8,13 +8,7 @@ from concurrent.futures import Executor
 from io import StringIO
 from tempfile import TemporaryDirectory
 from typing import Iterable, Optional
-from unittest.mock import (
-    Mock,
-    NonCallableMock,
-    NonCallableMagicMock,
-    call,
-    sentinel,
-)
+from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
 
 from pytest import fixture, raises, mark
 
@@ -63,35 +57,38 @@ def executor_factory(executor):
     return Mock(return_value=executor)
 
 
-def test_normal(mocker, base_dir, compiler, executor, executor_factory):
+def test_normal(mocker, base_dir, executor, executor_factory):
+    logger = NonCallableMock(logging.Logger)
     logger_ctor = mocker.patch(f'{PKG}.create_system_logger')
-    logger_ctor.return_value = NonCallableMock(logging.Logger)
+    logger_ctor.return_value = logger
+
+    objs_ctor = mocker.patch(f'{PKG}.load_objs')
+    objs_ctor.return_value = iter([sentinel.objs])
 
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
 
+    compiler = NonCallableMock(ScenarioCompiler)
+    compiler.compile_flattening.return_value = iter([sentinel.scenarios])
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
     compiler_ctor.return_value = compiler
 
-    def _run_scenarios(
-        xtor: Executor,
+    def _run(
+        executor_: Executor,
         scenarios: Iterable[Scenario],
-        listener: Optional[Listener] = None,
+        listener: Optional[Listener],
     ) -> Status:
-        assert xtor is executor
-        assert list(scenarios) == [sentinel.scenario] * 2
+        assert executor_ is executor
+        assert list(scenarios) == [sentinel.scenarios]
         assert listener is sentinel.listener
         return Status.SUCCESS
 
     runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = _run_scenarios
+    runner.run.side_effect = _run
     runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
     app(
-        paths=(
-            os.path.join(base_dir, 'foo.yml'),
-            os.path.join(base_dir, 'bar.yml'),
-        ),
+        paths=sentinel.paths,
         base_url=sentinel.base_url,
         arguments=sentinel.args,
         level=sentinel.level,
@@ -104,19 +101,20 @@ def test_normal(mocker, base_dir, compiler, executor, executor_factory):
         verbosity=sentinel.verbosity
     )
 
-    executor.__exit__.assert_called_once()
-    compiler.compile_flattening.assert_has_calls([
-        call('foo', arguments=sentinel.args),
-        call('bar', arguments=sentinel.args),
-    ])
-
     logger_ctor.assert_called_once_with(sentinel.verbosity)
+    objs_ctor.assert_called_once_with(sentinel.paths, logger)
+    compiler.compile_flattening.assert_called_once_with(
+        sentinel.objs,
+        arguments=sentinel.args,
+    )
     runner_ctor.assert_called_once_with(
         base_url=sentinel.base_url,
         retry=sentinel.retry,
         delay=sentinel.delay,
         timeout=sentinel.timeout,
     )
+    runner.run.assert_called_once()
+    executor.__exit__.assert_called_once()
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
     executor_factory.assert_called_once_with(sentinel.concurrency)
 
