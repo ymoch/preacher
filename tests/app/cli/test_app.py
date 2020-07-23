@@ -188,6 +188,19 @@ def test_load_objs_empty(mocker):
         next(objs)
 
 
+def test_load_objs_filled(base_dir):
+    logger = NonCallableMock(logging.Logger)
+    objs = load_objs(
+        (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml')),
+        logger,
+    )
+
+    assert next(objs) == 'foo'
+    assert next(objs) == 'bar'
+    with raises(StopIteration):
+        next(objs)
+
+
 @mark.parametrize(('level', 'expected_logging_level'), [
     (Status.SKIPPED, logging.DEBUG),
     (Status.SUCCESS, logging.INFO),
