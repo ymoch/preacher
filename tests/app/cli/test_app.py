@@ -119,30 +119,6 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     executor_factory.assert_called_once_with(sentinel.concurrency)
 
 
-def test_simple(mocker, base_dir, compiler):
-    mocker.patch('sys.stdin', StringIO('baz'))
-
-    compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
-    compiler_ctor.return_value = compiler
-
-    def _run_scenarios(
-        executor: Executor,
-        scenarios: Iterable[Scenario],
-        listener: Optional[Listener] = None,
-    ) -> Status:
-        assert list(scenarios) == [sentinel.scenario]
-        return Status.SUCCESS
-
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = _run_scenarios
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
-
-    app()
-
-    compiler.compile_flattening.assert_called_once_with('baz', arguments={})
-    runner.run.assert_called()
-
-
 def test_not_succeeds(mocker, base_dir, executor_factory):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.return_value = Status.UNSTABLE
