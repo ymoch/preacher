@@ -16,10 +16,10 @@ from .verification import Verification
 T = TypeVar('T')
 
 
-class HamcrestWrappingPredicate(Predicate):
+class MatcherWrappingPredicate(Predicate):
     """Matcher implemented by hamcrest matchers."""
 
-    def __init__(self, factory: HamcrestFactory):
+    def __init__(self, factory: MatcherFactory):
         self._factory = factory
 
     def verify(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
@@ -35,14 +35,14 @@ class HamcrestWrappingPredicate(Predicate):
         return Verification.succeed()
 
 
-class HamcrestFactory(ABC):
+class MatcherFactory(ABC):
 
     @abstractmethod
     def create(self, context: Optional[ValueContext] = None) -> Matcher:
         raise NotImplementedError()
 
 
-class StaticHamcrestFactory(HamcrestFactory):
+class StaticMatcherFactory(MatcherFactory):
 
     def __init__(self, hamcrest: Matcher):
         self._hamcrest = hamcrest
@@ -51,7 +51,7 @@ class StaticHamcrestFactory(HamcrestFactory):
         return self._hamcrest
 
 
-class ValueHamcrestFactory(HamcrestFactory, Generic[T]):
+class ValueMatcherFactory(MatcherFactory, Generic[T]):
 
     def __init__(self, hamcrest_factory: Callable[..., Matcher], value: Value[T]):
         self._hamcrest_factory = hamcrest_factory
@@ -62,12 +62,12 @@ class ValueHamcrestFactory(HamcrestFactory, Generic[T]):
         return self._hamcrest_factory(resolved_value)
 
 
-class RecursiveHamcrestFactory(HamcrestFactory):
+class RecursiveMatcherFactory(MatcherFactory):
 
     def __init__(
         self,
         hamcrest_factory: Callable[..., Matcher],
-        inner_matchers: List[HamcrestFactory],
+        inner_matchers: List[MatcherFactory],
     ):
         self._hamcrest_factory = hamcrest_factory
         self._inner_matchers = inner_matchers

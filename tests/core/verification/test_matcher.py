@@ -6,17 +6,17 @@ from pytest import fixture, raises
 
 from preacher.core.status import Status
 from preacher.core.value import Value, ValueContext
-from preacher.core.verification.matcher import HamcrestFactory
-from preacher.core.verification.matcher import HamcrestWrappingPredicate
-from preacher.core.verification.matcher import RecursiveHamcrestFactory
-from preacher.core.verification.matcher import StaticHamcrestFactory
-from preacher.core.verification.matcher import ValueHamcrestFactory
+from preacher.core.verification.matcher import MatcherFactory
+from preacher.core.verification.matcher import MatcherWrappingPredicate
+from preacher.core.verification.matcher import RecursiveMatcherFactory
+from preacher.core.verification.matcher import StaticMatcherFactory
+from preacher.core.verification.matcher import ValueMatcherFactory
 
 PKG = 'preacher.core.verification.matcher'
 
 
 def test_hamcrest_factory_interface():
-    class IncompleteMatcher(HamcrestFactory):
+    class IncompleteMatcher(MatcherFactory):
         def create(
             self,
             context: Optional[ValueContext] = None,
@@ -34,7 +34,7 @@ def hamcrest_factory():
 
 
 def test_static_factory():
-    matcher = StaticHamcrestFactory(sentinel.hamcrest)
+    matcher = StaticMatcherFactory(sentinel.hamcrest)
     assert matcher.create() == sentinel.hamcrest
 
 
@@ -42,7 +42,7 @@ def test_value_factory(hamcrest_factory):
     value = NonCallableMock(Value)
     value.resolve.return_value = sentinel.resolved
 
-    matcher = ValueHamcrestFactory(hamcrest_factory, value)
+    matcher = ValueMatcherFactory(hamcrest_factory, value)
     hamcrest = matcher.create(sentinel.context)
 
     assert hamcrest == sentinel.hamcrest
@@ -52,15 +52,15 @@ def test_value_factory(hamcrest_factory):
 
 def test_recursive_factory(hamcrest_factory):
     inner_matchers = [
-        NonCallableMock(HamcrestFactory, create=Mock(
+        NonCallableMock(MatcherFactory, create=Mock(
             return_value=sentinel.inner_hamcrest_0
         )),
-        NonCallableMock(HamcrestFactory, create=Mock(
+        NonCallableMock(MatcherFactory, create=Mock(
             return_value=sentinel.inner_hamcrest_1
         )),
     ]
 
-    matcher = RecursiveHamcrestFactory(hamcrest_factory, inner_matchers)
+    matcher = RecursiveMatcherFactory(hamcrest_factory, inner_matchers)
     hamcrest = matcher.create(sentinel.context)
     assert hamcrest == sentinel.hamcrest
     for inner_matcher in inner_matchers:
@@ -73,14 +73,14 @@ def test_recursive_factory(hamcrest_factory):
 
 @fixture
 def factory():
-    factory = NonCallableMock(HamcrestFactory)
+    factory = NonCallableMock(MatcherFactory)
     factory.create.return_value = sentinel.hamcrest
     return factory
 
 
 @fixture
 def predicate(factory):
-    return HamcrestWrappingPredicate(factory)
+    return MatcherWrappingPredicate(factory)
 
 
 def test_match_when_an_error_occurs(predicate, factory):

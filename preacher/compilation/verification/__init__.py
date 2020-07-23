@@ -4,7 +4,7 @@ from .factory import (
     create_description_compiler,
     create_response_description_compiler,
 )
-from .matcher import compile_hamcrest_factory
+from .matcher import compile_matcher_factory
 from .predicate import PredicateCompiler
 from .response import ResponseDescriptionCompiler, ResponseDescriptionCompiled
 from .response_body import (
@@ -14,7 +14,7 @@ from .response_body import (
 
 __all__ = [
     'DescriptionCompiler',
-    'compile_hamcrest_factory',
+    'compile_matcher_factory',
     'PredicateCompiler',
     'ResponseDescriptionCompiler',
     'ResponseDescriptionCompiled',

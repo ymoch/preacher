@@ -1,11 +1,11 @@
 """Verification."""
 
 from .description import Description
-from .matcher import HamcrestFactory
-from .matcher import HamcrestWrappingPredicate
-from .matcher import RecursiveHamcrestFactory
-from .matcher import StaticHamcrestFactory
-from .matcher import ValueHamcrestFactory
+from .matcher import MatcherFactory
+from .matcher import MatcherWrappingPredicate
+from .matcher import RecursiveMatcherFactory
+from .matcher import StaticMatcherFactory
+from .matcher import ValueMatcherFactory
 from .predicate import Predicate
 from .response import ResponseDescription
 from .response import ResponseVerification
@@ -15,11 +15,11 @@ from .verification import Verification
 
 __all__ = [
     'Description',
-    'HamcrestWrappingPredicate',
-    'HamcrestFactory',
-    'StaticHamcrestFactory',
-    'ValueHamcrestFactory',
-    'RecursiveHamcrestFactory',
+    'MatcherWrappingPredicate',
+    'MatcherFactory',
+    'StaticMatcherFactory',
+    'ValueMatcherFactory',
+    'RecursiveMatcherFactory',
     'Predicate',
     'ResponseDescription',
     'ResponseVerification',

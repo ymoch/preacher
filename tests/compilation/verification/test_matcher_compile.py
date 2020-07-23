@@ -4,10 +4,10 @@ from unittest.mock import sentinel
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.verification.matcher import compile_hamcrest_factory
+from preacher.compilation.verification.matcher import compile_matcher_factory
 from preacher.core.status import Status
 from preacher.core.verification.hamcrest import after, before
-from preacher.core.verification.matcher import HamcrestWrappingPredicate
+from preacher.core.verification.matcher import MatcherWrappingPredicate
 
 PKG = 'preacher.compilation.verification.matcher'
 
@@ -24,7 +24,7 @@ NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 ])
 def test_invalid_mapping(obj):
     with raises(CompilationError):
-        compile_hamcrest_factory(obj)
+        compile_matcher_factory(obj)
 
 
 @mark.parametrize(('obj', 'verified', 'expected_status'), [
@@ -159,8 +159,8 @@ def test_invalid_mapping(obj):
     ('anything', {'key': 'value'}, SUCCESS),
 ])
 def test_verification(obj, verified, expected_status):
-    factory = compile_hamcrest_factory(obj)
-    matcher = HamcrestWrappingPredicate(factory)  # HACK do not use predicates.
+    factory = compile_matcher_factory(obj)
+    matcher = MatcherWrappingPredicate(factory)  # HACK do not use predicates.
     assert matcher.verify(verified).status == expected_status
 
 
@@ -169,14 +169,14 @@ def test_verification(obj, verified, expected_status):
     ({'be_after': NOW}, NOW, after),
 ])
 def test_verification_with_datetime(mocker, obj, expected_value, expected_factory):
-    matcher_ctor = mocker.patch(f'{PKG}.ValueHamcrestFactory')
+    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PKG}.StaticValue')
     value_ctor.return_value = sentinel.value
     datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat')
     datetime_ctor.return_value = sentinel.datetime
 
-    actual = compile_hamcrest_factory(obj)
+    actual = compile_matcher_factory(obj)
     assert actual == sentinel.matcher
 
     datetime_ctor.assert_called_once_with(expected_value)
@@ -189,12 +189,12 @@ def test_verification_with_datetime(mocker, obj, expected_value, expected_factor
     ({'be_after': '1 second'}, timedelta(seconds=1), after),
 ])
 def test_verification_with_timedelta(mocker, obj, expected_value, expected_factory):
-    matcher_ctor = mocker.patch(f'{PKG}.ValueHamcrestFactory')
+    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PKG}.RelativeDatetime')
     value_ctor.return_value = sentinel.value
 
-    actual = compile_hamcrest_factory(obj)
+    actual = compile_matcher_factory(obj)
     assert actual == sentinel.matcher
 
     value_ctor.assert_called_once_with(expected_value)
