@@ -39,13 +39,6 @@ def base_dir():
 
 
 @fixture
-def compiler():
-    compiler = NonCallableMock(ScenarioCompiler)
-    compiler.compile_flattening.return_value = [sentinel.scenario]
-    return compiler
-
-
-@fixture
 def executor():
     executor = NonCallableMagicMock(Executor)
     executor.__enter__.return_value = executor
