@@ -16,6 +16,7 @@ from click import (
 
 from preacher import __version__ as _version
 from preacher.compilation.argument import Arguments
+from preacher.core.status import Status
 from .app import app
 from .option import (
     ArgumentType,
@@ -72,7 +73,7 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     default='success',
 )
 @option(
-    'report_dir_path',
+    'report_dir',
     '-R',
     '--report',
     help='set the report directory',
@@ -141,8 +142,8 @@ def main(
     paths: Sequence[str],
     base_url: str,
     arguments: Arguments,
-    level: int,
-    report_dir_path: Optional[str],
+    level: Status,
+    report_dir: Optional[str],
     retry: int,
     delay: float,
     timeout: Optional[float],
@@ -156,7 +157,7 @@ def main(
         base_url=base_url,
         arguments=arguments,
         level=level,
-        report_dir_path=report_dir_path,
+        report_dir=report_dir,
         retry=retry,
         delay=delay,
         timeout=timeout,

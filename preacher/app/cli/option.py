@@ -24,6 +24,7 @@ from yaml import safe_load
 from yaml.error import MarkedYAMLError
 
 from preacher.compilation.argument import Arguments
+from preacher.core.status import Status
 
 
 class Level(IntEnum):
@@ -60,7 +61,10 @@ class ArgumentType(ParamType):
 
 class LevelType(ParamType):
 
-    _choice = Choice(tuple(_LEVEL_MAP.keys()), case_sensitive=False)
+    _choice = Choice(
+        tuple(item.name.lower() for item in Status),
+        case_sensitive=False,
+    )
     name = _choice.name
 
     def get_metavar(self, param):
@@ -70,8 +74,8 @@ class LevelType(ParamType):
         return self._choice.get_missing_message(param)
 
     def convert(self, value, param, ctx):
-        key = self._choice.convert(value, param, ctx)
-        return _LEVEL_MAP[key.lower()].value
+        key = self._choice.convert(value, param, ctx).lower()
+        return next(item for item in Status if item.name.lower() == key)
 
 
 class ExecutorFactoryType(ParamType):

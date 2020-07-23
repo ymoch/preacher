@@ -1,8 +1,8 @@
-import logging
 from concurrent.futures.process import ProcessPoolExecutor
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from preacher.app.cli.option import LevelType, ExecutorFactoryType
+from preacher.core.status import Status
 
 
 def test_level_type():
@@ -11,10 +11,10 @@ def test_level_type():
     assert tp.get_missing_message(None) == (
         'Choose from:\n\tskipped,\n\tsuccess,\n\tunstable,\n\tfailure.'
     )
-    assert tp.convert('skipped', None, None) == logging.DEBUG
-    assert tp.convert('SUCCESS', None, None) == logging.INFO
-    assert tp.convert('UnStable', None, None) == logging.WARNING
-    assert tp.convert('FAILURE', None, None) == logging.ERROR
+    assert tp.convert('skipped', None, None) == Status.SKIPPED
+    assert tp.convert('SUCCESS', None, None) == Status.SUCCESS
+    assert tp.convert('UnStable', None, None) == Status.UNSTABLE
+    assert tp.convert('FAILURE', None, None) == Status.FAILURE
 
 
 def test_executor_factory_type():
