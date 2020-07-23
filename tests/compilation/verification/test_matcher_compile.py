@@ -4,7 +4,7 @@ from unittest.mock import sentinel
 from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.verification.matcher import compile_matcher
+from preacher.compilation.verification.matcher import compile_hamcrest_factory
 from preacher.core.status import Status
 from preacher.core.verification.hamcrest import after, before
 from preacher.core.verification.matcher import match
@@ -24,7 +24,7 @@ NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 ])
 def test_invalid_mapping(obj):
     with raises(CompilationError):
-        compile_matcher(obj)
+        compile_hamcrest_factory(obj)
 
 
 @mark.parametrize(('obj', 'verified', 'expected_status'), [
@@ -159,27 +159,22 @@ def test_invalid_mapping(obj):
     ('anything', {'key': 'value'}, SUCCESS),
 ])
 def test_verification(obj, verified, expected_status):
-    assert match(compile_matcher(obj), verified).status == expected_status
+    assert match(compile_hamcrest_factory(obj), verified).status == expected_status
 
 
 @mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
     ({'be_before': NOW.replace(tzinfo=None)}, NOW, before),
     ({'be_after': NOW}, NOW, after),
 ])
-def test_verification_with_datetime(
-    mocker,
-    obj,
-    expected_value,
-    expected_factory,
-):
-    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcher')
+def test_verification_with_datetime(mocker, obj, expected_value, expected_factory):
+    matcher_ctor = mocker.patch(f'{PKG}.ValueHamcrestFactory')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PKG}.StaticValue')
     value_ctor.return_value = sentinel.value
     datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat')
     datetime_ctor.return_value = sentinel.datetime
 
-    actual = compile_matcher(obj)
+    actual = compile_hamcrest_factory(obj)
     assert actual == sentinel.matcher
 
     datetime_ctor.assert_called_once_with(expected_value)
@@ -191,18 +186,13 @@ def test_verification_with_datetime(
     ({'be_before': 'now'}, timedelta(), before),
     ({'be_after': '1 second'}, timedelta(seconds=1), after),
 ])
-def test_verification_with_timedelta(
-    mocker,
-    obj,
-    expected_value,
-    expected_factory,
-):
-    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcher')
+def test_verification_with_timedelta(mocker, obj, expected_value, expected_factory):
+    matcher_ctor = mocker.patch(f'{PKG}.ValueHamcrestFactory')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PKG}.RelativeDatetime')
     value_ctor.return_value = sentinel.value
 
-    actual = compile_matcher(obj)
+    actual = compile_hamcrest_factory(obj)
     assert actual == sentinel.matcher
 
     value_ctor.assert_called_once_with(expected_value)

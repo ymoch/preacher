@@ -1,5 +1,7 @@
 """Matchers."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Callable, Generic, List, Optional, TypeVar
 
@@ -13,18 +15,32 @@ from .verification import Verification
 T = TypeVar('T')
 
 
+class Matcher(ABC):
+    """Matcher interfaces."""
+
+    @abstractmethod
+    def match(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
+        raise NotImplementedError()
+
+
+class HamcrestWrappingMatcher(Matcher):
+    """Matcher implemented by hamcrest matchers."""
+
+    def __init__(self, factory: HamcrestFactory):
+        self._factory = factory
+
+    def match(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
+        return match(self._factory, actual, context)
+
+
 class HamcrestFactory(ABC):
-    """
-    Matcher interfaces.
-    Matchers are implemented as factories of Hamcrest matchers.
-    """
 
     @abstractmethod
     def create(self, context: Optional[ValueContext] = None) -> HamcrestMatcher:
         raise NotImplementedError()
 
 
-class StaticMatcher(HamcrestFactory):
+class StaticHamcrestFactory(HamcrestFactory):
 
     def __init__(self, hamcrest: HamcrestMatcher):
         self._hamcrest = hamcrest
@@ -33,7 +49,7 @@ class StaticMatcher(HamcrestFactory):
         return self._hamcrest
 
 
-class ValueMatcher(HamcrestFactory, Generic[T]):
+class ValueHamcrestFactory(HamcrestFactory, Generic[T]):
 
     def __init__(self, hamcrest_factory: Callable[..., HamcrestMatcher], value: Value[T]):
         self._hamcrest_factory = hamcrest_factory
@@ -44,7 +60,7 @@ class ValueMatcher(HamcrestFactory, Generic[T]):
         return self._hamcrest_factory(resolved_value)
 
 
-class RecursiveMatcher(HamcrestFactory):
+class RecursiveHamcrestFactory(HamcrestFactory):
 
     def __init__(
         self,

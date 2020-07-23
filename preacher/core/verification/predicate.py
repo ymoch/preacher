@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from preacher.core.value import ValueContext
-from .matcher import HamcrestFactory, match
+from .matcher import Matcher
 from .verification import Verification
 
 
@@ -25,7 +25,7 @@ class Predicate(ABC):
 class MatcherPredicate(Predicate):
     """Predicate of a Hamcrest matcher."""
 
-    def __init__(self, matcher: HamcrestFactory):
+    def __init__(self, matcher: Matcher):
         self._matcher = matcher
 
     def verify(
@@ -33,4 +33,4 @@ class MatcherPredicate(Predicate):
         actual: object,
         context: Optional[ValueContext] = None,
     ) -> Verification:
-        return match(self._matcher, actual, context)
+        return self._matcher.match(actual, context)

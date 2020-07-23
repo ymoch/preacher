@@ -13,25 +13,25 @@ from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
-from preacher.core.verification import (
-    HamcrestFactory,
-    StaticMatcher,
-    ValueMatcher,
-    RecursiveMatcher,
-    require_type,
-)
+from preacher.core.verification import Matcher
+from preacher.core.verification import HamcrestFactory
+from preacher.core.verification import StaticHamcrestFactory
+from preacher.core.verification import ValueHamcrestFactory
+from preacher.core.verification import RecursiveHamcrestFactory
+from preacher.core.verification import require_type
 from preacher.core.verification.hamcrest import after, before
+from preacher.core.verification.matcher import HamcrestWrappingMatcher
 
 _STATIC_MATCHER_MAP = {
     # For objects.
-    'be_null': StaticMatcher(hamcrest.is_(hamcrest.none())),
-    'not_be_null': StaticMatcher(hamcrest.is_(hamcrest.not_none())),
+    'be_null': StaticHamcrestFactory(hamcrest.is_(hamcrest.none())),
+    'not_be_null': StaticHamcrestFactory(hamcrest.is_(hamcrest.not_none())),
 
     # For collections.
-    'be_empty': StaticMatcher(hamcrest.is_(hamcrest.empty())),
+    'be_empty': StaticHamcrestFactory(hamcrest.is_(hamcrest.empty())),
 
     # Logical.
-    'anything': StaticMatcher(hamcrest.is_(hamcrest.anything())),
+    'anything': StaticHamcrestFactory(hamcrest.is_(hamcrest.anything())),
 }
 
 _VALUE_MATCHER_HAMCREST_MAP: Dict[
@@ -106,11 +106,11 @@ def _compile_taking_single_matcher(key: str, value: object) -> HamcrestFactory:
 
     if isinstance(value, str) or isinstance(value, Mapping):
         with on_key(key):
-            inner = compile_matcher(value)
+            inner = compile_hamcrest_factory(value)
     else:
-        inner = ValueMatcher(hamcrest.equal_to, StaticValue(value))
+        inner = ValueHamcrestFactory(hamcrest.equal_to, StaticValue(value))
 
-    return RecursiveMatcher(hamcrest_factory, [inner])
+    return RecursiveHamcrestFactory(hamcrest_factory, [inner])
 
 
 def _compile_taking_multi_matchers(key: str, value: object) -> HamcrestFactory:
@@ -118,12 +118,12 @@ def _compile_taking_multi_matchers(key: str, value: object) -> HamcrestFactory:
 
     with on_key(key):
         value = ensure_list(value)
-        inner_matchers = list(map_compile(compile_matcher, value))
+        inner_matchers = list(map_compile(compile_hamcrest_factory, value))
 
-    return RecursiveMatcher(hamcrest_factory, inner_matchers)
+    return RecursiveHamcrestFactory(hamcrest_factory, inner_matchers)
 
 
-def compile_matcher(obj: object) -> HamcrestFactory:
+def compile_hamcrest_factory(obj: object) -> HamcrestFactory:
     if isinstance(obj, str):
         if obj in _STATIC_MATCHER_MAP:
             return _STATIC_MATCHER_MAP[obj]
@@ -137,7 +137,7 @@ def compile_matcher(obj: object) -> HamcrestFactory:
 
         if key in _VALUE_MATCHER_HAMCREST_MAP:
             value_factory = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
-            return ValueMatcher(
+            return ValueHamcrestFactory(
                 _VALUE_MATCHER_HAMCREST_MAP[key],
                 value_factory(value),
             )
@@ -148,4 +148,9 @@ def compile_matcher(obj: object) -> HamcrestFactory:
         if key in _MULTI_MATCHERS_HAMCREST_MAP:
             return _compile_taking_multi_matchers(key, value)
 
-    return ValueMatcher(hamcrest.equal_to, StaticValue(obj))
+    return ValueHamcrestFactory(hamcrest.equal_to, StaticValue(obj))
+
+
+def compile_matcher(obj: object) -> Matcher:
+    factory = compile_hamcrest_factory(obj)
+    return HamcrestWrappingMatcher(factory)

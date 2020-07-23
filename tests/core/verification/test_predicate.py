@@ -1,9 +1,10 @@
 from typing import Optional
-from unittest.mock import sentinel
+from unittest.mock import NonCallableMock, sentinel
 
 from pytest import raises
 
 from preacher.core.value import ValueContext
+from preacher.core.verification.matcher import Matcher
 from preacher.core.verification.predicate import Predicate, MatcherPredicate
 from preacher.core.verification.verification import Verification
 
@@ -23,15 +24,12 @@ def test_predicate_interface():
         IncompletePredicate().verify(sentinel.actual)
 
 
-def test_matcher_predicate(mocker):
-    match = mocker.patch(f'{PKG}.match', return_value=sentinel.verification)
+def test_matcher_predicate():
+    matcher = NonCallableMock(Matcher)
+    matcher.match.return_value = sentinel.verification
 
-    predicate = MatcherPredicate(sentinel.matcher)
+    predicate = MatcherPredicate(matcher)
     verification = predicate.verify(sentinel.actual, sentinel.context)
+    assert verification is sentinel.verification
 
-    assert verification == sentinel.verification
-    match.assert_called_once_with(
-        sentinel.matcher,
-        sentinel.actual,
-        sentinel.context,
-    )
+    matcher.match.assert_called_once_with(sentinel.actual, sentinel.context)

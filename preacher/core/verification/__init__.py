@@ -1,19 +1,28 @@
 """Verification."""
 
 from .description import Description
-from .matcher import HamcrestFactory, StaticMatcher, ValueMatcher, RecursiveMatcher
-from .predicate import Predicate, MatcherPredicate
-from .response import ResponseDescription, ResponseVerification
+from .matcher import Matcher
+from .matcher import HamcrestWrappingMatcher
+from .matcher import HamcrestFactory
+from .matcher import StaticHamcrestFactory
+from .matcher import ValueHamcrestFactory
+from .matcher import RecursiveHamcrestFactory
+from .predicate import Predicate
+from .predicate import MatcherPredicate
+from .response import ResponseDescription
+from .response import ResponseVerification
 from .response_body import ResponseBodyDescription
 from .type import require_type
 from .verification import Verification
 
 __all__ = [
     'Description',
+    'Matcher',
+    'HamcrestWrappingMatcher',
     'HamcrestFactory',
-    'StaticMatcher',
-    'ValueMatcher',
-    'RecursiveMatcher',
+    'StaticHamcrestFactory',
+    'ValueHamcrestFactory',
+    'RecursiveHamcrestFactory',
     'Predicate',
     'MatcherPredicate',
     'ResponseDescription',
