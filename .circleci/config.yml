@@ -29,25 +29,12 @@ jobs:
     steps:
       - checkout
       - install-poetry
-      - run:
-          name: Run with no dev package
-          command: |
-            poetry install --no-dev
-            poetry run preacher-cli --version
-            poetry run preacher-cli --help
-      - run:
-          name: Run unit tests
-          command: |
-            poetry install
-            poetry run pytest
-      - run:
-          name: Build documents
-          command: poetry run make html
-      - run:
-          name: Send the test coverage report
-          command: |
-            sudo pip install codecov
-            codecov
+      - prepare-production-env
+      - bootstrapping-test
+      - prepare-development-env
+      - unit-test
+      - example-test
+      - document-build
 
   test-37:  # Secondary
     docker:
@@ -55,25 +42,12 @@ jobs:
     steps:
       - checkout
       - install-poetry
-      - run:
-          name: Run with no dev package
-          command: |
-            poetry install --no-dev
-            poetry run preacher-cli --version
-            poetry run preacher-cli --help
-      - run:
-          name: Run unit tests
-          command: |
-            poetry install
-            poetry run pytest
-      - run:
-          name: Build documents
-          command: poetry run make html
-      - run:
-          name: Send the test coverage report
-          command: |
-            sudo pip install codecov
-            codecov
+      - prepare-production-env
+      - bootstrapping-test
+      - prepare-development-env
+      - unit-test
+      - example-test
+      - document-build
 
   deploy:
     docker:
@@ -95,3 +69,47 @@ commands:
       - run:
           name: Install Poetry
           command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+  prepare-production-env:
+    description: Prepare production environment
+    steps:
+      - run:
+          name: Install libraries for production
+          command: poetry install --no-dev
+  prepare-development-env:
+    description: Prepare development environment
+    steps:
+      - run:
+          name: Install libraries for development
+          command: |
+            poetry install
+            sudo pip install codecov
+  bootstrapping-test:
+    description: Bootstrapping test
+    steps:
+      - run:
+          name: Bootstrapping test
+          command: poetry run preacher-cli --help
+  unit-test:
+    description: Unit test
+    steps:
+      - run:
+          name: Unit test
+          command: |
+            poetry run pytest
+            codecov
+  example-test:
+    description: Example test
+    steps:
+      - run:
+          name: Example test
+          command: |
+            poetry run python3 examples/server.py > examples/server.log 2>&1 &
+            sleep 5
+            poetry run preacher-cli -uhttp://localhost:5000 examples/scenario/success.yml
+            cat examples/server.log
+  document-build:
+    description: Build documents
+    steps:
+      - run:
+          name: Build documents
+          command: poetry run make html
