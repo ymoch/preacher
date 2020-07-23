@@ -7,7 +7,7 @@ from preacher.compilation.error import CompilationError
 from preacher.compilation.verification.matcher import compile_hamcrest_factory
 from preacher.core.status import Status
 from preacher.core.verification.hamcrest import after, before
-from preacher.core.verification.matcher import match
+from preacher.core.verification.matcher import HamcrestWrappingMatcher
 
 PKG = 'preacher.compilation.verification.matcher'
 
@@ -159,7 +159,9 @@ def test_invalid_mapping(obj):
     ('anything', {'key': 'value'}, SUCCESS),
 ])
 def test_verification(obj, verified, expected_status):
-    assert match(compile_hamcrest_factory(obj), verified).status == expected_status
+    factory = compile_hamcrest_factory(obj)
+    matcher = HamcrestWrappingMatcher(factory)
+    assert matcher.match(verified).status == expected_status
 
 
 @mark.parametrize(('obj', 'expected_value', 'expected_factory'), [

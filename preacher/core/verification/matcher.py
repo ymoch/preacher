@@ -30,7 +30,16 @@ class HamcrestWrappingMatcher(Matcher):
         self._factory = factory
 
     def match(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
-        return match(self._factory, actual, context)
+        try:
+            hamcrest_matcher = self._factory.create(context)
+            assert_that(actual, hamcrest_matcher)
+        except AssertionError as error:
+            message = str(error).strip()
+            return Verification(status=Status.UNSTABLE, message=message)
+        except Exception as error:
+            return Verification.of_error(error)
+
+        return Verification.succeed()
 
 
 class HamcrestFactory(ABC):
@@ -76,20 +85,3 @@ class RecursiveHamcrestFactory(HamcrestFactory):
             for inner_matcher in self._inner_matchers
         )
         return self._hamcrest_factory(*inner_hamcrest_matchers)
-
-
-def match(
-    matcher: HamcrestFactory,
-    actual: object,
-    context: Optional[ValueContext] = None,
-) -> Verification:
-    try:
-        hamcrest_matcher = matcher.create(context)
-        assert_that(actual, hamcrest_matcher)
-    except AssertionError as error:
-        message = str(error).strip()
-        return Verification(status=Status.UNSTABLE, message=message)
-    except Exception as error:
-        return Verification.of_error(error)
-
-    return Verification.succeed()
