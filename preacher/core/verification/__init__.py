@@ -1,21 +1,26 @@
 """Verification."""
 
 from .description import Description
-from .matcher import Matcher, StaticMatcher, ValueMatcher, RecursiveMatcher
-from .predicate import Predicate, MatcherPredicate
-from .response import ResponseDescription, ResponseVerification
+from .matcher import MatcherFactory
+from .matcher import MatcherWrappingPredicate
+from .matcher import RecursiveMatcherFactory
+from .matcher import StaticMatcherFactory
+from .matcher import ValueMatcherFactory
+from .predicate import Predicate
+from .response import ResponseDescription
+from .response import ResponseVerification
 from .response_body import ResponseBodyDescription
 from .type import require_type
 from .verification import Verification
 
 __all__ = [
     'Description',
-    'Matcher',
-    'StaticMatcher',
-    'ValueMatcher',
-    'RecursiveMatcher',
+    'MatcherWrappingPredicate',
+    'MatcherFactory',
+    'StaticMatcherFactory',
+    'ValueMatcherFactory',
+    'RecursiveMatcherFactory',
     'Predicate',
-    'MatcherPredicate',
     'ResponseDescription',
     'ResponseVerification',
     'ResponseBodyDescription',

@@ -1,95 +1,77 @@
 """Matchers."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Callable, Generic, List, Optional, TypeVar
 
 from hamcrest import assert_that
-from hamcrest.core.matcher import Matcher as HamcrestMatcher
+from hamcrest.core.matcher import Matcher
 
 from preacher.core.status import Status
 from preacher.core.value import Value, ValueContext
+from .predicate import Predicate
 from .verification import Verification
 
 T = TypeVar('T')
 
 
-class Matcher(ABC):
-    """
-    Matcher interfaces.
-    Matchers are implemented as factories of Hamcrest matchers.
-    """
+class MatcherWrappingPredicate(Predicate):
+    """Matcher implemented by hamcrest matchers."""
+
+    def __init__(self, factory: MatcherFactory):
+        self._factory = factory
+
+    def verify(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
+        try:
+            hamcrest_matcher = self._factory.create(context)
+            assert_that(actual, hamcrest_matcher)
+        except AssertionError as error:
+            message = str(error).strip()
+            return Verification(status=Status.UNSTABLE, message=message)
+        except Exception as error:
+            return Verification.of_error(error)
+
+        return Verification.succeed()
+
+
+class MatcherFactory(ABC):
 
     @abstractmethod
-    def to_hamcrest(
-        self,
-        context: Optional[ValueContext] = None,
-    ) -> HamcrestMatcher:
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
         raise NotImplementedError()
 
 
-class StaticMatcher(Matcher):
+class StaticMatcherFactory(MatcherFactory):
 
-    def __init__(self, hamcrest: HamcrestMatcher):
-        self._hamcrest = hamcrest
+    def __init__(self, matcher: Matcher):
+        self._matcher = matcher
 
-    def to_hamcrest(
-        self,
-        context: Optional[ValueContext] = None,
-    ) -> HamcrestMatcher:
-        return self._hamcrest
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
+        return self._matcher
 
 
-class ValueMatcher(Matcher, Generic[T]):
+class ValueMatcherFactory(MatcherFactory, Generic[T]):
 
-    def __init__(
-        self,
-        hamcrest_factory: Callable[..., HamcrestMatcher],
-        value: Value[T],
-    ):
-        self._hamcrest_factory = hamcrest_factory
+    def __init__(self, matcher_func: Callable[..., Matcher], value: Value[T]):
+        self._inner_factory = matcher_func
         self._value = value
 
-    def to_hamcrest(
-        self,
-        context: Optional[ValueContext] = None,
-    ) -> HamcrestMatcher:
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
         resolved_value = self._value.resolve(context)
-        return self._hamcrest_factory(resolved_value)
+        return self._inner_factory(resolved_value)
 
 
-class RecursiveMatcher(Matcher):
+class RecursiveMatcherFactory(MatcherFactory):
 
     def __init__(
         self,
-        hamcrest_factory: Callable[..., HamcrestMatcher],
-        inner_matchers: List[Matcher],
+        matcher_func: Callable[..., Matcher],
+        inner_factories: List[MatcherFactory],
     ):
-        self._hamcrest_factory = hamcrest_factory
-        self._inner_matchers = inner_matchers
+        self._matcher_func = matcher_func
+        self._inner_factories = inner_factories
 
-    def to_hamcrest(
-        self,
-        context: Optional[ValueContext] = None,
-    ) -> HamcrestMatcher:
-        inner_hamcrest_matchers = (
-            inner_matcher.to_hamcrest(context)
-            for inner_matcher in self._inner_matchers
-        )
-        return self._hamcrest_factory(*inner_hamcrest_matchers)
-
-
-def match(
-    matcher: Matcher,
-    actual: object,
-    context: Optional[ValueContext] = None,
-) -> Verification:
-    try:
-        hamcrest_matcher = matcher.to_hamcrest(context)
-        assert_that(actual, hamcrest_matcher)
-    except AssertionError as error:
-        message = str(error).strip()
-        return Verification(status=Status.UNSTABLE, message=message)
-    except Exception as error:
-        return Verification.of_error(error)
-
-    return Verification.succeed()
+    def create(self, context: Optional[ValueContext] = None) -> Matcher:
+        inner_matchers = (factory.create(context) for factory in self._inner_factories)
+        return self._matcher_func(*inner_matchers)
