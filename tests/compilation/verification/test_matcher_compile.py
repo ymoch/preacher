@@ -5,16 +5,9 @@ from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.verification.matcher import compile_matcher_factory
-from preacher.core.status import Status
 from preacher.core.verification.hamcrest import after, before
-from preacher.core.verification.matcher import MatcherWrappingPredicate
 
 PKG = 'preacher.compilation.verification.matcher'
-
-SUCCESS = Status.SUCCESS
-UNSTABLE = Status.UNSTABLE
-FAILURE = Status.FAILURE
-
 NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 
 
@@ -27,141 +20,135 @@ def test_invalid_mapping(obj):
         compile_matcher_factory(obj)
 
 
-@mark.parametrize(('obj', 'verified', 'expected_status'), [
-    ('_undefined_string', 1, UNSTABLE),
-    ('_undefined_string', 'value', UNSTABLE),
-    ('_undefined_string', '_undefined_string', SUCCESS),
-    ({'_undefined_key': 'value'}, None, UNSTABLE),
-    ({'_undefined_key': 'value'}, 0, UNSTABLE),
-    ({'_undefined_key': 'value'}, 'value', UNSTABLE),
-    ({'_undefined_key': 'value'}, {'key': 'value'}, UNSTABLE),
-    ({'_undefined_key': 'value'}, {'_undefined_key': '_'}, UNSTABLE),
-    ({'_undefined_key': 'value'}, {'_undefined_key': 'value'}, SUCCESS),
-    ('be_null', None, SUCCESS),
-    ('be_null', False, UNSTABLE),
-    ('not_be_null', None, UNSTABLE),
-    ('not_be_null', False, SUCCESS),
-    ('be_empty', None, UNSTABLE),
-    ('be_empty', 0, UNSTABLE),
-    ('be_empty', '', SUCCESS),
-    ('be_empty', 'A', UNSTABLE),
-    ('be_empty', [], SUCCESS),
-    ('be_empty', [0], UNSTABLE),
-    ({'have_length': 1}, None, UNSTABLE),
-    ({'have_length': 1}, 1, UNSTABLE),
-    ({'have_length': 1}, '', UNSTABLE),
-    ({'have_length': 1}, [], UNSTABLE),
-    ({'have_length': {'be_less_than': 1}}, [0], UNSTABLE),
-    ({'have_length': 1}, 'A', SUCCESS),
-    ({'have_length': 1}, [0], SUCCESS),
-    ({'have_length': {'be_less_than': 2}}, [0], SUCCESS),
-    ({'have_length': None}, [0], UNSTABLE),  # HACK: should be FAILURE
-    ({'have_length': '1'}, [0], UNSTABLE),  # HACK: should be FAILURE
-    ({'equal': 1}, 0, UNSTABLE),
-    ({'equal': 1}, 1, SUCCESS),
-    ({'equal': 1}, '1', UNSTABLE),
-    ({'be_greater_than': 0}, -1, UNSTABLE),
-    ({'be_greater_than': 0}, 0, UNSTABLE),
-    ({'be_greater_than': 0}, 1, SUCCESS),
-    ({'be_greater_than_or_equal_to': 0}, -1, UNSTABLE),
-    ({'be_greater_than_or_equal_to': 0}, 0, SUCCESS),
-    ({'be_greater_than_or_equal_to': 0}, 1, SUCCESS),
-    ({'be_less_than': 0}, -1, SUCCESS),
-    ({'be_less_than': 0}, 0, UNSTABLE),
-    ({'be_less_than': 0}, 1, UNSTABLE),
-    ({'be_less_than_or_equal_to': 0}, -1, SUCCESS),
-    ({'be_less_than_or_equal_to': 0}, 0, SUCCESS),
-    ({'be_less_than_or_equal_to': 0}, 1, UNSTABLE),
-    ({'contain_string': '0'}, 0, UNSTABLE),
-    ({'contain_string': '0'}, '123', UNSTABLE),
-    ({'contain_string': '0'}, '21012', SUCCESS),
-    ({'contain_string': 0}, '0', FAILURE),
-    ({'start_with': 'AB'}, 0, UNSTABLE),
-    ({'start_with': 'AB'}, 'ABC', SUCCESS),
-    ({'start_with': 'AB'}, 'CAB', UNSTABLE),
-    ({'start_with': 0}, '0', FAILURE),
-    ({'end_with': 'BC'}, 0, UNSTABLE),
-    ({'end_with': 'BC'}, 'ABC', SUCCESS),
-    ({'end_with': 'BC'}, 'BCA', UNSTABLE),
-    ({'end_with': 0}, '0', FAILURE),
-    ({'match_regexp': '^A*B$'}, 'ACB', UNSTABLE),
-    ({'match_regexp': '^A*B$'}, 'B', SUCCESS),
-    ({'match_regexp': '^A*B$'}, 0, FAILURE),  # HACK: should be UNSTABLE.
-    ({'match_regexp': 0}, '0', FAILURE),
-    ({'be': 1}, 0, UNSTABLE),
-    ({'be': 1}, '1', UNSTABLE),
-    ({'be': 1}, 1, SUCCESS),
-    ({'not': 1}, 'A', SUCCESS),
-    ({'not': 1}, 0, SUCCESS),
-    ({'not': 1}, 1, UNSTABLE),
-    ({'not': {'be_greater_than': 0}}, -1, SUCCESS),
-    ({'not': {'be_greater_than': 0}}, 0, SUCCESS),
-    ({'not': {'be_greater_than': 0}}, 1, UNSTABLE),
-    ({'have_item': {'equal': 1}}, None, UNSTABLE),
-    ({'have_item': {'equal': 1}}, [], UNSTABLE),
-    ({'have_item': {'equal': 1}}, [0, 'A'], UNSTABLE),
-    ({'have_item': {'equal': 1}}, [0, 1, 2], SUCCESS),
-    ({'contain': 1}, [], UNSTABLE),
-    ({'contain': 1}, [1], SUCCESS),
-    ({'contain_exactly': 1}, [1], SUCCESS),
-    ({'contain': 1}, [1, 2], UNSTABLE),
-    ({'contain': 1}, [2, 3], UNSTABLE),
-    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [], UNSTABLE),
-    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1], UNSTABLE),
-    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 2, 4], UNSTABLE),
-    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 4, 2], SUCCESS),
-    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 4, 2, 3], UNSTABLE),
-    ({'contain_in_any_order':
-        [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [], UNSTABLE),
-    ({'contain_in_any_order':
-        [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1], UNSTABLE),
-    ({'contain_in_any_order':
-        [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 2, 4], SUCCESS),
-    ({'contain_in_any_order':
-        [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [4, 1, 2], SUCCESS),
-    ({'contain_in_any_order':
-        [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 4, 2], SUCCESS),
-    ({'contain_in_any_order':
-        [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 4, 2, 3], UNSTABLE),
-    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [], UNSTABLE),
-    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1], UNSTABLE),
-    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 2, 4], SUCCESS),
-    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [4, 1, 2], SUCCESS),
-    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 4, 2], SUCCESS),
-    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]},
-     [1, 4, 2, 3], SUCCESS),
-    ({'all_of': [{'be_greater_than': 1}, {'be_less_than': 3}]}, 1, UNSTABLE),
-    ({'all_of': [{'be_greater_than': 1}, {'be_less_than': 3}]}, 2, SUCCESS),
-    ({'all_of': [{'be_greater_than': 1}, {'be_less_than': 3}]}, 3, UNSTABLE),
-    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 1, SUCCESS),
-    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 2, UNSTABLE),
-    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 3, UNSTABLE),
-    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 4, SUCCESS),
-    ('anything', None, SUCCESS),
-    ('anything', 1, SUCCESS),
-    ('anything', [1], SUCCESS),
-    ('anything', {'key': 'value'}, SUCCESS),
+@mark.parametrize(('obj', 'item', 'expected'), [
+    ('_undefined_string', 1, False),
+    ('_undefined_string', 'value', False),
+    ('_undefined_string', '_undefined_string', True),
+    ({'_undefined_key': 'value'}, None, False),
+    ({'_undefined_key': 'value'}, 0, False),
+    ({'_undefined_key': 'value'}, 'value', False),
+    ({'_undefined_key': 'value'}, {'key': 'value'}, False),
+    ({'_undefined_key': 'value'}, {'_undefined_key': '_'}, False),
+    ({'_undefined_key': 'value'}, {'_undefined_key': 'value'}, True),
+    ('be_null', None, True),
+    ('be_null', False, False),
+    ('not_be_null', None, False),
+    ('not_be_null', False, True),
+    ('be_empty', None, False),
+    ('be_empty', 0, False),
+    ('be_empty', '', True),
+    ('be_empty', 'A', False),
+    ('be_empty', [], True),
+    ('be_empty', [0], False),
+    ({'have_length': 1}, None, False),
+    ({'have_length': 1}, 1, False),
+    ({'have_length': 1}, '', False),
+    ({'have_length': 1}, [], False),
+    ({'have_length': {'be_less_than': 1}}, [0], False),
+    ({'have_length': 1}, 'A', True),
+    ({'have_length': 1}, [0], True),
+    ({'have_length': {'be_less_than': 2}}, [0], True),
+    ({'have_length': None}, [0], False),  # HACK: should be FAILURE
+    ({'have_length': '1'}, [0], False),  # HACK: should be FAILURE
+    ({'equal': 1}, 0, False),
+    ({'equal': 1}, 1, True),
+    ({'equal': 1}, '1', False),
+    ({'be_greater_than': 0}, -1, False),
+    ({'be_greater_than': 0}, 0, False),
+    ({'be_greater_than': 0}, 1, True),
+    ({'be_greater_than_or_equal_to': 0}, -1, False),
+    ({'be_greater_than_or_equal_to': 0}, 0, True),
+    ({'be_greater_than_or_equal_to': 0}, 1, True),
+    ({'be_less_than': 0}, -1, True),
+    ({'be_less_than': 0}, 0, False),
+    ({'be_less_than': 0}, 1, False),
+    ({'be_less_than_or_equal_to': 0}, -1, True),
+    ({'be_less_than_or_equal_to': 0}, 0, True),
+    ({'be_less_than_or_equal_to': 0}, 1, False),
+    ({'contain_string': '0'}, 0, False),
+    ({'contain_string': '0'}, '123', False),
+    ({'contain_string': '0'}, '21012', True),
+    ({'start_with': 'AB'}, 0, False),
+    ({'start_with': 'AB'}, 'ABC', True),
+    ({'start_with': 'AB'}, 'CAB', False),
+    ({'end_with': 'BC'}, 0, False),
+    ({'end_with': 'BC'}, 'ABC', True),
+    ({'end_with': 'BC'}, 'BCA', False),
+    ({'match_regexp': '^A*B$'}, 'ACB', False),
+    ({'match_regexp': '^A*B$'}, 'B', True),
+    ({'be': 1}, 0, False),
+    ({'be': 1}, '1', False),
+    ({'be': 1}, 1, True),
+    ({'not': 1}, 'A', True),
+    ({'not': 1}, 0, True),
+    ({'not': 1}, 1, False),
+    ({'not': {'be_greater_than': 0}}, -1, True),
+    ({'not': {'be_greater_than': 0}}, 0, True),
+    ({'not': {'be_greater_than': 0}}, 1, False),
+    ({'have_item': {'equal': 1}}, None, False),
+    ({'have_item': {'equal': 1}}, [], False),
+    ({'have_item': {'equal': 1}}, [0, 'A'], False),
+    ({'have_item': {'equal': 1}}, [0, 1, 2], True),
+    ({'contain': 1}, [], False),
+    ({'contain': 1}, [1], True),
+    ({'contain_exactly': 1}, [1], True),
+    ({'contain': 1}, [1, 2], False),
+    ({'contain': 1}, [2, 3], False),
+    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [], False),
+    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1], False),
+    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 2, 4], False),
+    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 4, 2], True),
+    ({'contain': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 4, 2, 3], False),
+    ({'contain_in_any_order': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [], False),
+    ({'contain_in_any_order': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1], False),
+    ({'contain_in_any_order': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 2, 4], True),
+    ({'contain_in_any_order': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [4, 1, 2], True),
+    ({'contain_in_any_order': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 4, 2], True),
+    ({'contain_in_any_order': [1, {'be_greater_than': 2}]}, [1, 2, 4], False),
+    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [], False),
+    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1], False),
+    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 2, 4], True),
+    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [4, 1, 2], True),
+    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 4, 2], True),
+    ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 4, 2, 3], True),
+    ({'all_of': [{'be_greater_than': 1}, {'be_less_than': 3}]}, 1, False),
+    ({'all_of': [{'be_greater_than': 1}, {'be_less_than': 3}]}, 2, True),
+    ({'all_of': [{'be_greater_than': 1}, {'be_less_than': 3}]}, 3, False),
+    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 1, True),
+    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 2, False),
+    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 3, False),
+    ({'any_of': [{'be_less_than': 2}, {'be_greater_than': 3}]}, 4, True),
+    ('anything', None, True),
+    ('anything', 1, True),
+    ('anything', [1], True),
+    ('anything', {'key': 'value'}, True),
 ])
-def test_verification(obj, verified, expected_status):
+def test_matcher_matchers(obj, item, expected):
     factory = compile_matcher_factory(obj)
-    predicate = MatcherWrappingPredicate(factory)  # HACK do not use predicates.
-    assert predicate.verify(verified).status == expected_status
+    matcher = factory.create()
+    assert matcher.matches(item) == expected
+
+
+@mark.parametrize('obj', [
+    {'contain_string': 0},
+    {'start_with': 0},
+    {'end_with': 0},
+    {'match_regexp': 0},
+])
+def test_matcher_creation_failure(obj):
+    factory = compile_matcher_factory(obj)
+    with raises(TypeError):
+        factory.create()
+
+
+@mark.parametrize(('obj', 'item'), [
+    ({'match_regexp': '^A*B$'}, 0),  # HACK: should not fail.
+])
+def test_matcher_matching_failure(obj, item):
+    factory = compile_matcher_factory(obj)
+    matcher = factory.create()
+    with raises(TypeError):
+        matcher.matches(item)
 
 
 @mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
