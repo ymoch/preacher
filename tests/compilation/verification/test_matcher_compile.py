@@ -160,8 +160,8 @@ def test_invalid_mapping(obj):
 ])
 def test_verification(obj, verified, expected_status):
     factory = compile_matcher_factory(obj)
-    matcher = MatcherWrappingPredicate(factory)  # HACK do not use predicates.
-    assert matcher.verify(verified).status == expected_status
+    predicate = MatcherWrappingPredicate(factory)  # HACK do not use predicates.
+    assert predicate.verify(verified).status == expected_status
 
 
 @mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
