@@ -44,37 +44,34 @@ class MatcherFactory(ABC):
 
 class StaticMatcherFactory(MatcherFactory):
 
-    def __init__(self, hamcrest: Matcher):
-        self._hamcrest = hamcrest
+    def __init__(self, matcher: Matcher):
+        self._matcher = matcher
 
     def create(self, context: Optional[ValueContext] = None) -> Matcher:
-        return self._hamcrest
+        return self._matcher
 
 
 class ValueMatcherFactory(MatcherFactory, Generic[T]):
 
-    def __init__(self, hamcrest_factory: Callable[..., Matcher], value: Value[T]):
-        self._hamcrest_factory = hamcrest_factory
+    def __init__(self, matcher_func: Callable[..., Matcher], value: Value[T]):
+        self._inner_factory = matcher_func
         self._value = value
 
     def create(self, context: Optional[ValueContext] = None) -> Matcher:
         resolved_value = self._value.resolve(context)
-        return self._hamcrest_factory(resolved_value)
+        return self._inner_factory(resolved_value)
 
 
 class RecursiveMatcherFactory(MatcherFactory):
 
     def __init__(
         self,
-        hamcrest_factory: Callable[..., Matcher],
-        inner_matchers: List[MatcherFactory],
+        matcher_func: Callable[..., Matcher],
+        inner_factories: List[MatcherFactory],
     ):
-        self._hamcrest_factory = hamcrest_factory
-        self._inner_matchers = inner_matchers
+        self._matcher_func = matcher_func
+        self._inner_factories = inner_factories
 
     def create(self, context: Optional[ValueContext] = None) -> Matcher:
-        inner_hamcrest_matchers = (
-            inner_matcher.create(context)
-            for inner_matcher in self._inner_matchers
-        )
-        return self._hamcrest_factory(*inner_hamcrest_matchers)
+        inner_matchers = (factory.create(context) for factory in self._inner_factories)
+        return self._matcher_func(*inner_matchers)
