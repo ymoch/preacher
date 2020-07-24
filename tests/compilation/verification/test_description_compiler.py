@@ -1,4 +1,4 @@
-from unittest.mock import Mock, NonCallableMock, call, sentinel
+from unittest.mock import NonCallableMock, call, sentinel
 
 from pytest import fixture, raises
 
@@ -15,18 +15,16 @@ def compiler(extraction, predicate) -> DescriptionCompiler:
 
 @fixture
 def extraction():
-    return NonCallableMock(
-        spec=ExtractionCompiler,
-        compile=Mock(return_value=sentinel.extractor),
-    )
+    extraction = NonCallableMock(ExtractionCompiler)
+    extraction.compile.return_value = sentinel.extractor
+    return extraction
 
 
 @fixture
 def predicate():
-    return NonCallableMock(
-        spec=PredicateCompiler,
-        compile=Mock(return_value=sentinel.predicate),
-    )
+    predicate = NonCallableMock(PredicateCompiler)
+    predicate.compile.return_value = sentinel.predicate
+    return predicate
 
 
 def test_given_not_a_mapping(compiler):
@@ -39,7 +37,7 @@ def test_given_a_string_predicate(compiler, extraction, predicate):
         'describe': 'foo',
         'should': 'string',
     })
-    assert description.extractor == sentinel.extractor
+    assert description.extractor is sentinel.extractor
     assert description.predicates == [sentinel.predicate]
 
     extraction.compile.assert_called_with('foo')
@@ -51,7 +49,7 @@ def test_given_a_mapping_predicate(compiler, extraction, predicate):
         'describe': 'foo',
         'should': {'key': 'value'}
     })
-    assert description.extractor == sentinel.extractor
+    assert description.extractor is sentinel.extractor
     assert description.predicates == [sentinel.predicate]
 
     extraction.compile.assert_called_once_with('foo')
@@ -63,11 +61,8 @@ def test_given_a_list_of_mapping_predicates(compiler, extraction, predicate):
         'describe': {'key': 'value'},
         'should': [{'key1': 'value1'}, {'key2': 'value2'}]
     })
-    assert description.extractor == sentinel.extractor
+    assert description.extractor is sentinel.extractor
     assert description.predicates == [sentinel.predicate, sentinel.predicate]
 
     extraction.compile.assert_called_once_with({'key': 'value'})
-    predicate.compile.assert_has_calls([
-        call({'key1': 'value1'}),
-        call({'key2': 'value2'}),
-    ])
+    predicate.compile.assert_has_calls([call({'key1': 'value1'}), call({'key2': 'value2'})])
