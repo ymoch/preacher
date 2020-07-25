@@ -155,7 +155,3 @@ class MatcherFactoryCompiler:
         matcher_func = self._taking_matcher[key]
         inner_matchers = list(map_compile(self.compile, objs))
         return RecursiveMatcherFactory(matcher_func, inner_matchers)
-
-
-def compile_matcher_factory(obj: object) -> MatcherFactory:
-    return MatcherFactoryCompiler().compile(obj)

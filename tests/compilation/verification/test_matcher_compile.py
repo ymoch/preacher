@@ -1,23 +1,28 @@
 from datetime import datetime, timedelta, timezone
 from unittest.mock import sentinel
 
-from pytest import mark, raises
+from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.verification.matcher import compile_matcher_factory
+from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 from preacher.core.verification.hamcrest import after, before
 
 PKG = 'preacher.compilation.verification.matcher'
 NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 
 
+@fixture
+def compiler():
+    return MatcherFactoryCompiler()
+
+
 @mark.parametrize('obj', [
     {},
     {'key1': 'value1', 'key2': 'value2'},
 ])
-def test_invalid_mapping(obj):
+def test_invalid_mapping(compiler, obj):
     with raises(CompilationError):
-        compile_matcher_factory(obj)
+        compiler.compile(obj)
 
 
 @mark.parametrize(('obj', 'item', 'expected'), [
@@ -123,8 +128,8 @@ def test_invalid_mapping(obj):
     ('anything', [1], True),
     ('anything', {'key': 'value'}, True),
 ])
-def test_matcher_matchers(obj, item, expected):
-    factory = compile_matcher_factory(obj)
+def test_matcher_matchers(compiler, obj, item, expected):
+    factory = compiler.compile(obj)
     matcher = factory.create()
     assert matcher.matches(item) == expected
 
@@ -135,8 +140,8 @@ def test_matcher_matchers(obj, item, expected):
     {'end_with': 0},
     {'match_regexp': 0},
 ])
-def test_matcher_creation_failure(obj):
-    factory = compile_matcher_factory(obj)
+def test_matcher_creation_failure(compiler, obj):
+    factory = compiler.compile(obj)
     with raises(TypeError):
         factory.create()
 
@@ -144,18 +149,18 @@ def test_matcher_creation_failure(obj):
 @mark.parametrize(('obj', 'item'), [
     ({'match_regexp': '^A*B$'}, 0),  # HACK: should not fail.
 ])
-def test_matcher_matching_failure(obj, item):
-    factory = compile_matcher_factory(obj)
+def test_matcher_matching_failure(compiler, obj, item):
+    factory = compiler.compile(obj)
     matcher = factory.create()
     with raises(TypeError):
         matcher.matches(item)
 
 
-@mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
+@mark.parametrize(('obj', 'expected_value', 'expected_func'), [
     ({'be_before': NOW.replace(tzinfo=None)}, NOW, before),
     ({'be_after': NOW}, NOW, after),
 ])
-def test_verification_with_datetime(mocker, obj, expected_value, expected_factory):
+def test_verification_with_datetime(compiler, mocker, obj, expected_value, expected_func):
     matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PKG}.StaticValue')
@@ -163,26 +168,26 @@ def test_verification_with_datetime(mocker, obj, expected_value, expected_factor
     datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat')
     datetime_ctor.return_value = sentinel.datetime
 
-    actual = compile_matcher_factory(obj)
+    actual = compiler.compile(obj)
     assert actual == sentinel.matcher
 
     datetime_ctor.assert_called_once_with(expected_value)
     value_ctor.assert_called_once_with(sentinel.datetime)
-    matcher_ctor.assert_called_once_with(expected_factory, sentinel.value)
+    matcher_ctor.assert_called_once_with(expected_func, sentinel.value)
 
 
-@mark.parametrize(('obj', 'expected_value', 'expected_factory'), [
+@mark.parametrize(('obj', 'expected_value', 'expected_func'), [
     ({'be_before': 'now'}, timedelta(), before),
     ({'be_after': '1 second'}, timedelta(seconds=1), after),
 ])
-def test_verification_with_timedelta(mocker, obj, expected_value, expected_factory):
+def test_verification_with_timedelta(compiler, mocker, obj, expected_value, expected_func):
     matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
     matcher_ctor.return_value = sentinel.matcher
     value_ctor = mocker.patch(f'{PKG}.RelativeDatetime')
     value_ctor.return_value = sentinel.value
 
-    actual = compile_matcher_factory(obj)
+    actual = compiler.compile(obj)
     assert actual == sentinel.matcher
 
     value_ctor.assert_called_once_with(expected_value)
-    matcher_ctor.assert_called_once_with(expected_factory, sentinel.value)
+    matcher_ctor.assert_called_once_with(expected_func, sentinel.value)
