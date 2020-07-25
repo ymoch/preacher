@@ -20,7 +20,6 @@ from preacher.core.verification.matcher import RecursiveMatcherFactory
 from preacher.core.verification.matcher import StaticMatcherFactory
 from preacher.core.verification.matcher import ValueMatcherFactory
 from preacher.core.verification.type import require_type
-from preacher.plugin import hookimpl
 
 ValueFunc = Callable[[object], Value]
 
@@ -142,7 +141,6 @@ class MatcherFactoryCompiler:
         return keys
 
 
-@hookimpl
 def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     """
     Add default matchers to a compiler.
