@@ -2,6 +2,7 @@
 
 from .description import Description
 from .matcher import MatcherFactory
+from .matcher import MatcherFunc
 from .matcher import MatcherWrappingPredicate
 from .matcher import RecursiveMatcherFactory
 from .matcher import StaticMatcherFactory
@@ -20,6 +21,7 @@ __all__ = [
     'StaticMatcherFactory',
     'ValueMatcherFactory',
     'RecursiveMatcherFactory',
+    'MatcherFunc',
     'Predicate',
     'ResponseDescription',
     'ResponseVerification',
