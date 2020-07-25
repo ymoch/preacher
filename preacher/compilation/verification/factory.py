@@ -1,16 +1,27 @@
 from typing import Optional
 
 from preacher.compilation.extraction import AnalysisCompiler, ExtractionCompiler
+from preacher.plugin.manager import get_plugin_manager
+from . import matcher
 from .description import DescriptionCompiler
-from .matcher import MatcherFactoryCompiler, add_default_matchers
+from .matcher import MatcherFactoryCompiler
 from .predicate import PredicateCompiler
 from .response import ResponseDescriptionCompiler
 from .response_body import ResponseBodyDescriptionCompiler
 
 
+def create_matcher_factory_compiler() -> MatcherFactoryCompiler:
+    compiler = MatcherFactoryCompiler()
+
+    plugin_manager = get_plugin_manager()
+    plugin_manager.register(matcher)
+    plugin_manager.hook.preacher_add_matchers(compiler=compiler)
+
+    return compiler
+
+
 def create_predicate_compiler() -> PredicateCompiler:
-    matcher_factory = MatcherFactoryCompiler()
-    add_default_matchers(matcher_factory)
+    matcher_factory = create_matcher_factory_compiler()
     return PredicateCompiler(matcher_factory)
 
 
