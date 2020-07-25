@@ -39,8 +39,13 @@ class MatcherFactoryCompiler:
         item: Union[MatcherFactory, Matcher],
     ) -> None:
         """
-        Add a static matcher factory on key(s).
+        Add a static matcher on given keys.
+
+        Args:
+            keys: The key(s) of the matcher.
+            item: A matcher or a ``MatcherFactory`` to assign.
         """
+
         if isinstance(item, Matcher):
             item = StaticMatcherFactory(item)
         for key in self._ensure_keys(keys):
@@ -52,10 +57,27 @@ class MatcherFactoryCompiler:
         matcher_func: MatcherFunc,
         value_func: ValueFunc = _DEFAULT_VALUE_FUNC,
     ) -> None:
+        """
+        Add a matcher taking a value on given keys.
+
+        Args:
+            keys: The key(s) of the matcher.
+            matcher_func: A function that takes an object and returns a matcher.
+            value_func (optional): A function that takes an object and returns a ``Value`` object.
+        """
+
         for key in self._ensure_keys(keys):
             self._taking_value[key] = (matcher_func, value_func)
 
     def add_recursive(self, keys: Union[str, Iterable[str]], matcher_func: MatcherFunc) -> None:
+        """
+        Add a matcher taking one or more matchers.
+
+        Args:
+            keys: The key(s) of the matcher.
+            matcher_func: A function that takes one or more matchers and returns a matcher.
+        """
+
         for key in self._ensure_keys(keys):
             self._taking_matcher[key] = matcher_func
 
@@ -108,6 +130,13 @@ class MatcherFactoryCompiler:
 
 
 def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
+    """
+    Add default matchers to a compiler.
+
+    Args:
+        compiler: A compiler to be modified.
+    """
+
     compiler.add_recursive('be', hamcrest.is_)
 
     # For objects.
