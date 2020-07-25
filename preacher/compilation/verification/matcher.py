@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Callable, Dict, Iterable, Tuple, Union
 
 import hamcrest
+from hamcrest.core.matcher import Matcher
 
 from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
@@ -32,10 +33,16 @@ class MatcherFactoryCompiler:
         self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
         self._taking_matcher: Dict[str, MatcherFunc] = {}
 
-    def add_static(self, keys: Union[str, Iterable[str]], item: MatcherFactory) -> None:
+    def add_static(
+        self,
+        keys: Union[str, Iterable[str]],
+        item: Union[MatcherFactory, Matcher],
+    ) -> None:
         """
         Add a static matcher factory on key(s).
         """
+        if isinstance(item, Matcher):
+            item = StaticMatcherFactory(item)
         for key in self._ensure_keys(keys):
             self._static[key] = item
 
@@ -104,8 +111,8 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_recursive('be', hamcrest.is_)
 
     # For objects.
-    compiler.add_static(('be_null',), StaticMatcherFactory(hamcrest.none()))
-    compiler.add_static(('not_be_null',), StaticMatcherFactory(hamcrest.not_none()))
+    compiler.add_static(('be_null',), hamcrest.none())
+    compiler.add_static(('not_be_null',), hamcrest.not_none())
     compiler.add_taking_value(('equal',), hamcrest.equal_to)
     compiler.add_recursive(('have_length',), hamcrest.has_length)
 
