@@ -31,7 +31,7 @@ class MatcherFactoryCompiler:
     def __init__(self):
         self._static: Dict[str, MatcherFactory] = {}
         self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
-        self._taking_matcher: Dict[str, MatcherFunc] = {}
+        self._taking_matcher: Dict[str, Tuple[MatcherFunc, bool]] = {}
 
     def add_static(
         self,
@@ -69,17 +69,23 @@ class MatcherFactoryCompiler:
         for key in self._ensure_keys(keys):
             self._taking_value[key] = (matcher_func, value_func)
 
-    def add_recursive(self, keys: Union[str, Iterable[str]], matcher_func: MatcherFunc) -> None:
+    def add_recursive(
+        self,
+        keys: Union[str, Iterable[str]],
+        matcher_func: MatcherFunc,
+        multiple: bool = True,
+    ) -> None:
         """
         Add a matcher taking one or more matchers.
 
         Args:
             keys: The key(s) of the matcher.
             matcher_func: A function that takes one or more matchers and returns a matcher.
+            multiple: Whether the matcher can take multiple arguments or not.
         """
 
         for key in self._ensure_keys(keys):
-            self._taking_matcher[key] = matcher_func
+            self._taking_matcher[key] = (matcher_func, multiple)
 
     def compile(self, obj: object) -> MatcherFactory:
         """
@@ -116,10 +122,14 @@ class MatcherFactoryCompiler:
         return ValueMatcherFactory(matcher_func, value)
 
     def _compile_recursive(self, key: str, obj: object):
-        objs = ensure_list(obj)
 
-        matcher_func = self._taking_matcher[key]
-        inner_matchers = list(map_compile(self.compile, objs))
+        matcher_func, multiple = self._taking_matcher[key]
+        if multiple:
+            objs = ensure_list(obj)
+            inner_matchers = list(map_compile(self.compile, objs))
+        else:
+            with on_key(key):
+                inner_matchers = [self.compile(obj)]
         return RecursiveMatcherFactory(matcher_func, inner_matchers)
 
     @staticmethod
@@ -137,13 +147,13 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
         compiler: A compiler to be modified.
     """
 
-    compiler.add_recursive(('be',), hamcrest.is_)
+    compiler.add_recursive(('be',), hamcrest.is_, multiple=False)
 
     # For objects.
     compiler.add_static(('be_null',), hamcrest.none())
     compiler.add_static(('not_be_null',), hamcrest.not_none())
     compiler.add_taking_value(('equal',), hamcrest.equal_to)
-    compiler.add_recursive(('have_length',), hamcrest.has_length)
+    compiler.add_recursive(('have_length',), hamcrest.has_length, multiple=False)
 
     # For comparable values.
     compiler.add_taking_value(('be_greater_than',), hamcrest.greater_than)
@@ -158,7 +168,7 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_taking_value(('match_regexp',), require_type(str, hamcrest.matches_regexp))
 
     # For collections.
-    compiler.add_recursive(('have_item',), hamcrest.has_item)
+    compiler.add_recursive(('have_item',), hamcrest.has_item, multiple=False)
     compiler.add_recursive(('have_items',), hamcrest.has_items)
     compiler.add_recursive(('contain',), hamcrest.contains_exactly)  # HACK should be deprecated.
     compiler.add_recursive(('contain_exactly',), hamcrest.contains_exactly)
@@ -173,7 +183,7 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
 
     # Logical.
     compiler.add_static('anything', StaticMatcherFactory(hamcrest.anything()))
-    compiler.add_recursive(('not',), hamcrest.not_)
+    compiler.add_recursive(('not',), hamcrest.not_, multiple=False)
     compiler.add_recursive(('all_of',), hamcrest.all_of)
     compiler.add_recursive(('any_of',), hamcrest.any_of)
 
