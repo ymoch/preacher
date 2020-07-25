@@ -2,9 +2,10 @@
 
 from collections.abc import Mapping
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict
+from typing import Callable, Dict, Iterable, Tuple, Union
 
 import hamcrest
+from hamcrest.core.matcher import Matcher
 
 from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
@@ -20,57 +21,173 @@ from preacher.core.verification.matcher import StaticMatcherFactory
 from preacher.core.verification.matcher import ValueMatcherFactory
 from preacher.core.verification.type import require_type
 
-_STATIC_MATCHER_MAP: Dict[str, MatcherFactory] = {
+ValueFunc = Callable[[object], Value]
+
+
+class MatcherFactoryCompiler:
+    """
+    A matcher factory compiler.
+    """
+
+    _DEFAULT_VALUE_FUNC = StaticValue
+
+    def __init__(self):
+        self._static: Dict[str, MatcherFactory] = {}
+        self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
+        self._recursive: Dict[str, Tuple[MatcherFunc, bool]] = {}
+
+    def add_static(
+        self,
+        keys: Union[str, Iterable[str]],
+        item: Union[MatcherFactory, Matcher],
+    ) -> None:
+        """
+        Add a static matcher on given keys.
+
+        Args:
+            keys: The key(s) of the matcher.
+            item: A matcher or a ``MatcherFactory`` to assign.
+        """
+
+        if isinstance(item, Matcher):
+            item = StaticMatcherFactory(item)
+        for key in self._ensure_keys(keys):
+            self._static[key] = item
+
+    def add_taking_value(
+        self,
+        keys: Union[str, Iterable[str]],
+        matcher_func: MatcherFunc,
+        value_func: ValueFunc = _DEFAULT_VALUE_FUNC,
+    ) -> None:
+        """
+        Add a matcher taking a value on given keys.
+
+        Args:
+            keys: The key(s) of the matcher.
+            matcher_func: A function that takes an object and returns a matcher.
+            value_func (optional): A function that takes an object and returns a ``Value`` object.
+        """
+
+        for key in self._ensure_keys(keys):
+            self._taking_value[key] = (matcher_func, value_func)
+
+    def add_recursive(
+        self,
+        keys: Union[str, Iterable[str]],
+        matcher_func: MatcherFunc,
+        multiple: bool = True,
+    ) -> None:
+        """
+        Add a matcher taking one or more matchers.
+
+        Args:
+            keys: The key(s) of the matcher.
+            matcher_func: A function that takes one or more matchers and returns a matcher.
+            multiple: Whether the matcher can take multiple arguments or not.
+        """
+
+        for key in self._ensure_keys(keys):
+            self._recursive[key] = (matcher_func, multiple)
+
+    def compile(self, obj: object) -> MatcherFactory:
+        """
+        Compile an object into a matcher factory.
+
+        Args:
+            obj: A compiled object.
+        Returns:
+            The result of compilation.
+        Raises:
+            CompilationError: when compilation fails.
+        """
+
+        if isinstance(obj, str) and obj in self._static:
+            return self._static[obj]
+
+        if isinstance(obj, Mapping):
+            if len(obj) != 1:
+                message = f'Must have only 1 element, but has {len(obj)}'
+                raise CompilationError(message)
+
+            key, value_obj = next(iter(obj.items()))
+            if key in self._taking_value:
+                return self._compile_taking_value(key, value_obj)
+            if key in self._recursive:
+                return self._compile_recursive(key, value_obj)
+
+        return ValueMatcherFactory(hamcrest.equal_to, StaticValue(obj))
+
+    def _compile_taking_value(self, key: str, obj: object):
+        matcher_func, value_func = self._taking_value[key]
+        with on_key(key):
+            value = value_func(obj)
+        return ValueMatcherFactory(matcher_func, value)
+
+    def _compile_recursive(self, key: str, obj: object):
+        matcher_func, multiple = self._recursive[key]
+        if multiple:
+            objs = ensure_list(obj)
+            inner_matchers = list(map_compile(self.compile, objs))
+        else:
+            with on_key(key):
+                inner_matchers = [self.compile(obj)]
+        return RecursiveMatcherFactory(matcher_func, inner_matchers)
+
+    @staticmethod
+    def _ensure_keys(keys: Union[str, Iterable[str]]) -> Iterable[str]:
+        if isinstance(keys, str):
+            return (keys,)
+        return keys
+
+
+def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
+    """
+    Add default matchers to a compiler.
+
+    Args:
+        compiler: A compiler to be modified.
+    """
+
+    compiler.add_recursive(('be',), hamcrest.is_, multiple=False)
+
     # For objects.
-    'be_null': StaticMatcherFactory(hamcrest.is_(hamcrest.none())),
-    'not_be_null': StaticMatcherFactory(hamcrest.is_(hamcrest.not_none())),
-
-    # For collections.
-    'be_empty': StaticMatcherFactory(hamcrest.is_(hamcrest.empty())),
-
-    # Logical.
-    'anything': StaticMatcherFactory(hamcrest.is_(hamcrest.anything())),
-}
-
-_VALUE_MATCHER_HAMCREST_MAP: Dict[str, MatcherFunc] = {
-    # For objects.
-    'equal': hamcrest.equal_to,
+    compiler.add_static(('be_null',), hamcrest.none())
+    compiler.add_static(('not_be_null',), hamcrest.not_none())
+    compiler.add_taking_value(('equal',), hamcrest.equal_to)
+    compiler.add_recursive(('have_length',), hamcrest.has_length, multiple=False)
 
     # For comparable values.
-    'be_greater_than': hamcrest.greater_than,
-    'be_greater_than_or_equal_to': hamcrest.greater_than_or_equal_to,
-    'be_less_than': hamcrest.less_than,
-    'be_less_than_or_equal_to': hamcrest.less_than_or_equal_to,
+    compiler.add_taking_value(('be_greater_than',), hamcrest.greater_than)
+    compiler.add_taking_value(('be_greater_than_or_equal_to',), hamcrest.greater_than_or_equal_to)
+    compiler.add_taking_value(('be_less_than',), hamcrest.less_than)
+    compiler.add_taking_value(('be_less_than_or_equal_to',), hamcrest.less_than_or_equal_to)
 
     # For strings.
-    'contain_string': require_type(str, hamcrest.contains_string),
-    'start_with': require_type(str, hamcrest.starts_with),
-    'end_with': require_type(str, hamcrest.ends_with),
-    'match_regexp': require_type(str, hamcrest.matches_regexp),
-
-    # For datetime.
-    'be_before': before,
-    'be_after': after,
-}
-
-_RECURSIVE_MATCHERS_HAMCREST_MAP: Dict[str, MatcherFunc] = {
-    'be': hamcrest.is_,
-
-    # For objects.
-    'have_length': hamcrest.has_length,
+    compiler.add_taking_value(('contain_string',), require_type(str, hamcrest.contains_string))
+    compiler.add_taking_value(('start_with',), require_type(str, hamcrest.starts_with))
+    compiler.add_taking_value(('end_with',), require_type(str, hamcrest.ends_with))
+    compiler.add_taking_value(('match_regexp',), require_type(str, hamcrest.matches_regexp))
 
     # For collections.
-    'have_item': hamcrest.has_item,
-    'contain': hamcrest.contains_exactly,
-    'contain_exactly': hamcrest.contains_exactly,
-    'contain_in_any_order': hamcrest.contains_inanyorder,
-    'have_items': hamcrest.has_items,
+    compiler.add_recursive(('have_item',), hamcrest.has_item, multiple=False)
+    compiler.add_recursive(('have_items',), hamcrest.has_items)
+    compiler.add_recursive(('contain',), hamcrest.contains_exactly)  # HACK should be deprecated.
+    compiler.add_recursive(('contain_exactly',), hamcrest.contains_exactly)
+    compiler.add_recursive(('contain_in_any_order',), hamcrest.contains_inanyorder)
+
+    # For datetime.
+    compiler.add_taking_value(('be_before',), before, _compile_datetime_value)
+    compiler.add_taking_value(('be_after',), after, _compile_datetime_value)
+
+    # For collections.
+    compiler.add_static(('be_empty',), StaticMatcherFactory(hamcrest.empty()))
 
     # Logical.
-    'not': hamcrest.not_,
-    'all_of': hamcrest.all_of,
-    'any_of': hamcrest.any_of,
-}
+    compiler.add_static('anything', StaticMatcherFactory(hamcrest.anything()))
+    compiler.add_recursive(('not',), hamcrest.not_, multiple=False)
+    compiler.add_recursive(('all_of',), hamcrest.all_of)
+    compiler.add_recursive(('any_of',), hamcrest.any_of)
 
 
 def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
@@ -81,44 +198,3 @@ def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
 
     delta = compile_timedelta(value)
     return RelativeDatetime(delta)
-
-
-_VALUE_FACTORY_MAP: Dict[str, Callable[[object], Value[Any]]] = {
-    'be_before': _compile_datetime_value,
-    'be_after': _compile_datetime_value,
-}
-_DEFAULT_VALUE_FACTORY: Callable[[object], Value[Any]] = StaticValue
-
-
-def _compile_taking_multi_matchers(key: str, value: object) -> MatcherFactory:
-    hamcrest_factory = _RECURSIVE_MATCHERS_HAMCREST_MAP[key]
-
-    with on_key(key):
-        value = ensure_list(value)
-        inner_matchers = list(map_compile(compile_matcher_factory, value))
-
-    return RecursiveMatcherFactory(hamcrest_factory, inner_matchers)
-
-
-def compile_matcher_factory(obj: object) -> MatcherFactory:
-    if isinstance(obj, str) and obj in _STATIC_MATCHER_MAP:
-        return _STATIC_MATCHER_MAP[obj]
-
-    if isinstance(obj, Mapping):
-        if len(obj) != 1:
-            message = f'Must have only 1 element, but has {len(obj)}'
-            raise CompilationError(message)
-
-        key, value = next(iter(obj.items()))
-
-        if key in _VALUE_MATCHER_HAMCREST_MAP:
-            value_factory = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
-            return ValueMatcherFactory(
-                _VALUE_MATCHER_HAMCREST_MAP[key],
-                value_factory(value),
-            )
-
-        if key in _RECURSIVE_MATCHERS_HAMCREST_MAP:
-            return _compile_taking_multi_matchers(key, value)
-
-    return ValueMatcherFactory(hamcrest.equal_to, StaticValue(obj))
