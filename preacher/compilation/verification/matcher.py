@@ -137,7 +137,7 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
         compiler: A compiler to be modified.
     """
 
-    compiler.add_recursive('be', hamcrest.is_)
+    compiler.add_recursive(('be',), hamcrest.is_)
 
     # For objects.
     compiler.add_static(('be_null',), hamcrest.none())
