@@ -1,17 +1,16 @@
 from typing import Optional
 
-from preacher.compilation.extraction import (
-    AnalysisCompiler,
-    ExtractionCompiler,
-)
+from preacher.compilation.extraction import AnalysisCompiler, ExtractionCompiler
 from .description import DescriptionCompiler
+from .matcher import MatcherFactoryCompiler
 from .predicate import PredicateCompiler
 from .response import ResponseDescriptionCompiler
 from .response_body import ResponseBodyDescriptionCompiler
 
 
 def create_predicate_compiler() -> PredicateCompiler:
-    return PredicateCompiler()
+    matcher_factory = MatcherFactoryCompiler()
+    return PredicateCompiler(matcher_factory)
 
 
 def create_description_compiler(
