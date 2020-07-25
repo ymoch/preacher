@@ -34,7 +34,7 @@ class MatcherFactoryCompiler:
     def __init__(self):
         self._static: Dict[str, MatcherFactory] = {}
         self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
-        self._taking_matcher: Dict[str, Tuple[MatcherFunc, bool]] = {}
+        self._recursive: Dict[str, Tuple[MatcherFunc, bool]] = {}
 
     def add_static(
         self,
@@ -88,7 +88,7 @@ class MatcherFactoryCompiler:
         """
 
         for key in self._ensure_keys(keys):
-            self._taking_matcher[key] = (matcher_func, multiple)
+            self._recursive[key] = (matcher_func, multiple)
 
     def compile(self, obj: object) -> MatcherFactory:
         """
@@ -113,7 +113,7 @@ class MatcherFactoryCompiler:
             key, value_obj = next(iter(obj.items()))
             if key in self._taking_value:
                 return self._compile_taking_value(key, value_obj)
-            if key in self._taking_matcher:
+            if key in self._recursive:
                 return self._compile_recursive(key, value_obj)
 
         return ValueMatcherFactory(hamcrest.equal_to, StaticValue(obj))
@@ -125,7 +125,7 @@ class MatcherFactoryCompiler:
         return ValueMatcherFactory(matcher_func, value)
 
     def _compile_recursive(self, key: str, obj: object):
-        matcher_func, multiple = self._taking_matcher[key]
+        matcher_func, multiple = self._recursive[key]
         if multiple:
             objs = ensure_list(obj)
             inner_matchers = list(map_compile(self.compile, objs))
