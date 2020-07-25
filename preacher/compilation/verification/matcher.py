@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict, Iterable, Tuple, Union
 
 import hamcrest
 
@@ -95,14 +95,38 @@ _DEFAULT_VALUE_FACTORY: Callable[[object], Value[Any]] = StaticValue
 class MatcherFactoryCompiler:
 
     def __init__(self):
-        self._static: Mapping[str, MatcherFactory] = _STATIC_MATCHER_MAP
+        self._static: Dict[str, MatcherFactory] = {}
         self._taking_value: Mapping[str, Tuple[MatcherFunc, ValueFunc]] = {
             key: (matcher_func, _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY))
             for (key, matcher_func) in _VALUE_MATCHER_HAMCREST_MAP.items()
         }
         self._taking_matcher: Mapping[str, MatcherFunc] = _RECURSIVE_MATCHERS_HAMCREST_MAP
 
+        for key, item in _STATIC_MATCHER_MAP.items():
+            self.add_static(key, item)
+
+    def add_static(self, keys: Union[str, Iterable[str]], item: MatcherFactory) -> None:
+        """
+        Add a static matcher function on key(s).
+        """
+        if isinstance(keys, str):
+            keys = [keys]
+
+        for k in keys:
+            self._static[k] = item
+
     def compile(self, obj: object) -> MatcherFactory:
+        """
+        Compile an object into a matcher factory.
+
+        Args:
+            obj: A compiled object.
+        Returns:
+            The result of compilation.
+        Raises:
+            CompilationError: when compilation fails.
+        """
+
         if isinstance(obj, str) and obj in self._static:
             return self._static[obj]
 
