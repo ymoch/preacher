@@ -112,19 +112,25 @@ class MatcherFactoryCompiler:
                 raise CompilationError(message)
 
             key, value_obj = next(iter(obj.items()))
-
             if key in self._taking_value:
-                matcher_func, value_func = self._taking_value[key]
-                with on_key(key):
-                    value = value_func(value_obj)
-                return ValueMatcherFactory(matcher_func, value)
-
+                return self._compile_taking_value(key, value_obj)
             if key in self._taking_matcher:
-                matcher_func = self._taking_matcher[key]
-                inner_matchers = list(map_compile(self.compile, ensure_list(value_obj)))
-                return RecursiveMatcherFactory(matcher_func, inner_matchers)
+                return self._compile_recursive(key, value_obj)
 
         return ValueMatcherFactory(hamcrest.equal_to, StaticValue(obj))
+
+    def _compile_taking_value(self, key: str, obj: object):
+        matcher_func, value_func = self._taking_value[key]
+        with on_key(key):
+            value = value_func(obj)
+        return ValueMatcherFactory(matcher_func, value)
+
+    def _compile_recursive(self, key: str, obj: object):
+        objs = ensure_list(obj)
+
+        matcher_func = self._taking_matcher[key]
+        inner_matchers = list(map_compile(self.compile, objs))
+        return RecursiveMatcherFactory(matcher_func, inner_matchers)
 
 
 def compile_matcher_factory(obj: object) -> MatcherFactory:
