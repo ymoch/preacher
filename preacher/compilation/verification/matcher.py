@@ -97,7 +97,7 @@ class MatcherFactoryCompiler:
     def __init__(self):
         self._static: Dict[str, MatcherFactory] = {}
         self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
-        self._taking_matcher: Mapping[str, MatcherFunc] = _RECURSIVE_MATCHERS_HAMCREST_MAP
+        self._taking_matcher: Dict[str, MatcherFunc] = {}
 
         for key, matcher_factory in _STATIC_MATCHER_MAP.items():
             self.add_static(key, matcher_factory)
@@ -106,13 +106,14 @@ class MatcherFactoryCompiler:
             value_func = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
             self.add_taking_value(key, matcher_func, value_func)
 
+        for key, matcher_func in _RECURSIVE_MATCHERS_HAMCREST_MAP.items():
+            self.add_recursive(key, matcher_func)
+
     def add_static(self, keys: Union[str, Iterable[str]], item: MatcherFactory) -> None:
         """
         Add a static matcher factory on key(s).
         """
-        if isinstance(keys, str):
-            keys = [keys]
-        for key in keys:
+        for key in self._ensure_keys(keys):
             self._static[key] = item
 
     def add_taking_value(
@@ -120,11 +121,13 @@ class MatcherFactoryCompiler:
         keys: Union[str, Iterable[str]],
         matcher_func: MatcherFunc,
         value_func: ValueFunc = StaticValue,
-    ):
-        if isinstance(keys, str):
-            keys = [keys]
-        for key in keys:
+    ) -> None:
+        for key in self._ensure_keys(keys):
             self._taking_value[key] = (matcher_func, value_func)
+
+    def add_recursive(self, keys: Union[str, Iterable[str]], matcher_func: MatcherFunc) -> None:
+        for key in self._ensure_keys(keys):
+            self._taking_matcher[key] = matcher_func
 
     def compile(self, obj: object) -> MatcherFactory:
         """
@@ -166,3 +169,9 @@ class MatcherFactoryCompiler:
         matcher_func = self._taking_matcher[key]
         inner_matchers = list(map_compile(self.compile, objs))
         return RecursiveMatcherFactory(matcher_func, inner_matchers)
+
+    @staticmethod
+    def _ensure_keys(keys: Union[str, Iterable[str]]) -> Iterable[str]:
+        if isinstance(keys, str):
+            return (keys,)
+        return keys
