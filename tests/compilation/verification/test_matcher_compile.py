@@ -4,7 +4,7 @@ from unittest.mock import sentinel
 from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.verification.matcher import MatcherFactoryCompiler
+from preacher.compilation.verification.matcher import MatcherFactoryCompiler, add_default_matchers
 from preacher.core.verification.hamcrest import after, before
 
 PKG = 'preacher.compilation.verification.matcher'
@@ -13,7 +13,9 @@ NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 
 @fixture
 def compiler():
-    return MatcherFactoryCompiler()
+    compiler = MatcherFactoryCompiler()
+    add_default_matchers(compiler)
+    return compiler
 
 
 @mark.parametrize('obj', [

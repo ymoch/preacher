@@ -87,8 +87,6 @@ class MatcherFactoryCompiler:
         self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
         self._taking_matcher: Dict[str, MatcherFunc] = {}
 
-        add_defaults(self)
-
     def add_static(self, keys: Union[str, Iterable[str]], item: MatcherFactory) -> None:
         """
         Add a static matcher factory on key(s).
@@ -157,7 +155,7 @@ class MatcherFactoryCompiler:
         return keys
 
 
-def add_defaults(compiler: MatcherFactoryCompiler) -> None:
+def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     # For objects.
     compiler.add_static(('be_null',), StaticMatcherFactory(hamcrest.none()))
     compiler.add_static(('not_be_null',), StaticMatcherFactory(hamcrest.not_none()))
