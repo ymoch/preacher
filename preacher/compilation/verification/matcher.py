@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Tuple
 
 import hamcrest
 
@@ -19,6 +19,8 @@ from preacher.core.verification.matcher import RecursiveMatcherFactory
 from preacher.core.verification.matcher import StaticMatcherFactory
 from preacher.core.verification.matcher import ValueMatcherFactory
 from preacher.core.verification.type import require_type
+
+ValueFunc = Callable[[object], Value]
 
 _STATIC_MATCHER_MAP: Dict[str, MatcherFactory] = {
     # For objects.
@@ -83,42 +85,47 @@ def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
     return RelativeDatetime(delta)
 
 
-_VALUE_FACTORY_MAP: Dict[str, Callable[[object], Value[Any]]] = {
+_VALUE_FACTORY_MAP: Dict[str, ValueFunc] = {
     'be_before': _compile_datetime_value,
     'be_after': _compile_datetime_value,
 }
 _DEFAULT_VALUE_FACTORY: Callable[[object], Value[Any]] = StaticValue
 
 
-def _compile_taking_multi_matchers(key: str, value: object) -> MatcherFactory:
-    hamcrest_factory = _RECURSIVE_MATCHERS_HAMCREST_MAP[key]
+class MatcherFactoryCompiler:
 
-    with on_key(key):
-        value = ensure_list(value)
-        inner_matchers = list(map_compile(compile_matcher_factory, value))
+    def __init__(self):
+        self._static: Mapping[str, MatcherFactory] = _STATIC_MATCHER_MAP
+        self._taking_value: Mapping[str, Tuple[MatcherFunc, ValueFunc]] = {
+            key: (matcher_func, _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY))
+            for (key, matcher_func) in _VALUE_MATCHER_HAMCREST_MAP.items()
+        }
+        self._taking_matcher: Mapping[str, MatcherFunc] = _RECURSIVE_MATCHERS_HAMCREST_MAP
 
-    return RecursiveMatcherFactory(hamcrest_factory, inner_matchers)
+    def compile(self, obj: object) -> MatcherFactory:
+        if isinstance(obj, str) and obj in self._static:
+            return self._static[obj]
+
+        if isinstance(obj, Mapping):
+            if len(obj) != 1:
+                message = f'Must have only 1 element, but has {len(obj)}'
+                raise CompilationError(message)
+
+            key, value_obj = next(iter(obj.items()))
+
+            if key in self._taking_value:
+                matcher_func, value_func = self._taking_value[key]
+                with on_key(key):
+                    value = value_func(value_obj)
+                return ValueMatcherFactory(matcher_func, value)
+
+            if key in self._taking_matcher:
+                matcher_func = self._taking_matcher[key]
+                inner_matchers = list(map_compile(self.compile, ensure_list(value_obj)))
+                return RecursiveMatcherFactory(matcher_func, inner_matchers)
+
+        return ValueMatcherFactory(hamcrest.equal_to, StaticValue(obj))
 
 
 def compile_matcher_factory(obj: object) -> MatcherFactory:
-    if isinstance(obj, str) and obj in _STATIC_MATCHER_MAP:
-        return _STATIC_MATCHER_MAP[obj]
-
-    if isinstance(obj, Mapping):
-        if len(obj) != 1:
-            message = f'Must have only 1 element, but has {len(obj)}'
-            raise CompilationError(message)
-
-        key, value = next(iter(obj.items()))
-
-        if key in _VALUE_MATCHER_HAMCREST_MAP:
-            value_factory = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
-            return ValueMatcherFactory(
-                _VALUE_MATCHER_HAMCREST_MAP[key],
-                value_factory(value),
-            )
-
-        if key in _RECURSIVE_MATCHERS_HAMCREST_MAP:
-            return _compile_taking_multi_matchers(key, value)
-
-    return ValueMatcherFactory(hamcrest.equal_to, StaticValue(obj))
+    return MatcherFactoryCompiler().compile(obj)
