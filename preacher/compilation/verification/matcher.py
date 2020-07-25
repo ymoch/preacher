@@ -25,6 +25,9 @@ ValueFunc = Callable[[object], Value]
 
 
 class MatcherFactoryCompiler:
+    """
+    A matcher factory compiler.
+    """
 
     _DEFAULT_VALUE_FUNC = StaticValue
 
@@ -122,7 +125,6 @@ class MatcherFactoryCompiler:
         return ValueMatcherFactory(matcher_func, value)
 
     def _compile_recursive(self, key: str, obj: object):
-
         matcher_func, multiple = self._taking_matcher[key]
         if multiple:
             objs = ensure_list(obj)
