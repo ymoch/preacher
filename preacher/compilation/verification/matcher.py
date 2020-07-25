@@ -99,6 +99,9 @@ class MatcherFactoryCompiler:
         self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
         self._taking_matcher: Dict[str, MatcherFunc] = {}
 
+        self.add_defaults()
+
+    def add_defaults(self):
         for key, matcher_factory in _STATIC_MATCHER_MAP.items():
             self.add_static(key, matcher_factory)
 
