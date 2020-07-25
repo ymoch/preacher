@@ -32,10 +32,7 @@ _STATIC_MATCHER_MAP = {
     'anything': StaticMatcherFactory(hamcrest.is_(hamcrest.anything())),
 }
 
-_VALUE_MATCHER_HAMCREST_MAP: Dict[
-    str,
-    Callable[[object], Matcher]
-] = {
+_VALUE_MATCHER_HAMCREST_MAP: Dict[str, Callable[[object], Matcher]] = {
     # For objects.
     'equal': hamcrest.equal_to,
 
@@ -56,33 +53,27 @@ _VALUE_MATCHER_HAMCREST_MAP: Dict[
     'be_after': after,
 }
 
-_SINGLE_MATCHER_HAMCREST_MAP: Dict[
-    str,
-    Callable[[Matcher], Matcher]
-] = {
+_RECURSIVE_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., Matcher]] = {
     'be': hamcrest.is_,
-    'not': hamcrest.not_,
 
     # For objects.
     'have_length': hamcrest.has_length,
 
     # For collections.
     'have_item': hamcrest.has_item,
-}
-
-_MULTI_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., Matcher]] = {
     'contain': hamcrest.contains_exactly,
     'contain_exactly': hamcrest.contains_exactly,
     'contain_in_any_order': hamcrest.contains_inanyorder,
     'have_items': hamcrest.has_items,
+
+    # Logical.
+    'not': hamcrest.not_,
     'all_of': hamcrest.all_of,
     'any_of': hamcrest.any_of,
 }
 
 
-def _compile_relative_datetime_value(
-    value: object,
-) -> Value[DatetimeWithFormat]:
+def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
     if isinstance(value, datetime):
         if not value.tzinfo:
             value = value.replace(tzinfo=timezone.utc)
@@ -93,26 +84,14 @@ def _compile_relative_datetime_value(
 
 
 _VALUE_FACTORY_MAP: Dict[str, Callable[[object], Value[Any]]] = {
-    'be_before': _compile_relative_datetime_value,
-    'be_after': _compile_relative_datetime_value,
+    'be_before': _compile_datetime_value,
+    'be_after': _compile_datetime_value,
 }
 _DEFAULT_VALUE_FACTORY: Callable[[object], Value[Any]] = StaticValue
 
 
-def _compile_taking_single_matcher(key: str, value: object) -> MatcherFactory:
-    hamcrest_factory = _SINGLE_MATCHER_HAMCREST_MAP[key]
-
-    if isinstance(value, str) or isinstance(value, Mapping):
-        with on_key(key):
-            inner = compile_matcher_factory(value)
-    else:
-        inner = ValueMatcherFactory(hamcrest.equal_to, StaticValue(value))
-
-    return RecursiveMatcherFactory(hamcrest_factory, [inner])
-
-
 def _compile_taking_multi_matchers(key: str, value: object) -> MatcherFactory:
-    hamcrest_factory = _MULTI_MATCHERS_HAMCREST_MAP[key]
+    hamcrest_factory = _RECURSIVE_MATCHERS_HAMCREST_MAP[key]
 
     with on_key(key):
         value = ensure_list(value)
@@ -140,10 +119,7 @@ def compile_matcher_factory(obj: object) -> MatcherFactory:
                 value_factory(value),
             )
 
-        if key in _SINGLE_MATCHER_HAMCREST_MAP:
-            return _compile_taking_single_matcher(key, value)
-
-        if key in _MULTI_MATCHERS_HAMCREST_MAP:
+        if key in _RECURSIVE_MATCHERS_HAMCREST_MAP:
             return _compile_taking_multi_matchers(key, value)
 
     return ValueMatcherFactory(hamcrest.equal_to, StaticValue(obj))
