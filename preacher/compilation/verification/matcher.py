@@ -22,18 +22,6 @@ from preacher.core.verification.type import require_type
 
 ValueFunc = Callable[[object], Value]
 
-_STATIC_MATCHER_MAP: Dict[str, MatcherFactory] = {
-    # For objects.
-    'be_null': StaticMatcherFactory(hamcrest.is_(hamcrest.none())),
-    'not_be_null': StaticMatcherFactory(hamcrest.is_(hamcrest.not_none())),
-
-    # For collections.
-    'be_empty': StaticMatcherFactory(hamcrest.is_(hamcrest.empty())),
-
-    # Logical.
-    'anything': StaticMatcherFactory(hamcrest.is_(hamcrest.anything())),
-}
-
 _VALUE_MATCHER_HAMCREST_MAP: Dict[str, MatcherFunc] = {
     # For objects.
     'equal': hamcrest.equal_to,
@@ -99,18 +87,7 @@ class MatcherFactoryCompiler:
         self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
         self._taking_matcher: Dict[str, MatcherFunc] = {}
 
-        self.add_defaults()
-
-    def add_defaults(self):
-        for key, matcher_factory in _STATIC_MATCHER_MAP.items():
-            self.add_static(key, matcher_factory)
-
-        for key, matcher_func in _VALUE_MATCHER_HAMCREST_MAP.items():
-            value_func = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
-            self.add_taking_value(key, matcher_func, value_func)
-
-        for key, matcher_func in _RECURSIVE_MATCHERS_HAMCREST_MAP.items():
-            self.add_recursive(key, matcher_func)
+        add_defaults(self)
 
     def add_static(self, keys: Union[str, Iterable[str]], item: MatcherFactory) -> None:
         """
@@ -178,3 +155,22 @@ class MatcherFactoryCompiler:
         if isinstance(keys, str):
             return (keys,)
         return keys
+
+
+def add_defaults(compiler: MatcherFactoryCompiler) -> None:
+    # For objects.
+    compiler.add_static(('be_null',), StaticMatcherFactory(hamcrest.none()))
+    compiler.add_static(('not_be_null',), StaticMatcherFactory(hamcrest.not_none()))
+
+    # For collections.
+    compiler.add_static(('be_empty',), StaticMatcherFactory(hamcrest.empty()))
+
+    # Logical.
+    compiler.add_static(('anything',), StaticMatcherFactory(hamcrest.anything()))
+
+    for key, matcher_func in _VALUE_MATCHER_HAMCREST_MAP.items():
+        value_func = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
+        compiler.add_taking_value(key, matcher_func, value_func)
+
+    for key, matcher_func in _RECURSIVE_MATCHERS_HAMCREST_MAP.items():
+        compiler.add_recursive(key, matcher_func)
