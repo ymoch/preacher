@@ -4,19 +4,18 @@ from unittest.mock import sentinel
 from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError
-from preacher.compilation.verification.matcher.compiler import MatcherFactoryCompiler
-from preacher.compilation.verification.matcher.plugin import preacher_add_matchers
+from preacher.compilation.verification.matcher import MatcherFactoryCompiler
+from preacher.compilation.verification.matcher import add_default_matchers
 from preacher.core.verification.hamcrest import after, before
 
-COMPILER_PKG = 'preacher.compilation.verification.matcher.compiler'
-PLUGIN_PKG = 'preacher.compilation.verification.matcher.plugin'
+PKG = 'preacher.compilation.verification.matcher'
 NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
 
 
 @fixture
 def compiler():
     compiler = MatcherFactoryCompiler()
-    preacher_add_matchers(compiler)
+    add_default_matchers(compiler)
     return compiler
 
 
@@ -168,11 +167,11 @@ def test_matcher_matching_failure(compiler, obj, item):
     ({'be_after': NOW}, NOW, after),
 ])
 def test_verification_with_datetime(compiler, mocker, obj, expected_value, expected_func):
-    matcher_ctor = mocker.patch(f'{COMPILER_PKG}.ValueMatcherFactory')
+    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
     matcher_ctor.return_value = sentinel.matcher
-    value_ctor = mocker.patch(f'{PLUGIN_PKG}.StaticValue')
+    value_ctor = mocker.patch(f'{PKG}.StaticValue')
     value_ctor.return_value = sentinel.value
-    datetime_ctor = mocker.patch(f'{PLUGIN_PKG}.DatetimeWithFormat')
+    datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat')
     datetime_ctor.return_value = sentinel.datetime
 
     actual = compiler.compile(obj)
@@ -188,9 +187,9 @@ def test_verification_with_datetime(compiler, mocker, obj, expected_value, expec
     ({'be_after': '1 second'}, timedelta(seconds=1), after),
 ])
 def test_verification_with_timedelta(compiler, mocker, obj, expected_value, expected_func):
-    matcher_ctor = mocker.patch(f'{COMPILER_PKG}.ValueMatcherFactory')
+    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
     matcher_ctor.return_value = sentinel.matcher
-    value_ctor = mocker.patch(f'{PLUGIN_PKG}.RelativeDatetime')
+    value_ctor = mocker.patch(f'{PKG}.RelativeDatetime')
     value_ctor.return_value = sentinel.value
 
     actual = compiler.compile(obj)
