@@ -13,7 +13,7 @@ from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
-from preacher.core.verification.hamcrest import after, before
+from preacher.core.verification.hamcrest import before, after
 from preacher.core.verification.matcher import MatcherFactory
 from preacher.core.verification.matcher import MatcherFunc
 from preacher.core.verification.matcher import RecursiveMatcherFactory
