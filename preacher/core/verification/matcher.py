@@ -14,6 +14,7 @@ from .predicate import Predicate
 from .verification import Verification
 
 T = TypeVar('T')
+MatcherFunc = Callable[..., Matcher]
 
 
 class MatcherWrappingPredicate(Predicate):
@@ -53,7 +54,7 @@ class StaticMatcherFactory(MatcherFactory):
 
 class ValueMatcherFactory(MatcherFactory, Generic[T]):
 
-    def __init__(self, matcher_func: Callable[..., Matcher], value: Value[T]):
+    def __init__(self, matcher_func: MatcherFunc, value: Value[T]):
         self._inner_factory = matcher_func
         self._value = value
 
@@ -64,11 +65,7 @@ class ValueMatcherFactory(MatcherFactory, Generic[T]):
 
 class RecursiveMatcherFactory(MatcherFactory):
 
-    def __init__(
-        self,
-        matcher_func: Callable[..., Matcher],
-        inner_factories: List[MatcherFactory],
-    ):
+    def __init__(self, matcher_func: MatcherFunc, inner_factories: List[MatcherFactory]):
         self._matcher_func = matcher_func
         self._inner_factories = inner_factories
 

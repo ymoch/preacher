@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Dict
 
 import hamcrest
-from hamcrest.core.matcher import Matcher
 
 from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
@@ -13,14 +12,15 @@ from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value, StaticValue, RelativeDatetime
-from preacher.core.verification import MatcherFactory
-from preacher.core.verification import RecursiveMatcherFactory
-from preacher.core.verification import StaticMatcherFactory
-from preacher.core.verification import ValueMatcherFactory
-from preacher.core.verification import require_type
 from preacher.core.verification.hamcrest import after, before
+from preacher.core.verification.matcher import MatcherFactory
+from preacher.core.verification.matcher import MatcherFunc
+from preacher.core.verification.matcher import RecursiveMatcherFactory
+from preacher.core.verification.matcher import StaticMatcherFactory
+from preacher.core.verification.matcher import ValueMatcherFactory
+from preacher.core.verification.type import require_type
 
-_STATIC_MATCHER_MAP = {
+_STATIC_MATCHER_MAP: Dict[str, MatcherFactory] = {
     # For objects.
     'be_null': StaticMatcherFactory(hamcrest.is_(hamcrest.none())),
     'not_be_null': StaticMatcherFactory(hamcrest.is_(hamcrest.not_none())),
@@ -32,7 +32,7 @@ _STATIC_MATCHER_MAP = {
     'anything': StaticMatcherFactory(hamcrest.is_(hamcrest.anything())),
 }
 
-_VALUE_MATCHER_HAMCREST_MAP: Dict[str, Callable[[object], Matcher]] = {
+_VALUE_MATCHER_HAMCREST_MAP: Dict[str, MatcherFunc] = {
     # For objects.
     'equal': hamcrest.equal_to,
 
@@ -53,7 +53,7 @@ _VALUE_MATCHER_HAMCREST_MAP: Dict[str, Callable[[object], Matcher]] = {
     'be_after': after,
 }
 
-_RECURSIVE_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., Matcher]] = {
+_RECURSIVE_MATCHERS_HAMCREST_MAP: Dict[str, MatcherFunc] = {
     'be': hamcrest.is_,
 
     # For objects.
@@ -101,9 +101,8 @@ def _compile_taking_multi_matchers(key: str, value: object) -> MatcherFactory:
 
 
 def compile_matcher_factory(obj: object) -> MatcherFactory:
-    if isinstance(obj, str):
-        if obj in _STATIC_MATCHER_MAP:
-            return _STATIC_MATCHER_MAP[obj]
+    if isinstance(obj, str) and obj in _STATIC_MATCHER_MAP:
+        return _STATIC_MATCHER_MAP[obj]
 
     if isinstance(obj, Mapping):
         if len(obj) != 1:
