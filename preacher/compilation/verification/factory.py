@@ -2,7 +2,6 @@ from typing import Optional
 
 from preacher.compilation.extraction import AnalysisCompiler, ExtractionCompiler
 from preacher.plugin.manager import get_plugin_manager
-from . import matcher
 from .description import DescriptionCompiler
 from .matcher import MatcherFactoryCompiler
 from .predicate import PredicateCompiler
@@ -14,7 +13,6 @@ def create_matcher_factory_compiler() -> MatcherFactoryCompiler:
     compiler = MatcherFactoryCompiler()
 
     plugin_manager = get_plugin_manager()
-    plugin_manager.register(matcher)
     plugin_manager.hook.preacher_add_matchers(compiler=compiler)
 
     return compiler
