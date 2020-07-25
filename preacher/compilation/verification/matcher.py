@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Dict
 
 import hamcrest
-from hamcrest.core.matcher import Matcher as HamcrestMatcher
+from hamcrest.core.matcher import Matcher
 
 from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
@@ -34,7 +34,7 @@ _STATIC_MATCHER_MAP = {
 
 _VALUE_MATCHER_HAMCREST_MAP: Dict[
     str,
-    Callable[[object], HamcrestMatcher]
+    Callable[[object], Matcher]
 ] = {
     # For objects.
     'equal': hamcrest.equal_to,
@@ -58,7 +58,7 @@ _VALUE_MATCHER_HAMCREST_MAP: Dict[
 
 _SINGLE_MATCHER_HAMCREST_MAP: Dict[
     str,
-    Callable[[HamcrestMatcher], HamcrestMatcher]
+    Callable[[Matcher], Matcher]
 ] = {
     'be': hamcrest.is_,
     'not': hamcrest.not_,
@@ -70,7 +70,7 @@ _SINGLE_MATCHER_HAMCREST_MAP: Dict[
     'have_item': hamcrest.has_item,
 }
 
-_MULTI_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., HamcrestMatcher]] = {
+_MULTI_MATCHERS_HAMCREST_MAP: Dict[str, Callable[..., Matcher]] = {
     'contain': hamcrest.contains_exactly,
     'contain_exactly': hamcrest.contains_exactly,
     'contain_in_any_order': hamcrest.contains_inanyorder,
