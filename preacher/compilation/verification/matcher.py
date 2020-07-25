@@ -96,24 +96,35 @@ class MatcherFactoryCompiler:
 
     def __init__(self):
         self._static: Dict[str, MatcherFactory] = {}
-        self._taking_value: Mapping[str, Tuple[MatcherFunc, ValueFunc]] = {
-            key: (matcher_func, _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY))
-            for (key, matcher_func) in _VALUE_MATCHER_HAMCREST_MAP.items()
-        }
+        self._taking_value: Dict[str, Tuple[MatcherFunc, ValueFunc]] = {}
         self._taking_matcher: Mapping[str, MatcherFunc] = _RECURSIVE_MATCHERS_HAMCREST_MAP
 
-        for key, item in _STATIC_MATCHER_MAP.items():
-            self.add_static(key, item)
+        for key, matcher_factory in _STATIC_MATCHER_MAP.items():
+            self.add_static(key, matcher_factory)
+
+        for key, matcher_func in _VALUE_MATCHER_HAMCREST_MAP.items():
+            value_func = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
+            self.add_taking_value(key, matcher_func, value_func)
 
     def add_static(self, keys: Union[str, Iterable[str]], item: MatcherFactory) -> None:
         """
-        Add a static matcher function on key(s).
+        Add a static matcher factory on key(s).
         """
         if isinstance(keys, str):
             keys = [keys]
+        for key in keys:
+            self._static[key] = item
 
-        for k in keys:
-            self._static[k] = item
+    def add_taking_value(
+        self,
+        keys: Union[str, Iterable[str]],
+        matcher_func: MatcherFunc,
+        value_func: ValueFunc = StaticValue,
+    ):
+        if isinstance(keys, str):
+            keys = [keys]
+        for key in keys:
+            self._taking_value[key] = (matcher_func, value_func)
 
     def compile(self, obj: object) -> MatcherFactory:
         """
