@@ -5,6 +5,8 @@ from pluggy import PluginManager
 from . import hookspec
 from . import impl
 
+__all__ = ['get_plugin_manager']
+
 
 def get_plugin_manager() -> PluginManager:
     manager = PluginManager('preacher')

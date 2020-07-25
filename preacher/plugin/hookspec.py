@@ -2,8 +2,6 @@ from pluggy.hooks import HookspecMarker
 
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 
-__all__ = ['hookspec']
-
 hookspec = HookspecMarker('preacher')
 
 
