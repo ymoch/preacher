@@ -22,35 +22,6 @@ from preacher.core.verification.type import require_type
 
 ValueFunc = Callable[[object], Value]
 
-_RECURSIVE_MATCHERS_HAMCREST_MAP: Dict[str, MatcherFunc] = {
-    'be': hamcrest.is_,
-
-    # For objects.
-    'have_length': hamcrest.has_length,
-
-    # For collections.
-    'have_item': hamcrest.has_item,
-    'contain': hamcrest.contains_exactly,
-    'contain_exactly': hamcrest.contains_exactly,
-    'contain_in_any_order': hamcrest.contains_inanyorder,
-    'have_items': hamcrest.has_items,
-
-    # Logical.
-    'not': hamcrest.not_,
-    'all_of': hamcrest.all_of,
-    'any_of': hamcrest.any_of,
-}
-
-
-def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
-    if isinstance(value, datetime):
-        if not value.tzinfo:
-            value = value.replace(tzinfo=timezone.utc)
-        return StaticValue(DatetimeWithFormat(value))
-
-    delta = compile_timedelta(value)
-    return RelativeDatetime(delta)
-
 
 class MatcherFactoryCompiler:
 
@@ -130,10 +101,13 @@ class MatcherFactoryCompiler:
 
 
 def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
+    compiler.add_recursive('be', hamcrest.is_)
+
     # For objects.
     compiler.add_static(('be_null',), StaticMatcherFactory(hamcrest.none()))
     compiler.add_static(('not_be_null',), StaticMatcherFactory(hamcrest.not_none()))
     compiler.add_taking_value(('equal',), hamcrest.equal_to)
+    compiler.add_recursive(('have_length',), hamcrest.has_length)
 
     # For comparable values.
     compiler.add_taking_value(('be_greater_than',), hamcrest.greater_than)
@@ -147,6 +121,13 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_taking_value(('end_with',), require_type(str, hamcrest.ends_with))
     compiler.add_taking_value(('match_regexp',), require_type(str, hamcrest.matches_regexp))
 
+    # For collections.
+    compiler.add_recursive(('have_item',), hamcrest.has_item)
+    compiler.add_recursive(('have_items',), hamcrest.has_items)
+    compiler.add_recursive(('contain',), hamcrest.contains_exactly)  # HACK should be deprecated.
+    compiler.add_recursive(('contain_exactly',), hamcrest.contains_exactly)
+    compiler.add_recursive(('contain_in_any_order',), hamcrest.contains_inanyorder)
+
     # For datetime.
     compiler.add_taking_value(('be_before',), before, _compile_datetime_value)
     compiler.add_taking_value(('be_after',), after, _compile_datetime_value)
@@ -156,6 +137,16 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
 
     # Logical.
     compiler.add_static('anything', StaticMatcherFactory(hamcrest.anything()))
+    compiler.add_recursive(('not',), hamcrest.not_)
+    compiler.add_recursive(('all_of',), hamcrest.all_of)
+    compiler.add_recursive(('any_of',), hamcrest.any_of)
 
-    for key, matcher_func in _RECURSIVE_MATCHERS_HAMCREST_MAP.items():
-        compiler.add_recursive(key, matcher_func)
+
+def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
+    if isinstance(value, datetime):
+        if not value.tzinfo:
+            value = value.replace(tzinfo=timezone.utc)
+        return StaticValue(DatetimeWithFormat(value))
+
+    delta = compile_timedelta(value)
+    return RelativeDatetime(delta)
