@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Iterable, Tuple, Union
+from typing import Callable, Dict, Iterable, Tuple, Union
 
 import hamcrest
 
@@ -21,27 +21,6 @@ from preacher.core.verification.matcher import ValueMatcherFactory
 from preacher.core.verification.type import require_type
 
 ValueFunc = Callable[[object], Value]
-
-_VALUE_MATCHER_HAMCREST_MAP: Dict[str, MatcherFunc] = {
-    # For objects.
-    'equal': hamcrest.equal_to,
-
-    # For comparable values.
-    'be_greater_than': hamcrest.greater_than,
-    'be_greater_than_or_equal_to': hamcrest.greater_than_or_equal_to,
-    'be_less_than': hamcrest.less_than,
-    'be_less_than_or_equal_to': hamcrest.less_than_or_equal_to,
-
-    # For strings.
-    'contain_string': require_type(str, hamcrest.contains_string),
-    'start_with': require_type(str, hamcrest.starts_with),
-    'end_with': require_type(str, hamcrest.ends_with),
-    'match_regexp': require_type(str, hamcrest.matches_regexp),
-
-    # For datetime.
-    'be_before': before,
-    'be_after': after,
-}
 
 _RECURSIVE_MATCHERS_HAMCREST_MAP: Dict[str, MatcherFunc] = {
     'be': hamcrest.is_,
@@ -73,14 +52,9 @@ def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
     return RelativeDatetime(delta)
 
 
-_VALUE_FACTORY_MAP: Dict[str, ValueFunc] = {
-    'be_before': _compile_datetime_value,
-    'be_after': _compile_datetime_value,
-}
-_DEFAULT_VALUE_FACTORY: Callable[[object], Value[Any]] = StaticValue
-
-
 class MatcherFactoryCompiler:
+
+    _DEFAULT_VALUE_FUNC = StaticValue
 
     def __init__(self):
         self._static: Dict[str, MatcherFactory] = {}
@@ -98,7 +72,7 @@ class MatcherFactoryCompiler:
         self,
         keys: Union[str, Iterable[str]],
         matcher_func: MatcherFunc,
-        value_func: ValueFunc = StaticValue,
+        value_func: ValueFunc = _DEFAULT_VALUE_FUNC,
     ) -> None:
         for key in self._ensure_keys(keys):
             self._taking_value[key] = (matcher_func, value_func)
@@ -159,16 +133,29 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     # For objects.
     compiler.add_static(('be_null',), StaticMatcherFactory(hamcrest.none()))
     compiler.add_static(('not_be_null',), StaticMatcherFactory(hamcrest.not_none()))
+    compiler.add_taking_value(('equal',), hamcrest.equal_to)
+
+    # For comparable values.
+    compiler.add_taking_value(('be_greater_than',), hamcrest.greater_than)
+    compiler.add_taking_value(('be_greater_than_or_equal_to',), hamcrest.greater_than_or_equal_to)
+    compiler.add_taking_value(('be_less_than',), hamcrest.less_than)
+    compiler.add_taking_value(('be_less_than_or_equal_to',), hamcrest.less_than_or_equal_to)
+
+    # For strings.
+    compiler.add_taking_value(('contain_string',), require_type(str, hamcrest.contains_string))
+    compiler.add_taking_value(('start_with',), require_type(str, hamcrest.starts_with))
+    compiler.add_taking_value(('end_with',), require_type(str, hamcrest.ends_with))
+    compiler.add_taking_value(('match_regexp',), require_type(str, hamcrest.matches_regexp))
+
+    # For datetime.
+    compiler.add_taking_value(('be_before',), before, _compile_datetime_value)
+    compiler.add_taking_value(('be_after',), after, _compile_datetime_value)
 
     # For collections.
     compiler.add_static(('be_empty',), StaticMatcherFactory(hamcrest.empty()))
 
     # Logical.
-    compiler.add_static(('anything',), StaticMatcherFactory(hamcrest.anything()))
-
-    for key, matcher_func in _VALUE_MATCHER_HAMCREST_MAP.items():
-        value_func = _VALUE_FACTORY_MAP.get(key, _DEFAULT_VALUE_FACTORY)
-        compiler.add_taking_value(key, matcher_func, value_func)
+    compiler.add_static('anything', StaticMatcherFactory(hamcrest.anything()))
 
     for key, matcher_func in _RECURSIVE_MATCHERS_HAMCREST_MAP.items():
         compiler.add_recursive(key, matcher_func)
