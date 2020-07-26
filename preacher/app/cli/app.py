@@ -68,6 +68,7 @@ def app(
         verbosity
     )
 
+    logger.info('Create a compiler.')
     plugin_manager = get_plugin_manager()
     compiler = create_scenario_compiler(plugin_manager=plugin_manager)
 
@@ -78,14 +79,14 @@ def app(
     runner = ScenarioRunner(base_url=base_url, retry=retry, delay=delay, timeout=timeout)
     listener = create_listener(level, report_dir)
     try:
-        logger.info("Start running scenarios.")
+        logger.info('Start running scenarios.')
         with executor_factory(concurrency) as executor:
             status = runner.run(executor, scenarios, listener=listener)
     except Exception as error:
         logger.exception(error)
         return 3
     finally:
-        logger.info("End running scenarios.")
+        logger.info('End running scenarios.')
 
     if not status.is_succeeded:
         return 1
@@ -114,9 +115,15 @@ def _verbosity_to_logging_level(verbosity: int) -> int:
 
 def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
     if not paths:
-        logger.info('Load scenarios from stdin.')
+        logger.info('No scenario file is given. Load scenarios from stdin.')
         return load_all(sys.stdin)
+    paths = (_hook_loading(path, logger) for path in paths)
     return chain.from_iterable(load_all_from_path(path) for path in paths)
+
+
+def _hook_loading(path: str, logger: Logger) -> str:
+    logger.debug('Load: %s', path)
+    return path
 
 
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
