@@ -42,6 +42,7 @@ sphinx-intl = "^2.0"
 sphinx-autobuild = "^0.7.1"
 tomlkit = "^0.6.0"
 flask = "^1.1.2"
+codecov = "^2.1.8"  # For reporting from CI.
 
 [build-system]
 requires = ["poetry>=1.0"]
