@@ -117,8 +117,7 @@ def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
     if not paths:
         logger.info('No scenario file is given. Load scenarios from stdin.')
         return load_all(sys.stdin)
-    paths = (_hook_loading(path, logger) for path in paths)
-    return chain.from_iterable(load_all_from_path(path) for path in paths)
+    return chain.from_iterable(load_all_from_path(_hook_loading(path, logger)) for path in paths)
 
 
 def _hook_loading(path: str, logger: Logger) -> str:
