@@ -1,9 +1,14 @@
 import sys
+import uuid
 from concurrent.futures import Executor, ProcessPoolExecutor
+from importlib.util import spec_from_file_location, module_from_spec
 from itertools import chain
 from logging import DEBUG, INFO, WARNING, ERROR
 from logging import Logger, StreamHandler, getLogger
-from typing import Sequence, Optional, Callable, Iterator
+from types import ModuleType
+from typing import Callable, Iterable, Iterator, Optional, Sequence
+
+from pluggy import PluginManager
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
@@ -28,6 +33,7 @@ def app(
     timeout: Optional[float] = None,
     concurrency: int = 1,
     executor_factory: Callable[[int], Executor] = ProcessPoolExecutor,
+    plugins: Iterable[str] = (),
     verbosity: int = 0,
 ) -> int:
     """
@@ -68,9 +74,14 @@ def app(
         verbosity
     )
 
-    logger.info('Create a compiler.')
+    logger.info('Load plugins.')
     plugin_manager = get_plugin_manager()
-    compiler = create_scenario_compiler(plugin_manager=plugin_manager)
+    try:
+        load_plugins(plugin_manager, plugins, logger)
+        compiler = create_scenario_compiler(plugin_manager=plugin_manager)
+    except Exception as error:
+        logger.exception(error)
+        return 3
 
     objs = load_objs(paths, logger)
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
@@ -111,6 +122,26 @@ def _verbosity_to_logging_level(verbosity: int) -> int:
     if verbosity > 0:
         return INFO
     return WARNING
+
+
+def load_plugins(manager: PluginManager, plugins: Iterable[str], logger: Logger) -> None:
+    modules = (_load_module(path, logger) for path in plugins)
+    for module in modules:
+        manager.register(module)
+
+
+def _load_module(path: str, logger: Logger) -> ModuleType:
+    name = str(uuid.uuid4())  # Create a unique name.
+    logger.info('Load module file "%s" as module name "%s"', path, name)
+
+    spec = spec_from_file_location(name, path)
+    if not spec:
+        raise RuntimeError(f'Could not load as a module: {path}')
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)  # type: ignore
+    sys.modules[name] = module  # To enable sub-processes use this module.
+
+    return module
 
 
 def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:

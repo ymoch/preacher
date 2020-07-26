@@ -2,7 +2,7 @@
 
 import sys
 from concurrent.futures import Executor
-from typing import Sequence, Callable, Optional
+from typing import Callable, Iterable, Optional, Sequence
 
 from click import FloatRange
 from click import IntRange
@@ -33,6 +33,7 @@ _ENV_TIMEOUT = f'{_ENV_PREFIX}TIMEOUT'
 _ENV_CONCURRENCY = f'{_ENV_PREFIX}CONCURRENCY'
 _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
 _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
+_ENV_PLUGIN = f'{_ENV_PREFIX}PLUGIN'
 
 
 @command()
@@ -127,6 +128,16 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     default='process',
 )
 @option(
+    'plugins',
+    '-p',
+    '--plugin',
+    help='add a plugin',
+    metavar='path',
+    type=Path(exists=True),
+    multiple=True,
+    envvar=_ENV_PLUGIN,
+)
+@option(
     'verbosity',
     '-V',
     '--verbose',
@@ -146,6 +157,7 @@ def main(
     timeout: Optional[float],
     concurrency: int,
     executor_factory: Callable[[int], Executor],
+    plugins: Iterable[str],
     verbosity: int,
 ) -> None:
     """Preacher CLI: Web API Verification without Coding"""
@@ -160,6 +172,7 @@ def main(
         timeout=timeout,
         concurrency=concurrency,
         executor_factory=executor_factory,
+        plugins=plugins,
         verbosity=verbosity,
     )
     sys.exit(exit_code)

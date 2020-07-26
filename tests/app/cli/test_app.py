@@ -4,21 +4,26 @@ Styles should be checked independently.
 """
 import logging
 import os
+import sys
+import uuid
 from concurrent.futures import Executor
+from importlib.abc import InspectLoader
+from importlib.machinery import ModuleSpec
 from io import StringIO
 from tempfile import TemporaryDirectory
+from types import ModuleType
 from typing import Iterable, Optional
 from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
 
+from pluggy import PluginManager
 from pytest import fixture, raises, mark
 
 from preacher.app.cli.app import REPORT_LOGGER_NAME
-from preacher.app.cli.app import (
-    app,
-    create_system_logger,
-    load_objs,
-    create_listener,
-)
+from preacher.app.cli.app import app
+from preacher.app.cli.app import create_listener
+from preacher.app.cli.app import create_system_logger
+from preacher.app.cli.app import load_objs
+from preacher.app.cli.app import load_plugins
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -39,6 +44,11 @@ def base_dir():
 
 
 @fixture
+def logger():
+    return NonCallableMock(logging.Logger)
+
+
+@fixture
 def executor():
     executor = NonCallableMagicMock(Executor)
     executor.__enter__.return_value = executor
@@ -50,13 +60,13 @@ def executor_factory(executor):
     return Mock(return_value=executor)
 
 
-def test_normal(mocker, base_dir, executor, executor_factory):
-    logger = NonCallableMock(logging.Logger)
-    logger_ctor = mocker.patch(f'{PKG}.create_system_logger')
-    logger_ctor.return_value = logger
+def test_app_normal(mocker, base_dir, logger, executor, executor_factory):
+    logger_ctor = mocker.patch(f'{PKG}.create_system_logger', return_value=logger)
 
     plugin_manager_ctor = mocker.patch(f'{PKG}.get_plugin_manager')
     plugin_manager_ctor.return_value = sentinel.plugin_manager
+
+    load_plugins_func = mocker.patch(f'{PKG}.load_plugins')
 
     compiler = NonCallableMock(ScenarioCompiler)
     compiler.compile_flattening.return_value = iter([sentinel.scenario])
@@ -94,6 +104,7 @@ def test_normal(mocker, base_dir, executor, executor_factory):
         timeout=sentinel.timeout,
         concurrency=sentinel.concurrency,
         executor_factory=executor_factory,
+        plugins=sentinel.plugins,
         verbosity=sentinel.verbosity
     )
     assert exit_code == 0
@@ -101,6 +112,8 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     logger_ctor.assert_called_once_with(sentinel.verbosity)
 
     plugin_manager_ctor.assert_called_once_with()
+    load_plugins_func.assert_called_once_with(sentinel.plugin_manager, sentinel.plugins, logger)
+
     compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
     compiler.compile_flattening.assert_called_once_with(
         sentinel.objs,
@@ -120,7 +133,17 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     executor.__exit__.assert_called_once()
 
 
-def test_not_succeeds(mocker, executor_factory, executor):
+def test_app_plugin_loading_fails(mocker):
+    mocker.patch(f'{PKG}.load_plugins', side_effect=RuntimeError('msg'))
+    assert app() == 3
+
+
+def test_app_compiler_creation_fails(mocker):
+    mocker.patch(f'{PKG}.create_scenario_compiler', side_effect=RuntimeError('msg'))
+    assert app() == 3
+
+
+def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.return_value = Status.UNSTABLE
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
@@ -131,7 +154,7 @@ def test_not_succeeds(mocker, executor_factory, executor):
     executor.__exit__.assert_called_once()
 
 
-def test_unexpected_error_occurs(mocker, executor_factory, executor):
+def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
@@ -153,10 +176,9 @@ def test_create_system_logger(verbosity, expected_level):
     assert logger.getEffectiveLevel() == expected_level
 
 
-def test_load_objs_empty(mocker):
+def test_load_objs_empty(mocker, logger):
     mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
 
-    logger = NonCallableMock(logging.Logger)
     objs = load_objs((), logger)
 
     assert next(objs) == 'foo'
@@ -165,8 +187,68 @@ def test_load_objs_empty(mocker):
         next(objs)
 
 
-def test_load_objs_filled(base_dir):
-    logger = NonCallableMock(logging.Logger)
+def test_load_plugins_empty(logger):
+    manager = NonCallableMock(PluginManager)
+    load_plugins(manager, (), logger)
+    manager.register.assert_not_called()
+
+
+def test_load_plugins_normal(mocker, logger):
+    loader = NonCallableMock(InspectLoader)
+
+    spec = NonCallableMock(ModuleSpec, loader=loader)
+    spec_ctor = mocker.patch(f'{PKG}.spec_from_file_location', return_value=spec)
+
+    module = NonCallableMock(ModuleType)
+    module_ctor = mocker.patch(f'{PKG}.module_from_spec', return_value=module)
+
+    uuid4 = NonCallableMagicMock(uuid.uuid4)
+    uuid4.__str__.return_value = 'module-name'
+    mocker.patch('uuid.uuid4', return_value=uuid4)
+
+    manager = NonCallableMock(PluginManager)
+    load_plugins(manager, (sentinel.plugin,), logger)
+
+    spec_ctor.assert_called_once_with('module-name', sentinel.plugin)
+    module_ctor.assert_called_once_with(spec)
+    loader.exec_module.assert_called_once_with(module)
+    manager.register.assert_called_once_with(module)
+    assert sys.modules['module-name'] == module
+
+
+def test_load_plugins_not_a_module(mocker, logger):
+    mocker.patch(f'{PKG}.spec_from_file_location', return_value=None)
+
+    manager = NonCallableMock(PluginManager)
+    with raises(RuntimeError):
+        load_plugins(manager, (sentinel.plugin,), logger)
+
+    manager.register.assert_not_called()
+
+
+def test_load_plugins_invalid_module(mocker, logger):
+    loader = NonCallableMock(InspectLoader)
+    loader.exec_module.side_effect = SyntaxError('msg')
+
+    spec = NonCallableMock(ModuleSpec, loader=loader)
+    mocker.patch(f'{PKG}.spec_from_file_location', return_value=spec)
+
+    module = NonCallableMock(ModuleType)
+    mocker.patch(f'{PKG}.module_from_spec', return_value=module)
+
+    uuid4 = NonCallableMagicMock(uuid.uuid4)
+    uuid4.__str__.return_value = 'module-name'
+    mocker.patch('uuid.uuid4', return_value=uuid4)
+
+    manager = NonCallableMock(PluginManager)
+    with raises(SyntaxError):
+        load_plugins(manager, (sentinel.plugin,), logger)
+
+    manager.register.assert_not_called()
+    assert sys.modules.get('module-name') != module
+
+
+def test_load_objs_filled(base_dir, logger):
     objs = load_objs(
         (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml')),
         logger,

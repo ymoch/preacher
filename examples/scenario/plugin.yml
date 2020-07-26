@@ -1,0 +1,16 @@
+label: Plugin test
+ordered: false
+cases:
+  - request:
+      path: /echo
+      body:
+        type: json
+        data:
+          six: 6
+    response:
+      status_code: 200
+      body:
+        - describe: .json.six
+          should:
+            - be_even
+            - be_multiple_of: 3
