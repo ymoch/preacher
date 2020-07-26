@@ -117,7 +117,7 @@ commands:
               ./examples/scenario/plugin.yml
 
             # Run plugin scenarios with installation.
-            poetry add ./example/plugin
+            poetry run pip install ./examples/plugin
             poetry run preacher-cli \
               -uhttp://localhost:5000 \
               ./examples/scenario/plugin.yml
