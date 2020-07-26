@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 17:20+0900\n"
+"POT-Creation-Date: 2020-07-26 17:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,8 +71,8 @@ msgstr ""
 "``when`` プロパティの記述を満たしたときだけ実行されます."
 
 #: ../../user/advanced-usage.rst:104 546ca3afeedb4daaab2c053ce9eea361
-msgid "See :doc:`context` to find available context."
-msgstr ""
+msgid "See :doc:`../reference/context` to find available context."
+msgstr "利用可能なコンテキストは :doc:`../reference/context` を参照してください."
 
 # fac7a37ce24c4bc8b0c7473fb795e3ab
 #: ../../user/advanced-usage.rst:109 c582c5c4863e4257b49c08b3cf600f22
@@ -85,3 +85,4 @@ msgid ""
 "To skip some cases temporarily for some reason, add ``enabled: false`` to"
 " that cases."
 msgstr "何らかの理由で一時的にテストを実行したくない場合, そのケースに ``enabled: false`` を付与します."
+

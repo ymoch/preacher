@@ -101,7 +101,7 @@ in ``when`` properties.
     cases:
       - ...
 
-See :doc:`context` to find available context.
+See :doc:`../reference/context` to find available context.
 
 .. _ignore-cases:
 

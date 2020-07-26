@@ -36,8 +36,14 @@ The User Guide
     user/scenario-structure
     user/extraction
     user/matcher
-    user/context
 
+The Reference Guide
+-------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    reference/context
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
