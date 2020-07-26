@@ -1,23 +1,23 @@
+"""CLI Application implementation."""
+
 import sys
-import uuid
 from concurrent.futures import Executor, ProcessPoolExecutor
-from importlib.util import spec_from_file_location, module_from_spec
 from itertools import chain
 from logging import DEBUG, INFO, WARNING, ERROR
 from logging import Logger, StreamHandler, getLogger
-from types import ModuleType
 from typing import Callable, Iterable, Iterator, Optional, Sequence
-
-from pluggy import PluginManager
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
+from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .logging import ColoredFormatter
+
+__all__ = ['app', 'create_system_logger', 'create_listener', 'load_objs']
 
 REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
@@ -122,26 +122,6 @@ def _verbosity_to_logging_level(verbosity: int) -> int:
     if verbosity > 0:
         return INFO
     return WARNING
-
-
-def load_plugins(manager: PluginManager, plugins: Iterable[str], logger: Logger) -> None:
-    modules = (_load_module(path, logger) for path in plugins)
-    for module in modules:
-        manager.register(module)
-
-
-def _load_module(path: str, logger: Logger) -> ModuleType:
-    name = str(uuid.uuid4())  # Create a unique name.
-    logger.info('Load module file "%s" as module name "%s"', path, name)
-
-    spec = spec_from_file_location(name, path)
-    if not spec:
-        raise RuntimeError(f'Could not load as a module: {path}')
-    module = module_from_spec(spec)
-    spec.loader.exec_module(module)  # type: ignore
-    sys.modules[name] = module  # To enable sub-processes use this module.
-
-    return module
 
 
 def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
