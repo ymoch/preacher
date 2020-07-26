@@ -78,11 +78,10 @@ def app(
     plugin_manager = get_plugin_manager()
     try:
         load_plugins(plugin_manager, plugins, logger)
+        compiler = create_scenario_compiler(plugin_manager=plugin_manager)
     except Exception as error:
-        logger.fatal(error)
+        logger.exception(error)
         return 3
-
-    compiler = create_scenario_compiler(plugin_manager=plugin_manager)
 
     objs = load_objs(paths, logger)
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
