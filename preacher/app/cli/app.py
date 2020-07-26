@@ -10,10 +10,7 @@ from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
-from preacher.presentation.listener import (
-    LoggingReportingListener,
-    HtmlReportingListener,
-)
+from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .logging import ColoredFormatter
 
 REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
