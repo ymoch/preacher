@@ -10,6 +10,7 @@ from typing import Callable, Iterable, Iterator, Optional, Sequence
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
+from preacher.core.logger import default_logger
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
 from preacher.plugin.loader import load_plugins
@@ -19,7 +20,7 @@ from .logging import ColoredFormatter
 
 __all__ = ['app', 'create_system_logger', 'create_listener', 'load_objs']
 
-REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
+_REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
 
 def app(
@@ -124,7 +125,7 @@ def _verbosity_to_logging_level(verbosity: int) -> int:
     return WARNING
 
 
-def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
+def load_objs(paths: Sequence[str], logger: Logger = default_logger) -> Iterator[object]:
     if not paths:
         logger.info('No scenario file is given. Load scenarios from stdin.')
         return load_all(sys.stdin)
@@ -143,7 +144,7 @@ def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     handler = StreamHandler(sys.stdout)
     handler.setLevel(logging_level)
     handler.setFormatter(ColoredFormatter())
-    logger = getLogger(REPORT_LOGGER_NAME)
+    logger = getLogger(_REPORT_LOGGER_NAME)
     logger.setLevel(logging_level)
     logger.addHandler(handler)
     merging.append(LoggingReportingListener.from_logger(logger))

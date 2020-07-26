@@ -7,10 +7,16 @@ from typing import Iterable
 
 from pluggy import PluginManager
 
+from preacher.core.logger import default_logger
+
 __all__ = ['load_plugins']
 
 
-def load_plugins(manager: PluginManager, plugins: Iterable[str], logger: Logger) -> None:
+def load_plugins(
+    manager: PluginManager,
+    plugins: Iterable[str] = (),
+    logger: Logger = default_logger,
+) -> None:
     """
     Load plugins explicitly.
 

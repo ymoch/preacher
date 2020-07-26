@@ -2,30 +2,24 @@ import sys
 import uuid
 from importlib.abc import InspectLoader
 from importlib.machinery import ModuleSpec
-from logging import Logger
 from types import ModuleType
 from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 
 from pluggy import PluginManager
-from pytest import fixture, raises
+from pytest import raises
 
 from preacher.plugin.loader import load_plugins
 
 PKG = 'preacher.plugin.loader'
 
 
-@fixture
-def logger():
-    return NonCallableMock(Logger)
-
-
-def test_load_plugins_empty(logger):
+def test_load_plugins_empty():
     manager = NonCallableMock(PluginManager)
-    load_plugins(manager, (), logger)
+    load_plugins(manager, ())
     manager.register.assert_not_called()
 
 
-def test_load_plugins_normal(mocker, logger):
+def test_load_plugins_normal(mocker):
     loader = NonCallableMock(InspectLoader)
 
     spec = NonCallableMock(ModuleSpec, loader=loader)
@@ -39,7 +33,7 @@ def test_load_plugins_normal(mocker, logger):
     mocker.patch('uuid.uuid4', return_value=uuid4)
 
     manager = NonCallableMock(PluginManager)
-    load_plugins(manager, (sentinel.plugin,), logger)
+    load_plugins(manager, (sentinel.plugin,))
 
     spec_ctor.assert_called_once_with('module-name', sentinel.plugin)
     module_ctor.assert_called_once_with(spec)
@@ -48,17 +42,17 @@ def test_load_plugins_normal(mocker, logger):
     assert sys.modules['module-name'] == module
 
 
-def test_load_plugins_not_a_module(mocker, logger):
+def test_load_plugins_not_a_module(mocker):
     mocker.patch(f'{PKG}.spec_from_file_location', return_value=None)
 
     manager = NonCallableMock(PluginManager)
     with raises(RuntimeError):
-        load_plugins(manager, (sentinel.plugin,), logger)
+        load_plugins(manager, (sentinel.plugin,))
 
     manager.register.assert_not_called()
 
 
-def test_load_plugins_invalid_module(mocker, logger):
+def test_load_plugins_invalid_module(mocker):
     loader = NonCallableMock(InspectLoader)
     loader.exec_module.side_effect = SyntaxError('msg')
 
@@ -74,7 +68,7 @@ def test_load_plugins_invalid_module(mocker, logger):
 
     manager = NonCallableMock(PluginManager)
     with raises(SyntaxError):
-        load_plugins(manager, (sentinel.plugin,), logger)
+        load_plugins(manager, (sentinel.plugin,))
 
     manager.register.assert_not_called()
     assert sys.modules.get('module-name') != module
