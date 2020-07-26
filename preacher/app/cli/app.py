@@ -105,6 +105,25 @@ def app(
     return 0
 
 
+def create_system_logger(verbosity: int) -> Logger:
+    level = _verbosity_to_logging_level(verbosity)
+    handler = StreamHandler()
+    handler.setLevel(level)
+    handler.setFormatter(ColoredFormatter(fmt='[%(levelname)s] %(message)s'))
+    logger = getLogger(__name__)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+    return logger
+
+
+def _verbosity_to_logging_level(verbosity: int) -> int:
+    if verbosity > 1:
+        return DEBUG
+    if verbosity > 0:
+        return INFO
+    return WARNING
+
+
 def load_plugins(manager: PluginManager, plugins: Iterable[str], logger: Logger) -> None:
     modules = (_load_module(path, logger) for path in plugins)
     for module in modules:
@@ -123,25 +142,6 @@ def _load_module(path: str, logger: Logger) -> ModuleType:
     sys.modules[name] = module  # To enable sub-processes use this module.
 
     return module
-
-
-def create_system_logger(verbosity: int) -> Logger:
-    level = _verbosity_to_logging_level(verbosity)
-    handler = StreamHandler()
-    handler.setLevel(level)
-    handler.setFormatter(ColoredFormatter(fmt='[%(levelname)s] %(message)s'))
-    logger = getLogger(__name__)
-    logger.setLevel(level)
-    logger.addHandler(handler)
-    return logger
-
-
-def _verbosity_to_logging_level(verbosity: int) -> int:
-    if verbosity > 1:
-        return DEBUG
-    if verbosity > 0:
-        return INFO
-    return WARNING
 
 
 def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:

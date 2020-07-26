@@ -10,15 +10,15 @@ from tempfile import TemporaryDirectory
 from typing import Iterable, Optional
 from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
 
+from pluggy import PluginManager
 from pytest import fixture, raises, mark
 
 from preacher.app.cli.app import REPORT_LOGGER_NAME
-from preacher.app.cli.app import (
-    app,
-    create_system_logger,
-    load_objs,
-    create_listener,
-)
+from preacher.app.cli.app import app
+from preacher.app.cli.app import create_listener
+from preacher.app.cli.app import create_system_logger
+from preacher.app.cli.app import load_objs
+from preacher.app.cli.app import load_plugins
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -39,6 +39,11 @@ def base_dir():
 
 
 @fixture
+def logger():
+    return NonCallableMock(logging.Logger)
+
+
+@fixture
 def executor():
     executor = NonCallableMagicMock(Executor)
     executor.__enter__.return_value = executor
@@ -50,14 +55,13 @@ def executor_factory(executor):
     return Mock(return_value=executor)
 
 
-def test_app_normal(mocker, base_dir, executor, executor_factory):
-    logger = NonCallableMock(logging.Logger)
+def test_app_normal(mocker, base_dir, logger, executor, executor_factory):
     logger_ctor = mocker.patch(f'{PKG}.create_system_logger', return_value=logger)
 
     plugin_manager_ctor = mocker.patch(f'{PKG}.get_plugin_manager')
     plugin_manager_ctor.return_value = sentinel.plugin_manager
 
-    load_plugins = mocker.patch(f'{PKG}.load_plugins')
+    load_plugins_func = mocker.patch(f'{PKG}.load_plugins')
 
     compiler = NonCallableMock(ScenarioCompiler)
     compiler.compile_flattening.return_value = iter([sentinel.scenario])
@@ -103,7 +107,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     logger_ctor.assert_called_once_with(sentinel.verbosity)
 
     plugin_manager_ctor.assert_called_once_with()
-    load_plugins.assert_called_once_with(sentinel.plugin_manager, sentinel.plugins, logger)
+    load_plugins_func.assert_called_once_with(sentinel.plugin_manager, sentinel.plugins, logger)
 
     compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
     compiler.compile_flattening.assert_called_once_with(
@@ -167,10 +171,9 @@ def test_create_system_logger(verbosity, expected_level):
     assert logger.getEffectiveLevel() == expected_level
 
 
-def test_load_objs_empty(mocker):
+def test_load_objs_empty(mocker, logger):
     mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
 
-    logger = NonCallableMock(logging.Logger)
     objs = load_objs((), logger)
 
     assert next(objs) == 'foo'
@@ -179,8 +182,13 @@ def test_load_objs_empty(mocker):
         next(objs)
 
 
-def test_load_objs_filled(base_dir):
-    logger = NonCallableMock(logging.Logger)
+def test_load_plugins_empty(logger):
+    manager = NonCallableMock(PluginManager)
+    load_plugins(manager, (), logger)
+    manager.register.assert_not_called()
+
+
+def test_load_objs_filled(base_dir, logger):
     objs = load_objs(
         (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml')),
         logger,
