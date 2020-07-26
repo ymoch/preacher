@@ -64,11 +64,8 @@ Here is a scenario example.
                   - start_with: x
                   - end_with: y
 
-Components
-----------
-
 Scenario
-^^^^^^^^
+--------
 A "scenario" is the basic unit of verification process.
 A scenario contains some "cases", which are basically run serially.
 Scenarios can be nested by using "subscenarios."
@@ -159,7 +156,7 @@ which has zero or more documents.
 .. _case:
 
 Case
-^^^^
+----
 A "case" is the basic unit of verification, which executes a request and verify its response.
 
 .. list-table::
@@ -197,7 +194,7 @@ You can use default values to simplify cases. See :ref:`default-test` for more i
 .. _request:
 
 Request
-^^^^^^^
+-------
 Normally, a "request" is described in a form of a dictionary.
 When given only a string, that is equivalent to ``{path: it}``.
 
@@ -236,7 +233,7 @@ When given only a string, that is equivalent to ``{path: it}``.
 .. _url-parameters:
 
 URLParameters
-"""""""""""""
+^^^^^^^^^^^^^
 When given URL parameters as a string, then it is regarded as a raw query string.
 
 .. code-block:: yaml
@@ -267,7 +264,7 @@ then it is regarded as a map of keys to values and the query string is built wit
 .. _request-body:
 
 RequestBody
-"""""""""""
+^^^^^^^^^^^
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -293,7 +290,7 @@ The typical ``Content-type`` header will be set automatically.
 .. _response-description:
 
 ResponseDescription
-^^^^^^^^^^^^^^^^^^^
+-------------------
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -320,13 +317,13 @@ ResponseDescription
 .. _status-code:
 
 Status code
-"""""""""""
+^^^^^^^^^^^
 When given a number, that is equivalent to ``{"equal": it}``.
 
 .. _headers:
 
 Headers
-"""""""
+^^^^^^^
 Response headers are converted to be a JSON
 that is a map of names to values
 and can be described as a JSON (e.g. ``."content-type"``).
@@ -335,7 +332,7 @@ and can be described as a JSON (e.g. ``."content-type"``).
 .. _response-body-description:
 
 ResponseBodyDescription
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -360,7 +357,7 @@ that is equivalent to ``{"descritptions": it}``.
 .. _description:
 
 Description
-^^^^^^^^^^^
+-----------
 .. list-table::
     :header-rows: 1
     :widths: 10 15 15 60
@@ -381,13 +378,13 @@ Description
 .. _predicate:
 
 Predicate
-^^^^^^^^^
+---------
 A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the future).
 
 .. _parameter:
 
 Parameter
-^^^^^^^^^
+---------
 A "parameter" is a parameter in parameterized tests.
 See :ref:`parameterized-test` for more information.
 
