@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 17:04+0900\n"
+"POT-Creation-Date: 2020-07-26 17:20+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,34 +74,13 @@ msgstr ""
 msgid "See :doc:`context` to find available context."
 msgstr ""
 
-#: ../../user/advanced-usage.rst:109 5ab2b9e1d1d749cdb0381a7f9b8a64ee
-msgid "Concurrent running"
-msgstr "並列実行"
-
-#: ../../user/advanced-usage.rst:110 65e13722701b43ad8032fd20cbed1df9
-msgid ""
-"To reduce runtime, Preacher can run scenarios concurrently by ``-c`` or "
-"``--concurrency`` options The default is ``1`` (run serially.)"
-msgstr ""
-"実行時間を短縮するため, Preacher は ``-c`` ないし ``--concurrency`` "
-"オプションを使用してシナリオを並列に実行できます. デフォルトは 1（シリアルで実行）です。"
-
-#: ../../user/advanced-usage.rst:113 e9f67b39b1774c23a8aa5f8d5b6e3f7b
-msgid ""
-"By default, the running unit is each scenario: cases are run in order, "
-"not concurrently. When given ``ordered: false`` to a scenario, then the "
-"cases of the scenario will be run concurrently."
-msgstr ""
-"デフォルトでは, 実行単位はシナリオです. ケースは同時にではなく順番に実行されます. シナリオに ``ordered: false`` "
-"を指定すると, そのシナリオのケースが並列で実行されることを許容します."
-
 # fac7a37ce24c4bc8b0c7473fb795e3ab
-#: ../../user/advanced-usage.rst:129 c582c5c4863e4257b49c08b3cf600f22
+#: ../../user/advanced-usage.rst:109 c582c5c4863e4257b49c08b3cf600f22
 msgid "Ignore cases"
 msgstr "テストケースを無視する"
 
 # feeab0fd48a14b1ab5872d8bc8b430e7
-#: ../../user/advanced-usage.rst:130 35952b5680f747efa57c7e13e5d544f0
+#: ../../user/advanced-usage.rst:110 35952b5680f747efa57c7e13e5d544f0
 msgid ""
 "To skip some cases temporarily for some reason, add ``enabled: false`` to"
 " that cases."

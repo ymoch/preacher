@@ -103,28 +103,6 @@ in ``when`` properties.
 
 See :doc:`context` to find available context.
 
-.. _concurrent-running:
-
-Concurrent running
-------------------
-To reduce runtime, Preacher can run scenarios concurrently
-by ``-c`` or ``--concurrency`` options The default is ``1`` (run serially.)
-
-By default, the running unit is each scenario: cases are run in order, not concurrently.
-When given ``ordered: false`` to a scenario,
-then the cases of the scenario will be run concurrently.
-
-.. code-block:: yaml
-
-    label: Unordered cases.
-    ordered: false
-    cases:
-      # These cases can be run concurrently.
-      - label: Case 1
-        ...
-      - label: Case 2
-        ...
-
 .. _ignore-cases:
 
 Ignore cases

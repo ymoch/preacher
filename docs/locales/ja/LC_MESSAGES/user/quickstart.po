@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 17:13+0900\n"
+"POT-Creation-Date: 2020-07-26 17:18+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,20 +73,20 @@ msgstr ""
 
 #: ../../user/quickstart.rst:23 d944617c6d4946218c1c9adad86ace95
 msgid ""
-"`pyjq`_ requires ``autoconf``, ``automake``, ``libtool``, ``make`` and a "
-"C compiler such as ``gcc``."
+"`jq.py`_ requires ``autoconf``, ``automake``, ``libtool``, ``make`` and a"
+" C compiler such as ``gcc``."
 msgstr ""
-"`pyjq`_ をビルドするために, ``autoconf``, ``automake``, ``libtool``, ``make`` および "
-"``gcc`` に代表される C コンパイラが必要です."
+"`jq.py`_ をビルドするために, ``autoconf``, ``automake``, ``libtool``, ``make`` および"
+" ``gcc`` に代表される C コンパイラが必要です."
 
 #: ../../user/quickstart.rst:26 0f3d76dcbc58441f8b18befc55cf4f04
 msgid ""
 "Unfortunately, **Preacher doesn't support Windows now** due to the "
-"dependent package `pyjq`_, which `cannot be built on Windows "
-"<https://github.com/doloopwhile/pyjq/issues/9>`_."
+"dependent package `jq.py`_, which `cannot be built on Windows "
+"<https://github.com/mwilliamson/jq.py/issues/20>`_."
 msgstr ""
-"残念ながら, **Preacher は現在 Windows をサポートしていません**. 依存パッケージである `pyjq`_ が "
-"`Windows でビルドできない <https://github.com/doloopwhile/pyjq/issues/9>`_ ためです."
+"残念ながら, **Preacher は現在 Windows をサポートしていません**. 依存パッケージである `jq.py`_ が "
+"`Windows でビルドできない <https://github.com/mwilliamson/jq.py/issues/20>`_ ためです."
 
 # c43490a71a4d444d86ccb268334e9975
 #: ../../user/quickstart.rst:30 5a9f63bed5424dbab0fa3a3fa14fb899
@@ -238,3 +238,4 @@ msgstr ""
 #: ../../user/quickstart.rst:115 500cbbf73f5f40c2b47d0d84fac6f051
 msgid "It encountered an unexpected situation and failed."
 msgstr "想定外の状況に遭遇し, 失敗した"
+

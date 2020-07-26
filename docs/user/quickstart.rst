@@ -20,12 +20,12 @@ If you feel annoyed, see :ref:`docker-run`.
   or installing Python by source code build.
 - On Linux, ``libxml2`` and ``libxslt`` are required by `lxml`_,
   as `official documentation <https://lxml.de/installation.html#requirements>`_ says.
-- `pyjq`_ requires ``autoconf``, ``automake``, ``libtool``, ``make``
+- `jq.py`_ requires ``autoconf``, ``automake``, ``libtool``, ``make``
   and a C compiler such as ``gcc``.
 
 Unfortunately, **Preacher doesn't support Windows now**
-due to the dependent package `pyjq`_,
-which `cannot be built on Windows <https://github.com/doloopwhile/pyjq/issues/9>`_.
+due to the dependent package `jq.py`_,
+which `cannot be built on Windows <https://github.com/mwilliamson/jq.py/issues/20>`_.
 
 If you have satisfied environment,
 let's install Preacher and see its version.
@@ -120,5 +120,5 @@ Each verification result has a "Verification Status."
 .. _Docker Hub: https://hub.docker.com/r/ymoch/preacher
 .. _pip: https://pip.pypa.io/en/stable/
 .. _lxml: https://lxml.de/
-.. _pyjq: https://github.com/doloopwhile/pyjq
+.. _jq.py: https://github.com/mwilliamson/jq.py
 .. _C extensions: https://docs.python.org/ja/3/extending/extending.html

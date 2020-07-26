@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 17:10+0900\n"
+"POT-Creation-Date: 2020-07-26 17:19+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,9 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: ../../user/option.rst:2 8d7119f617b6460aadf4581420932c77
-msgid "Options"
-msgstr "オプション"
+#: ../../user/option.rst:2 bd61b4bade38490f85b2c1b01be77827
+msgid "Frequently Used Options"
+msgstr "よく使われるオプション"
 
 #: ../../user/option.rst:5 895174d029104d8c992c0e0307853d09
 msgid "Rich HTML Report"
@@ -45,7 +45,6 @@ msgstr ""
 "レポートディレクトリは自動的に作られます. ``path/to/report`` をレポートディレクトリとして指定すると, "
 "``path/to/report/index.html`` がエントリーポイントになります. Preacher を CI "
 "で実行しているのであれば, レポートをビルド成果物として保存するとよいでしょう."
-
 
 #: ../../user/option.rst:17 baf85d978e7345dbb67327897611a5da
 msgid "Control Console Outputs"
@@ -119,4 +118,3 @@ msgid ""
 msgstr ""
 "デフォルトでは, 実行単位はシナリオです. ケースは同時にではなく順番に実行されます. シナリオに ``ordered: false`` "
 "を指定すると, そのシナリオのケースが並列で実行されることを許容します."
-

@@ -1,5 +1,5 @@
-Options
-=======
+Frequently Used Options
+=======================
 
 Rich HTML Report
 ----------------
