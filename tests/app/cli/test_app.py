@@ -52,11 +52,12 @@ def executor_factory(executor):
 
 def test_normal(mocker, base_dir, executor, executor_factory):
     logger = NonCallableMock(logging.Logger)
-    logger_ctor = mocker.patch(f'{PKG}.create_system_logger')
-    logger_ctor.return_value = logger
+    logger_ctor = mocker.patch(f'{PKG}.create_system_logger', return_value=logger)
 
     plugin_manager_ctor = mocker.patch(f'{PKG}.get_plugin_manager')
     plugin_manager_ctor.return_value = sentinel.plugin_manager
+
+    load_plugins = mocker.patch(f'{PKG}.load_plugins')
 
     compiler = NonCallableMock(ScenarioCompiler)
     compiler.compile_flattening.return_value = iter([sentinel.scenario])
@@ -94,6 +95,7 @@ def test_normal(mocker, base_dir, executor, executor_factory):
         timeout=sentinel.timeout,
         concurrency=sentinel.concurrency,
         executor_factory=executor_factory,
+        plugins=sentinel.plugins,
         verbosity=sentinel.verbosity
     )
     assert exit_code == 0
@@ -101,6 +103,8 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     logger_ctor.assert_called_once_with(sentinel.verbosity)
 
     plugin_manager_ctor.assert_called_once_with()
+    load_plugins.assert_called_once_with(sentinel.plugin_manager, sentinel.plugins, logger)
+
     compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
     compiler.compile_flattening.assert_called_once_with(
         sentinel.objs,
@@ -120,7 +124,14 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     executor.__exit__.assert_called_once()
 
 
-def test_not_succeeds(mocker, executor_factory, executor):
+def test_plugin_loading_fails(mocker):
+    mocker.patch(f'{PKG}.load_plugins', side_effect=RuntimeError('msg'))
+
+    exit_code = app()
+    assert exit_code == 3
+
+
+def test_scenario_running_not_succeeds(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.return_value = Status.UNSTABLE
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
@@ -131,7 +142,7 @@ def test_not_succeeds(mocker, executor_factory, executor):
     executor.__exit__.assert_called_once()
 
 
-def test_unexpected_error_occurs(mocker, executor_factory, executor):
+def test_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
