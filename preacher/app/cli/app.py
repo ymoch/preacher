@@ -10,6 +10,7 @@ from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
+from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .logging import ColoredFormatter
 
@@ -67,8 +68,10 @@ def app(
         verbosity
     )
 
+    plugin_manager = get_plugin_manager()
+    compiler = create_scenario_compiler(plugin_manager=plugin_manager)
+
     objs = load_objs(paths, logger)
-    compiler = create_scenario_compiler()
     scenarios = chain.from_iterable(
         compiler.compile_flattening(obj, arguments=arguments)
         for obj in objs
