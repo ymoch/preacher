@@ -53,7 +53,5 @@ msgid "The User Guide"
 msgstr "ユーザーガイド"
 
 #: ../../index.rst:42 e0af3ba058284354be1c9e96fd29b111
-#, fuzzy
 msgid "The Reference Guide"
-msgstr "ユーザーガイド"
-
+msgstr "リファレンスガイド"
