@@ -33,8 +33,6 @@ The User Guide
     user/option
     user/advanced-usage
     user/cli
-    user/scenario-structure
-    user/extraction
 
 The Reference Guide
 -------------------
@@ -42,6 +40,8 @@ The Reference Guide
 .. toctree::
     :maxdepth: 2
 
+    reference/scenario-structure
+    reference/extraction
     reference/matcher
     reference/context
 
