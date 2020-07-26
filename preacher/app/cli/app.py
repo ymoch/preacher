@@ -72,17 +72,10 @@ def app(
     compiler = create_scenario_compiler(plugin_manager=plugin_manager)
 
     objs = load_objs(paths, logger)
-    scenarios = chain.from_iterable(
-        compiler.compile_flattening(obj, arguments=arguments)
-        for obj in objs
-    )
+    scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
+    scenarios = chain.from_iterable(scenario_groups)
 
-    runner = ScenarioRunner(
-        base_url=base_url,
-        retry=retry,
-        delay=delay,
-        timeout=timeout
-    )
+    runner = ScenarioRunner(base_url=base_url, retry=retry, delay=delay, timeout=timeout)
     listener = create_listener(level, report_dir)
     try:
         logger.info("Start running scenarios.")
