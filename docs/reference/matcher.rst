@@ -91,3 +91,29 @@ Logical Matchers
     - Matches a value that matches any of the given matchers.
 - anything
     - Matches anything.
+
+Custom matchers
+---------------
+You can define custom matchers and load as a plugins.
+
+First, implement a custom matcher plugin like below.
+
+.. literalinclude:: /../examples/plugin/custom_matcher.py
+
+And then, run Preacher with loading that plugin.
+
+.. code-block:: sh
+
+    $ preacher-cli -p path/to/plugin.py with-custom-matchers.yml
+
+.. code-block:: yaml
+
+    # with-custom-matchers.yml
+
+    label: Custom matchers example
+    response:
+      body:
+        describe: .six
+        should:
+          - be_even
+          - be_multiple_of: 3

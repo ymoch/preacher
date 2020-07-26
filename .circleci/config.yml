@@ -113,7 +113,7 @@ commands:
             # Run plugin scenarios.
             poetry run preacher-cli \
               -uhttp://localhost:5000 \
-              -pexamples/plugin/plugin_example.py \
+              -pexamples/plugin/custom_matcher.py \
               ./examples/scenario/plugin.yml
 
             # Run plugin scenarios with installation.

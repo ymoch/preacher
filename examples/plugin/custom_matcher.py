@@ -1,6 +1,5 @@
 """
-Custom matchers example.
-- according to: https://pyhamcrest.readthedocs.io/en/stable/custom_matchers/
+A custom matcher plugin example.
 """
 
 from hamcrest.core.base_matcher import BaseMatcher
@@ -11,8 +10,14 @@ from preacher.plugin import hookimpl
 
 
 class IsEven(BaseMatcher[int]):
+    """
+    A custom matcher example
+    according to: https://pyhamcrest.readthedocs.io/en/stable/custom_matchers/
+    """
 
     def _matches(self, item: int) -> bool:
+        if not isinstance(item, int):
+            return False
         return item % 2 == 0
 
     def describe_to(self, description: Description) -> None:
@@ -20,11 +25,16 @@ class IsEven(BaseMatcher[int]):
 
 
 class IsMultipleOf(BaseMatcher[int]):
+    """
+    Another custom matcher example, which take a value.
+    """
 
     def __init__(self, base: int):
         self.base = base
 
     def _matches(self, item: int) -> bool:
+        if not isinstance(item, int):
+            return False
         return item % self.base == 0
 
     def describe_to(self, description: Description) -> None:
@@ -34,7 +44,9 @@ class IsMultipleOf(BaseMatcher[int]):
 @hookimpl
 def preacher_add_matchers(compiler: MatcherFactoryCompiler) -> None:
     """
-    An example of adding matchers.
+    An example of hook to add matchers. This hook requires:
+    - decoration of `preacher.plugin.hookimpl`
+    - named `preacher_add_matchers`
     """
 
     # Add a static matcher.
