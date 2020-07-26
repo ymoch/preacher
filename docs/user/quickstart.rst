@@ -117,7 +117,7 @@ Each verification result has a "Verification Status."
 Test Report
 -----------
 Preacher can export a rich test report in HTML format,
-which visualize test results and provide actual responses.
+which visualize test results and provide actual requests and responses.
 
 When given a directory path in ``-R`` or ``--report`` option,
 Preacher exports the test report to that directory.
