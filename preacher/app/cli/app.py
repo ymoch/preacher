@@ -80,7 +80,7 @@ def app(
         load_plugins(plugin_manager, plugins, logger)
     except Exception as error:
         logger.fatal(error)
-        return 2
+        return 3
 
     compiler = create_scenario_compiler(plugin_manager=plugin_manager)
 
