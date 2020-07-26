@@ -1,22 +1,26 @@
+"""CLI Application implementation."""
+
 import sys
 from concurrent.futures import Executor, ProcessPoolExecutor
 from itertools import chain
 from logging import DEBUG, INFO, WARNING, ERROR
 from logging import Logger, StreamHandler, getLogger
-from typing import Sequence, Optional, Callable, Iterator
+from typing import Callable, Iterable, Iterator, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
+from preacher.core.logger import default_logger
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
-from preacher.presentation.listener import (
-    LoggingReportingListener,
-    HtmlReportingListener,
-)
+from preacher.plugin.loader import load_plugins
+from preacher.plugin.manager import get_plugin_manager
+from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .logging import ColoredFormatter
 
-REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
+__all__ = ['app', 'create_system_logger', 'create_listener', 'load_objs']
+
+_REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
 
 def app(
@@ -30,8 +34,16 @@ def app(
     timeout: Optional[float] = None,
     concurrency: int = 1,
     executor_factory: Callable[[int], Executor] = ProcessPoolExecutor,
+    plugins: Iterable[str] = (),
     verbosity: int = 0,
-):
+) -> int:
+    """
+    Preacher CLI application.
+
+    Returns:
+        the exit code.
+    """
+
     # Fill default.
     arguments = arguments or {}
 
@@ -63,31 +75,35 @@ def app(
         verbosity
     )
 
-    objs = load_objs(paths, logger)
-    compiler = create_scenario_compiler()
-    scenarios = chain.from_iterable(
-        compiler.compile_flattening(obj, arguments=arguments)
-        for obj in objs
-    )
+    logger.info('Load plugins.')
+    plugin_manager = get_plugin_manager()
+    try:
+        load_plugins(plugin_manager, plugins, logger)
+        compiler = create_scenario_compiler(plugin_manager=plugin_manager)
+    except Exception as error:
+        logger.exception(error)
+        return 3
 
-    runner = ScenarioRunner(
-        base_url=base_url,
-        retry=retry,
-        delay=delay,
-        timeout=timeout
-    )
+    objs = load_objs(paths, logger)
+    scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
+    scenarios = chain.from_iterable(scenario_groups)
+
+    runner = ScenarioRunner(base_url=base_url, retry=retry, delay=delay, timeout=timeout)
     listener = create_listener(level, report_dir)
     try:
-        logger.info("Start running scenarios.")
+        logger.info('Start running scenarios.')
         with executor_factory(concurrency) as executor:
             status = runner.run(executor, scenarios, listener=listener)
     except Exception as error:
         logger.exception(error)
-        sys.exit(3)
-    logger.info("End running scenarios.")
+        return 3
+    finally:
+        logger.info('End running scenarios.')
 
     if not status.is_succeeded:
-        sys.exit(1)
+        return 1
+
+    return 0
 
 
 def create_system_logger(verbosity: int) -> Logger:
@@ -109,11 +125,16 @@ def _verbosity_to_logging_level(verbosity: int) -> int:
     return WARNING
 
 
-def load_objs(paths: Sequence[str], logger: Logger) -> Iterator[object]:
+def load_objs(paths: Sequence[str], logger: Logger = default_logger) -> Iterator[object]:
     if not paths:
-        logger.info('Load scenarios from stdin.')
+        logger.info('No scenario file is given. Load scenarios from stdin.')
         return load_all(sys.stdin)
-    return chain.from_iterable(load_all_from_path(path) for path in paths)
+    return chain.from_iterable(load_all_from_path(_hook_loading(path, logger)) for path in paths)
+
+
+def _hook_loading(path: str, logger: Logger) -> str:
+    logger.debug('Load: %s', path)
+    return path
 
 
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
@@ -123,7 +144,7 @@ def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     handler = StreamHandler(sys.stdout)
     handler.setLevel(logging_level)
     handler.setFormatter(ColoredFormatter())
-    logger = getLogger(REPORT_LOGGER_NAME)
+    logger = getLogger(_REPORT_LOGGER_NAME)
     logger.setLevel(logging_level)
     logger.addHandler(handler)
     merging.append(LoggingReportingListener.from_logger(logger))

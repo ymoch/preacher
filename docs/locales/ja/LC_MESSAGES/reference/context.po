@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019, Yu Mochizuki
+# This file is distributed under the same license as the Preacher package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Preacher \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-26 17:51+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../reference/context.rst:2 4f9c3f4c0ee64c7491ec46265ca0ce6e
+msgid "Context"
+msgstr "コンテキスト"
+
+#: ../../reference/context.rst:5 53efa955b45a432e926df2c7c5204863
+msgid "Context for a Scenario"
+msgstr "Scenario のコンテキスト"
+
+# 15b212e51ebc4acc8a5b1bbc6e9d5219
+#: ../../reference/context.rst:6 7ebd91fc7a5c42feb08b0fd6ed96aa6c
+msgid "The definition of ``ScenarioContext`` Object"
+msgstr ""
+
+#: ../../reference/context.rst:10 ../../reference/context.rst:42
+#: d32f11e59b6046d58ec2f854d63090d6 fc885bbad36f4310a2f1d6a0e66e2ef6
+msgid "Key"
+msgstr "キー"
+
+#: ../../reference/context.rst:11 ../../reference/context.rst:43
+#: 1d9aa99373b14a1ab8bea65817160ec2 dadd73eecef84d6fbe6434df553b18b4
+msgid "Type"
+msgstr "型"
+
+#: ../../reference/context.rst:12 ../../reference/context.rst:44
+#: 333347d8f0684369bdcc5d3e328a5a5c 47a6fa3db0e1418986b87930cbe2a87e
+msgid "Description"
+msgstr "説明"
+
+#: ../../reference/context.rst:13 ../../reference/context.rst:45
+#: 9348d81c54584937bab9b0427e1cfd7f b178361179ba4718be7351faa10916e1
+msgid "Example"
+msgstr "例"
+
+# 33d1035bed9e4ce389a6e47b9bc746dc
+# c05cc3ef2a244083a31afff31bdc68ae
+#: ../../reference/context.rst:14 ../../reference/context.rst:46
+#: 7d2249afc3a7455cab39c85852dfd1a8 a4397e4f91694518a93783e1058d7bb8
+msgid "starts"
+msgstr ""
+
+# abf15ee9890548f0a751ba25c0d1355d
+# 9f4203da04c74fdb9b9eb60f18211145
+#: ../../reference/context.rst:15 ../../reference/context.rst:47
+#: 48e06c893a724363913ca1411b1b05e8 d0b31980ba124edb855a68336870d4f1
+msgid "DateTime"
+msgstr ""
+
+# 38ad1c5893344f02a17832d82411140c
+#: ../../reference/context.rst:16 79b178cce66c42f59b30a99ff05f84c2
+msgid "When the scenario starts"
+msgstr "シナリオの実行開始時刻"
+
+# df0edca693474f98b330aa0e9fef45d9
+# 0f38db0c37b84a28875c74a5bfe238c3
+#: ../../reference/context.rst:17 ../../reference/context.rst:49
+#: 686bb7245917465bb842683cac9e0a89 fd4b3c8271d64f97a43ce06695208942
+msgid "``2019-01-23T12:34:56.123456+00:00``"
+msgstr ""
+
+#: ../../reference/context.rst:18 ../../reference/context.rst:50
+#: 011a148f22aa42289569b5548edbc3dd 9fca6ffc8bd742a4bf85dddf65f83bdf
+msgid "base_url"
+msgstr ""
+
+#: ../../reference/context.rst:19 ../../reference/context.rst:51
+#: 748777163e014a45b968afa4ff95b311 a7f3e96443974318a486fa4e6b0cec0a
+msgid "String"
+msgstr ""
+
+#: ../../reference/context.rst:20 ../../reference/context.rst:52
+#: 5bf61174bb024b95ba93ad8dea6fd9f0 60e4a908e0e04aa7b757959c08d642a8
+msgid "The base URL"
+msgstr "リクエストの基準 URL"
+
+#: ../../reference/context.rst:21 ../../reference/context.rst:53
+#: 692f7acf895645ab9ba90f54fe88b523 6af3d1f0429844f6adc2b1ad4fa29ec4
+msgid "``http://localhost:5042/base``"
+msgstr ""
+
+#: ../../reference/context.rst:22 ../../reference/context.rst:54
+#: 76f850a2eb424b5caff8b5973c04c8e4 e30e610ccbf34ff7b1faf8db18607336
+msgid "retry"
+msgstr ""
+
+#: ../../reference/context.rst:23 ../../reference/context.rst:55
+#: 247ee5fdf8e742d9b7e12dc769c8086e d757de3cae194fe3b784afa76d460d9b
+msgid "Integer"
+msgstr ""
+
+#: ../../reference/context.rst:24 ../../reference/context.rst:56
+#: 93912ef1e4924e99b96b2776b3cc4265 b08d270249d643c98b5c0ddb3bac82f0
+msgid "The max retry count"
+msgstr "最大リトライ数"
+
+#: ../../reference/context.rst:25 ../../reference/context.rst:57
+#: 61857805c4a04786933d5850414e67e0 b415bf9e02384e50a96fdb92e41e1c5b
+msgid "0"
+msgstr ""
+
+#: ../../reference/context.rst:26 ../../reference/context.rst:58
+#: 80ca0d9c1a404151b831f33ca7751600 c06fbbdeec354882adb8174cad478ab6
+msgid "delay"
+msgstr ""
+
+#: ../../reference/context.rst:27 ../../reference/context.rst:59
+#: 355b86300fad4910addc7b10337a1438 aaa88155a5a449da83713b475fb1a921
+msgid "Float"
+msgstr ""
+
+#: ../../reference/context.rst:28 ../../reference/context.rst:60
+#: a76fa74e642743af902ef22f9f72c910 ec82e2f4b6424f798b69b7d2f9ea7a77
+msgid "The delay between attempts in seconds"
+msgstr "試行間の待ち時間 (秒)"
+
+#: ../../reference/context.rst:29 ../../reference/context.rst:61
+#: 197621d304b848b5beefaf75608e0f66 dfbe07ce61294fc9a967d0c7bb7547f0
+msgid "0.1"
+msgstr ""
+
+#: ../../reference/context.rst:30 ../../reference/context.rst:62
+#: 8910b57f39f34a92821fd5bc102980ed 92242724ab62425680fefca22d0a9125
+msgid "timeout"
+msgstr ""
+
+#: ../../reference/context.rst:31 ../../reference/context.rst:63
+#: b0435103d86b4056a35163ed4d5bfd8a e1b8c2d6812240d6a735fcc674410a9b
+msgid "Optional[Float]"
+msgstr ""
+
+#: ../../reference/context.rst:32 ../../reference/context.rst:64
+#: 60d682a350394b7b84bb0f0867440d54 81ea3958e4ac44c8a3b0c4be7164a451
+msgid "The request timeout in seconds"
+msgstr "リクエストタイムアウト時間 (秒)"
+
+#: ../../reference/context.rst:33 ../../reference/context.rst:65
+#: af1b9725111a49b2a3922c4ea64924df c65789a8b8fa4eb08dc3d90532924e50
+msgid "``null``, 1.0"
+msgstr ""
+
+#: ../../reference/context.rst:37 0271d3501b214599a933ae12bb4a7a83
+msgid "Context for a Case"
+msgstr "Case のコンテキスト"
+
+#: ../../reference/context.rst:38 df61f366da0d4ca09910707652941f51
+msgid "The definition of ``CaseContext`` Object"
+msgstr ""
+
+# 38ad1c5893344f02a17832d82411140c
+#: ../../reference/context.rst:48 2c3f1b462d9a4e678aad3b054b8c2fdb
+msgid "When the case starts"
+msgstr "ケースの実行開始時刻"

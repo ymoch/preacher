@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-16 00:43+0900\n"
+"POT-Creation-Date: 2020-07-26 17:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,25 +16,25 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 # a66396d358974012976c700f464d83cb
-#: ../../user/advanced-usage.rst:2 3407d0183a6e466a90501eb3a04d2bd9
+#: ../../user/advanced-usage.rst:2 67fab486f2ef408c9acc084ca2d5a0f7
 msgid "Advanced Usage"
 msgstr "発展的な使い方"
 
-#: ../../user/advanced-usage.rst:7 84425cc881674ed497238b354dcbb66a
+#: ../../user/advanced-usage.rst:7 e1a5a043d7574683b3647954dcf9532d
 msgid "Default Test"
 msgstr "デフォルトテスト"
 
-#: ../../user/advanced-usage.rst:8 96aa1563447041b98b36cb2d4d4d8004
+#: ../../user/advanced-usage.rst:8 6e4a8d94e3cf4b828e15feecf8cc8634
 msgid ""
 "Default test make it possible to run similar tests, which fills the "
 "missing values with default values."
 msgstr "デフォルトテストを用いると, 値がないところをデフォルト値で穴埋めすることによって, 似たテストを実行することができます."
 
-#: ../../user/advanced-usage.rst:53 ea88258490104e98a96dd60a9daff8d9
+#: ../../user/advanced-usage.rst:53 2c1fc382052843909b0a22deedec789c
 msgid "Parameterized Test"
 msgstr "パラメータ化されたテスト"
 
-#: ../../user/advanced-usage.rst:54 884adea3f4ce43a9a4b9f07a5e83ebce
+#: ../../user/advanced-usage.rst:54 f242f62cde8d45ed8980cbc3a1843ada
 msgid ""
 "Parameterized tests make it possible to run a test multiple times with "
 "different arguments, which can reduce test scenarios description and make"
@@ -43,25 +43,25 @@ msgstr ""
 "パラメータ化されたテストを用いると, あるテストを別の引数で複数回実行することができます. これによってテストの記述を少なくし, "
 "よりシンプルで宣言的にできることがあります."
 
-#: ../../user/advanced-usage.rst:57 c89f6e27d27242e39dd439cdcfc20d0f
+#: ../../user/advanced-usage.rst:57 9f1e613915dd4214b12e2e695d4ff203
 msgid "To make tests parameterized:"
 msgstr "テストをパラメータ化するには:"
 
-#: ../../user/advanced-usage.rst:59 b82efdb044b747c390a56588c67edcdc
+#: ../../user/advanced-usage.rst:59 fff546fc5f83424e8faee71fdd3eb23b
 msgid "Define ``parameters`` field."
 msgstr "``parameters`` フィールドを定義します."
 
-#: ../../user/advanced-usage.rst:60 46a5987778df4f7e94c968f69e05b542
+#: ../../user/advanced-usage.rst:60 294ff4b3e70f4eddacbf7a217cc4f688
 msgid "Set ``!argument`` tag and its key on parameterized fields."
 msgstr "``!argument`` タグとパラメータのキーを, パラメータ化されたフィールドに設定します."
 
 # c7946552237c437c9c905d85f53dbe4e
-#: ../../user/advanced-usage.rst:86 5480f6e946664065b7507d8ff4907cc6
+#: ../../user/advanced-usage.rst:86 68c1ff3e232d40a8a2ade86243313ff7
 msgid "Conditional Scenario"
 msgstr "条件に応じて実行するシナリオ"
 
 # 993027b0dbef4117a9af5bfb73df3e47
-#: ../../user/advanced-usage.rst:87 0418baab2b294630ace95a38b40031c6
+#: ../../user/advanced-usage.rst:87 0f4966a5b2c9424982c3fdf5f703583e
 msgid ""
 "Using ``when`` properties, you can run scenarios conditionally. Scenarios"
 " are run only when the *context* satisfied the descriptions in ``when`` "
@@ -70,98 +70,19 @@ msgstr ""
 "``when`` プロパティを用いることで, 条件を満たしたときだけシナリオを実行することができます.  シナリオは *コンテキスト* が "
 "``when`` プロパティの記述を満たしたときだけ実行されます."
 
-#: ../../user/advanced-usage.rst:104 71d87642e8dd4b29ae250718a4d618d1
-msgid "See :doc:`context` to find available context."
-msgstr ""
-
-#: ../../user/advanced-usage.rst:109 b5edd62ad0524249af4a4c2812487577
-msgid "Concurrent running"
-msgstr "並列実行"
-
-#: ../../user/advanced-usage.rst:110 e340ed4b7e8c4eb9a02eec48b5110189
-msgid ""
-"To reduce runtime, Preacher can run scenarios concurrently by ``-c`` or "
-"``--concurrency`` options The default is ``1`` (run serially.)"
-msgstr ""
-"実行時間を短縮するため, Preacher は ``-c`` ないし ``--concurrency`` "
-"オプションを使用してシナリオを並列に実行できます. デフォルトは 1（シリアルで実行）です。"
-
-#: ../../user/advanced-usage.rst:113 ed6a3c3f7692403c856c38e0f9fc5a22
-msgid ""
-"By default, the running unit is each scenario: cases are run in order, "
-"not concurrently. When given ``ordered: false`` to a scenario, then the "
-"cases of the scenario will be run concurrently."
-msgstr ""
-"デフォルトでは, 実行単位はシナリオです. ケースは同時にではなく順番に実行されます. シナリオに ``ordered: false`` "
-"を指定すると, そのシナリオのケースが並列で実行されることを許容します."
-
-# dc8d1a6a728441d9b4fb1b375063028b
-#: ../../user/advanced-usage.rst:129 18fcdcc3be6743f5832e137bc07feadf
-msgid "Allowing Random Errors"
-msgstr "ランダムなエラーの許容"
-
-# a38e12d938e64ccb824b11f840094f98
-#: ../../user/advanced-usage.rst:130 52feed39a1034e2fa32325fd0512d052
-msgid ""
-"Web API cannot always responds due to communication errors and so on. To "
-"allow these errors to some extent, Preacher supports retrying. you can "
-"set the retry count by ``-r`` or ``--retry`` options. The default is "
-"``0`` (no retry.)"
-msgstr ""
-"Web API は通信エラーなどにより, 必ず応答するとは限りません. 多少応答しなくてもテストを成立させるように, リトライすることができます."
-" ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
-
-# 3b47ff03344b4e3dbf773d739ba1780f
-#: ../../user/advanced-usage.rst:135 857f8a78f168487bab28a20c2c7d15b5
-msgid ""
-"Preacher retries while not only request fails but also a validation "
-"doesn't succeed."
-msgstr "Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
-
-# 282fd99674fa427786a5bb87ff884896
-#: ../../user/advanced-usage.rst:137 a5225b654ef14225a3829756783924ce
-msgid ""
-"Extreme response delaying can affect the testing process. You can set the"
-" timeout by ``-t`` or ``--timeout`` options (in seconds). The default is "
-"none (no timeout.)"
-msgstr ""
-"極端なレスポンス遅延が, テストの進行に影響することがあります. ``-t`` もしくは ``--timeout`` "
-"オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
-
-# d27c47106c004884b2c888a9c88e313a
-#: ../../user/advanced-usage.rst:141 5a477ed87f2e48b99eea4822048d5d91
-msgid ""
-"Retrying should have intervals to avoid overloading. You can set the "
-"retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
-" is ``0.1``."
-msgstr ""
-"テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです. ``-d`` もしくは ``--delay`` "
-"オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
-
-# 889d898ebfbf4d7591b777aca497f7e4
-#: ../../user/advanced-usage.rst:147 b289126ae2f045b4adf042f8c5675321
-msgid "Control Outputs"
-msgstr "出力制御"
-
-# 38f65f102ccd4d08830df16b14174e1c
-#: ../../user/advanced-usage.rst:148 0d70e910287c4be4b0ac7ffb0fae6df4
-msgid ""
-"By default, not ``SKIPPED`` test results are shown. It is useful for "
-"debugging your test cases, but will be noisy when your test scenarios "
-"become huge. The output level control will help you find important "
-"errors."
-msgstr ""
-"デフォルトでは, ``SKIPPED`` ではないテスト結果が出力されます. これはテストケースのデバッグには便利ですが, "
-"テストが巨大になるにつれ煩わしくなります. 出力レベルの制御は重要なエラーを見つけるために有用です."
+#: ../../user/advanced-usage.rst:104 546ca3afeedb4daaab2c053ce9eea361
+msgid "See :doc:`../reference/context` to find available context."
+msgstr "利用可能なコンテキストは :doc:`../reference/context` を参照してください."
 
 # fac7a37ce24c4bc8b0c7473fb795e3ab
-#: ../../user/advanced-usage.rst:160 d53d478ecf0f47e19ad851d5f7d6bbd0
+#: ../../user/advanced-usage.rst:109 c582c5c4863e4257b49c08b3cf600f22
 msgid "Ignore cases"
 msgstr "テストケースを無視する"
 
 # feeab0fd48a14b1ab5872d8bc8b430e7
-#: ../../user/advanced-usage.rst:161 1ac04131e2694fdea43cdd3445dc9747
+#: ../../user/advanced-usage.rst:110 35952b5680f747efa57c7e13e5d544f0
 msgid ""
 "To skip some cases temporarily for some reason, add ``enabled: false`` to"
 " that cases."
 msgstr "何らかの理由で一時的にテストを実行したくない場合, そのケースに ``enabled: false`` を付与します."
+

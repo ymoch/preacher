@@ -1,30 +1,27 @@
 """Preacher CLI."""
 
+import sys
 from concurrent.futures import Executor
-from typing import Sequence, Callable, Optional
+from typing import Callable, Iterable, Optional, Sequence
 
-from click import (
-    IntRange,
-    FloatRange,
-    Path,
-    command,
-    argument,
-    option,
-    help_option,
-    version_option
-)
+from click import FloatRange
+from click import IntRange
+from click import Path
+from click import argument
+from click import command
+from click import help_option
+from click import option
+from click import version_option
 
 from preacher import __version__ as _version
 from preacher.compilation.argument import Arguments
 from preacher.core.status import Status
 from .app import app
-from .option import (
-    ArgumentType,
-    LevelType,
-    ExecutorFactoryType,
-    pairs_callback,
-    positive_float_callback,
-)
+from .option import ArgumentType
+from .option import ExecutorFactoryType
+from .option import LevelType
+from .option import pairs_callback
+from .option import positive_float_callback
 
 _ENV_PREFIX = 'PREACHER_CLI_'
 _ENV_BASE_URL = f'{_ENV_PREFIX}BASE_URL'
@@ -36,6 +33,7 @@ _ENV_TIMEOUT = f'{_ENV_PREFIX}TIMEOUT'
 _ENV_CONCURRENCY = f'{_ENV_PREFIX}CONCURRENCY'
 _ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
 _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
+_ENV_PLUGIN = f'{_ENV_PREFIX}PLUGIN'
 
 
 @command()
@@ -130,6 +128,16 @@ _ENV_REPORT = f'{_ENV_PREFIX}REPORT'
     default='process',
 )
 @option(
+    'plugins',
+    '-p',
+    '--plugin',
+    help='add a plugin',
+    metavar='path',
+    type=Path(exists=True),
+    multiple=True,
+    envvar=_ENV_PLUGIN,
+)
+@option(
     'verbosity',
     '-V',
     '--verbose',
@@ -149,10 +157,11 @@ def main(
     timeout: Optional[float],
     concurrency: int,
     executor_factory: Callable[[int], Executor],
+    plugins: Iterable[str],
     verbosity: int,
 ) -> None:
     """Preacher CLI: Web API Verification without Coding"""
-    return app(
+    exit_code = app(
         paths=paths,
         base_url=base_url,
         arguments=arguments,
@@ -163,5 +172,7 @@ def main(
         timeout=timeout,
         concurrency=concurrency,
         executor_factory=executor_factory,
+        plugins=plugins,
         verbosity=verbosity,
     )
+    sys.exit(exit_code)

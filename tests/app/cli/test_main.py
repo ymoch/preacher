@@ -19,6 +19,9 @@ def base_dir():
             f.write('foo')
         with open(os.path.join(path, 'bar.yml'), 'w') as f:
             f.write('bar')
+        with open(os.path.join(path, 'plugin.py'), 'w') as f:
+            f.write('bar')
+        os.makedirs(os.path.join(path, 'dir'))
         yield path
 
 
@@ -30,7 +33,6 @@ def base_dir():
 ])
 def test_show_and_exit(args):
     result = CliRunner().invoke(main, args)
-    print(result)
     assert result.exit_code == 0
 
 
@@ -51,8 +53,11 @@ def test_show_and_exit(args):
     ['--concurrency', '0'],
     ['-C', 'foo'],
     ['--concurrent-executor', 'foo'],
+    ['-p', 'invalid'],
+    ['--plugin', 'invalid'],
+    ['dir'],
 ])
-def test_given_invalid_options(args):
+def test_given_invalid_options(args, base_dir):
     runner = CliRunner()
     result = runner.invoke(main, args)
     assert result.exit_code == 2
@@ -69,10 +74,11 @@ def test_given_invalid_options(args):
         'PREACHER_CLI_TIMEOUT': '',
         'PREACHER_CLI_CONCURRENCY': '',
         'PREACHER_CLI_CONCURRENT_EXECUTOR': '',
+        'PREACHER_CLI_PLUGIN': '',
     },
 ])
 def test_default(mocker, env):
-    app = mocker.patch(f'{PKG}.app')
+    app = mocker.patch(f'{PKG}.app', return_value=0)
 
     result = CliRunner().invoke(main, env=env)
     assert result.exit_code == 0
@@ -87,12 +93,13 @@ def test_default(mocker, env):
         timeout=None,
         concurrency=1,
         executor_factory=ProcessPoolExecutor,
+        plugins=(),
         verbosity=0,
     )
 
 
 def test_arguments(mocker, base_dir):
-    app = mocker.patch(f'{PKG}.app')
+    app = mocker.patch(f'{PKG}.app', return_value=0)
 
     args = (
         '--base-url', 'https://your-domain.com/api',
@@ -107,6 +114,8 @@ def test_arguments(mocker, base_dir):
         '--timeout', '3.5',
         '--concurrency', '4',
         '--executor', 'thread',
+        '-p', os.path.join(base_dir, 'plugin.py'),
+        '--plugin', os.path.join(base_dir, 'dir'),
         '--verbose',
         os.path.join(base_dir, 'foo.yml'),
         os.path.join(base_dir, 'bar.yml'),
@@ -120,21 +129,14 @@ def test_arguments(mocker, base_dir):
         'PREACHER_CLI_TIMEOUT': 'foo',
         'PREACHER_CLI_CONCURRENCY': 'foo',
         'PREACHER_CLI_CONCURRENT_EXECUTOR': 'foo',
+        'PREACHER_CLI_PLUGIN': 'foo',
     }
     result = CliRunner().invoke(main, args=args, env=env)
     assert result.exit_code == 0
     app.assert_called_once_with(
-        paths=(
-            os.path.join(base_dir, 'foo.yml'),
-            os.path.join(base_dir, 'bar.yml'),
-        ),
+        paths=(os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml')),
         base_url='https://your-domain.com/api',
-        arguments={
-            'foo': None,
-            'bar': 1,
-            'baz': 1.2,
-            'spam': ['ham', 'eggs'],
-        },
+        arguments={'foo': None, 'bar': 1, 'baz': 1.2, 'spam': ['ham', 'eggs']},
         level=Status.UNSTABLE,
         report_dir=os.path.join(base_dir, 'report'),
         retry=5,
@@ -142,23 +144,28 @@ def test_arguments(mocker, base_dir):
         timeout=3.5,
         concurrency=4,
         executor_factory=ThreadPoolExecutor,
+        plugins=(os.path.join(base_dir, 'plugin.py'), os.path.join(base_dir, 'dir')),
         verbosity=1,
     )
 
 
-def test_environ(mocker):
-    app = mocker.patch(f'{PKG}.app')
+def test_environ(mocker, base_dir):
+    app = mocker.patch(f'{PKG}.app', return_value=0)
 
     env = {
         'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
         'PREACHER_CLI_ARGUMENT': 'foo=1 bar=" baz " spam="ham\'""eggs"',
         'PREACHER_CLI_LEVEL': 'failure',
+        'PREACHER_CLI_REPORT': 'reports/',
         'PREACHER_CLI_RETRY': '10',
         'PREACHER_CLI_DELAY': '1.2',
         'PREACHER_CLI_TIMEOUT': '3.4',
         'PREACHER_CLI_CONCURRENCY': '5',
         'PREACHER_CLI_CONCURRENT_EXECUTOR': 'thread',
-        'PREACHER_CLI_REPORT': 'reports/',
+        'PREACHER_CLI_PLUGIN': ':'.join([
+            os.path.join(base_dir, 'plugin.py'),
+            os.path.join(base_dir, 'dir'),
+        ])
     }
     result = CliRunner().invoke(main, env=env)
     assert result.exit_code == 0
@@ -173,5 +180,14 @@ def test_environ(mocker):
         timeout=3.4,
         concurrency=5,
         executor_factory=ThreadPoolExecutor,
+        plugins=(os.path.join(base_dir, 'plugin.py'), os.path.join(base_dir, 'dir')),
         verbosity=0,
     )
+
+
+@mark.parametrize('exit_code', list(range(-1, 5)))
+def test_exit_code(mocker, exit_code):
+    mocker.patch(f'{PKG}.app', return_value=exit_code)
+
+    result = CliRunner().invoke(main)
+    assert result.exit_code == exit_code

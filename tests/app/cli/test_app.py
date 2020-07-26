@@ -12,13 +12,10 @@ from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
 
 from pytest import fixture, raises, mark
 
-from preacher.app.cli.app import REPORT_LOGGER_NAME
-from preacher.app.cli.app import (
-    app,
-    create_system_logger,
-    load_objs,
-    create_listener,
-)
+from preacher.app.cli.app import app
+from preacher.app.cli.app import create_listener
+from preacher.app.cli.app import create_system_logger
+from preacher.app.cli.app import load_objs
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -50,21 +47,25 @@ def executor_factory(executor):
     return Mock(return_value=executor)
 
 
-def test_normal(mocker, base_dir, executor, executor_factory):
+def test_app_normal(mocker, base_dir, executor, executor_factory):
     logger = NonCallableMock(logging.Logger)
-    logger_ctor = mocker.patch(f'{PKG}.create_system_logger')
-    logger_ctor.return_value = logger
+    logger_ctor = mocker.patch(f'{PKG}.create_system_logger', return_value=logger)
+
+    plugin_manager_ctor = mocker.patch(f'{PKG}.get_plugin_manager')
+    plugin_manager_ctor.return_value = sentinel.plugin_manager
+
+    load_plugins_func = mocker.patch(f'{PKG}.load_plugins')
+
+    compiler = NonCallableMock(ScenarioCompiler)
+    compiler.compile_flattening.return_value = iter([sentinel.scenario])
+    compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
+    compiler_ctor.return_value = compiler
 
     objs_ctor = mocker.patch(f'{PKG}.load_objs')
     objs_ctor.return_value = iter([sentinel.objs])
 
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
-
-    compiler = NonCallableMock(ScenarioCompiler)
-    compiler.compile_flattening.return_value = iter([sentinel.scenario])
-    compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler')
-    compiler_ctor.return_value = compiler
 
     def _run(
         executor_: Executor,
@@ -80,7 +81,7 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     runner.run.side_effect = _run
     runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    app(
+    exit_code = app(
         paths=sentinel.paths,
         base_url=sentinel.base_url,
         arguments=sentinel.args,
@@ -91,15 +92,23 @@ def test_normal(mocker, base_dir, executor, executor_factory):
         timeout=sentinel.timeout,
         concurrency=sentinel.concurrency,
         executor_factory=executor_factory,
+        plugins=sentinel.plugins,
         verbosity=sentinel.verbosity
     )
+    assert exit_code == 0
 
     logger_ctor.assert_called_once_with(sentinel.verbosity)
-    objs_ctor.assert_called_once_with(sentinel.paths, logger)
+
+    plugin_manager_ctor.assert_called_once_with()
+    load_plugins_func.assert_called_once_with(sentinel.plugin_manager, sentinel.plugins, logger)
+
+    compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
     compiler.compile_flattening.assert_called_once_with(
         sentinel.objs,
         arguments=sentinel.args,
     )
+
+    objs_ctor.assert_called_once_with(sentinel.paths, logger)
     runner_ctor.assert_called_once_with(
         base_url=sentinel.base_url,
         retry=sentinel.retry,
@@ -112,26 +121,34 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     executor.__exit__.assert_called_once()
 
 
-def test_not_succeeds(mocker, executor_factory, executor):
+def test_app_plugin_loading_fails(mocker):
+    mocker.patch(f'{PKG}.load_plugins', side_effect=RuntimeError('msg'))
+    assert app() == 3
+
+
+def test_app_compiler_creation_fails(mocker):
+    mocker.patch(f'{PKG}.create_scenario_compiler', side_effect=RuntimeError('msg'))
+    assert app() == 3
+
+
+def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.return_value = Status.UNSTABLE
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    with raises(SystemExit) as error_info:
-        app(executor_factory=executor_factory)
-    assert error_info.value.code == 1
+    exit_code = app(executor_factory=executor_factory)
+    assert exit_code == 1
 
     executor.__exit__.assert_called_once()
 
 
-def test_unexpected_error_occurs(mocker, executor_factory, executor):
+def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioRunner)
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    with raises(SystemExit) as error_info:
-        app(executor_factory=executor_factory)
-    assert error_info.value.code == 3
+    exit_code = app(executor_factory=executor_factory)
+    assert exit_code == 3
 
     executor.__exit__.assert_called_once()
 
@@ -150,8 +167,8 @@ def test_create_system_logger(verbosity, expected_level):
 def test_load_objs_empty(mocker):
     mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
 
-    logger = NonCallableMock(logging.Logger)
-    objs = load_objs((), logger)
+    paths = ()
+    objs = load_objs(paths)
 
     assert next(objs) == 'foo'
     assert next(objs) == 'bar'
@@ -160,11 +177,8 @@ def test_load_objs_empty(mocker):
 
 
 def test_load_objs_filled(base_dir):
-    logger = NonCallableMock(logging.Logger)
-    objs = load_objs(
-        (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml')),
-        logger,
-    )
+    paths = (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml'))
+    objs = load_objs(paths)
 
     assert next(objs) == 'foo'
     assert next(objs) == 'bar'
@@ -181,8 +195,8 @@ def test_load_objs_filled(base_dir):
 def test_create_listener_logging_level(level, expected_logging_level):
     create_listener(level=level, report_dir=None)
 
-    logging_level = logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
-    assert logging_level == expected_logging_level
+    logger = logging.getLogger('preacher.cli.report.logging')
+    assert logger.getEffectiveLevel() == expected_logging_level
 
 
 def test_create_listener_report_dir(base_dir):

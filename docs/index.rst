@@ -26,17 +26,24 @@ The User Guide
 --------------
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   user/intro
-   user/quickstart
-   user/advanced-usage
-   user/cli
-   user/scenario-structure
-   user/extraction
-   user/matcher
-   user/context
+    user/intro
+    user/quickstart
+    user/option
+    user/advanced-usage
 
+The Reference Guide
+-------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    reference/scenario-structure
+    reference/extraction
+    reference/matcher
+    reference/context
+    reference/cli
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/

@@ -5,24 +5,16 @@ from pytest import fixture, mark, raises
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.verification.description import DescriptionCompiler
 from preacher.compilation.verification.predicate import PredicateCompiler
-from preacher.compilation.verification.response import (
-    ResponseDescriptionCompiler,
-)
-from preacher.compilation.verification.response_body import (
-    ResponseBodyDescriptionCompiled,
-    ResponseBodyDescriptionCompiler,
-)
+from preacher.compilation.verification.response import ResponseDescriptionCompiler
+from preacher.compilation.verification.response_body import ResponseBodyDescriptionCompiled
+from preacher.compilation.verification.response_body import ResponseBodyDescriptionCompiler
 
 PKG = 'preacher.compilation.verification.response'
 
 
 @fixture
 def compiler(predicate, description, body) -> ResponseDescriptionCompiler:
-    return ResponseDescriptionCompiler(
-        predicate=predicate,
-        description=description,
-        body=body,
-    )
+    return ResponseDescriptionCompiler(predicate=predicate, description=description, body=body)
 
 
 @fixture
@@ -118,13 +110,7 @@ def initial_default():
     return initial_default
 
 
-def test_given_hollow_default(
-    mocker,
-    predicate,
-    description,
-    body,
-    initial_default,
-):
+def test_given_hollow_default(mocker, predicate, description, body, initial_default):
     compiler_ctor = mocker.patch(f'{PKG}.ResponseDescriptionCompiler')
     compiler_ctor.return_value = sentinel.compiler_of_default
 
