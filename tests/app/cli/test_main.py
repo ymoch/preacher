@@ -86,6 +86,7 @@ def test_default(mocker, env):
         timeout=None,
         concurrency=1,
         executor_factory=ProcessPoolExecutor,
+        plugins=(),
         verbosity=0,
     )
 
@@ -141,6 +142,7 @@ def test_arguments(mocker, base_dir):
         timeout=3.5,
         concurrency=4,
         executor_factory=ThreadPoolExecutor,
+        plugins=(),
         verbosity=1,
     )
 
@@ -172,6 +174,7 @@ def test_environ(mocker):
         timeout=3.4,
         concurrency=5,
         executor_factory=ThreadPoolExecutor,
+        plugins=(),
         verbosity=0,
     )
 

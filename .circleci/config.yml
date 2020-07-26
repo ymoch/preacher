@@ -104,7 +104,14 @@ commands:
           command: |
             poetry run python3 examples/server.py > examples/server.log 2>&1 &
             sleep 5
-            poetry run preacher-cli -uhttp://localhost:5000 examples/scenario/success.yml
+            poetry run preacher-cli \
+              -uhttp://localhost:5000 \
+              examples/scenario/success.yml
+            poetry run preacher-cli \
+              -uhttp://localhost:5000 \
+              -pexamples/plugin/plugin_example.py \
+              -Ethread \
+              examples/scenario/plugin.yml
             cat examples/server.log
   document-build:
     description: Build documents
