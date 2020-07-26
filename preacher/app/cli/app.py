@@ -28,7 +28,14 @@ def app(
     concurrency: int = 1,
     executor_factory: Callable[[int], Executor] = ProcessPoolExecutor,
     verbosity: int = 0,
-):
+) -> int:
+    """
+    Preacher CLI application.
+
+    Returns:
+        the exit code.
+    """
+
     # Fill default.
     arguments = arguments or {}
 
@@ -80,11 +87,14 @@ def app(
             status = runner.run(executor, scenarios, listener=listener)
     except Exception as error:
         logger.exception(error)
-        sys.exit(3)
-    logger.info("End running scenarios.")
+        return 3
+    finally:
+        logger.info("End running scenarios.")
 
     if not status.is_succeeded:
-        sys.exit(1)
+        return 1
+
+    return 0
 
 
 def create_system_logger(verbosity: int) -> Logger:

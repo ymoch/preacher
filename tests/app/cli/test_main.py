@@ -30,7 +30,6 @@ def base_dir():
 ])
 def test_show_and_exit(args):
     result = CliRunner().invoke(main, args)
-    print(result)
     assert result.exit_code == 0
 
 
@@ -72,7 +71,7 @@ def test_given_invalid_options(args):
     },
 ])
 def test_default(mocker, env):
-    app = mocker.patch(f'{PKG}.app')
+    app = mocker.patch(f'{PKG}.app', return_value=0)
 
     result = CliRunner().invoke(main, env=env)
     assert result.exit_code == 0
@@ -92,7 +91,7 @@ def test_default(mocker, env):
 
 
 def test_arguments(mocker, base_dir):
-    app = mocker.patch(f'{PKG}.app')
+    app = mocker.patch(f'{PKG}.app', return_value=0)
 
     args = (
         '--base-url', 'https://your-domain.com/api',
@@ -147,7 +146,7 @@ def test_arguments(mocker, base_dir):
 
 
 def test_environ(mocker):
-    app = mocker.patch(f'{PKG}.app')
+    app = mocker.patch(f'{PKG}.app', return_value=0)
 
     env = {
         'PREACHER_CLI_BASE_URL': 'https://my-domain.com/api',
@@ -175,3 +174,11 @@ def test_environ(mocker):
         executor_factory=ThreadPoolExecutor,
         verbosity=0,
     )
+
+
+@mark.parametrize('exit_code', list(range(-1, 5)))
+def test_exit_code(mocker, exit_code):
+    mocker.patch(f'{PKG}.app', return_value=exit_code)
+
+    result = CliRunner().invoke(main)
+    assert result.exit_code == exit_code

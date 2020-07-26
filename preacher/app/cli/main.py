@@ -1,5 +1,6 @@
 """Preacher CLI."""
 
+import sys
 from concurrent.futures import Executor
 from typing import Sequence, Callable, Optional
 
@@ -148,7 +149,7 @@ def main(
     verbosity: int,
 ) -> None:
     """Preacher CLI: Web API Verification without Coding"""
-    return app(
+    exit_code = app(
         paths=paths,
         base_url=base_url,
         arguments=arguments,
@@ -161,3 +162,4 @@ def main(
         executor_factory=executor_factory,
         verbosity=verbosity,
     )
+    sys.exit(exit_code)

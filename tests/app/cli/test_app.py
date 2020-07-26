@@ -80,7 +80,7 @@ def test_normal(mocker, base_dir, executor, executor_factory):
     runner.run.side_effect = _run
     runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    app(
+    exit_code = app(
         paths=sentinel.paths,
         base_url=sentinel.base_url,
         arguments=sentinel.args,
@@ -93,6 +93,7 @@ def test_normal(mocker, base_dir, executor, executor_factory):
         executor_factory=executor_factory,
         verbosity=sentinel.verbosity
     )
+    assert exit_code == 0
 
     logger_ctor.assert_called_once_with(sentinel.verbosity)
     objs_ctor.assert_called_once_with(sentinel.paths, logger)
@@ -117,9 +118,8 @@ def test_not_succeeds(mocker, executor_factory, executor):
     runner.run.return_value = Status.UNSTABLE
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    with raises(SystemExit) as error_info:
-        app(executor_factory=executor_factory)
-    assert error_info.value.code == 1
+    exit_code = app(executor_factory=executor_factory)
+    assert exit_code == 1
 
     executor.__exit__.assert_called_once()
 
@@ -129,9 +129,8 @@ def test_unexpected_error_occurs(mocker, executor_factory, executor):
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
-    with raises(SystemExit) as error_info:
-        app(executor_factory=executor_factory)
-    assert error_info.value.code == 3
+    exit_code = app(executor_factory=executor_factory)
+    assert exit_code == 3
 
     executor.__exit__.assert_called_once()
 
