@@ -105,7 +105,7 @@ Scenarios can be nested by using "subscenarios."
       - List[:ref:`description`]
       - ``[]``
       - Run this scenario only when the context satisfies these description.
-        See :doc:`Application Running Context<context>` for more information.
+        See :doc:`context` for more information.
     * - parameters
       - List[:ref:`parameter`]
       - ``null``
@@ -187,7 +187,7 @@ A "case" is the basic unit of verification, which executes a request and verify 
       - List[Description]
       - ``[]``
       - Run this case only when the context satisfies these description.
-        See :doc:`Application Running Context<context>` for more information.
+        See :doc:`context` for more information.
 
 You can use default values to simplify cases. See :ref:`default-test` for more information.
 
