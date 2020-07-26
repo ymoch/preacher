@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-18 19:00+0900\n"
+"POT-Creation-Date: 2020-07-26 17:38+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,27 +15,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: ../../user/scenario-structure.rst:2 20f830cb6ccf47f095d5d057555117bd
+#: ../../user/scenario-structure.rst:2 28a482ebdecd46d0941d6bea2a2f7099
 msgid "Scenario Structure"
 msgstr "シナリオ構成"
 
-#: ../../user/scenario-structure.rst:3 c7c9336925b64d2e9dd468bc443a02b0
+#: ../../user/scenario-structure.rst:3 5ce5e07be1724590a76c7383b8547cc9
 msgid "Let's take a look at the structure of verification scenario."
 msgstr "テストシナリオの構成を見てみましょう."
 
-#: ../../user/scenario-structure.rst:5 88202d63341b4754a07865a04316f945
+#: ../../user/scenario-structure.rst:5 7a3f5230d40346729c284756304fd603
 msgid "Here is a scenario example."
 msgstr "シナリオの一例を挙げます."
 
-#: ../../user/scenario-structure.rst:68 47b187142b9b42278f463b4862d2e897
+#: ../../user/scenario-structure.rst:68 910eb14d5a8545128c17c72e7b45ebac
 msgid "Components"
 msgstr "構成要素"
 
-#: ../../user/scenario-structure.rst:71 34e54e17b1c6431ca058c6afd09cf2b8
+#: ../../user/scenario-structure.rst:71 1e4456640c6f4bd6bd5632c635243147
 msgid "Scenario"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:72 060a271d3fb84a31ac9a26f5f546863e
+#: ../../user/scenario-structure.rst:72 5d718f458c0748e08d3c342326e6b2bf
 msgid ""
 "A \"scenario\" is the basic unit of verification process. A scenario "
 "contains some \"cases\", which are basically run serially. Scenarios can "
@@ -44,112 +44,128 @@ msgstr ""
 "「シナリオ」はテストプロセスの基本単位です. シナリオにはいくつかの「ケース」が含まれており, 基本的には順次実行されます. "
 "「サブシナリオ」を用いて, シナリオをネストすることもできます."
 
-#: ../../user/scenario-structure.rst:80 ../../user/scenario-structure.rst:163
-#: ../../user/scenario-structure.rst:202 ../../user/scenario-structure.rst:269
-#: ../../user/scenario-structure.rst:295 ../../user/scenario-structure.rst:337
-#: ../../user/scenario-structure.rst:362 ../../user/scenario-structure.rst:392
-#: 1eb1818caa99459faba4471baf5b95d3 bccc58d4d39141e0b3f017bbc53bd87d
+#: ../../user/scenario-structure.rst:80 ../../user/scenario-structure.rst:169
+#: ../../user/scenario-structure.rst:208 ../../user/scenario-structure.rst:275
+#: ../../user/scenario-structure.rst:301 ../../user/scenario-structure.rst:343
+#: ../../user/scenario-structure.rst:368 ../../user/scenario-structure.rst:398
+#: 218a1e1bb456421198751be0601ff355 2aa25de6b70f42d787b9e1a017aacce3
+#: 2aa8f28d92f34999aba30ce4f97f3712 468203a915c848e4b700353e5453c90f
+#: 7c85889bc36d4d85999f83b730e570da 8fb5f264ddda463b98861df8bc57b119
+#: dc6dda7613514e91ab7107b7f07e3b60 dc91b310ed864a1fad9e7c689e753458
 msgid "Key"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:81 ../../user/scenario-structure.rst:164
-#: ../../user/scenario-structure.rst:203 ../../user/scenario-structure.rst:270
-#: ../../user/scenario-structure.rst:296 ../../user/scenario-structure.rst:338
-#: ../../user/scenario-structure.rst:363 ../../user/scenario-structure.rst:393
-#: 1229eafe71274622877c82ddb1deaad9 6aa218df76fc4de986691efd02596ab1
+#: ../../user/scenario-structure.rst:81 ../../user/scenario-structure.rst:170
+#: ../../user/scenario-structure.rst:209 ../../user/scenario-structure.rst:276
+#: ../../user/scenario-structure.rst:302 ../../user/scenario-structure.rst:344
+#: ../../user/scenario-structure.rst:369 ../../user/scenario-structure.rst:399
+#: 3897b0fbe53444d28d2c3f633beb3173 60cfd77feaec4b5d9de49002c86f7bb2
+#: 6d657ea41cb84fe985eb0dd5c7e99890 80874e710f8243eabe1f5d35619d74bb
+#: a816318a21f8487fb303e1109b2f1c13 b0a811e77e594eeb84cb913d9eb828db
+#: c40cb1f7f32349269764a79c7f12a8f5 d5c62f44313f4f38b63a26c78bad2057
 msgid "Type"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:82 ../../user/scenario-structure.rst:165
-#: ../../user/scenario-structure.rst:204 ../../user/scenario-structure.rst:271
-#: ../../user/scenario-structure.rst:297 ../../user/scenario-structure.rst:339
-#: ../../user/scenario-structure.rst:364 ../../user/scenario-structure.rst:394
-#: 451df0b83ebc427bad4db0047144f5c3 97f895830a8f463eab9fc145d24a0668
+#: ../../user/scenario-structure.rst:82 ../../user/scenario-structure.rst:171
+#: ../../user/scenario-structure.rst:210 ../../user/scenario-structure.rst:277
+#: ../../user/scenario-structure.rst:303 ../../user/scenario-structure.rst:345
+#: ../../user/scenario-structure.rst:370 ../../user/scenario-structure.rst:400
+#: 05fc772d48864325a6698f1362fb0889 448e39f6edcd48ea8d13be9e6eb53b04
+#: 547075d8bc094f17afe9e04145722fa4 5d400cef80244306a39c86d67cc42bcf
+#: 8ac45c10cbd24daeaf59fc3d722b488f 8f85c6993b6e44f88e6f614d084ccc04
+#: ad9df367500549339fc5740d43eecf63 d6ab8f41b89f46bb9b738601307870e9
 msgid "Default"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:83 ../../user/scenario-structure.rst:166
-#: ../../user/scenario-structure.rst:205 ../../user/scenario-structure.rst:272
-#: ../../user/scenario-structure.rst:298 ../../user/scenario-structure.rst:340
-#: ../../user/scenario-structure.rst:357 ../../user/scenario-structure.rst:365
-#: ../../user/scenario-structure.rst:395 5494c378bffe4ce19e6638ce6224db74
-#: a6d87299079544b4b9e7c6e174ef3718
+#: ../../user/scenario-structure.rst:83 ../../user/scenario-structure.rst:172
+#: ../../user/scenario-structure.rst:211 ../../user/scenario-structure.rst:278
+#: ../../user/scenario-structure.rst:304 ../../user/scenario-structure.rst:346
+#: ../../user/scenario-structure.rst:363 ../../user/scenario-structure.rst:371
+#: ../../user/scenario-structure.rst:401 63e83378d4394c4c93e2d3c8358dcfa1
+#: 764af5de0b92486ea44bd55827ba5f9f 8376473d5e2049aba886d907ec32c56f
+#: 9312e8e31ea24027a5797553a06ce172 a58f31c9cbaf4a74a19b66fcbded573e
+#: c5f68938a6b6429b87f17b1d511be1b8 d9ca209b68014c1ebef958065ab317d6
+#: e51ee65631894939866513d7d9290b80 fde714ea625f4619b5f344b17bbd9686
 msgid "Description"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:84 ../../user/scenario-structure.rst:167
-#: ../../user/scenario-structure.rst:396 3ed9fba5d37540bf9cef7c70daf856a8
-#: 59b1436e8ad9466789b8d3da584d5493
+#: ../../user/scenario-structure.rst:84 ../../user/scenario-structure.rst:173
+#: ../../user/scenario-structure.rst:402 2c0c612ead8443f0b2e144a63a03ee90
+#: 43ce9c9341ed47288c9db157b489f39d a2858ebe87a34abda81c0aa03bde49b6
 msgid "label"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:85 ../../user/scenario-structure.rst:168
-#: ../../user/scenario-structure.rst:207 ../../user/scenario-structure.rst:212
-#: ../../user/scenario-structure.rst:274 ../../user/scenario-structure.rst:342
-#: ../../user/scenario-structure.rst:397 195308e302fb471696ba78469ba68191
-#: daf0eed64e1048138f0f484efb64ba1d
+#: ../../user/scenario-structure.rst:85 ../../user/scenario-structure.rst:174
+#: ../../user/scenario-structure.rst:213 ../../user/scenario-structure.rst:218
+#: ../../user/scenario-structure.rst:280 ../../user/scenario-structure.rst:348
+#: ../../user/scenario-structure.rst:403 0cf4fe1e47e34f849305cd5c75130cba
+#: 14cd4019173a4619896041d318806385 26a5ecc97532425fafed9b09156711ab
+#: b2e276a57994427d8a8cba2ac3c47fc7 d7c04da286a64a62ab66435414f60b0a
+#: ee5591eb4a494f6ea80329aaf3d3d7f5 fabeec7a0f9149e68a7eb315dbaada0b
 msgid "String"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:86 ../../user/scenario-structure.rst:114
-#: ../../user/scenario-structure.rst:169 ../../user/scenario-structure.rst:225
-#: ../../user/scenario-structure.rst:311 ../../user/scenario-structure.rst:398
-#: 3b3d8cfbb54a4728a2ad479c6288e9c9 aff71e3468514644a6c9862369e09833
-#: e1c821f4139c40ccb19eb2d0d9bef020
+#: ../../user/scenario-structure.rst:175 ../../user/scenario-structure.rst:231
+#: ../../user/scenario-structure.rst:317 ../../user/scenario-structure.rst:404
+#: 18815f18950242ecb8c9ab735333b4ff 35a5d00e6f5444fcbc8ea7085cedb43c
+#: 394a0e5530204eb49abd872a1e56c900 599ba6d25ccc4d3da8a91994b008598f
+#: c3a7a862c809492d933d67c70f6c29cc fe4611bdbdc34b3f81f9793788aff9af
 msgid "``null``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:87 9b3077cede5f41bcb9b08c25a1e23929
+#: ../../user/scenario-structure.rst:87 fc020bde7deb4b22be9219452e445554
 msgid "A label of this scenario."
 msgstr "シナリオのラベル."
 
-#: ../../user/scenario-structure.rst:88 33d3e633c9c4486a8faeac3225f2461a
+#: ../../user/scenario-structure.rst:88 8755e95291df4e0cbb92588594cf94b9
 msgid "cases"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:89 831926adc2e64375b8acc3f9b19f215f
+#: ../../user/scenario-structure.rst:89 e609781290394cd3ac6399c618a94331
 msgid "List[:ref:`case`]"
 msgstr ""
 
 #: ../../user/scenario-structure.rst:90 ../../user/scenario-structure.rst:94
-#: ../../user/scenario-structure.rst:109 ../../user/scenario-structure.rst:185
-#: ../../user/scenario-structure.rst:301 ../../user/scenario-structure.rst:348
-#: 145db49da72c465b887538def331b599 caba2c1cfc8f4b649519959575ad83eb
-#: f0991e0c817f49d9938002e1bb71d871 f452f663ee864737ab988fc297c710b8
+#: ../../user/scenario-structure.rst:109 ../../user/scenario-structure.rst:191
+#: ../../user/scenario-structure.rst:307 ../../user/scenario-structure.rst:354
+#: 0120269ab2d040b6b2cbf6bff3cb57da 09c08ee748044947bb3c352ca5302228
+#: 0e8d94008e49451abc8d0190ac5aca53 86e210b946e94b5c84cc59fe2f86d15d
+#: 8fb4f7a8adbf4d48a72528c72e174883 c0467fb234ec4c158b68808384ea2ded
 msgid "``[]``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:91 86ee0999b17a4148a635752bdbf3fc73
+#: ../../user/scenario-structure.rst:91 39987caf07634a11a4290ce5c3a31be4
 msgid "Test cases."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:92 18ff9a92e811471d8dc66309e40ca52d
+#: ../../user/scenario-structure.rst:92 c8b07666b48a44d7b2b7f7ab275a71d5
 msgid "subscenarios"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:93 45174cf487624ae2a1ed711c9d8cbad2
+#: ../../user/scenario-structure.rst:93 319fe6ceb98240b39dba9755609bb5ae
 msgid "List[Scenario]"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:95 4e9703efea0f44d1bcbd6f37deb5bd82
+#: ../../user/scenario-structure.rst:95 bfa62134194d4593b3cf2e1096457fb8
 msgid "Nested scenarios."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:96 69ddbe9a55ba4708aa83c4593beadf88
+#: ../../user/scenario-structure.rst:96 cb0005e8547345cb8a6b9c017afd6503
 msgid "ordered"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:97 ../../user/scenario-structure.rst:180
-#: 05f36a5a33f94493a557279843f9bcc8 46838f89674348bf9e50d06e4df4f482
+#: ../../user/scenario-structure.rst:97 ../../user/scenario-structure.rst:186
+#: 02003c1bf60147e1987b9f02cafad503 56086f42252742f4ac195c913df51b64
 msgid "Boolean"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:98 ../../user/scenario-structure.rst:181
-#: 6977fb8b29024fefb03bbc0f4e231f07 a6de7b53ab4e4067a3f1c59e36c2da56
+#: ../../user/scenario-structure.rst:98 ../../user/scenario-structure.rst:187
+#: 5c135c261a40491fbf9e4ba9282b770f 9ae223dc98a8432ca8dbd87729503944
 msgid "``true``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:99 5305460c951b4f448de9954fa4c0fe12
+#: ../../user/scenario-structure.rst:99 39ba16e3996942e8a4f9d29389f51013
 msgid ""
 "Mark the cases is ordered or not. When ``false``, cases can be run "
 "concurrently. See :ref:`concurrent-running` for more information."
@@ -157,137 +173,138 @@ msgstr ""
 "ケースが順序立てられているかどうかを表現します. ``false`` を指定すると, ケースの並列実行が許可されます. 詳しくは :ref"
 ":`concurrent-running` を参照してください."
 
-#: ../../user/scenario-structure.rst:102 838c1a491f1e43d4859d4b401bb7d1c5
+#: ../../user/scenario-structure.rst:102 2f31ec386a3e44f5a91c7621c81e46d6
 msgid "default"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:103 05b0566831f742b8a7bceae332dc14a2
+#: ../../user/scenario-structure.rst:103 cbed1b188c41412285887c3bb038fd9b
 msgid ":ref:`case`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:104 ../../user/scenario-structure.rst:217
-#: ../../user/scenario-structure.rst:221 ../../user/scenario-structure.rst:306
-#: ../../user/scenario-structure.rst:372 ../../user/scenario-structure.rst:402
-#: 210eb7bc828a4568bcc063a3cd0524d8 d55e5e1a0df44dc2afa1d3a85cfa41b5
+#: ../../user/scenario-structure.rst:104 ../../user/scenario-structure.rst:223
+#: ../../user/scenario-structure.rst:227 ../../user/scenario-structure.rst:312
+#: ../../user/scenario-structure.rst:378 ../../user/scenario-structure.rst:408
+#: 282999335c324e809b49bb172289c860 48517bc8e2a5468fa18fcbd5f5864407
+#: 8d3b501810dc45c18b219348a6923954 a26e25fb2a1847a49007bc6b6a2e44e5
+#: be1d20c4f9304c509b62c580e2cda683 e278da8463d94463a5e34069be316140
 msgid "``{}``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:105 0a81704e1867484b8cecbade92a8cb45
+#: ../../user/scenario-structure.rst:105 3b9bbc1689154a80a0eb1d5820b885c0
 msgid "Default of this scenario. See :ref:`default-test` for more information."
 msgstr "シナリオにおけるデフォルト設定. 詳しくは :ref:`default-test` を参照してください."
 
-#: ../../user/scenario-structure.rst:107 ../../user/scenario-structure.rst:183
-#: 3dc7718347b84763bd0f10733876ca48 f467a682ef8647538d2b9e4c59d088da
+#: ../../user/scenario-structure.rst:107 ../../user/scenario-structure.rst:189
+#: 30af49ee01024eb68b6e4b5c45a31367 5d1fd069ba2d448f9ae2cb6aa14bb6c0
 msgid "when"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:108 ../../user/scenario-structure.rst:305
-#: ../../user/scenario-structure.rst:347 4787bca9e5164a3e90099be10a414d7b
-#: f9c8b94c12c544dcac6d902c68d5303e
+#: ../../user/scenario-structure.rst:108 ../../user/scenario-structure.rst:311
+#: ../../user/scenario-structure.rst:353 62d4b3e4a46f427b8307605873ef4ed4
+#: 74e1c0b95f80450c82d22912cdb8adab bf47e90212e24b9ca57d4bc6560b9867
 msgid "List[:ref:`description`]"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:110 41a8bb5e9175426b8506e56fc1980724
+#: ../../user/scenario-structure.rst:110 eafb3e5fe5db4aae921036f9ec1bf105
+#, fuzzy
 msgid ""
 "Run this scenario only when the context satisfies these description. See "
 ":doc:`Application Running Context<context>` for more information."
 msgstr ""
-"この記述を満たしたときだけシナリオを実行します. 詳しくは :doc:`Application Running Context<context>`"
-" を参照してください."
+"この記述を満たしたときだけケースを実行します. 詳しくは :doc:`Application Running Context<context>` "
+"を参照してください."
 
-#: ../../user/scenario-structure.rst:112 388891e498fb470194cf736a3a0a931e
+#: ../../user/scenario-structure.rst:112 3c2bd52407a843bb8849b4baed971954
 msgid "parameters"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:113 384050f5fc244ef7a8317817beafd64d
+#: ../../user/scenario-structure.rst:113 38e2082ac49e400897fbce28f43b6f71
 msgid "List[:ref:`parameter`]"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:115 91937b88eb6b46c996b3dfc064276e4d
+#: ../../user/scenario-structure.rst:115 670e45fe7779406cb9705e3f93556aaa
 msgid ""
 "Parameters to make parameterized test. See :ref:`parameterized-test` for "
 "more information."
 msgstr "パラメータ化されたテストを作成するためのパラメータ. 詳しくは :ref:`parameterized-test` を参照してください."
 
-#: ../../user/scenario-structure.rst:118 f73e1c9b93ba489e8f69e83b314a4a0d
+#: ../../user/scenario-structure.rst:118 2bf4f81205234f8a9c5abd5052d74b22
 msgid "Minimally, a scenario should contain ``label`` and ``cases``."
 msgstr "最低限, ラベルとケースを設定しておきましょう."
 
-#: ../../user/scenario-structure.rst:127 3727afb61828406ab4928e427f4b9fdb
+#: ../../user/scenario-structure.rst:127 8e1f8f4b98d34221bb18a9c3d3df1ab9
 msgid ""
 "Only the top level YAML value can be a list, which will be flattened even"
 " if it is nested."
-msgstr ""
-"トップレベルの YAML のみ, リストにすることができます."
-" ネストされているものを含め平坦化されます."
+msgstr "トップレベルの YAML のみ, リストにすることができます. ネストされているものを含め平坦化されます."
 
-#: ../../user/scenario-structure.rst:139 3727afb61828406ab4928e427f4b9fdb
+#: ../../user/scenario-structure.rst:142 cda806c417674d1aac5961480c980366
 msgid ""
 "Only the top level YAML value can also be a YAML stream, which has zero "
 "or more documents."
 msgstr "トップレベルの YAML のみ, YAML ストリーム (0 個以上のドキュメントを含む) にすることもできます."
 
-#: ../../user/scenario-structure.rst:156 8730760944094ebf96cb5f32e619bb88
+#: ../../user/scenario-structure.rst:162 a178cce7684f4b67b0173e5203c08ab1
 msgid "Case"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:157 e6a11afa9f42460cbbf81023ac0c52fd
+#: ../../user/scenario-structure.rst:163 9caad453d93441a4a45b105dd4185e74
 msgid ""
 "A \"case\" is the basic unit of verification, which executes a request "
 "and verify its response."
 msgstr "「ケース」はテストの基本単位です. リクエストを実行し, そのレスポンスを検証します."
 
-#: ../../user/scenario-structure.rst:170 121dc03bd3d34d3e811582845bbf9757
+#: ../../user/scenario-structure.rst:176 b25698c3fe27414f81a818aa7e390803
 msgid "A label of this case."
 msgstr "このケースのラベル"
 
-#: ../../user/scenario-structure.rst:171 ce90dc4360904c97a6f65dad0299dfe3
+#: ../../user/scenario-structure.rst:177 43a2e394aa9b4698ae3e7dcd68659d02
 msgid "request"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:172 f3cc03ca659a4251b3696807968a5313
+#: ../../user/scenario-structure.rst:178 b343069e408c4b809be7040ee6980f36
 msgid ":ref:`request`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:173 70c430c2cb9f49c0b04b31d11569c85e
+#: ../../user/scenario-structure.rst:179 7f24c0d53866441b9d8a714a579bedbe
 msgid ":ref:`The default request <default-test>`"
 msgstr ":ref:`デフォルトのリクエスト <default-test>`"
 
-#: ../../user/scenario-structure.rst:174 c5ab89e5c8234e4387807b4c94767ddd
+#: ../../user/scenario-structure.rst:180 2de664a8fa954884b97286b31755e0c2
 msgid "The request to be executed in this case."
 msgstr "このケースで実行されるリクエスト"
 
-#: ../../user/scenario-structure.rst:175 ee255348b3dc49e895986cbb517039e2
+#: ../../user/scenario-structure.rst:181 f89508ab69cc4f65903b68fb6b017463
 msgid "response"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:176 3f93007c9c1f4f6d9c3760b635d6a558
+#: ../../user/scenario-structure.rst:182 b3842240864b453fb06b0024871b074c
 msgid ":ref:`response-description`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:177 cf55376ea2884ed1aa559147373697d8
+#: ../../user/scenario-structure.rst:183 e883c8ce896a416eb35fba7431f29197
 msgid ":ref:`The default response description<default-test>`"
 msgstr ":ref:`デフォルトのレスポンス記述 <default-test>`"
 
-#: ../../user/scenario-structure.rst:178 89312d7035b14c5dadadaf977b6d5dc0
+#: ../../user/scenario-structure.rst:184 28bf1bd6f7564ee9b14a89f925032d72
 msgid "The response description of this case."
 msgstr "このケースのレスポンスについての記述."
 
-#: ../../user/scenario-structure.rst:179 5279b75e120446d4b7eb28a4c0f6c98d
+#: ../../user/scenario-structure.rst:185 ceed96c6a21e46cea5776deaad8fe746
 msgid "enabled"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:182 d9144ea73c524edfbde11d96de5a286c
+#: ../../user/scenario-structure.rst:188 8c35cae27f684449b17eb9671ac38b38
 msgid ""
 "Whether this case is enabled. See :ref:`ignore-cases` for more "
 "information."
 msgstr "ケースが有効かどうか. 詳しくは :ref:`ignore-cases` を参照してください."
 
-#: ../../user/scenario-structure.rst:184 60508f03bb6441d396e95efc9aabdb40
+#: ../../user/scenario-structure.rst:190 52aca1c85867477e9fcd3f8eac3e9730
 msgid "List[Description]"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:186 96ba359bef7d42e8ac5b31f21162941c
+#: ../../user/scenario-structure.rst:192 21fa093704c0420f802aa83efee6ff5e
 msgid ""
 "Run this case only when the context satisfies these description. See "
 ":doc:`Application Running Context<context>` for more information."
@@ -295,107 +312,107 @@ msgstr ""
 "この記述を満たしたときだけケースを実行します. 詳しくは :doc:`Application Running Context<context>` "
 "を参照してください."
 
-#: ../../user/scenario-structure.rst:189 41eb913f8af743329ae938c7a0bfe382
+#: ../../user/scenario-structure.rst:195 0eea00800343479eb94d8a52002a7608
 msgid ""
 "You can use default values to simplify cases. See :ref:`default-test` for"
 " more information."
 msgstr "デフォルト値を用いて, ケースをシンプルに記述することもできます. 詳しくは :ref:`default-test` を参照してください."
 
-#: ../../user/scenario-structure.rst:194 02edd10a6281431db5e96997a9029938
+#: ../../user/scenario-structure.rst:200 89728d8b68384a2b978e3afa93aa7510
 msgid "Request"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:195 91f450d25aab4b6ba5371e44c64a6f04
+#: ../../user/scenario-structure.rst:201 347ce91cf83747ae942b0a88d67921fa
 msgid ""
 "Normally, a \"request\" is described in a form of a dictionary. When "
 "given only a string, that is equivalent to ``{path: it}``."
 msgstr "通常, 「リクエスト」は辞書形式で記述されます. 単に文字列を与えられた場合は ``{path: it}`` と等価です."
 
-#: ../../user/scenario-structure.rst:206 6520380b58844ba4a334125e4c80de14
+#: ../../user/scenario-structure.rst:212 fcec71696f384656b9200300d807d580
 msgid "method"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:208 fadd60376a7d460aa54efd4ee003b48f
+#: ../../user/scenario-structure.rst:214 1d069fbb8d9d4b5291ae0585ed68e9c5
 msgid "``GET``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:209 992b92770ac9484ea74aafb703e39b8e
+#: ../../user/scenario-structure.rst:215 89a6dee4082c4e3e80be5790d80b4fe4
 msgid "An HTTP method, which must be in ``GET``, ``POST``, ``PUT`` or ``DELETE``."
 msgstr "HTTP メソッド. ``GET``, ``POST``, ``PUT`` ないし ``DELETE`` のいずれかです."
 
-#: ../../user/scenario-structure.rst:211 4d23b7babbc047c7a670d70819710a92
+#: ../../user/scenario-structure.rst:217 1a6f389fe0554db68a95a76955ad41bd
 msgid "path"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:213 fadd60376a7d460aa54efd4ee003b48f
+#: ../../user/scenario-structure.rst:219 7a2b09d160cf494c96f9e13fbd24e050
 msgid "``''``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:214 293a64b799a141138aeef172b44fff6a
+#: ../../user/scenario-structure.rst:220 7f09fff1d93a42799bcb6bc972f55857
 msgid "A request path"
 msgstr "リクエストパス"
 
-#: ../../user/scenario-structure.rst:215 ../../user/scenario-structure.rst:304
-#: a10a4123a3d640c08d6b9244c7759f2c
+#: ../../user/scenario-structure.rst:221 ../../user/scenario-structure.rst:310
+#: ba180ee5c2c640dca2fb8e48cdd90b93 fa8b175a23c74bd1a98f9587799220b4
 msgid "headers"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:216 581a9e2758074769991ac9104770ea9c
+#: ../../user/scenario-structure.rst:222 fd404ce64f754feba415ff7caed811f0
 msgid "Map[String, String]"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:218 870f0b63501a40fbbd9c51d4a25ef296
+#: ../../user/scenario-structure.rst:224 e45e010f76514b529a98611bd8ce84af
 msgid "The headers as a map of names to values."
 msgstr "リクエストヘッダ. 「名前-値」の辞書形式で記述します."
 
-#: ../../user/scenario-structure.rst:219 b0f0cd068cd648e5883e72708b1d5826
+#: ../../user/scenario-structure.rst:225 b3d3c987753b40ba9ae9877378c07cf9
 msgid "params"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:220 f1b9a5dbcbe3496d93a3658853e814fa
+#: ../../user/scenario-structure.rst:226 0cfd18c556614f7f99608ef0e6f87270
 msgid ":ref:`url-parameters`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:222 c869d29f846a4fc3b134a563e4c77b12
+#: ../../user/scenario-structure.rst:228 e2acb169e135404db0fe36b01cb5d498
 msgid "The URL parameters for the query string."
 msgstr "クエリ文字列のパラメータ"
 
-#: ../../user/scenario-structure.rst:223 ../../user/scenario-structure.rst:309
-#: 8b9d17f0de0a46b6b165b06faa7461ac
+#: ../../user/scenario-structure.rst:229 ../../user/scenario-structure.rst:315
+#: 89d864099997414daacdce86dfbe8a2e 9ca2733c3ef344b19767a4b60c7fc3c2
 msgid "body"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:224 f2e18f30e98f42d7ba41ef43bfde9ff9
+#: ../../user/scenario-structure.rst:230 7446d2062dad4759955424f5c02b3403
 msgid ":ref:`request-body`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:226 c055529f868641ebbe45e3f206974c28
+#: ../../user/scenario-structure.rst:232 8d47d6ee797d4e819e390f21b1e96c4b
 msgid "The request body."
 msgstr "リクエストボディ"
 
-#: ../../user/scenario-structure.rst:228 85ea58bb727e477cb4742a444ab614b2
+#: ../../user/scenario-structure.rst:234 ca43bc5dd0df41318d9fb1f337845e33
 msgid ""
 "A request path can also contain query parameters like "
 "``/path?foo=bar&spam=ham``."
 msgstr "リクエストパスは ```/path?foo=bar&spam=ham`` のようにクエリ文字列を含むこともできます."
 
-#: ../../user/scenario-structure.rst:233 ade4d3449a3d4787af3832119c0af42b
+#: ../../user/scenario-structure.rst:239 b6066f0c4f754343b9a54765d037b86f
 msgid "URLParameters"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:234 b8fb97d58b46481ca742682a6353065d
+#: ../../user/scenario-structure.rst:240 73fd6370d05744caad1fc0249ffbd5cf
 msgid ""
 "When given URL parameters as a string, then it is regarded as a raw query"
 " string."
 msgstr "URL パラメータが文字列として与えられた場合, 生のクエリ文字列とみなされます."
 
-#: ../../user/scenario-structure.rst:243 710049d263c5416da2d37418820f2d8c
+#: ../../user/scenario-structure.rst:249 f3468ce379a44452903c8858c1998677
 msgid ""
 "When given URL parameters as a dictionary, then it is regarded as a map "
 "of keys to values and the query string is built with it."
 msgstr "クエリパラメータが辞書として与えられた場合, キー-値のマッピングとみなされ, クエリ文字列を自動的に構築します."
 
-#: ../../user/scenario-structure.rst:258 9efdb9a9ad6b42c19c97f14039f50ba3
+#: ../../user/scenario-structure.rst:264 71b3f2b0eddc4c238903d7bd25533122
 msgid ""
 "Allowed types for the parameter values are integer, float, string, "
 "timestamp and null (ignored). A timestamp value is converted into IS0 "
@@ -404,36 +421,36 @@ msgstr ""
 "パラメータとして許容されている型は, 整数型, 浮動小数点型, 文字列, タイムスタンプおよび null (無視される) です. "
 "タイムスタンプ型は ISO 8601 形式に変換されます."
 
-#: ../../user/scenario-structure.rst:264 dc36000549e84f948014bb0911343cd5
+#: ../../user/scenario-structure.rst:270 88abdc86b03e43049b988d58583dcca1
 msgid "RequestBody"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:273 4d15206de8ef4e32aa263d9f5e788482
+#: ../../user/scenario-structure.rst:279 718826a70304422d84f7f7f1403aa75c
 msgid "type"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:275 eedf37e680d94b9f9cd88af9e58833b5
+#: ../../user/scenario-structure.rst:281 29260c96ce3f4558adebe05277a56831
 msgid "``urlencoded``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:276 d40bc639dda34880b2ac9d34852df15a
+#: ../../user/scenario-structure.rst:282 66a1f933487444f0b4be6383525cb4f9
 msgid "The request body type, which is ``urlencoded`` or ``json``."
 msgstr "リクエストボディの種別. ``urlencoded`` もしくは ``json``."
 
-#: ../../user/scenario-structure.rst:277 be4452c6e59645e68f11947b6cfa29db
+#: ../../user/scenario-structure.rst:283 4dc6038f35534dc49d7b39e336d873c2
 msgid "data"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:278 ../../user/scenario-structure.rst:279
-#: 3c5ef1eeefa54c48b1adb5261f36cfff 6950fc2ba6354d18b719ff01fd28f568
+#: ../../user/scenario-structure.rst:284 ../../user/scenario-structure.rst:285
+#: 87a24fdbc3714b829e55f331adfe86c5 a2c5d122fac24c279ff1753dc0e44954
 msgid "Depends on the type"
 msgstr "type に依存する"
 
-#: ../../user/scenario-structure.rst:280 f2e18f30e98f42d7ba41ef43bfde9ff9
+#: ../../user/scenario-structure.rst:286 2d853679841644bca46cdb20770ec6c7
 msgid "The request body data."
 msgstr "リクエストボディ"
 
-#: ../../user/scenario-structure.rst:282 d51e825bd3774de39b62a4fd503ab719
+#: ../../user/scenario-structure.rst:288 362697d1701b4eba9e9974034c20c7fa
 msgid ""
 "When the type is ``urlencoded``, the data are :ref:`url-parameters` and "
 "built into a URL-encoded value such that HTML forms send. When the type "
@@ -444,127 +461,127 @@ msgstr ""
 "フォームから送信されるような URL エンコードされた値を構築します. 種別が ``json`` のとき, データをもとに JSON "
 "を構築します. 典型的な ``Content-Type`` ヘッダが自動的に設定されます."
 
-#: ../../user/scenario-structure.rst:290 be11f7d8fce343018314106c8f500566
+#: ../../user/scenario-structure.rst:296 9ac41fec084547b8b3024b32b5a08153
 msgid "ResponseDescription"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:299 3da77ebfd1b34b72b209be9c6f943136
+#: ../../user/scenario-structure.rst:305 97dffc9b641c4400a3c4853eb3a8e099
 msgid "status_code"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:300 ../../user/scenario-structure.rst:371
-#: d8e7930786674d5c9c4a8e04ae615c52
+#: ../../user/scenario-structure.rst:306 ../../user/scenario-structure.rst:377
+#: 8fe0308477c5416db9e7a238d9e8814b cc865a60aec74d72a3b0b1b61dcfc0fa
 msgid "List[:ref:`predicate`]"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:302 8c9d7219e52d47018b58df772768f904
+#: ../../user/scenario-structure.rst:308 fa099f06ee154011a127e5eeb55c41be
 msgid ""
 "Predicates that match a status code as an integer value. See :ref"
 ":`status-code` for more information."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:307 96b8183ec4fa43b29a9f82a8e1f0da46
+#: ../../user/scenario-structure.rst:313 248d4c0384194853a5f658d84fdc0889
 msgid ""
 "Descriptions that describe the response headers. See :ref:`headers` for "
 "more information."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:310 f2e18f30e98f42d7ba41ef43bfde9ff9
+#: ../../user/scenario-structure.rst:316 92af766032534f6e8b58c863f4408ed4
 msgid ":ref:`response-body-description`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:312 14064ceb477948d392078059af64e0d8
+#: ../../user/scenario-structure.rst:318 9deaafbe09aa4c149a196d256b79a256
 msgid "A description that describe the response body."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:317 03995d9aff2841409d60afc27328f744
+#: ../../user/scenario-structure.rst:323 726465f2d7174b02a8b5eb57595adbc2
 msgid "Status code"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:318 b6350a79cdec47e29058ac16292d7778
+#: ../../user/scenario-structure.rst:324 e02cb40d7e534cdba691130d25e29377
 msgid "When given a number, that is equivalent to ``{\"equal\": it}``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:323 12414b402c0e437d97212ef8ab7b7c84
+#: ../../user/scenario-structure.rst:329 b182c22b41fa4584971900570ca45ecd
 msgid "Headers"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:324 c6dcd31692c043bbb95349aa788dad80
+#: ../../user/scenario-structure.rst:330 e838f8f7d57b452193eae88f3060aaaa
 msgid ""
 "Response headers are converted to be a JSON that is a map of names to "
 "values and can be described as a JSON (e.g. ``.\"content-type\"``). *Note"
 " that Names are lower-cased* to normalize."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:332 f2e18f30e98f42d7ba41ef43bfde9ff9
+#: ../../user/scenario-structure.rst:338 5d3402e24f5c4af4aa3ece99627c8633
 msgid "ResponseBodyDescription"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:341 192d765aee2d4e90b5c4a4b86665a2de
+#: ../../user/scenario-structure.rst:347 65b7230673ac4c98a3526a0d01e1e748
 msgid "analyze_as"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:343 4f79ff88366c4db79d414df61f2f08b9
+#: ../../user/scenario-structure.rst:349 f4e53dcb16d44756874777b89b8188de
 msgid "``json``"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:344 86e1e82a223849879f1051657bb11697
+#: ../../user/scenario-structure.rst:350 1d9861817d554238a4c42b7bd569a26f
 msgid "The method to analyze the body. Allowed values are ``json`` and ``xml``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:346 9dfb15717c5d4ae3819983179fb1a392
+#: ../../user/scenario-structure.rst:352 70af80f2516d4186853c34254dd2efed
 msgid "descriptions"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:349 f25315d4f22f42bda8ca82e28d5bbb74
+#: ../../user/scenario-structure.rst:355 9f623c3268b74174841f870dd5982309
 msgid "Descriptions that describe the response body."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:351 9c3749afc552473aa03ad0182657731a
+#: ../../user/scenario-structure.rst:357 6828687d74b64a6dae24e3d659d966ad
 msgid ""
 "When given a list as a ``ResponseBodyDescription``, that is equivalent to"
 " ``{\"descritptions\": it}``."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:366 dd8d8f89a5cb4c07be4f4c8c5f55d5a2
+#: ../../user/scenario-structure.rst:372 d922b73ff74847d19945211c59ec215a
 msgid "describe"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:367 9fba7345106b4058b3858fdfa17d8130
+#: ../../user/scenario-structure.rst:373 5cfa35059c0a4ce6a7c3468ea8be64b8
 msgid ":doc:`Extraction<extraction>`"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:368 b1ecbb806745476cbdb97b304a2001b6
+#: ../../user/scenario-structure.rst:374 6a68d8e5e8b14635a11a6d548160841d
 msgid "**Required**"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:369 bd0add386084456c8402ea650f473f07
+#: ../../user/scenario-structure.rst:375 2a6299cbb83243dabb6e334ee69658c0
 msgid "An extraction to get the described value."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:370 541c213a70be4525830b613175869c71
+#: ../../user/scenario-structure.rst:376 326c1690c2504e649b3a9d43dc004a4a
 msgid "should"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:373 8c4304d198054c5a9bd6cbbe107ceb67
+#: ../../user/scenario-structure.rst:379 f2c6449e781c46b587d6bd84d1f448bb
 msgid "Predicates that match the described value."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:378 64d972f4b2e046aa831e3f9ef7b22aee
+#: ../../user/scenario-structure.rst:384 774ed6dc62ef4215a73ed8fda05b77b8
 msgid "Predicate"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:379 ccdfa3d6be0d4d04aac697438cc77449
+#: ../../user/scenario-structure.rst:385 d6d89b2e416a4d5a9e9ed0633f3232cf
 msgid ""
 "A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the "
 "future)."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:384 e098679909cb4d09a66b823a35ba2da0
+#: ../../user/scenario-structure.rst:390 e839a46347394cb7a4ccc3fca6cfc3c7
 msgid "Parameter"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:385 d372e99d6efe4d6c9e6fefb44b4112ee
+#: ../../user/scenario-structure.rst:391 3bd6da464e704bbe92d72a443c22841d
 msgid ""
 "A \"parameter\" is a parameter in parameterized tests. See :ref"
 ":`parameterized-test` for more information."
@@ -572,45 +589,45 @@ msgstr ""
 "「パラメータ」は, パラメータ化されたテストにおけるパラメータです. 詳しくは :ref:`parameterized-test` "
 "を参照してください."
 
-#: ../../user/scenario-structure.rst:399 703fd8b2c9ea469cb6a1284af41f70c9
+#: ../../user/scenario-structure.rst:405 0639c20961a54609a1fd1ed880de0e87
 msgid "Label of this parameter."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:400 f071d1368c62484a9789a9e823505b04
+#: ../../user/scenario-structure.rst:406 64aa5f9341e241febebee7888936e633
 msgid "args"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:401 53b7bbe383554f4d8af72540a308e413
+#: ../../user/scenario-structure.rst:407 cdd16725ad5342e48c177ddd4890eed8
 msgid "Map"
 msgstr ""
 
-#: ../../user/scenario-structure.rst:403 9ffbdb98b7544db0b8bec605d95defa5
+#: ../../user/scenario-structure.rst:409 b77435c79f5e4abbb2a60919b8aa0ceb
 msgid "An argument map of argument names to their values."
 msgstr ""
 
-#: ../../user/scenario-structure.rst:406 2b75acbee8424c0581cc0656258901e9
+#: ../../user/scenario-structure.rst:412 019bfc7426fb48668859ead7cc6b3365
 msgid "Including other files"
 msgstr "他のファイルを含める"
 
-#: ../../user/scenario-structure.rst:407 f117fd834a0d4334850b971dc90b421f
+#: ../../user/scenario-structure.rst:413 5deec5c9a2d04b878ad0ce56b8fd3260
 msgid ""
 "Using ``!include`` tag, you can include other YAML files. This macro is "
 "available anywhere in your scenario."
 msgstr "``!include`` タグを用いることで, 他の YAML ファイルを含めることができます. このマクロはシナリオのどこでも使用できます."
 
-#: ../../user/scenario-structure.rst:414 2a733c44714c4746b22e7e7f3ed9b2ee
+#: ../../user/scenario-structure.rst:420 c20b27d1f49b462f93c42464b0091c52
 msgid ""
 "A good practice of this feature is locating subscenarios on "
 "subdirectories."
 msgstr "この機能の実用例を挙げると, サブシナリオをサブディレクトリに配置することができます."
 
-#: ../../user/scenario-structure.rst:423 255865c5c3174349be20defc0951b9f5
+#: ../../user/scenario-structure.rst:429 fa8c648d03714f868e9f807b1e8bbae1
 msgid ""
 "UNIX-like wildcard expansion is available. A wildcard inclusion results "
 "in the list of matching inclusion."
 msgstr "UNIX-like なワイルドカード展開も利用できます. ワイルドカードを利用したインクルードの結果は, マッチするインクルードのリストになります."
 
-#: ../../user/scenario-structure.rst:430 5b29f02d754740fba3c32b633300ab1b
+#: ../../user/scenario-structure.rst:436 f23110543aa844d49b57da69c52f8eeb
 msgid ""
 "Anchors in a included YAML are not available in including YAMLs, because "
 "the included YAMLs are parsed after the including YAML is parsed."
@@ -618,8 +635,18 @@ msgstr ""
 "インクルードされる YAML のアンカーは、インクルードする側の YAML では使用できません. インクルードする側の YAML "
 "が解析された後に, インクルードされる YAML が解析されるためです."
 
-#: ../../user/scenario-structure.rst:433 9dc78e52cc184fcda4b6998fb9f2e134
+#: ../../user/scenario-structure.rst:439 cb7c2f55a26a469a834a2ac2b5473d15
 msgid ""
 "Names of included files should not contain any wildcard characters "
 "because not all of the wildcard expansion rules are covered."
 msgstr "インクルードされるファイルの名前にはワイルドカード文字を含めないでください. ワイルドカード展開ルールのすべてが網羅されているわけではないためです。"
+
+#~ msgid ""
+#~ "Run this scenario only when the "
+#~ "context satisfies these description. See "
+#~ ":doc:`Application Running Context<../reference/context>`"
+#~ " for more information."
+#~ msgstr ""
+#~ "この記述を満たしたときだけシナリオを実行します. 詳しくは :doc:`Application "
+#~ "Running Context<context>` を参照してください."
+

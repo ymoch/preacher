@@ -35,7 +35,6 @@ The User Guide
     user/cli
     user/scenario-structure
     user/extraction
-    user/matcher
 
 The Reference Guide
 -------------------
@@ -43,6 +42,7 @@ The Reference Guide
 .. toctree::
     :maxdepth: 2
 
+    reference/matcher
     reference/context
 
 .. _YAML: https://yaml.org/
