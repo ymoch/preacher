@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 17:04+0900\n"
+"POT-Creation-Date: 2020-07-26 17:10+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,25 +21,51 @@ msgstr ""
 msgid "Options"
 msgstr "オプション"
 
-#: ../../user/option.rst:5 baf85d978e7345dbb67327897611a5da
-msgid "Control Outputs"
-msgstr "出力制御"
+#: ../../user/option.rst:5 895174d029104d8c992c0e0307853d09
+msgid "Rich HTML Report"
+msgstr "リッチな HTML レポート"
 
-#: ../../user/option.rst:6 971d8c786c7b4917b03243cd2e096a23
+#: ../../user/option.rst:6 667e09a117254625a178d49e32ea5f73
 msgid ""
-"By default, not ``SKIPPED`` test results are shown. It is useful for "
-"debugging your test cases, but will be noisy when your test scenarios "
-"become huge. The output level control will help you find important "
-"errors."
+"Preacher can export a rich test report in HTML format, which visualize "
+"test results and provide actual requests and responses."
 msgstr ""
-"デフォルトでは, ``SKIPPED`` ではないテスト結果が出力されます. これはテストケースのデバッグには便利ですが, "
+"Preacher は HTML 形式の詳細なテストレポートを出力することができます. テスト結果を視覚的に確認したり, "
+"実際のリクエストやレスポンスを閲覧することができます."
+
+#: ../../user/option.rst:9 40bcd948494e42c2bd32446b491dc89a
+msgid ""
+"When given a directory path in ``-R`` or ``--report`` option, Preacher "
+"exports the test report to that directory. The directory is automatically"
+" created. When given ``path/to/report`` as a report directory path, "
+"``path/to/report/index.html`` should be the entry point. When running "
+"Preacher on CI, you may save the report as a build artifact."
+msgstr ""
+"``-R`` もしくは ``--report`` オプションで出力先のディレクトリを指定すると, そのディレクトリにレポートを出力します.  "
+"レポートディレクトリは自動的に作られます. ``path/to/report`` をレポートディレクトリとして指定すると, "
+"``path/to/report/index.html`` がエントリーポイントになります. Preacher を CI "
+"で実行しているのであれば, レポートをビルド成果物として保存するとよいでしょう."
+
+
+#: ../../user/option.rst:17 baf85d978e7345dbb67327897611a5da
+msgid "Control Console Outputs"
+msgstr "コンソール出力制御"
+
+#: ../../user/option.rst:18 971d8c786c7b4917b03243cd2e096a23
+msgid ""
+"By default, not ``SKIPPED`` test results are shown in the console. It is "
+"useful for debugging your test cases, but will be noisy when your test "
+"scenarios become huge. The output level control will help you find "
+"important errors."
+msgstr ""
+"デフォルトでは, ``SKIPPED`` ではないテスト結果がコンソールに出力されます. これはテストケースのデバッグには便利ですが, "
 "テストが巨大になるにつれ煩わしくなります. 出力レベルの制御は重要なエラーを見つけるために有用です."
 
-#: ../../user/option.rst:16 e33b9ea4412640d9b608244ebd95b680
+#: ../../user/option.rst:28 e33b9ea4412640d9b608244ebd95b680
 msgid "Allowing Random Errors"
 msgstr "ランダムなエラーの許容"
 
-#: ../../user/option.rst:17 2e02a81cbfea482b8cc541ddc9884438
+#: ../../user/option.rst:29 2e02a81cbfea482b8cc541ddc9884438
 msgid ""
 "Web API cannot always responds due to communication errors and so on. To "
 "allow these errors to some extent, Preacher supports retrying. you can "
@@ -49,13 +75,13 @@ msgstr ""
 "Web API は通信エラーなどにより, 必ず応答するとは限りません. 多少応答しなくてもテストを成立させるように, リトライすることができます."
 " ``-r`` もしくは ``--retry`` オプションでリトライ回数を指定できます. デフォルトは ``0`` (リトライしない) です"
 
-#: ../../user/option.rst:22 e940696d99a844248627f17d2a4cdd31
+#: ../../user/option.rst:34 e940696d99a844248627f17d2a4cdd31
 msgid ""
 "Preacher retries while not only request fails but also a validation "
 "doesn't succeed."
 msgstr ""
 
-#: ../../user/option.rst:24 f3b4b0e691f943929c7be5e1c2f381ae
+#: ../../user/option.rst:36 f3b4b0e691f943929c7be5e1c2f381ae
 msgid ""
 "Extreme response delaying can affect the testing process. You can set the"
 " timeout by ``-t`` or ``--timeout`` options (in seconds). The default is "
@@ -64,7 +90,7 @@ msgstr ""
 "極端なレスポンス遅延が, テストの進行に影響することがあります. ``-t`` もしくは ``--timeout`` "
 "オプションでリクエストのタイムアウト (単位は秒) を指定できます. デフォルトはタイムアウトなしです."
 
-#: ../../user/option.rst:28 b42293a549ce49ec9c79901d2beadf84
+#: ../../user/option.rst:40 b42293a549ce49ec9c79901d2beadf84
 msgid ""
 "Retrying should have intervals to avoid overloading. You can set the "
 "retry interval (in seconds) by ``-d`` or ``--delay`` options. The default"
@@ -73,11 +99,11 @@ msgstr ""
 "テスト対象に負荷を与えすぎないように, リトライは間隔を開けることが望ましいです. ``-d`` もしくは ``--delay`` "
 "オプションでリトライ間隔 (単位は秒) を指定できます. デフォルトは ``0.1`` です."
 
-#: ../../user/option.rst:37 bcfeb00395464611b281ddb35e127520
+#: ../../user/option.rst:49 bcfeb00395464611b281ddb35e127520
 msgid "Concurrent running"
 msgstr "並列実行"
 
-#: ../../user/option.rst:38 812764dfbf0046cc9c01d75eebcf422c
+#: ../../user/option.rst:50 812764dfbf0046cc9c01d75eebcf422c
 msgid ""
 "To reduce runtime, Preacher can run scenarios concurrently by ``-c`` or "
 "``--concurrency`` options The default is ``1`` (run serially.)"
@@ -85,7 +111,7 @@ msgstr ""
 "実行時間を短縮するため, Preacher は ``-c`` ないし ``--concurrency`` "
 "オプションを使用してシナリオを並列に実行できます. デフォルトは 1（シリアルで実行）です。"
 
-#: ../../user/option.rst:41 f853394ffa0e43b59c9c57a1b5ebc7eb
+#: ../../user/option.rst:53 f853394ffa0e43b59c9c57a1b5ebc7eb
 msgid ""
 "By default, the running unit is each scenario: cases are run in order, "
 "not concurrently. When given ``ordered: false`` to a scenario, then the "
@@ -93,3 +119,4 @@ msgid ""
 msgstr ""
 "デフォルトでは, 実行単位はシナリオです. ケースは同時にではなく順番に実行されます. シナリオに ``ordered: false`` "
 "を指定すると, そのシナリオのケースが並列で実行されることを許容します."
+

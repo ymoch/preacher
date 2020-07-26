@@ -1,9 +1,21 @@
 Options
 =======
 
-Control Outputs
----------------
-By default, not ``SKIPPED`` test results are shown.
+Rich HTML Report
+----------------
+Preacher can export a rich test report in HTML format,
+which visualize test results and provide actual requests and responses.
+
+When given a directory path in ``-R`` or ``--report`` option,
+Preacher exports the test report to that directory.
+The directory is automatically created.
+When given ``path/to/report`` as a report directory path,
+``path/to/report/index.html`` should be the entry point.
+When running Preacher on CI, you may save the report as a build artifact.
+
+Control Console Outputs
+-----------------------
+By default, not ``SKIPPED`` test results are shown in the console.
 It is useful for debugging your test cases,
 but will be noisy when your test scenarios become huge.
 The output level control will help you find important errors.
