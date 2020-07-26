@@ -32,7 +32,6 @@ The User Guide
     user/quickstart
     user/option
     user/advanced-usage
-    user/cli
 
 The Reference Guide
 -------------------
@@ -44,6 +43,7 @@ The Reference Guide
     reference/extraction
     reference/matcher
     reference/context
+    reference/cli
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/
