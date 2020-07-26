@@ -1,5 +1,5 @@
-Context Reference
-=================
+Context
+=======
 
 Context for a Scenario
 ----------------------

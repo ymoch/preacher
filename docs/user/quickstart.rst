@@ -20,12 +20,12 @@ If you feel annoyed, see :ref:`docker-run`.
   or installing Python by source code build.
 - On Linux, ``libxml2`` and ``libxslt`` are required by `lxml`_,
   as `official documentation <https://lxml.de/installation.html#requirements>`_ says.
-- `pyjq`_ requires ``autoconf``, ``automake``, ``libtool``, ``make``
+- `jq.py`_ requires ``autoconf``, ``automake``, ``libtool``, ``make``
   and a C compiler such as ``gcc``.
 
 Unfortunately, **Preacher doesn't support Windows now**
-due to the dependent package `pyjq`_,
-which `cannot be built on Windows <https://github.com/doloopwhile/pyjq/issues/9>`_.
+due to the dependent package `jq.py`_,
+which `cannot be built on Windows <https://github.com/mwilliamson/jq.py/issues/20>`_.
 
 If you have satisfied environment,
 let's install Preacher and see its version.
@@ -114,23 +114,11 @@ Each verification result has a "Verification Status."
      - no
      - It encountered an unexpected situation and failed.
 
-Test Report
------------
-Preacher can export a rich test report in HTML format,
-which visualize test results and provide actual responses.
-
-When given a directory path in ``-R`` or ``--report`` option,
-Preacher exports the test report to that directory.
-The directory is automatically created.
-When given ``path/to/report`` as a report directory path,
-``path/to/report/index.html`` should be the entry point.
-When running Preacher on CI, you may save the report as a build artifact.
-
 
 .. _PyPI: https://pypi.org/project/preacher/
 .. _Docker: https://www.docker.com/
 .. _Docker Hub: https://hub.docker.com/r/ymoch/preacher
 .. _pip: https://pip.pypa.io/en/stable/
 .. _lxml: https://lxml.de/
-.. _pyjq: https://github.com/doloopwhile/pyjq
+.. _jq.py: https://github.com/mwilliamson/jq.py
 .. _C extensions: https://docs.python.org/ja/3/extending/extending.html
