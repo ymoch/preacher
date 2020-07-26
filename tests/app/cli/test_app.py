@@ -4,26 +4,18 @@ Styles should be checked independently.
 """
 import logging
 import os
-import sys
-import uuid
 from concurrent.futures import Executor
-from importlib.abc import InspectLoader
-from importlib.machinery import ModuleSpec
 from io import StringIO
 from tempfile import TemporaryDirectory
-from types import ModuleType
 from typing import Iterable, Optional
 from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
 
-from pluggy import PluginManager
 from pytest import fixture, raises, mark
 
-from preacher.app.cli.app import REPORT_LOGGER_NAME
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
 from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
-from preacher.app.cli.app import load_plugins
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -44,11 +36,6 @@ def base_dir():
 
 
 @fixture
-def logger():
-    return NonCallableMock(logging.Logger)
-
-
-@fixture
 def executor():
     executor = NonCallableMagicMock(Executor)
     executor.__enter__.return_value = executor
@@ -60,7 +47,8 @@ def executor_factory(executor):
     return Mock(return_value=executor)
 
 
-def test_app_normal(mocker, base_dir, logger, executor, executor_factory):
+def test_app_normal(mocker, base_dir, executor, executor_factory):
+    logger = NonCallableMock(logging.Logger)
     logger_ctor = mocker.patch(f'{PKG}.create_system_logger', return_value=logger)
 
     plugin_manager_ctor = mocker.patch(f'{PKG}.get_plugin_manager')
@@ -176,10 +164,11 @@ def test_create_system_logger(verbosity, expected_level):
     assert logger.getEffectiveLevel() == expected_level
 
 
-def test_load_objs_empty(mocker, logger):
+def test_load_objs_empty(mocker):
     mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
 
-    objs = load_objs((), logger)
+    paths = ()
+    objs = load_objs(paths)
 
     assert next(objs) == 'foo'
     assert next(objs) == 'bar'
@@ -187,72 +176,9 @@ def test_load_objs_empty(mocker, logger):
         next(objs)
 
 
-def test_load_plugins_empty(logger):
-    manager = NonCallableMock(PluginManager)
-    load_plugins(manager, (), logger)
-    manager.register.assert_not_called()
-
-
-def test_load_plugins_normal(mocker, logger):
-    loader = NonCallableMock(InspectLoader)
-
-    spec = NonCallableMock(ModuleSpec, loader=loader)
-    spec_ctor = mocker.patch(f'{PKG}.spec_from_file_location', return_value=spec)
-
-    module = NonCallableMock(ModuleType)
-    module_ctor = mocker.patch(f'{PKG}.module_from_spec', return_value=module)
-
-    uuid4 = NonCallableMagicMock(uuid.uuid4)
-    uuid4.__str__.return_value = 'module-name'
-    mocker.patch('uuid.uuid4', return_value=uuid4)
-
-    manager = NonCallableMock(PluginManager)
-    load_plugins(manager, (sentinel.plugin,), logger)
-
-    spec_ctor.assert_called_once_with('module-name', sentinel.plugin)
-    module_ctor.assert_called_once_with(spec)
-    loader.exec_module.assert_called_once_with(module)
-    manager.register.assert_called_once_with(module)
-    assert sys.modules['module-name'] == module
-
-
-def test_load_plugins_not_a_module(mocker, logger):
-    mocker.patch(f'{PKG}.spec_from_file_location', return_value=None)
-
-    manager = NonCallableMock(PluginManager)
-    with raises(RuntimeError):
-        load_plugins(manager, (sentinel.plugin,), logger)
-
-    manager.register.assert_not_called()
-
-
-def test_load_plugins_invalid_module(mocker, logger):
-    loader = NonCallableMock(InspectLoader)
-    loader.exec_module.side_effect = SyntaxError('msg')
-
-    spec = NonCallableMock(ModuleSpec, loader=loader)
-    mocker.patch(f'{PKG}.spec_from_file_location', return_value=spec)
-
-    module = NonCallableMock(ModuleType)
-    mocker.patch(f'{PKG}.module_from_spec', return_value=module)
-
-    uuid4 = NonCallableMagicMock(uuid.uuid4)
-    uuid4.__str__.return_value = 'module-name'
-    mocker.patch('uuid.uuid4', return_value=uuid4)
-
-    manager = NonCallableMock(PluginManager)
-    with raises(SyntaxError):
-        load_plugins(manager, (sentinel.plugin,), logger)
-
-    manager.register.assert_not_called()
-    assert sys.modules.get('module-name') != module
-
-
-def test_load_objs_filled(base_dir, logger):
-    objs = load_objs(
-        (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml')),
-        logger,
-    )
+def test_load_objs_filled(base_dir):
+    paths = (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml'))
+    objs = load_objs(paths)
 
     assert next(objs) == 'foo'
     assert next(objs) == 'bar'
@@ -269,8 +195,8 @@ def test_load_objs_filled(base_dir, logger):
 def test_create_listener_logging_level(level, expected_logging_level):
     create_listener(level=level, report_dir=None)
 
-    logging_level = logging.getLogger(REPORT_LOGGER_NAME).getEffectiveLevel()
-    assert logging_level == expected_logging_level
+    logger = logging.getLogger('preacher.cli.report.logging')
+    assert logger.getEffectiveLevel() == expected_logging_level
 
 
 def test_create_listener_report_dir(base_dir):
