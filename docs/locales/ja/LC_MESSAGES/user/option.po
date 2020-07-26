@@ -78,7 +78,7 @@ msgstr ""
 msgid ""
 "Preacher retries while not only request fails but also a validation "
 "doesn't succeed."
-msgstr ""
+msgstr "Preacher はリクエストが失敗したときだけでなく, 検証が成功しなかったときにもリトライします."
 
 #: ../../user/option.rst:36 f3b4b0e691f943929c7be5e1c2f381ae
 msgid ""
