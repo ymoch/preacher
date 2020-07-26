@@ -26,16 +26,17 @@ The User Guide
 --------------
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   user/intro
-   user/quickstart
-   user/advanced-usage
-   user/cli
-   user/scenario-structure
-   user/extraction
-   user/matcher
-   user/context
+    user/intro
+    user/quickstart
+    user/option
+    user/advanced-usage
+    user/cli
+    user/scenario-structure
+    user/extraction
+    user/matcher
+    user/context
 
 
 .. _YAML: https://yaml.org/
