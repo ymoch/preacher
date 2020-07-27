@@ -61,7 +61,7 @@ class _LazyElementTreeLoader:
             self._is_loaded = True
 
         etree = self._etree
-        if not etree:
+        if etree is None:
             raise ExtractionError('Not an XML content')
         return etree
 
