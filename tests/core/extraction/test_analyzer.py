@@ -9,7 +9,7 @@ from preacher.core.extraction.analysis import Analyzer
 T = TypeVar('T')
 
 
-def test_incomplete_analyzer():
+def test_analyzer_interface():
     class _IncompleteAnalyzer(Analyzer):
         def jq(self, extract: Callable[[str], T]) -> T:
             return super().jq(extract)

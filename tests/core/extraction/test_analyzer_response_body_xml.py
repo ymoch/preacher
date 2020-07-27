@@ -2,7 +2,7 @@ from unittest.mock import Mock, NonCallableMock
 
 from pytest import fixture, raises
 
-from preacher.core.extraction.analysis import analyze_xml_str
+from preacher.core.extraction.analysis import ResponseBodyAnalyzer
 from preacher.core.extraction.error import ExtractionError
 from preacher.core.request import ResponseBody
 
@@ -24,7 +24,7 @@ def extract():
 
 
 def test_xpath(extract, body):
-    analyzer = analyze_xml_str(body)
+    analyzer = ResponseBodyAnalyzer(body)
     value = analyzer.xpath(extract)
     assert value == 'value'
 
@@ -32,14 +32,14 @@ def test_xpath(extract, body):
 
 
 def test_jq(body):
-    analyzer = analyze_xml_str(body)
+    analyzer = ResponseBodyAnalyzer(body)
     extract = Mock(side_effect=RuntimeError('msg'))
     with raises(RuntimeError):
         analyzer.jq(extract)
 
 
 def test_key(extract, body):
-    analyzer = analyze_xml_str(body)
+    analyzer = ResponseBodyAnalyzer(body)
     with raises(ExtractionError):
         analyzer.key(extract)
 

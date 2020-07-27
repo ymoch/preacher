@@ -108,12 +108,5 @@ class MappingAnalyzer(Analyzer):
         return extract(self._value)
 
 
-def analyze_xml_str(body: ResponseBody) -> Analyzer:
-    return ResponseBodyAnalyzer(body)
-
-
 def analyze_data_obj(obj) -> Analyzer:
     return MappingAnalyzer(asdict(obj))
-
-
-Analysis = Callable[[ResponseBody], Analyzer]
