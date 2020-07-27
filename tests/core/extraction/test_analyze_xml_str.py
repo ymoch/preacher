@@ -35,6 +35,8 @@ def test_not_supported(extract, body):
     with raises(NotImplementedError):
         analyzer.jq(extract)
     with raises(NotImplementedError):
+        analyzer.jq_text(extract)
+    with raises(NotImplementedError):
         analyzer.key(extract)
 
     extract.assert_not_called()

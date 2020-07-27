@@ -20,6 +20,15 @@ def test_jq(extract):
     extract.assert_called_once_with({'k1': 'v1', 'k2': 'v2'})
 
 
+def test_jq_text(extract):
+    body = NonCallableMock(ResponseBody, text='{"k1":"v1","k2":"v2"}')
+    analyzer = analyze_json_str(body)
+    value = analyzer.jq_text(extract)
+    assert value is sentinel.extracted
+
+    extract.assert_called_once_with('{"k1":"v1","k2":"v2"}')
+
+
 def test_key_for_invalid_body(extract):
     body = NonCallableMock(ResponseBody, text='[]')
     analyzer = analyze_json_str(body)

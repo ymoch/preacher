@@ -14,6 +14,9 @@ def test_incomplete_analyzer():
         def jq(self, extract: Callable[[object], T]) -> T:
             return super().jq(extract)
 
+        def jq_text(self, extract: Callable[[str], T]) -> T:
+            return super().jq_text(extract)
+
         def xpath(self, extract: Callable[[Element], T]) -> T:
             return super().xpath(extract)
 
@@ -24,6 +27,8 @@ def test_incomplete_analyzer():
     ext = Mock()
     with raises(NotImplementedError):
         analyzer.jq(ext)
+    with raises(NotImplementedError):
+        analyzer.jq_text(ext)
     with raises(NotImplementedError):
         analyzer.xpath(ext)
     with raises(NotImplementedError):
