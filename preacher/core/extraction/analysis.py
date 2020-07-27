@@ -108,10 +108,6 @@ class MappingAnalyzer(Analyzer):
         return extract(self._value)
 
 
-def analyze_json_str(body: ResponseBody) -> Analyzer:
-    return ResponseBodyAnalyzer(body)
-
-
 def analyze_xml_str(body: ResponseBody) -> Analyzer:
     return ResponseBodyAnalyzer(body)
 

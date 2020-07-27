@@ -5,7 +5,6 @@ from preacher.core.extraction.analysis import (
     ResponseBodyAnalyzer,
     MappingAnalyzer,
     Analysis,
-    analyze_json_str,
     analyze_xml_str,
     analyze_data_obj,
 )
@@ -22,7 +21,6 @@ __all__ = [
     'ResponseBodyAnalyzer',
     'MappingAnalyzer',
     'Analysis',
-    'analyze_json_str',
     'analyze_xml_str',
     'analyze_data_obj',
     'ExtractionError',

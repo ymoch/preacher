@@ -1,15 +1,8 @@
 from preacher.compilation.error import CompilationError
 from preacher.compilation.util.type import ensure_str
-from preacher.core.extraction.analysis import (
-    Analysis,
-    analyze_json_str,
-    analyze_xml_str,
-)
+from preacher.core.extraction.analysis import Analysis, analyze_xml_str
 
-_ANALYSIS_MAP = {
-    'json': analyze_json_str,
-    'xml': analyze_xml_str,
-}
+_ANALYSIS_MAP = {'xml': analyze_xml_str}
 
 
 class AnalysisCompiler:

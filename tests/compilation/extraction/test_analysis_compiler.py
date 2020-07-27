@@ -21,16 +21,11 @@ def test_given_invalid_keys(value, expected_suffix):
 
 
 @mark.parametrize('value, text', (
-    ('json', '{"key": "value"}'),
     ('xml', '<a><b>text1</b><b>text2</b></a>'),
 ))
 def test_given_valid_keys(value, text):
     compiler = AnalysisCompiler()
     analyze = compiler.compile(value)
 
-    body = NonCallableMock(
-        spec=ResponseBody,
-        text=text,
-        content=text.encode('utf-8'),
-    )
+    body = NonCallableMock(spec=ResponseBody, text=text, content=text.encode('utf-8'))
     analyze(body)
