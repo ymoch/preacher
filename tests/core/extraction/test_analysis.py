@@ -11,9 +11,6 @@ T = TypeVar('T')
 
 def test_incomplete_analyzer():
     class _IncompleteAnalyzer(Analyzer):
-        def jq(self, extract: Callable[[object], T]) -> T:
-            return super().jq(extract)
-
         def jq_text(self, extract: Callable[[str], T]) -> T:
             return super().jq_text(extract)
 
@@ -25,8 +22,6 @@ def test_incomplete_analyzer():
 
     analyzer = _IncompleteAnalyzer()
     ext = Mock()
-    with raises(NotImplementedError):
-        analyzer.jq(ext)
     with raises(NotImplementedError):
         analyzer.jq_text(ext)
     with raises(NotImplementedError):

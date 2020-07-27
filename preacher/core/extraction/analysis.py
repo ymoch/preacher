@@ -22,10 +22,6 @@ class Analyzer(ABC):
     """
 
     @abstractmethod
-    def jq(self, extract: Callable[[object], T]) -> T:
-        raise NotImplementedError()
-
-    @abstractmethod
     def jq_text(self, extract: Callable[[str], T]) -> T:
         raise NotImplementedError()
 
@@ -42,9 +38,6 @@ class JsonAnalyzer(Analyzer):
 
     def __init__(self, json_body: Any):
         self._json_body = json_body
-
-    def jq(self, extract: Callable[[object], T]) -> T:
-        return extract(self._json_body)
 
     def jq_text(self, extract: Callable[[str], T]) -> T:
         return extract(json.dumps(self._json_body, separators=(',', ':')))
@@ -64,9 +57,6 @@ class XmlAnalyzer(Analyzer):
 
     def __init__(self, etree: Element):
         self._etree = etree
-
-    def jq(self, extract: Callable[[object], T]) -> T:
-        raise NotImplementedError('jq extraction is not allowed for XML')
 
     def jq_text(self, extract: Callable[[str], T]) -> T:
         raise NotImplementedError('jq_text extraction is not allowed for XML')
