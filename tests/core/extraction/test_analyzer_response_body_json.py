@@ -15,7 +15,7 @@ def extract():
 def test_jq(extract):
     body = NonCallableMock(ResponseBody, text='{"k1":"v1","k2":"v2"}')
     analyzer = ResponseBodyAnalyzer(body)
-    value = analyzer.jq(extract)
+    value = analyzer.for_text(extract)
     assert value is sentinel.extracted
 
     extract.assert_called_once_with('{"k1":"v1","k2":"v2"}')
@@ -25,7 +25,7 @@ def test_key_for_invalid_body(extract):
     body = NonCallableMock(ResponseBody, text='[]')
     analyzer = ResponseBodyAnalyzer(body)
     with raises(ExtractionError):
-        analyzer.key(extract)
+        analyzer.for_mapping(extract)
 
     extract.assert_not_called()
 
@@ -33,7 +33,7 @@ def test_key_for_invalid_body(extract):
 def test_key_for_valid_body(extract):
     body = NonCallableMock(ResponseBody, text='{"int":1,"str":"s"}')
     analyzer = ResponseBodyAnalyzer(body)
-    value = analyzer.key(extract)
+    value = analyzer.for_mapping(extract)
     assert value is sentinel.extracted
 
     extract.assert_called_once_with({'int': 1, 'str': 's'})
@@ -43,6 +43,6 @@ def test_not_supported(extract):
     body = NonCallableMock(ResponseBody, content=b'{}')
     analyzer = ResponseBodyAnalyzer(body)
     with raises(ExtractionError):
-        analyzer.xpath(extract)
+        analyzer.for_etree(extract)
 
     extract.assert_not_called()

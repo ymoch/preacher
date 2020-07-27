@@ -33,7 +33,7 @@ VALUE = json.dumps({
 @fixture
 def analyzer():
     analyzer = NonCallableMock(Analyzer)
-    analyzer.jq.side_effect = lambda extract: extract(VALUE)
+    analyzer.for_text.side_effect = lambda extract: extract(VALUE)
     return analyzer
 
 

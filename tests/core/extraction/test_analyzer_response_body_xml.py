@@ -25,7 +25,7 @@ def extract():
 
 def test_xpath(extract, body):
     analyzer = ResponseBodyAnalyzer(body)
-    value = analyzer.xpath(extract)
+    value = analyzer.for_etree(extract)
     assert value == 'value'
 
     extract.assert_called()
@@ -35,12 +35,12 @@ def test_jq(body):
     analyzer = ResponseBodyAnalyzer(body)
     extract = Mock(side_effect=RuntimeError('msg'))
     with raises(RuntimeError):
-        analyzer.jq(extract)
+        analyzer.for_text(extract)
 
 
 def test_key(extract, body):
     analyzer = ResponseBodyAnalyzer(body)
     with raises(ExtractionError):
-        analyzer.key(extract)
+        analyzer.for_mapping(extract)
 
     extract.assert_not_called()

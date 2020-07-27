@@ -1,8 +1,8 @@
 """Extraction."""
-import json
+
 from abc import ABC, abstractmethod
 from functools import partial
-from typing import Any, Callable, List, Optional, TypeVar, Iterable
+from typing import Any, Callable, Iterator, List, Optional, TypeVar
 
 import jq
 from lxml.etree import _Element as Element, XPathEvalError
@@ -45,7 +45,7 @@ class JqExtractor(Extractor):
 
         values = (
             self._cast(value) if value is not None else value
-            for value in analyzer.jq(partial(_foo, compiled))
+            for value in analyzer.for_text(partial(_foo, compiled))
         )
         if self._multiple:
             return list(values)
@@ -53,9 +53,8 @@ class JqExtractor(Extractor):
             return next(values, None)
 
 
-def _foo(compiled, text: str) -> Iterable[str]:
-    content = compiled.input(text=text).text()
-    return (json.loads(line) for line in content.split('\n'))
+def _foo(compiled, text: str) -> Iterator[object]:
+    return compiled.input(text=text)
 
 
 class XPathExtractor(Extractor):
@@ -71,7 +70,7 @@ class XPathExtractor(Extractor):
         self._cast = cast or identity
 
     def extract(self, analyzer: Analyzer) -> object:
-        elements = analyzer.xpath(self._extract)
+        elements = analyzer.for_etree(self._extract)
         if not elements:
             return None
 
@@ -106,5 +105,5 @@ class KeyExtractor(Extractor):
 
     def extract(self, analyzer: Analyzer) -> object:
         return self._cast(
-            analyzer.key(lambda mapping: mapping.get(self._key))
+            analyzer.for_mapping(lambda mapping: mapping.get(self._key))
         )

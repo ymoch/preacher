@@ -11,22 +11,22 @@ T = TypeVar('T')
 
 def test_analyzer_interface():
     class _IncompleteAnalyzer(Analyzer):
-        def jq(self, extract: Callable[[str], T]) -> T:
-            return super().jq(extract)
+        def for_text(self, extract: Callable[[str], T]) -> T:
+            return super().for_text(extract)
 
-        def xpath(self, extract: Callable[[Element], T]) -> T:
-            return super().xpath(extract)
+        def for_etree(self, extract: Callable[[Element], T]) -> T:
+            return super().for_etree(extract)
 
-        def key(self, extract: Callable[[Mapping], T]) -> T:
-            return super().key(extract)
+        def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
+            return super().for_mapping(extract)
 
     analyzer = _IncompleteAnalyzer()
     ext = Mock()
     with raises(NotImplementedError):
-        analyzer.jq(ext)
+        analyzer.for_text(ext)
     with raises(NotImplementedError):
-        analyzer.xpath(ext)
+        analyzer.for_etree(ext)
     with raises(NotImplementedError):
-        analyzer.key(ext)
+        analyzer.for_mapping(ext)
 
     ext.assert_not_called()

@@ -1,5 +1,5 @@
 """
-Response body analysis.
+Value analysis.
 """
 
 import json
@@ -23,15 +23,15 @@ class Analyzer(ABC):
     """
 
     @abstractmethod
-    def jq(self, extract: Callable[[str], T]) -> T:
+    def for_text(self, extract: Callable[[str], T]) -> T:
         raise NotImplementedError()
 
     @abstractmethod
-    def xpath(self, extract: Callable[[Element], T]) -> T:
+    def for_etree(self, extract: Callable[[Element], T]) -> T:
         raise NotImplementedError()
 
     @abstractmethod
-    def key(self, extract: Callable[[Mapping], T]) -> T:
+    def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         raise NotImplementedError()
 
 
@@ -89,13 +89,13 @@ class ResponseBodyAnalyzer(Analyzer):
         self._json_loader = _LazyJsonLoader(body.text)
         self._caches: Dict[str, Any] = {}
 
-    def jq(self, extract: Callable[[str], T]) -> T:
+    def for_text(self, extract: Callable[[str], T]) -> T:
         return extract(self._body.text)
 
-    def xpath(self, extract: Callable[[Element], T]) -> T:
+    def for_etree(self, extract: Callable[[Element], T]) -> T:
         return extract(self._etree_loader.get())
 
-    def key(self, extract: Callable[[Mapping], T]) -> T:
+    def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         json_value = self._json_loader.get()
         if not isinstance(json_value, Mapping):
             raise ExtractionError(f'Expected a dictionary, but given {type(json_value)}')
@@ -107,14 +107,14 @@ class MappingAnalyzer(Analyzer):
     def __init__(self, value: Mapping):
         self._value = value
 
-    def jq(self, extract: Callable[[str], T]) -> T:
+    def for_text(self, extract: Callable[[str], T]) -> T:
         serializable = recursive_map(to_serializable, self._value)
         return extract(json.dumps(serializable, separators=(',', ':')))
 
-    def xpath(self, extract: Callable[[Element], T]) -> T:
+    def for_etree(self, extract: Callable[[Element], T]) -> T:
         raise ExtractionError('Not an XML content')
 
-    def key(self, extract: Callable[[Mapping], T]) -> T:
+    def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         return extract(self._value)
 
 
