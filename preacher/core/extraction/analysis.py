@@ -105,21 +105,6 @@ class JsonAnalyzer(Analyzer):
         return extract(self._json_body)
 
 
-class XmlAnalyzer(Analyzer):
-
-    def __init__(self, etree: Element):
-        self._etree = etree
-
-    def jq(self, extract: Callable[[str], T]) -> T:
-        raise NotImplementedError('jq_text extraction is not allowed for XML')
-
-    def xpath(self, extract: Callable[[Element], T]) -> T:
-        return extract(self._etree)
-
-    def key(self, extract: Callable[[Mapping], T]) -> T:
-        raise NotImplementedError('Key extraction is not allowed for XML')
-
-
 def analyze_json_str(body: ResponseBody) -> Analyzer:
     return ContentAnalyzer(body)
 

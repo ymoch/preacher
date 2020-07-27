@@ -3,7 +3,6 @@
 from preacher.core.extraction.analysis import (
     Analyzer,
     JsonAnalyzer,
-    XmlAnalyzer,
     Analysis,
     analyze_json_str,
     analyze_xml_str,
@@ -20,7 +19,6 @@ from preacher.core.extraction.extraction import (
 __all__ = [
     'Analyzer',
     'JsonAnalyzer',
-    'XmlAnalyzer',
     'Analysis',
     'analyze_json_str',
     'analyze_xml_str',
