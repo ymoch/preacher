@@ -73,16 +73,16 @@ Allowed values are:
 
 Abbreviation
 ^^^^^^^^^^^^
-Ordinally, extractions should be very simple `jq`_ queries.
+Ordinary, extractions should be very simple `jq`_ queries.
 In these cases, an extraction can be written in a string,
 which is equivalent to ``{"jq": it}``.
 
-Analysis Compatibility
-----------------------
-The extraction must be compatible for the body analysis.
+Content Compatibility
+---------------------
+A extraction must be compatible for the content.
 
 +----------------------+----+-------+-----+
-| Analysis             | jq | xpath | key |
+| Content              | jq | xpath | key |
 +======================+====+=======+=====+
 | JSON (an object)     |  o |     x |   o |
 +----------------------+----+-------+-----+

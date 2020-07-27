@@ -341,11 +341,6 @@ ResponseBodyDescription
       - Type
       - Default
       - Description
-    * - analyze_as
-      - String
-      - ``json``
-      - The method to analyze the body.
-        Allowed values are ``json`` and ``xml``.
     * - descriptions
       - List[:ref:`description`]
       - ``[]``
