@@ -1,7 +1,8 @@
 """Extraction."""
-
+import json
 from abc import ABC, abstractmethod
-from typing import Any, Callable, List, Optional, TypeVar
+from functools import partial
+from typing import Any, Callable, List, Optional, TypeVar, Iterable
 
 import jq
 from lxml.etree import _Element as Element, XPathEvalError
@@ -44,12 +45,17 @@ class JqExtractor(Extractor):
 
         values = (
             self._cast(value) if value is not None else value
-            for value in analyzer.jq(compiled.input)
+            for value in analyzer.jq_text(partial(_foo, compiled))
         )
         if self._multiple:
             return list(values)
         else:
             return next(values, None)
+
+
+def _foo(compiled, text: str) -> Iterable[str]:
+    content = compiled.input(text=text).text()
+    return (json.loads(line) for line in content.split('\n'))
 
 
 class XPathExtractor(Extractor):

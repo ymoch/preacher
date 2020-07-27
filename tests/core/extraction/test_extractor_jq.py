@@ -1,4 +1,5 @@
-from unittest.mock import Mock, NonCallableMock
+import json
+from unittest.mock import NonCallableMock
 
 from pytest import fixture, mark, raises
 
@@ -6,7 +7,7 @@ from preacher.core.extraction.analysis import Analyzer
 from preacher.core.extraction.error import ExtractionError
 from preacher.core.extraction.extraction import JqExtractor
 
-VALUE = {
+VALUE = json.dumps({
     'foo': 'bar',
     'list': [
         {
@@ -26,15 +27,14 @@ VALUE = {
         {},
         {'value': '2'},
     ],
-}
+}, separators=(',', ':'))
 
 
 @fixture
 def analyzer():
-    return NonCallableMock(
-        spec=Analyzer,
-        jq=Mock(side_effect=lambda x: x(VALUE))
-    )
+    analyzer = NonCallableMock(Analyzer)
+    analyzer.jq_text.side_effect = lambda extract: extract(VALUE)
+    return analyzer
 
 
 def test_extract_invalid(analyzer):
