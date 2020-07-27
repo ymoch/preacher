@@ -3,6 +3,7 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 from pytest import fixture, raises
 
 from preacher.core.extraction.analysis import analyze_json_str
+from preacher.core.extraction.error import ExtractionError
 from preacher.core.request import ResponseBody
 
 
@@ -23,7 +24,7 @@ def test_jq(extract):
 def test_key_for_invalid_body(extract):
     body = NonCallableMock(ResponseBody, text='[]')
     analyzer = analyze_json_str(body)
-    with raises(ValueError):
+    with raises(ExtractionError):
         analyzer.key(extract)
 
     extract.assert_not_called()
@@ -39,9 +40,9 @@ def test_key_for_valid_body(extract):
 
 
 def test_not_supported(extract):
-    body = NonCallableMock(ResponseBody, text='{}')
+    body = NonCallableMock(ResponseBody, content=b'{}')
     analyzer = analyze_json_str(body)
-    with raises(NotImplementedError):
+    with raises(ExtractionError):
         analyzer.xpath(extract)
 
     extract.assert_not_called()
