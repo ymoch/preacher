@@ -6,9 +6,9 @@ and the body.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Callable, List, Mapping, Optional
+from typing import List, Mapping, Optional
 
-from preacher.core.extraction import Analyzer, JsonAnalyzer
+from preacher.core.extraction import MappingAnalyzer
 from preacher.core.request import Response
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
@@ -34,13 +34,10 @@ class ResponseDescription:
         status_code: Optional[List[Predicate]] = None,
         headers: Optional[List[Description]] = None,
         body: Optional[ResponseBodyDescription] = None,
-        analyze_headers:
-            Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
     ):
         self._status_code = status_code or []
         self._headers = headers or []
         self._body = body
-        self._analyze_headers = analyze_headers
 
     def verify(
         self,
@@ -86,7 +83,7 @@ class ResponseDescription:
         headers: Mapping[str, str],
         context: Optional[ValueContext],
     ) -> Verification:
-        analyzer = self._analyze_headers(headers)
+        analyzer = MappingAnalyzer(headers)
         return Verification.collect(
             description.verify(analyzer, context)
             for description in self._headers

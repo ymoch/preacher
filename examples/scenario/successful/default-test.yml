@@ -113,27 +113,3 @@ subscenarios:
           - describe: .form.foo
             should:
               contain_exactly: [bar]
-
-  - label: Body analysis can be overwritten
-
-    default:
-      response:
-        body:
-          analyze_as: xml
-
-    cases:
-      - label: Default XML analysis succeeds
-        request:
-          method: GET
-          path: /xml
-        response:
-          headers:
-            describe:
-              key: content-type
-            should:
-              equal: application/xml
-          body:
-            - describe:
-                xpath: /root/foo
-              should:
-                equal: '1'

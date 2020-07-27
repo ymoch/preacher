@@ -5,50 +5,32 @@ from dataclasses import dataclass, replace
 from typing import List, Optional
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.extraction import AnalysisCompiler
 from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import or_else
-from preacher.core.extraction import Analysis, analyze_json_str
-from preacher.core.verification import (
-    ResponseBodyDescription,
-    Description,
-)
+from preacher.core.verification import ResponseBodyDescription, Description
 from .description import DescriptionCompiler
 
-_KEY_ANALYSIS = 'analyze_as'
 _KEY_DESCRIPTIONS = 'descriptions'
 
 
 @dataclass(frozen=True)
 class ResponseBodyDescriptionCompiled:
-    analyze: Optional[Analysis] = None
     descriptions: Optional[List[Description]] = None
 
-    def replace(
-        self,
-        other: ResponseBodyDescriptionCompiled,
-    ) -> ResponseBodyDescriptionCompiled:
-        return ResponseBodyDescriptionCompiled(
-            analyze=or_else(other.analyze, self.analyze),
-            descriptions=or_else(other.descriptions, self.descriptions),
-        )
+    def replace(self, other: ResponseBodyDescriptionCompiled) -> ResponseBodyDescriptionCompiled:
+        return ResponseBodyDescriptionCompiled(or_else(other.descriptions, self.descriptions))
 
     def fix(self) -> ResponseBodyDescription:
-        return ResponseBodyDescription(
-            analyze=self.analyze or analyze_json_str,
-            descriptions=self.descriptions,
-        )
+        return ResponseBodyDescription(self.descriptions)
 
 
 class ResponseBodyDescriptionCompiler:
 
     def __init__(
         self,
-        analysis: AnalysisCompiler,
         description: DescriptionCompiler,
         default: Optional[ResponseBodyDescriptionCompiled] = None,
     ):
-        self._analysis = analysis
         self._description = description
         self._default = default or ResponseBodyDescriptionCompiled()
 
@@ -66,12 +48,6 @@ class ResponseBodyDescriptionCompiler:
 
         compiled = self._default
 
-        analyze_obj = obj.get(_KEY_ANALYSIS)
-        if analyze_obj is not None:
-            with on_key(_KEY_ANALYSIS):
-                analyze = self._analysis.compile(analyze_obj)
-            compiled = replace(compiled, analyze=analyze)
-
         descriptions_obj = obj.get(_KEY_DESCRIPTIONS)
         if descriptions_obj is not None:
             descriptions = self._compile_descriptions(descriptions_obj)
@@ -84,7 +60,6 @@ class ResponseBodyDescriptionCompiler:
         default: ResponseBodyDescriptionCompiled
     ) -> ResponseBodyDescriptionCompiler:
         return ResponseBodyDescriptionCompiler(
-            analysis=self._analysis,
             description=self._description,
             default=self._default.replace(default),
         )

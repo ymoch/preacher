@@ -11,6 +11,8 @@ from preacher.core.verification.response import ResponseDescription
 from preacher.core.verification.response_body import ResponseBodyDescription
 from preacher.core.verification.verification import Verification
 
+PKG = 'preacher.core.verification.response'
+
 
 @fixture
 def response():
@@ -36,9 +38,7 @@ def test_when_given_no_description(response):
 
 def test_when_header_verification_fails(response):
     headers = [
-        NonCallableMock(Description, verify=Mock(
-            side_effect=RuntimeError('message')
-        )),
+        NonCallableMock(Description, verify=Mock(side_effect=RuntimeError('message'))),
     ]
     description = ResponseDescription(headers=headers)
 
@@ -47,7 +47,9 @@ def test_when_header_verification_fails(response):
     assert verification.headers.status == Status.FAILURE
 
 
-def test_when_given_descriptions(response):
+def test_when_given_descriptions(mocker, response):
+    analyze_headers = mocker.patch(f'{PKG}.MappingAnalyzer', return_value=sentinel.headers)
+
     headers = [
         NonCallableMock(Description, verify=Mock(
             return_value=Verification(status=Status.UNSTABLE)
@@ -60,13 +62,7 @@ def test_when_given_descriptions(response):
         spec=ResponseBodyDescription,
         verify=Mock(return_value=Verification(status=Status.UNSTABLE)),
     )
-    analyze_headers = Mock(return_value=sentinel.headers)
-    description = ResponseDescription(
-        status_code=[],
-        headers=headers,
-        body=body,
-        analyze_headers=analyze_headers,
-    )
+    description = ResponseDescription(status_code=[], headers=headers, body=body)
     verification = description.verify(response, sentinel.context)
     assert verification.response_id == sentinel.response_id
     assert verification.status == Status.UNSTABLE
@@ -75,10 +71,7 @@ def test_when_given_descriptions(response):
 
     analyze_headers.assert_called_once_with({})
     for description in headers:
-        description.verify.assert_called_once_with(
-            sentinel.headers,
-            sentinel.context,
-        )
+        description.verify.assert_called_once_with(sentinel.headers, sentinel.context)
     body.verify.assert_called_once_with(sentinel.body, sentinel.context)
 
 

@@ -8,7 +8,6 @@ cases:
           should:
             equal: "application/xml"
       body:
-        analyze_as: xml
         descriptions:
           - describe:
               xpath: /root/foo
