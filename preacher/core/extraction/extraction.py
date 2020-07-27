@@ -1,8 +1,7 @@
 """Extraction."""
 
 from abc import ABC, abstractmethod
-from functools import partial
-from typing import Any, Callable, Iterator, List, Optional, TypeVar
+from typing import Any, Callable, List, Optional, TypeVar
 
 import jq
 from lxml.etree import _Element as Element, XPathEvalError
@@ -45,16 +44,12 @@ class JqExtractor(Extractor):
 
         values = (
             self._cast(value) if value is not None else value
-            for value in analyzer.for_text(partial(_foo, compiled))
+            for value in analyzer.for_text(lambda text: compiled.input(text=text))
         )
         if self._multiple:
             return list(values)
         else:
             return next(values, None)
-
-
-def _foo(compiled, text: str) -> Iterator[object]:
-    return compiled.input(text=text)
 
 
 class XPathExtractor(Extractor):
