@@ -8,7 +8,6 @@ from preacher.core.status import Status
 from preacher.core.verification.description import Description
 from preacher.core.verification.predicate import Predicate
 from preacher.core.verification.response import ResponseDescription
-from preacher.core.verification.response_body import ResponseBodyDescription
 from preacher.core.verification.verification import Verification
 
 PKG = 'preacher.core.verification.response'
@@ -20,14 +19,16 @@ def response():
         spec=Response,
         id=sentinel.response_id,
         elapsed=sentinel.elapsed,
-        status_code=200,
-        headers={},
+        status_code=sentinel.status_code,
+        headers=sentinel.headers,
         body=sentinel.body,
         request_datetime=sentinel.starts,
     )
 
 
-def test_when_given_no_description(response):
+def test_when_given_no_description(mocker, response):
+    mocker.patch(f'{PKG}.ResponseBodyAnalyzer', return_value=sentinel.body)
+
     description = ResponseDescription()
     verification = description.verify(response)
     assert verification.response_id == sentinel.response_id
@@ -36,20 +37,18 @@ def test_when_given_no_description(response):
     assert verification.status == Status.SKIPPED
 
 
-def test_when_header_verification_fails(response):
-    headers = [
-        NonCallableMock(Description, verify=Mock(side_effect=RuntimeError('message'))),
-    ]
-    description = ResponseDescription(headers=headers)
-
-    verification = description.verify(response)
-    assert verification.response_id == sentinel.response_id
-    assert verification.headers.status == Status.FAILURE
-
-
 def test_when_given_descriptions(mocker, response):
-    analyze_headers = mocker.patch(f'{PKG}.MappingAnalyzer', return_value=sentinel.headers)
+    analyze_headers = mocker.patch(f'{PKG}.MappingAnalyzer', return_value=sentinel.a_headers)
+    analyze_body = mocker.patch(f'{PKG}.ResponseBodyAnalyzer', return_value=sentinel.a_body)
 
+    status_code = [
+        NonCallableMock(Predicate, verify=Mock(
+            return_value=Verification(status=Status.UNSTABLE)
+        )),
+        NonCallableMock(Predicate, verify=Mock(
+            return_value=Verification.succeed()
+        )),
+    ]
     headers = [
         NonCallableMock(Description, verify=Mock(
             return_value=Verification(status=Status.UNSTABLE)
@@ -58,21 +57,30 @@ def test_when_given_descriptions(mocker, response):
             return_value=Verification.succeed()
         )),
     ]
-    body = NonCallableMock(
-        spec=ResponseBodyDescription,
-        verify=Mock(return_value=Verification(status=Status.UNSTABLE)),
-    )
-    description = ResponseDescription(status_code=[], headers=headers, body=body)
+    body = [
+        NonCallableMock(Description, verify=Mock(
+            return_value=Verification(status=Status.UNSTABLE)
+        )),
+        NonCallableMock(Description, verify=Mock(
+            return_value=Verification.succeed()
+        )),
+    ]
+    description = ResponseDescription(status_code=status_code, headers=headers, body=body)
     verification = description.verify(response, sentinel.context)
     assert verification.response_id == sentinel.response_id
     assert verification.status == Status.UNSTABLE
-    assert verification.status_code.status == Status.SKIPPED
+    assert verification.status_code.status == Status.UNSTABLE
+    assert verification.headers.status == Status.UNSTABLE
     assert verification.body.status == Status.UNSTABLE
 
-    analyze_headers.assert_called_once_with({})
+    analyze_headers.assert_called_once_with(sentinel.headers)
+    analyze_body.assert_called_once_with(sentinel.body)
+    for predicate in status_code:
+        predicate.verify.assert_called_once_with(sentinel.status_code, sentinel.context)
     for description in headers:
-        description.verify.assert_called_once_with(sentinel.headers, sentinel.context)
-    body.verify.assert_called_once_with(sentinel.body, sentinel.context)
+        description.verify.assert_called_once_with(sentinel.a_headers, sentinel.context)
+    for description in body:
+        description.verify.assert_called_once_with(sentinel.a_body, sentinel.context)
 
 
 @mark.parametrize(
@@ -85,30 +93,35 @@ def test_when_given_descriptions(mocker, response):
     ),
 )
 def test_merge_statuses(
+    mocker,
+    response,
     status_code_status: Status,
     headers_status: Status,
     body_status: Status,
     expected: Status,
-    response,
 ):
-    status_code_predicates: List[Predicate] = [
+    mocker.patch(f'{PKG}.MappingAnalyzer', return_value=sentinel.a_headers)
+    mocker.patch(f'{PKG}.ResponseBodyAnalyzer', return_value=sentinel.a_body)
+
+    status_code: List[Predicate] = [
         NonCallableMock(Predicate, verify=Mock(
             return_value=Verification(status=status_code_status)
         )),
     ]
-    headers_descriptions: List[Description] = [
+    headers: List[Description] = [
         NonCallableMock(Description, verify=Mock(
             return_value=Verification(status=headers_status)
         )),
     ]
-    body_description: ResponseBodyDescription = NonCallableMock(
-        spec=ResponseBodyDescription,
-        verify=Mock(return_value=Verification(status=body_status))
-    )
+    body_description: List[Description] = [
+        NonCallableMock(Description, verify=Mock(
+            return_value=Verification(status=body_status)
+        )),
+    ]
     description = ResponseDescription(
-        status_code=status_code_predicates,
-        headers=headers_descriptions,
+        status_code=status_code,
+        headers=headers,
         body=body_description,
     )
     verification = description.verify(response)
-    assert verification.status == expected
+    assert verification.status is expected

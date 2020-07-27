@@ -8,7 +8,6 @@ from .description import DescriptionCompiler
 from .matcher import MatcherFactoryCompiler
 from .predicate import PredicateCompiler
 from .response import ResponseDescriptionCompiler
-from .response_body import ResponseBodyDescriptionCompiler
 
 
 def create_matcher_factory_compiler(
@@ -47,9 +46,4 @@ def create_response_description_compiler(
     predicate = predicate or create_predicate_compiler(plugin_manager=plugin_manager)
     description = description or create_description_compiler()
 
-    body = ResponseBodyDescriptionCompiler(description=description)
-    return ResponseDescriptionCompiler(
-        predicate=predicate,
-        description=description,
-        body=body,
-    )
+    return ResponseDescriptionCompiler(predicate=predicate, description=description)

@@ -3,28 +3,28 @@ Response descriptions, which verify the status code, the headers
 and the body.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from typing import List, Mapping, Optional
 
-from preacher.core.extraction import MappingAnalyzer
-from preacher.core.request import Response
+from preacher.core.extraction import MappingAnalyzer, ResponseBodyAnalyzer
+from preacher.core.request import Response, ResponseBody
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
 from .description import Description
 from .predicate import Predicate
-from .response_body import ResponseBodyDescription
 from .verification import Verification
 
 
 @dataclass(frozen=True)
 class ResponseVerification(Statused):
     response_id: str
-    status: Status = Status.SKIPPED
     status_code: Verification = field(default_factory=Verification)
     headers: Verification = field(default_factory=Verification)
     body: Verification = field(default_factory=Verification)
+
+    @property  # HACK should be cached.
+    def status(self) -> Status:
+        return merge_statuses([self.status_code.status, self.headers.status, self.body.status])
 
 
 class ResponseDescription:
@@ -33,11 +33,11 @@ class ResponseDescription:
         self,
         status_code: Optional[List[Predicate]] = None,
         headers: Optional[List[Description]] = None,
-        body: Optional[ResponseBodyDescription] = None,
+        body: Optional[List[Description]] = None,
     ):
         self._status_code = status_code or []
         self._headers = headers or []
-        self._body = body
+        self._body = body or []
 
     def verify(
         self,
@@ -45,24 +45,11 @@ class ResponseDescription:
         context: Optional[ValueContext] = None,
     ) -> ResponseVerification:
         status_code = self._verify_status_code(response.status_code, context)
+        headers = self._verify_headers(response.headers, context)
+        body = self._verify_body(response.body, context)
 
-        try:
-            headers = self._verify_headers(response.headers, context)
-        except Exception as error:
-            headers = Verification.of_error(error)
-
-        body = Verification.skipped()
-        if self._body:
-            body = self._body.verify(response.body, context)
-
-        status = merge_statuses([
-            status_code.status,
-            headers.status,
-            body.status,
-        ])
         return ResponseVerification(
             response_id=response.id,
-            status=status,
             status_code=status_code,
             headers=headers,
             body=body,
@@ -73,10 +60,7 @@ class ResponseDescription:
         code: int,
         context: Optional[ValueContext],
     ) -> Verification:
-        return Verification.collect(
-            predicate.verify(code, context)
-            for predicate in self._status_code
-        )
+        return Verification.collect(p.verify(code, context) for p in self._status_code)
 
     def _verify_headers(
         self,
@@ -84,7 +68,12 @@ class ResponseDescription:
         context: Optional[ValueContext],
     ) -> Verification:
         analyzer = MappingAnalyzer(headers)
-        return Verification.collect(
-            description.verify(analyzer, context)
-            for description in self._headers
-        )
+        return Verification.collect(d.verify(analyzer, context) for d in self._headers)
+
+    def _verify_body(
+        self,
+        body: ResponseBody,
+        context: Optional[ValueContext],
+    ) -> Verification:
+        analyzer = ResponseBodyAnalyzer(body)
+        return Verification.collect(d.verify(analyzer, context) for d in self._body)

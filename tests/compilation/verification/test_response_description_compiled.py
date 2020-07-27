@@ -1,11 +1,6 @@
-from unittest.mock import MagicMock, patch, sentinel
+from unittest.mock import patch, sentinel
 
-from preacher.compilation.verification.response import (
-    ResponseDescriptionCompiled,
-)
-from preacher.compilation.verification.response_body import (
-    ResponseBodyDescriptionCompiled,
-)
+from preacher.compilation.verification.response import ResponseDescriptionCompiled
 
 PKG = 'preacher.compilation.verification.response'
 
@@ -42,22 +37,15 @@ def test_fix_hollow(ctor):
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
 
-    ctor.assert_called_once_with(
-        status_code=None,
-        headers=None,
-        body=None,
-    )
+    ctor.assert_called_once_with(status_code=None, headers=None, body=None)
 
 
 @ctor_patch
 def test_fix_filled(ctor):
-    body = MagicMock(ResponseBodyDescriptionCompiled)
-    body.fix.return_value = sentinel.body
-
     compiled = ResponseDescriptionCompiled(
         status_code=sentinel.status_code,
         headers=sentinel.headers,
-        body=body,
+        body=sentinel.body,
     )
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
@@ -67,4 +55,3 @@ def test_fix_filled(ctor):
         headers=sentinel.headers,
         body=sentinel.body,
     )
-    body.fix.assert_called_once_with()

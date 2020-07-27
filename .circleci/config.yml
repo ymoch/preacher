@@ -108,6 +108,7 @@ commands:
             # Run normal scenarios.
             poetry run preacher-cli \
               -uhttp://localhost:5000 \
+              -Rreport/ \
               ./examples/scenario/success.yml
 
             # Run plugin scenarios.
@@ -122,6 +123,7 @@ commands:
               -uhttp://localhost:5000 \
               ./examples/scenario/plugin.yml
 
+            ls report/
             cat examples/server.log
   document-build:
     description: Build documents
