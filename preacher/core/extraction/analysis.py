@@ -35,25 +35,42 @@ class Analyzer(ABC):
         raise NotImplementedError()
 
 
-class ContentAnalyzer(Analyzer):
+class _LazyElementTreeLoader:
+
+    def __init__(self, content: bytes):
+        self._content = content
+        self._is_loaded = False
+        self._etree: Optional[Element] = None
+
+    def get(self) -> Element:
+        if not self._is_loaded:
+            try:
+                self._etree = fromstring(self._content, parser=XMLParser())
+            except LxmlError:
+                pass
+            self._is_loaded = True
+
+        etree = self._etree
+        if not etree:
+            raise ExtractionError('Not an XML content')
+        return etree
+
+
+class ResponseBodyAnalyzer(Analyzer):
 
     _KEY_JSON = '_json'
-    _KEY_ETREE = '_etree'
-
     _INVALID_JSON = object()
 
     def __init__(self, body: ResponseBody):
         self._body = body
+        self._etree_loader = _LazyElementTreeLoader(body.content)
         self._caches: Dict[str, Any] = {}
 
     def jq(self, extract: Callable[[str], T]) -> T:
         return extract(self._body.text)
 
     def xpath(self, extract: Callable[[Element], T]) -> T:
-        etree = self._etree
-        if not etree:
-            raise ExtractionError('Not an XML content')
-        return extract(etree)
+        return extract(self._etree_loader.get())
 
     def key(self, extract: Callable[[Mapping], T]) -> T:
         json_value = self._json
@@ -62,17 +79,6 @@ class ContentAnalyzer(Analyzer):
         if not isinstance(json_value, Mapping):
             raise ExtractionError(f'Expected a dictionary, but given {type(json_value)}')
         return extract(json_value)
-
-    @property
-    def _etree(self) -> Optional[Element]:
-        if self._KEY_ETREE not in self._caches:
-            try:
-                etree = fromstring(self._body.content, parser=XMLParser())
-            except LxmlError:
-                etree = None
-            self._caches[self._KEY_ETREE] = etree
-
-        return self._caches[self._KEY_ETREE]
 
     @property
     def _json(self) -> object:
@@ -106,11 +112,11 @@ class JsonAnalyzer(Analyzer):
 
 
 def analyze_json_str(body: ResponseBody) -> Analyzer:
-    return ContentAnalyzer(body)
+    return ResponseBodyAnalyzer(body)
 
 
 def analyze_xml_str(body: ResponseBody) -> Analyzer:
-    return ContentAnalyzer(body)
+    return ResponseBodyAnalyzer(body)
 
 
 def analyze_data_obj(obj) -> Analyzer:
