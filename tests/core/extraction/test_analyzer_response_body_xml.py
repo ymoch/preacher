@@ -23,7 +23,7 @@ def extract():
     return Mock(return_value='value')
 
 
-def test_xpath(extract, body):
+def test_for_etree(extract, body):
     analyzer = ResponseBodyAnalyzer(body)
     value = analyzer.for_etree(extract)
     assert value == 'value'
@@ -31,14 +31,14 @@ def test_xpath(extract, body):
     extract.assert_called()
 
 
-def test_jq(body):
+def test_for_text(body):
     analyzer = ResponseBodyAnalyzer(body)
     extract = Mock(side_effect=RuntimeError('msg'))
     with raises(RuntimeError):
         analyzer.for_text(extract)
 
 
-def test_key(extract, body):
+def test_for_mapping(extract, body):
     analyzer = ResponseBodyAnalyzer(body)
     with raises(ExtractionError):
         analyzer.for_mapping(extract)
