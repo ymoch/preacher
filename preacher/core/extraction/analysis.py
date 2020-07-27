@@ -92,23 +92,20 @@ class ResponseBodyAnalyzer(Analyzer):
         return self._caches[self._KEY_JSON]
 
 
-class JsonAnalyzer(Analyzer):
+class MappingAnalyzer(Analyzer):
 
-    def __init__(self, json_body: Any):
-        self._json_body = json_body
+    def __init__(self, value: Mapping):
+        self._value = value
 
     def jq(self, extract: Callable[[str], T]) -> T:
-        return extract(json.dumps(self._json_body, separators=(',', ':')))
+        serializable = recursive_map(to_serializable, self._value)
+        return extract(json.dumps(serializable, separators=(',', ':')))
 
     def xpath(self, extract: Callable[[Element], T]) -> T:
-        raise NotImplementedError('XPath extraction is not allowed for JSON')
+        raise ExtractionError('Not an XML content')
 
     def key(self, extract: Callable[[Mapping], T]) -> T:
-        if not isinstance(self._json_body, Mapping):
-            raise ValueError(
-                f'Expected a dictionary, but given {type(self._json_body)}'
-            )
-        return extract(self._json_body)
+        return extract(self._value)
 
 
 def analyze_json_str(body: ResponseBody) -> Analyzer:
@@ -120,7 +117,7 @@ def analyze_xml_str(body: ResponseBody) -> Analyzer:
 
 
 def analyze_data_obj(obj) -> Analyzer:
-    return JsonAnalyzer(recursive_map(to_serializable, asdict(obj)))
+    return MappingAnalyzer(asdict(obj))
 
 
 Analysis = Callable[[ResponseBody], Analyzer]

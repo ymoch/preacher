@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Callable, List, Mapping, Optional
 
-from preacher.core.extraction import Analyzer, JsonAnalyzer
+from preacher.core.extraction import Analyzer, MappingAnalyzer
 from preacher.core.request import Response
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
@@ -35,7 +35,7 @@ class ResponseDescription:
         headers: Optional[List[Description]] = None,
         body: Optional[ResponseBodyDescription] = None,
         analyze_headers:
-            Callable[[Mapping[str, str]], Analyzer] = JsonAnalyzer,
+            Callable[[Mapping[str, str]], Analyzer] = MappingAnalyzer,
     ):
         self._status_code = status_code or []
         self._headers = headers or []
