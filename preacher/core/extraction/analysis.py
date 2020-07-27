@@ -19,7 +19,7 @@ T = TypeVar('T')
 
 class Analyzer(ABC):
     """
-    Interface to analyze body.
+    Interface to analyze contents.
     """
 
     @abstractmethod
@@ -27,15 +27,16 @@ class Analyzer(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def for_etree(self, extract: Callable[[Element], T]) -> T:
+    def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         raise NotImplementedError()
 
     @abstractmethod
-    def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
+    def for_etree(self, extract: Callable[[Element], T]) -> T:
         raise NotImplementedError()
 
 
 class _LazyElementTreeLoader:
+    """Loads an element tree from a binary content lazily."""
 
     def __init__(self, content: bytes):
         self._content = content
@@ -43,6 +44,15 @@ class _LazyElementTreeLoader:
         self._etree: Optional[Element] = None
 
     def get(self) -> Element:
+        """
+        Load an element tree if needed and returns it.
+
+        Returns:
+            The loaded element tree.
+        Raises:
+            ExtractionError: when loading the element tree has failed once.
+        """
+
         if not self._is_loaded:
             try:
                 self._etree = fromstring(self._content, parser=XMLParser())
@@ -57,6 +67,7 @@ class _LazyElementTreeLoader:
 
 
 class _LazyJsonLoader:
+    """Loads a JSON value from a text lazily."""
 
     def __init__(self, text: str):
         self._text = text
@@ -65,6 +76,15 @@ class _LazyJsonLoader:
         self._value: object = None
 
     def get(self) -> object:
+        """
+        Load a JSON value if needed and returns it.
+
+        Returns:
+            The loaded JSON value.
+        Raises:
+            ExtractionError: when loading the JSON value has failed once.
+        """
+
         if not self._is_loaded:
             try:
                 self._value = json.loads(self._text)
@@ -92,14 +112,14 @@ class ResponseBodyAnalyzer(Analyzer):
     def for_text(self, extract: Callable[[str], T]) -> T:
         return extract(self._body.text)
 
-    def for_etree(self, extract: Callable[[Element], T]) -> T:
-        return extract(self._etree_loader.get())
-
     def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         json_value = self._json_loader.get()
         if not isinstance(json_value, Mapping):
             raise ExtractionError(f'Expected a dictionary, but given {type(json_value)}')
         return extract(json_value)
+
+    def for_etree(self, extract: Callable[[Element], T]) -> T:
+        return extract(self._etree_loader.get())
 
 
 class MappingAnalyzer(Analyzer):
@@ -111,11 +131,11 @@ class MappingAnalyzer(Analyzer):
         serializable = recursive_map(to_serializable, self._value)
         return extract(json.dumps(serializable, separators=(',', ':')))
 
-    def for_etree(self, extract: Callable[[Element], T]) -> T:
-        raise ExtractionError('Not an XML content')
-
     def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         return extract(self._value)
+
+    def for_etree(self, extract: Callable[[Element], T]) -> T:
+        raise ExtractionError('Not an XML content')
 
 
 def analyze_data_obj(obj) -> Analyzer:
