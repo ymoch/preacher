@@ -56,6 +56,28 @@ class _LazyElementTreeLoader:
         return etree
 
 
+class _LazyJsonLoader:
+
+    def __init__(self, text: str):
+        self._text = text
+        self._is_loaded = False
+        self._is_valid_json = False
+        self._value: object = None
+
+    def get(self) -> object:
+        if not self._is_loaded:
+            try:
+                self._value = json.loads(self._text)
+                self._is_valid_json = True
+            except json.JSONDecodeError:
+                pass
+            self._is_loaded = True
+
+        if not self._is_valid_json:
+            raise ExtractionError('Not a JSON content')
+        return self._value
+
+
 class ResponseBodyAnalyzer(Analyzer):
 
     _KEY_JSON = '_json'
@@ -64,6 +86,7 @@ class ResponseBodyAnalyzer(Analyzer):
     def __init__(self, body: ResponseBody):
         self._body = body
         self._etree_loader = _LazyElementTreeLoader(body.content)
+        self._json_loader = _LazyJsonLoader(body.text)
         self._caches: Dict[str, Any] = {}
 
     def jq(self, extract: Callable[[str], T]) -> T:
@@ -73,23 +96,10 @@ class ResponseBodyAnalyzer(Analyzer):
         return extract(self._etree_loader.get())
 
     def key(self, extract: Callable[[Mapping], T]) -> T:
-        json_value = self._json
-        if json_value is self._INVALID_JSON:
-            raise ExtractionError('Not a JSON content')
+        json_value = self._json_loader.get()
         if not isinstance(json_value, Mapping):
             raise ExtractionError(f'Expected a dictionary, but given {type(json_value)}')
         return extract(json_value)
-
-    @property
-    def _json(self) -> object:
-        if self._KEY_JSON not in self._caches:
-            try:
-                json_value = json.loads(self._body.text)
-            except json.JSONDecodeError:
-                json_value = self._INVALID_JSON
-            self._caches[self._KEY_JSON] = json_value
-
-        return self._caches[self._KEY_JSON]
 
 
 class MappingAnalyzer(Analyzer):
