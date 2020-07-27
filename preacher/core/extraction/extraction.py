@@ -45,7 +45,7 @@ class JqExtractor(Extractor):
 
         values = (
             self._cast(value) if value is not None else value
-            for value in analyzer.jq_text(partial(_foo, compiled))
+            for value in analyzer.jq(partial(_foo, compiled))
         )
         if self._multiple:
             return list(values)

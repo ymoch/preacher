@@ -33,7 +33,7 @@ def test_xpath(extract, body):
 def test_not_supported(extract, body):
     analyzer = analyze_xml_str(body)
     with raises(NotImplementedError):
-        analyzer.jq_text(extract)
+        analyzer.jq(extract)
     with raises(NotImplementedError):
         analyzer.key(extract)
 

@@ -11,10 +11,10 @@ def extract():
     return Mock(return_value=sentinel.extracted)
 
 
-def test_jq_text(extract):
+def test_jq(extract):
     body = NonCallableMock(ResponseBody, text='{"k1":"v1","k2":"v2"}')
     analyzer = analyze_json_str(body)
-    value = analyzer.jq_text(extract)
+    value = analyzer.jq(extract)
     assert value is sentinel.extracted
 
     extract.assert_called_once_with('{"k1":"v1","k2":"v2"}')
