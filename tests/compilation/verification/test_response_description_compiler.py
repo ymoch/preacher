@@ -1,4 +1,4 @@
-from unittest.mock import ANY, NonCallableMock, call, sentinel
+from unittest.mock import NonCallableMock, call, sentinel
 
 from pytest import fixture, mark, raises
 
@@ -7,7 +7,6 @@ from preacher.compilation.verification.description import DescriptionCompiler
 from preacher.compilation.verification.predicate import PredicateCompiler
 from preacher.compilation.verification.response import ResponseDescriptionCompiled
 from preacher.compilation.verification.response import ResponseDescriptionCompiler
-from preacher.compilation.verification.response_body import ResponseBodyDescriptionCompiled
 
 PKG = 'preacher.compilation.verification.response'
 
@@ -105,7 +104,7 @@ def test_given_hollow_default(mocker, predicate, description, initial_default):
         default=initial_default,
     )
 
-    default = NonCallableMock(ResponseBodyDescriptionCompiled, body=None)
+    default = NonCallableMock(ResponseDescriptionCompiled, body=None)
     compiler_of_default = compiler.of_default(default)
     assert compiler_of_default is sentinel.compiler_of_default
 
@@ -113,10 +112,8 @@ def test_given_hollow_default(mocker, predicate, description, initial_default):
     compiler_ctor.assert_called_once_with(
         predicate=predicate,
         description=description,
-        default=ANY,
+        default=sentinel.new_default,
     )
-    default = compiler_ctor.call_args[1]['default']
-    assert default is sentinel.new_default
 
 
 def test_given_filled_default(mocker, predicate, description, initial_default):
@@ -129,8 +126,7 @@ def test_given_filled_default(mocker, predicate, description, initial_default):
         default=initial_default,
     )
 
-    default = NonCallableMock(ResponseBodyDescriptionCompiled)
-    default.body = sentinel.default_body
+    default = NonCallableMock(ResponseDescriptionCompiled)
     compiler_of_default = compiler.of_default(default)
     assert compiler_of_default is sentinel.compiler_of_default
 
@@ -138,7 +134,5 @@ def test_given_filled_default(mocker, predicate, description, initial_default):
     compiler_ctor.assert_called_once_with(
         predicate=predicate,
         description=description,
-        default=ANY,
+        default=sentinel.new_default,
     )
-    default = compiler_ctor.call_args[1]['default']
-    assert default is sentinel.new_default
