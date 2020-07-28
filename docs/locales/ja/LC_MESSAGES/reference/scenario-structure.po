@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-28 01:06+0900\n"
+"POT-Creation-Date: 2020-07-28 09:37+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,8 +46,7 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:272
 #: ../../reference/scenario-structure.rst:298
 #: ../../reference/scenario-structure.rst:340
-#: ../../reference/scenario-structure.rst:360
-#: ../../reference/scenario-structure.rst:390 fd28d1ee579545b4bc108f1eb7a128b0
+#: ../../reference/scenario-structure.rst:370 fd28d1ee579545b4bc108f1eb7a128b0
 msgid "Key"
 msgstr ""
 
@@ -57,8 +56,7 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:273
 #: ../../reference/scenario-structure.rst:299
 #: ../../reference/scenario-structure.rst:341
-#: ../../reference/scenario-structure.rst:361
-#: ../../reference/scenario-structure.rst:391 2e21c903da074ae4823f66d54cc8b11f
+#: ../../reference/scenario-structure.rst:371 2e21c903da074ae4823f66d54cc8b11f
 msgid "Type"
 msgstr ""
 
@@ -68,8 +66,7 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:274
 #: ../../reference/scenario-structure.rst:300
 #: ../../reference/scenario-structure.rst:342
-#: ../../reference/scenario-structure.rst:362
-#: ../../reference/scenario-structure.rst:392 265ce010784e4292865864c740c975bd
+#: ../../reference/scenario-structure.rst:372 265ce010784e4292865864c740c975bd
 msgid "Default"
 msgstr ""
 
@@ -78,16 +75,15 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:208
 #: ../../reference/scenario-structure.rst:275
 #: ../../reference/scenario-structure.rst:301
+#: ../../reference/scenario-structure.rst:335
 #: ../../reference/scenario-structure.rst:343
-#: ../../reference/scenario-structure.rst:355
-#: ../../reference/scenario-structure.rst:363
-#: ../../reference/scenario-structure.rst:393 1c3f47c04fb2417b988c47243aca4aa7
+#: ../../reference/scenario-structure.rst:373 1c3f47c04fb2417b988c47243aca4aa7
 msgid "Description"
 msgstr ""
 
 #: ../../reference/scenario-structure.rst:81
 #: ../../reference/scenario-structure.rst:170
-#: ../../reference/scenario-structure.rst:394 1410eada8a03427599b8ea24c940b238
+#: ../../reference/scenario-structure.rst:374 1410eada8a03427599b8ea24c940b238
 msgid "label"
 msgstr ""
 
@@ -96,7 +92,7 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:210
 #: ../../reference/scenario-structure.rst:215
 #: ../../reference/scenario-structure.rst:277
-#: ../../reference/scenario-structure.rst:395 59fe766f862940f199c7787025b70974
+#: ../../reference/scenario-structure.rst:375 59fe766f862940f199c7787025b70974
 msgid "String"
 msgstr ""
 
@@ -105,7 +101,7 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:172
 #: ../../reference/scenario-structure.rst:228
 #: ../../reference/scenario-structure.rst:314
-#: ../../reference/scenario-structure.rst:396 366ce585158b4541a2ffdd8f365c551e
+#: ../../reference/scenario-structure.rst:376 366ce585158b4541a2ffdd8f365c551e
 msgid "``null``"
 msgstr ""
 
@@ -125,8 +121,7 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:91
 #: ../../reference/scenario-structure.rst:106
 #: ../../reference/scenario-structure.rst:188
-#: ../../reference/scenario-structure.rst:304
-#: ../../reference/scenario-structure.rst:346 5b16b23afdb047a7a8769d91f8c45615
+#: ../../reference/scenario-structure.rst:304 5b16b23afdb047a7a8769d91f8c45615
 msgid "``[]``"
 msgstr ""
 
@@ -180,8 +175,8 @@ msgstr ""
 #: ../../reference/scenario-structure.rst:220
 #: ../../reference/scenario-structure.rst:224
 #: ../../reference/scenario-structure.rst:309
-#: ../../reference/scenario-structure.rst:370
-#: ../../reference/scenario-structure.rst:400 d8f1521505c148a29b7e08347e81479e
+#: ../../reference/scenario-structure.rst:350
+#: ../../reference/scenario-structure.rst:380 d8f1521505c148a29b7e08347e81479e
 msgid "``{}``"
 msgstr ""
 
@@ -196,7 +191,7 @@ msgstr ""
 
 #: ../../reference/scenario-structure.rst:105
 #: ../../reference/scenario-structure.rst:308
-#: ../../reference/scenario-structure.rst:345 654bbdc5110b413d87491f2aff09eb34
+#: ../../reference/scenario-structure.rst:313 654bbdc5110b413d87491f2aff09eb34
 msgid "List[:ref:`description`]"
 msgstr ""
 
@@ -461,7 +456,7 @@ msgid "status_code"
 msgstr ""
 
 #: ../../reference/scenario-structure.rst:303
-#: ../../reference/scenario-structure.rst:369 4fb67ba786ef4b39916a1775bc7cd170
+#: ../../reference/scenario-structure.rst:349 4fb67ba786ef4b39916a1775bc7cd170
 msgid "List[:ref:`predicate`]"
 msgstr ""
 
@@ -475,10 +470,6 @@ msgstr ""
 msgid ""
 "Descriptions that describe the response headers. See :ref:`headers` for "
 "more information."
-msgstr ""
-
-#: ../../reference/scenario-structure.rst:313 6cf5efa1e5d1458aa4030c7b9c262396
-msgid ":ref:`response-body-description`"
 msgstr ""
 
 #: ../../reference/scenario-structure.rst:315 bc02c8326a974f778c3e0526e217cadb
@@ -504,63 +495,45 @@ msgid ""
 " that Names are lower-cased* to normalize."
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:335 e0463d99f70448379214e8573cf2456d
-msgid "ResponseBodyDescription"
-msgstr ""
-
-#: ../../reference/scenario-structure.rst:344 a00e2e09a943420b97e9aea8ed7c4120
-msgid "descriptions"
-msgstr ""
-
-#: ../../reference/scenario-structure.rst:347 03faeaa0272e4c5b922f7e96c52c747e
-msgid "Descriptions that describe the response body."
-msgstr ""
-
-#: ../../reference/scenario-structure.rst:349 ef1344b052a94632a888d829e1aaf06e
-msgid ""
-"When given a list as a ``ResponseBodyDescription``, that is equivalent to"
-" ``{\"descritptions\": it}``."
-msgstr ""
-
-#: ../../reference/scenario-structure.rst:364 dbccfc2593954f1189806ce799e33af0
+#: ../../reference/scenario-structure.rst:344 dbccfc2593954f1189806ce799e33af0
 msgid "describe"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:365 6089cd9e85994b63bd25710f1e232828
+#: ../../reference/scenario-structure.rst:345 6089cd9e85994b63bd25710f1e232828
 msgid ":doc:`Extraction<extraction>`"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:366 b801b1d7ac974fc79cbc5fd54c88a9fb
+#: ../../reference/scenario-structure.rst:346 b801b1d7ac974fc79cbc5fd54c88a9fb
 msgid "**Required**"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:367 2c608357296745fc83f0cdb6c3e722c9
+#: ../../reference/scenario-structure.rst:347 2c608357296745fc83f0cdb6c3e722c9
 msgid "An extraction to get the described value."
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:368 ef0420ab3e764cd8b8591263a75e0e74
+#: ../../reference/scenario-structure.rst:348 ef0420ab3e764cd8b8591263a75e0e74
 msgid "should"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:371 cd6f8391d7bd4b7d9d01d2930d04e55a
+#: ../../reference/scenario-structure.rst:351 cd6f8391d7bd4b7d9d01d2930d04e55a
 msgid "Predicates that match the described value."
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:376 4c3f4a03bd634d00895196efd30ec50b
+#: ../../reference/scenario-structure.rst:356 4c3f4a03bd634d00895196efd30ec50b
 msgid "Predicate"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:377 92fa41da2e984b1590b6b54eb4c0f60b
+#: ../../reference/scenario-structure.rst:357 92fa41da2e984b1590b6b54eb4c0f60b
 msgid ""
 "A ``Predicate`` is a :doc:`Matcher<matcher>` (can be extended in the "
 "future)."
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:382 1d296b0489794c229617f3796e8105a3
+#: ../../reference/scenario-structure.rst:362 1d296b0489794c229617f3796e8105a3
 msgid "Parameter"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:383 8b71895e5cfa4ab0ac286ad03ece7f61
+#: ../../reference/scenario-structure.rst:363 8b71895e5cfa4ab0ac286ad03ece7f61
 msgid ""
 "A \"parameter\" is a parameter in parameterized tests. See :ref"
 ":`parameterized-test` for more information."
@@ -568,45 +541,45 @@ msgstr ""
 "「パラメータ」は, パラメータ化されたテストにおけるパラメータです. 詳しくは :ref:`parameterized-test` "
 "を参照してください."
 
-#: ../../reference/scenario-structure.rst:397 e628cd8730ec4ed8b1716acf719c69c5
+#: ../../reference/scenario-structure.rst:377 e628cd8730ec4ed8b1716acf719c69c5
 msgid "Label of this parameter."
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:398 53046d5802884ff9a0737648d0042e38
+#: ../../reference/scenario-structure.rst:378 53046d5802884ff9a0737648d0042e38
 msgid "args"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:399 3c277865a48741c18e8f5d6891b5b7ef
+#: ../../reference/scenario-structure.rst:379 3c277865a48741c18e8f5d6891b5b7ef
 msgid "Map"
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:401 8196e880ab874053901484fa588e2c58
+#: ../../reference/scenario-structure.rst:381 8196e880ab874053901484fa588e2c58
 msgid "An argument map of argument names to their values."
 msgstr ""
 
-#: ../../reference/scenario-structure.rst:404 ae72aff8d7a64e8b9518acc4c65b5134
+#: ../../reference/scenario-structure.rst:384 ae72aff8d7a64e8b9518acc4c65b5134
 msgid "Including other files"
 msgstr "他のファイルを含める"
 
-#: ../../reference/scenario-structure.rst:405 2c0606c5286b4a77a632e2756f174f46
+#: ../../reference/scenario-structure.rst:385 2c0606c5286b4a77a632e2756f174f46
 msgid ""
 "Using ``!include`` tag, you can include other YAML files. This macro is "
 "available anywhere in your scenario."
 msgstr "``!include`` タグを用いることで, 他の YAML ファイルを含めることができます. このマクロはシナリオのどこでも使用できます."
 
-#: ../../reference/scenario-structure.rst:412 95d4c37aa38e47fab3cad029e5a99c52
+#: ../../reference/scenario-structure.rst:392 95d4c37aa38e47fab3cad029e5a99c52
 msgid ""
 "A good practice of this feature is locating subscenarios on "
 "subdirectories."
 msgstr "この機能の実用例を挙げると, サブシナリオをサブディレクトリに配置することができます."
 
-#: ../../reference/scenario-structure.rst:421 75ad084aaa84425486d1cfe7ff407c16
+#: ../../reference/scenario-structure.rst:401 75ad084aaa84425486d1cfe7ff407c16
 msgid ""
 "UNIX-like wildcard expansion is available. A wildcard inclusion results "
 "in the list of matching inclusion."
 msgstr "UNIX-like なワイルドカード展開も利用できます. ワイルドカードを利用したインクルードの結果は, マッチするインクルードのリストになります."
 
-#: ../../reference/scenario-structure.rst:428 e1ea89a93d6f498aad6a6b844d89335a
+#: ../../reference/scenario-structure.rst:408 e1ea89a93d6f498aad6a6b844d89335a
 msgid ""
 "Anchors in a included YAML are not available in including YAMLs, because "
 "the included YAMLs are parsed after the including YAML is parsed."
@@ -614,7 +587,7 @@ msgstr ""
 "インクルードされる YAML のアンカーは、インクルードする側の YAML では使用できません. インクルードする側の YAML "
 "が解析された後に, インクルードされる YAML が解析されるためです."
 
-#: ../../reference/scenario-structure.rst:431 d421a03450574fa7affe26635c73a5e9
+#: ../../reference/scenario-structure.rst:411 d421a03450574fa7affe26635c73a5e9
 msgid ""
 "Names of included files should not contain any wildcard characters "
 "because not all of the wildcard expansion rules are covered."
