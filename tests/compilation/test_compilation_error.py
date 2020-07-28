@@ -1,9 +1,4 @@
-from preacher.compilation.error import (
-    CompilationError,
-    IndexedNode,
-    NamedNode,
-    render_path,
-)
+from preacher.compilation.error import CompilationError, IndexedNode, NamedNode, render_path
 
 
 def test_render_path():

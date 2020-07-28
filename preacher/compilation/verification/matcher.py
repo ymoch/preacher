@@ -172,7 +172,6 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     # For collections.
     compiler.add_recursive(('have_item',), hamcrest.has_item, multiple=False)
     compiler.add_recursive(('have_items',), hamcrest.has_items)
-    compiler.add_recursive(('contain',), hamcrest.contains_exactly)  # HACK should be deprecated.
     compiler.add_recursive(('contain_exactly',), hamcrest.contains_exactly)
     compiler.add_recursive(('contain_in_any_order',), hamcrest.contains_inanyorder)
 

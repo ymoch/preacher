@@ -97,8 +97,6 @@ def test_invalid_mapping(compiler, obj):
     ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [4, 1, 2], True),
     ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 4, 2], True),
     ({'have_items': [1, {'be_greater_than': 2}, {'be_less_than': 3}]}, [1, 4, 2, 3], True),
-    ({'contain': 1}, [], False),
-    ({'contain': 1}, [1], True),
     ({'contain_exactly': 1}, [], False),
     ({'contain_exactly': 1}, [1], True),
     ({'contain_exactly': 1}, [1, 2], False),

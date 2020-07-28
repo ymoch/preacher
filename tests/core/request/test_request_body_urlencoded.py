@@ -6,10 +6,8 @@ PKG = 'preacher.core.request.request_body'
 
 
 def test(mocker):
-    resolve_params = mocker.patch(
-        f'{PKG}.resolve_url_params',
-        return_value=sentinel.resolved_params,
-    )
+    resolve_params = mocker.patch(f'{PKG}.resolve_url_params')
+    resolve_params.return_value = sentinel.resolved_params
 
     body = UrlencodedRequestBody(sentinel.params)
     assert body.content_type == 'application/x-www-form-urlencoded'

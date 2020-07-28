@@ -14,11 +14,7 @@ class HtmlReportingListener(Listener):
         self._reporter = reporter
         self._results: List[ScenarioResult] = []
 
-    def on_execution(
-        self,
-        execution: ExecutionReport,
-        response: Optional[Response],
-    ) -> None:
+    def on_execution(self, execution: ExecutionReport, response: Optional[Response]) -> None:
         if not response:
             return
         self._reporter.export_response(execution, response)

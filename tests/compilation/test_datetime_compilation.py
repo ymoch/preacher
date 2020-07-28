@@ -3,10 +3,7 @@ from unittest.mock import sentinel
 
 from pytest import mark, raises
 
-from preacher.compilation.datetime import (
-    compile_datetime_format,
-    compile_timedelta,
-)
+from preacher.compilation.datetime import compile_datetime_format, compile_timedelta
 from preacher.compilation.error import CompilationError
 from preacher.core.datetime import ISO8601
 

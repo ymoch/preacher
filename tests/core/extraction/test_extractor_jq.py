@@ -10,16 +10,10 @@ from preacher.core.extraction.extraction import JqExtractor
 VALUE = json.dumps({
     'foo': 'bar',
     'list': [
-        {
-            "key": "value1",
-        },
-        {
-            "key": "value2",
-        },
+        {'key': 'value1'},
+        {'key': 'value2'},
         {},
-        {
-            "key": "value3",
-        },
+        {'key': 'value3'},
     ],
     'int_string': '10',
     'int_strings': [

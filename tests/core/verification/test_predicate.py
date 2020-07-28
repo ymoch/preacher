@@ -12,11 +12,7 @@ PKG = 'preacher.core.verification.predicate'
 
 def test_predicate_interface():
     class IncompletePredicate(Predicate):
-        def verify(
-            self,
-            actual: object,
-            context: Optional[ValueContext] = None,
-        ) -> Verification:
+        def verify(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
             return super().verify(actual, context)
 
     with raises(NotImplementedError):

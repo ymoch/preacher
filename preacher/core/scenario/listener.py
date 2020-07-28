@@ -26,11 +26,7 @@ class MergingListener(Listener):
     def append(self, listener: Listener) -> None:
         self._listeners.append(listener)
 
-    def on_execution(
-        self,
-        execution: ExecutionReport,
-        response: Optional[Response],
-    ) -> None:
+    def on_execution(self, execution: ExecutionReport, response: Optional[Response]) -> None:
         for listener in self._listeners:
             listener.on_execution(execution, response)
 

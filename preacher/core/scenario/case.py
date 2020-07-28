@@ -15,12 +15,10 @@ from preacher.core.extraction import analyze_data_obj
 from preacher.core.request import Request, Response, ExecutionReport
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
-from preacher.core.verification import (
-    Description,
-    ResponseDescription,
-    ResponseVerification,
-    Verification,
-)
+from preacher.core.verification import Description
+from preacher.core.verification import ResponseDescription
+from preacher.core.verification import ResponseVerification
+from preacher.core.verification import Verification
 from .util.retry import retry_while_false
 
 

@@ -112,11 +112,7 @@ def test_when_request_succeeds(mocker, session, body):
         params=sentinel.params,
         body=body,
     )
-    report, response = request.execute(
-        'https://a.com',
-        timeout=5.0,
-        session=session,
-    )
+    report, response = request.execute('https://a.com', timeout=5.0, session=session)
     assert report.status is Status.SUCCESS
     assert report.request
     assert report.request.method == 'POST'

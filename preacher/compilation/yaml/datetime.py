@@ -3,10 +3,7 @@ from typing import Optional
 
 from yaml import BaseLoader, MappingNode, ScalarNode, Node
 
-from preacher.compilation.datetime import (
-    compile_timedelta,
-    compile_datetime_format,
-)
+from preacher.compilation.datetime import compile_timedelta, compile_datetime_format
 from preacher.core.datetime import DatetimeFormat
 from preacher.core.value import RelativeDatetime
 from .error import YamlError, on_node
@@ -15,10 +12,7 @@ _KEY_DELTA = 'delta'
 _KEY_FORMAT = 'format'
 
 
-def construct_relative_datetime(
-    loader: BaseLoader,
-    node: Node,
-) -> RelativeDatetime:
+def construct_relative_datetime(loader: BaseLoader, node: Node) -> RelativeDatetime:
     if isinstance(node, ScalarNode):
         return _construct_relative_datetime_of_scalar(loader, node)
     elif isinstance(node, MappingNode):
