@@ -54,7 +54,7 @@ class ExtractionCompiler:
             return XPathExtractor(query, multiple=multiple, cast=cast)
         if _KEY_KEY in obj:
             key = obj[_KEY_KEY]
-            return KeyExtractor(key, cast=cast)
+            return KeyExtractor(key, multiple=multiple, cast=cast)
         raise CompilationError('Must have only 1 extraction key, but has 0')
 
     @staticmethod
