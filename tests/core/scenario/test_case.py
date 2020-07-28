@@ -137,7 +137,6 @@ def test_when_given_an_response(mocker):
 
     response_verification = ResponseVerification(
         response_id=sentinel.response_id,
-        status=Status.UNSTABLE,
         status_code=Verification.succeed(),
         headers=Verification.succeed(),
         body=Verification(status=Status.UNSTABLE)

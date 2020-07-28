@@ -44,7 +44,7 @@ class JqExtractor(Extractor):
 
         values = (
             self._cast(value) if value is not None else value
-            for value in analyzer.jq(compiled.input)
+            for value in analyzer.for_text(lambda text: compiled.input(text=text))
         )
         if self._multiple:
             return list(values)
@@ -65,7 +65,7 @@ class XPathExtractor(Extractor):
         self._cast = cast or identity
 
     def extract(self, analyzer: Analyzer) -> object:
-        elements = analyzer.xpath(self._extract)
+        elements = analyzer.for_etree(self._extract)
         if not elements:
             return None
 
@@ -100,5 +100,5 @@ class KeyExtractor(Extractor):
 
     def extract(self, analyzer: Analyzer) -> object:
         return self._cast(
-            analyzer.key(lambda mapping: mapping.get(self._key))
+            analyzer.for_mapping(lambda mapping: mapping.get(self._key))
         )

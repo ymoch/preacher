@@ -26,7 +26,7 @@ class IsEven(BaseMatcher[int]):
 
 class IsMultipleOf(BaseMatcher[int]):
     """
-    Another custom matcher example, which take a value.
+    Another custom matcher example, which takes a value.
     """
 
     def __init__(self, base: int):

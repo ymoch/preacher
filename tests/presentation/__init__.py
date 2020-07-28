@@ -45,7 +45,6 @@ FILLED_SCENARIO_RESULTS: List[ScenarioResult] = [
                 ),
                 response=ResponseVerification(
                     response_id='response-id',
-                    status=Status.SUCCESS,
                     status_code=Verification(
                         status=Status.SUCCESS,
                         children=[

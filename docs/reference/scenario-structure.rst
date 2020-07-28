@@ -310,9 +310,9 @@ ResponseDescription
       - Descriptions that describe the response headers.
         See :ref:`headers` for more information.
     * - body
-      - :ref:`response-body-description`
+      - List[:ref:`description`]
       - ``null``
-      - A description that describe the response body.
+      - Descriptions that describe the response body.
 
 .. _status-code:
 
@@ -328,31 +328,6 @@ Response headers are converted to be a JSON
 that is a map of names to values
 and can be described as a JSON (e.g. ``."content-type"``).
 *Note that Names are lower-cased* to normalize.
-
-.. _response-body-description:
-
-ResponseBodyDescription
------------------------
-.. list-table::
-    :header-rows: 1
-    :widths: 10 15 15 60
-
-    * - Key
-      - Type
-      - Default
-      - Description
-    * - analyze_as
-      - String
-      - ``json``
-      - The method to analyze the body.
-        Allowed values are ``json`` and ``xml``.
-    * - descriptions
-      - List[:ref:`description`]
-      - ``[]``
-      - Descriptions that describe the response body.
-
-When given a list as a ``ResponseBodyDescription``,
-that is equivalent to ``{"descritptions": it}``.
 
 .. _description:
 

@@ -1,4 +1,4 @@
-from unittest.mock import Mock, NonCallableMock
+from unittest.mock import NonCallableMock
 
 from lxml.etree import XMLParser, fromstring
 from pytest import fixture, mark, raises
@@ -30,7 +30,10 @@ VALUE = '''
 @fixture
 def analyzer():
     elem = fromstring(VALUE, parser=XMLParser())
-    return NonCallableMock(Analyzer, xpath=Mock(side_effect=lambda x: x(elem)))
+
+    analyzer = NonCallableMock(Analyzer)
+    analyzer.for_etree.side_effect = lambda x: x(elem)
+    return analyzer
 
 
 def test_extract_invalid(analyzer):

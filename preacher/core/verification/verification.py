@@ -13,11 +13,7 @@ from preacher.core.util.error import to_message
 class Verification(Statused):
     status: Status = Status.SKIPPED
     message: Optional[str] = None
-    children: Sequence[Verification] = tuple()
-
-    @staticmethod
-    def skipped() -> Verification:
-        return Verification(status=Status.SKIPPED)
+    children: Sequence[Verification] = ()
 
     @staticmethod
     def succeed() -> Verification:

@@ -8,28 +8,26 @@ cases:
           should:
             equal: "application/xml"
       body:
-        analyze_as: xml
-        descriptions:
-          - describe:
-              xpath: /root/foo
-            should:
-              equal: '1'
-          - describe:
-              xpath: /root/foo
-              cast_to: int
-            should:
-              equal: 1
-          - describe:
-              xpath: /root/foo
-              multiple: true
-              cast_to: float
-            should:
-              equal: [1.0, 2.0]
-          - describe:
-              xpath: ./foo[1]/@id
-            should:
-              equal: foo1
-          - describe:
-              xpath: //baz/@id
-            should:
-              equal: baz1
+        - describe:
+            xpath: /root/foo
+          should:
+            equal: '1'
+        - describe:
+            xpath: /root/foo
+            cast_to: int
+          should:
+            equal: 1
+        - describe:
+            xpath: /root/foo
+            multiple: true
+            cast_to: float
+          should:
+            equal: [1.0, 2.0]
+        - describe:
+            xpath: ./foo[1]/@id
+          should:
+            equal: foo1
+        - describe:
+            xpath: //baz/@id
+          should:
+            equal: baz1
