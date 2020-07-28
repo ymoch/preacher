@@ -1,9 +1,7 @@
 from unittest.mock import NonCallableMock, sentinel
 
-from preacher.compilation.request.request_body import (
-    RequestBodyCompiled,
-    JsonRequestBodyCompiled,
-)
+from preacher.compilation.request.request_body import JsonRequestBodyCompiled
+from preacher.compilation.request.request_body import RequestBodyCompiled
 
 PACKAGE = 'preacher.compilation.request.request_body'
 

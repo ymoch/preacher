@@ -4,14 +4,11 @@ from pytest import mark, raises, fixture
 
 from preacher.compilation.argument import Argument
 from preacher.compilation.error import CompilationError, NamedNode, IndexedNode
-from preacher.compilation.request.request import (
-    RequestCompiler,
-    RequestCompiled,
-)
+from preacher.compilation.request.request import RequestCompiler, RequestCompiled
 from preacher.compilation.request.request_body import RequestBodyCompiler
 from preacher.core.request import Method
 
-PACKAGE = 'preacher.compilation.request.request'
+PKG = 'preacher.compilation.request.request'
 
 
 @fixture
@@ -84,7 +81,7 @@ def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
 
 
 def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
-    compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
+    compile_params = mocker.patch(f'{PKG}.compile_url_params')
     compile_params.side_effect = CompilationError('msg', node=NamedNode('x'))
 
     with raises(CompilationError) as error_info:
@@ -95,7 +92,7 @@ def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
 
 
 def test_given_valid_params(compiler: RequestCompiler, mocker):
-    compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
+    compile_params = mocker.patch(f'{PKG}.compile_url_params')
     compile_params.return_value = sentinel.compiled_params
 
     compiled = compiler.compile({'params': sentinel.params}, sentinel.args)
@@ -133,7 +130,7 @@ def test_given_a_string(compiler: RequestCompiler):
 
 
 def test_of_default_no_body(compiler: RequestCompiler, body, mocker):
-    ctor = mocker.patch(f'{PACKAGE}.RequestCompiler')
+    ctor = mocker.patch(f'{PKG}.RequestCompiler')
     ctor.return_value = sentinel.compiler_of_default
 
     new_default = RequestCompiled(
@@ -159,7 +156,7 @@ def test_of_default_no_body(compiler: RequestCompiler, body, mocker):
 
 
 def test_of_default_body(compiler: RequestCompiler, body, mocker):
-    ctor = mocker.patch(f'{PACKAGE}.RequestCompiler')
+    ctor = mocker.patch(f'{PKG}.RequestCompiler')
     ctor.return_value = sentinel.compiler_of_default
 
     new_default = RequestCompiled(body=sentinel.new_default_body)

@@ -3,13 +3,7 @@ from unittest.mock import call
 
 from pytest import mark, raises
 
-from preacher.compilation.yaml import (
-    YamlError,
-    load,
-    load_from_path,
-    load_all,
-    load_all_from_path,
-)
+from preacher.compilation.yaml import YamlError, load, load_from_path, load_all, load_all_from_path
 
 
 @mark.parametrize(('content', 'expected_message'), (

@@ -3,12 +3,10 @@ from unittest.mock import NonCallableMock, sentinel
 from pytest import raises
 
 from preacher.compilation.error import CompilationError, NamedNode
-from preacher.compilation.request.request_body import (
-    RequestBodyCompiled,
-    UrlencodedRequestBodyCompiled,
-)
+from preacher.compilation.request.request_body import RequestBodyCompiled
+from preacher.compilation.request.request_body import UrlencodedRequestBodyCompiled
 
-PACKAGE = 'preacher.compilation.request.request_body'
+PKG = 'preacher.compilation.request.request_body'
 
 
 def test_replace_given_another_type():
@@ -39,7 +37,7 @@ def test_compile_and_replace_empty():
 
 
 def test_compile_and_replace_given_invalid_data(mocker):
-    compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
+    compile_params = mocker.patch(f'{PKG}.compile_url_params')
     compile_params.side_effect = CompilationError('m', node=NamedNode('x'))
 
     default = UrlencodedRequestBodyCompiled(data=sentinel.original_data)
@@ -51,7 +49,7 @@ def test_compile_and_replace_given_invalid_data(mocker):
 
 
 def test_compile_and_replace_given_valid_data(mocker):
-    compile_params = mocker.patch(f'{PACKAGE}.compile_url_params')
+    compile_params = mocker.patch(f'{PKG}.compile_url_params')
     compile_params.return_value = sentinel.params
 
     default = UrlencodedRequestBodyCompiled(data=sentinel.original_data)
@@ -63,8 +61,7 @@ def test_compile_and_replace_given_valid_data(mocker):
 
 
 def test_fix_empty(mocker):
-    ctor = mocker.patch(f'{PACKAGE}.UrlencodedRequestBody')
-    ctor.return_value = sentinel.fixed
+    ctor = mocker.patch(f'{PKG}.UrlencodedRequestBody', return_value=sentinel.fixed)
 
     compiled = UrlencodedRequestBodyCompiled()
     fixed = compiled.fix()
@@ -74,8 +71,7 @@ def test_fix_empty(mocker):
 
 
 def test_fix_filled(mocker):
-    ctor = mocker.patch(f'{PACKAGE}.UrlencodedRequestBody')
-    ctor.return_value = sentinel.fixed
+    ctor = mocker.patch(f'{PKG}.UrlencodedRequestBody', return_value=sentinel.fixed)
 
     compiled = UrlencodedRequestBodyCompiled(data=sentinel.data)
     fixed = compiled.fix()
