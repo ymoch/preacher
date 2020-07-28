@@ -10,7 +10,6 @@ from .matcher import ValueMatcherFactory
 from .predicate import Predicate
 from .response import ResponseDescription
 from .response import ResponseVerification
-from .response_body import ResponseBodyDescription
 from .type import require_type
 from .verification import Verification
 
@@ -25,7 +24,6 @@ __all__ = [
     'Predicate',
     'ResponseDescription',
     'ResponseVerification',
-    'ResponseBodyDescription',
     'require_type',
     'Verification',
 ]
