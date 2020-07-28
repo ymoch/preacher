@@ -4,10 +4,10 @@ and the body.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Mapping, Optional
+from typing import List, Optional
 
-from preacher.core.extraction import MappingAnalyzer, ResponseBodyAnalyzer
-from preacher.core.request import Response, ResponseBody
+from preacher.core.extraction import ResponseBodyAnalyzer, MappingAnalyzer
+from preacher.core.request import Response
 from preacher.core.status import Status, Statused, merge_statuses
 from preacher.core.value import ValueContext
 from .description import Description
@@ -44,9 +44,19 @@ class ResponseDescription:
         response: Response,
         context: Optional[ValueContext] = None,
     ) -> ResponseVerification:
-        status_code = self._verify_status_code(response.status_code, context)
-        headers = self._verify_headers(response.headers, context)
-        body = self._verify_body(response.body, context)
+        status_code = Verification.collect(
+            p.verify(response.status_code, context) for p in self._status_code
+        )
+
+        header_analyzer = MappingAnalyzer(response.headers)
+        headers = Verification.collect(
+            d.verify(header_analyzer, context) for d in self._headers
+        )
+
+        body_analyzer = ResponseBodyAnalyzer(response.body)
+        body = Verification.collect(
+            d.verify(body_analyzer, context) for d in self._body
+        )
 
         return ResponseVerification(
             response_id=response.id,
@@ -54,26 +64,3 @@ class ResponseDescription:
             headers=headers,
             body=body,
         )
-
-    def _verify_status_code(
-        self,
-        code: int,
-        context: Optional[ValueContext],
-    ) -> Verification:
-        return Verification.collect(p.verify(code, context) for p in self._status_code)
-
-    def _verify_headers(
-        self,
-        headers: Mapping[str, str],
-        context: Optional[ValueContext],
-    ) -> Verification:
-        analyzer = MappingAnalyzer(headers)
-        return Verification.collect(d.verify(analyzer, context) for d in self._headers)
-
-    def _verify_body(
-        self,
-        body: ResponseBody,
-        context: Optional[ValueContext],
-    ) -> Verification:
-        analyzer = ResponseBodyAnalyzer(body)
-        return Verification.collect(d.verify(analyzer, context) for d in self._body)
