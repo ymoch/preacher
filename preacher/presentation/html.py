@@ -22,11 +22,7 @@ class HtmlReporter:
         os.makedirs(self._path, exist_ok=True)
         os.makedirs(self._responses_path, exist_ok=True)
 
-    def export_response(
-        self,
-        execution: ExecutionReport,
-        response: Response,
-    ) -> None:
+    def export_response(self, execution: ExecutionReport, response: Response) -> None:
         name = f'{response.id}.html'
         path = os.path.join(self._responses_path, name)
 
