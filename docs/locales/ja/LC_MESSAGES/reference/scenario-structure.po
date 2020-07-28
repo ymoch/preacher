@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-28 09:37+0900\n"
+"POT-Creation-Date: 2020-07-28 09:41+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -473,7 +473,7 @@ msgid ""
 msgstr ""
 
 #: ../../reference/scenario-structure.rst:315 bc02c8326a974f778c3e0526e217cadb
-msgid "A description that describe the response body."
+msgid "Descriptions that describe the response body."
 msgstr ""
 
 #: ../../reference/scenario-structure.rst:320 6cb3a29666f04b4b8992ccc2e24ccdbd

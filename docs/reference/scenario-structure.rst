@@ -312,7 +312,7 @@ ResponseDescription
     * - body
       - List[:ref:`description`]
       - ``null``
-      - A description that describe the response body.
+      - Descriptions that describe the response body.
 
 .. _status-code:
 
