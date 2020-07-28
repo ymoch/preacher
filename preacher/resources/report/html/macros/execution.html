@@ -1,22 +1,11 @@
 {% from "./macros/request.html" import show_request %}
 
 {% macro show_execution(item) %}
-  <li class="accordion-item status-{{ item.status }}" data-accordion-item>
-    <a href="#" class="accordion-title">
-      <span class="badge status-{{ item.status }}">{{ item.status }}</span>
-      Execution
-    </a>
+  {% if item.request %}
+    {{ show_request(item.request) }}
+  {% endif %}
 
-    <div class="accordion-content" data-tab-content>
-      {% if item.request %}
-        {{ show_request(item.request) }}
-      {% endif %}
-
-      {% if not item.message %}
-        No message.
-      {% else %}
-        <pre>{{ item.message }}</pre>
-      {% endif %}
-    </div>
-  </li>
+  {% if item.message %}
+    <pre>{{ item.message }}</pre>
+  {% endif %}
 {% endmacro %}

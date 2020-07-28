@@ -4,14 +4,12 @@ from pytest import fixture, mark, raises
 
 from preacher.compilation.argument import Argument
 from preacher.compilation.error import CompilationError, NamedNode
-from preacher.compilation.request.request_body import (
-    RequestBodyCompiler,
-    RequestBodyCompiled,
-    UrlencodedRequestBodyCompiled,
-    JsonRequestBodyCompiled,
-)
+from preacher.compilation.request.request_body import JsonRequestBodyCompiled
+from preacher.compilation.request.request_body import RequestBodyCompiled
+from preacher.compilation.request.request_body import RequestBodyCompiler
+from preacher.compilation.request.request_body import UrlencodedRequestBodyCompiled
 
-PACKAGE = 'preacher.compilation.request.request_body'
+PKG = 'preacher.compilation.request.request_body'
 
 
 @fixture
@@ -46,12 +44,7 @@ def test_compile_empty(compiler, default_body):
     ('urlencoded', UrlencodedRequestBodyCompiled()),
     ('json', JsonRequestBodyCompiled()),
 ])
-def test_given_type(
-    compiler: RequestBodyCompiler,
-    default_body,
-    type_key,
-    expected,
-):
+def test_given_type(compiler: RequestBodyCompiler, default_body, type_key, expected):
     replaced_body = NonCallableMock(RequestBodyCompiled)
     replaced_body.compile_and_replace = Mock(return_value=sentinel.new_result)
     default_body.replace = Mock(return_value=replaced_body)
@@ -69,7 +62,7 @@ def test_given_type(
 def test_of_default(compiler: RequestBodyCompiler, default_body, mocker):
     default_body.replace = Mock(return_value=sentinel.new_default_body)
 
-    ctor = mocker.patch(f'{PACKAGE}.RequestBodyCompiler')
+    ctor = mocker.patch(f'{PKG}.RequestBodyCompiler')
     ctor.return_value = sentinel.new_compiler
 
     new_compiler = compiler.of_default(sentinel.new_default_body)

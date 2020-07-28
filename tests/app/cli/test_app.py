@@ -103,10 +103,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     load_plugins_func.assert_called_once_with(sentinel.plugin_manager, sentinel.plugins, logger)
 
     compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
-    compiler.compile_flattening.assert_called_once_with(
-        sentinel.objs,
-        arguments=sentinel.args,
-    )
+    compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
 
     objs_ctor.assert_called_once_with(sentinel.paths, logger)
     runner_ctor.assert_called_once_with(

@@ -17,11 +17,7 @@ class Description:
         self._extractor = extractor
         self._predicates = predicates
 
-    def verify(
-        self,
-        analyzer: Analyzer,
-        context: Optional[ValueContext] = None,
-    ) -> Verification:
+    def verify(self, analyzer: Analyzer, context: Optional[ValueContext] = None) -> Verification:
         try:
             verified_value = self._extractor.extract(analyzer)
         except Exception as error:
@@ -31,11 +27,3 @@ class Description:
             predicate.verify(verified_value, context)
             for predicate in self._predicates
         )
-
-    @property
-    def extractor(self) -> Extractor:
-        return self._extractor
-
-    @property
-    def predicates(self) -> List[Predicate]:
-        return self._predicates

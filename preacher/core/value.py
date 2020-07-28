@@ -7,12 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Generic, Optional, TypeVar
 
-from preacher.core.datetime import (
-    DatetimeWithFormat,
-    DatetimeFormat,
-    ISO8601,
-    now,
-)
+from preacher.core.datetime import DatetimeWithFormat, DatetimeFormat, ISO8601, now
 
 T = TypeVar('T')
 

@@ -72,12 +72,12 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
     (
         {'key': 'foo'},
         'KeyExtractor',
-        call('foo', cast=None),
+        call('foo', multiple=False, cast=None),
     ),
     (
         {'key': 'bar', 'multiple': True, 'cast_to': 'float'},
         'KeyExtractor',
-        call('bar', cast=float),
+        call('bar', multiple=True, cast=float),
     ),
 ))
 def test_when_given_a_valid_value(value, expected_ctor, expected_call, mocker):

@@ -6,12 +6,10 @@ from preacher.core.request.request import Request, ExecutionReport
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
-from preacher.core.verification import (
-    ResponseDescription,
-    ResponseVerification,
-    Description,
-    Verification,
-)
+from preacher.core.verification import Description
+from preacher.core.verification import ResponseDescription
+from preacher.core.verification import ResponseVerification
+from preacher.core.verification import Verification
 
 PKG = 'preacher.core.scenario.case'
 
@@ -117,11 +115,7 @@ def test_when_given_no_response(mocker):
     assert result.execution is execution
     assert result.response is None
 
-    request.execute.assert_called_once_with(
-        sentinel.base_url,
-        timeout=None,
-        session=None,
-    )
+    request.execute.assert_called_once_with(sentinel.base_url, timeout=None, session=None)
     response.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
 

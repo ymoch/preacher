@@ -76,8 +76,6 @@ For Sequence values
     - Matches if all given items appear in the list, in any order.
 - contain_exactly: ``List<Matcher>``
     - Exactly matches the entire sequence.
-- contain: ``List<Matcher>`` (Deprecated)
-    - Same as ``contain_exactly``. ``contain`` will be removed in the future.
 - contain_in_any_order: ``List<Matcher>``
     - Matches the entire sequence, but in any order.
 

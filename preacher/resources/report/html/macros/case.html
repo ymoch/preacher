@@ -11,8 +11,8 @@
     </a>
     <div class="accordion-content" data-tab-content>
       <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-        {{ show_conditions(item.conditions) }}
         {{ show_execution(item.execution) }}
+        {{ show_conditions(item.conditions) }}
         {% if item.response %}
           {{ show_response(item.response) }}
         {% endif %}

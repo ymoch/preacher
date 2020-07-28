@@ -35,11 +35,7 @@ class ScenarioCompiler:
         self._description = description
         self._case = case
 
-    def compile(
-        self,
-        obj: object,
-        arguments: Optional[Arguments] = None,
-    ) -> Scenario:
+    def compile(self, obj: object, arguments: Optional[Arguments] = None) -> Scenario:
         """
         Compile the given object into a scenario.
 

@@ -1,29 +1,20 @@
 {% from "./macros/verification.html" import show_verification, show_description %}
 
 {% macro show_response(item) %}
-  <li class="accordion-item status-{{ item.status }}" data-accordion-item>
-    <a href="#" class="accordion-title">
-      <span class="badge status-{{ item.status }}">{{ item.status }}</span>
-      Response
-    </a>
+  <dl>
+    <dt>Response ID</dt>
+    <dd>
+      <a href="responses/{{ item.response_id }}.html" target="response-viewer">{{ item.response_id }}</a>
+    </dd>
+  </dl>
 
-    <div class="accordion-content" data-tab-content>
-      <dl>
-        <dt>Response ID</dt>
-        <dd>
-          <a href="responses/{{ item.response_id }}.html" target="response-viewer">{{ item.response_id }}</a>
-        </dd>
-      </dl>
+  {% if item.message %}
+    <pre>{{ item.message }}</pre>
+  {% endif %}
 
-      {% if item.message %}
-      <pre>{{ item.message }}</pre>
-      {% endif %}
-
-      <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-        {{ show_verification("Status Code", item.status_code) }}
-        {{ show_description("Headers", item.headers) }}
-        {{ show_description("Body", item.body) }}
-      </ul>
-    </div>
-  </li>
+  <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    {{ show_verification("Status Code", item.status_code) }}
+    {{ show_description("Headers", item.headers) }}
+    {{ show_description("Body", item.body) }}
+  </ul>
 {% endmacro %}

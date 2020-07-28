@@ -59,12 +59,7 @@ def test_when_given_invalid_values(value, expected_path, compiler):
     assert error_info.value.path == expected_path
 
 
-def test_given_an_empty_object(
-    compiler: ScenarioCompiler,
-    case,
-    case_of_default,
-    mocker,
-):
+def test_given_an_empty_object(compiler: ScenarioCompiler, case, case_of_default, mocker):
     ctor = mocker.patch(f'{PKG}.Scenario', return_value=sentinel.scenario)
 
     scenario = compiler.compile({})

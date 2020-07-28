@@ -28,6 +28,4 @@ def test_colored_formatter():
     assert next(stream) == f'{Fore.GREEN}success{Style.RESET_ALL}\n'
     assert next(stream) == f'{Fore.YELLOW}unstable{Style.RESET_ALL}\n'
     assert next(stream) == f'{Fore.RED}failure{Style.RESET_ALL}\n'
-    assert next(stream) == (
-        f'{Fore.RED}{Style.BRIGHT}critical{Style.RESET_ALL}\n'
-    )
+    assert next(stream) == f'{Fore.RED}{Style.BRIGHT}critical{Style.RESET_ALL}\n'

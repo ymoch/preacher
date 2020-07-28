@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, sentinel
+from unittest.mock import NonCallableMock, sentinel
 
 from pytest import fixture
 
@@ -7,7 +7,7 @@ from preacher.core.scenario.listener import Listener, MergingListener
 
 @fixture
 def listeners():
-    return [MagicMock(Listener), MagicMock(Listener)]
+    return [NonCallableMock(Listener), NonCallableMock(Listener)]
 
 
 @fixture
@@ -21,10 +21,7 @@ def merging_listener(listeners) -> MergingListener:
 def test_on_response(merging_listener, listeners):
     merging_listener.on_execution(sentinel.execution, sentinel.response)
     for listener in listeners:
-        listener.on_execution.assert_called_once_with(
-            sentinel.execution,
-            sentinel.response,
-        )
+        listener.on_execution.assert_called_once_with(sentinel.execution, sentinel.response)
 
 
 def test_on_scenario(merging_listener, listeners):

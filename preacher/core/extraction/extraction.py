@@ -43,7 +43,7 @@ class JqExtractor(Extractor):
             raise ExtractionError(f'Invalid jq script: {self._query}')
 
         values = (
-            self._cast(value) if value is not None else value
+            _cast_not_none(self._cast, value)
             for value in analyzer.for_text(lambda text: compiled.input(text=text))
         )
         if self._multiple:
@@ -69,7 +69,7 @@ class XPathExtractor(Extractor):
         if not elements:
             return None
 
-        values = (self._cast(self._convert(element)) for element in elements)
+        values = (_cast_not_none(self._cast, self._convert(element)) for element in elements)
         if self._multiple:
             return list(values)
         else:
@@ -93,12 +93,19 @@ class KeyExtractor(Extractor):
     def __init__(
         self,
         key: str,
+        multiple: bool = False,
         cast: Optional[Callable[[object], Any]] = None,
     ):
         self._key = key
+        self._multiple = multiple
         self._cast = cast or identity
 
     def extract(self, analyzer: Analyzer) -> object:
-        return self._cast(
-            analyzer.for_mapping(lambda mapping: mapping.get(self._key))
-        )
+        value = _cast_not_none(self._cast, analyzer.for_mapping(lambda v: v.get(self._key)))
+        return [value] if self._multiple else value
+
+
+def _cast_not_none(cast: Callable[[object], Any], value: object) -> Any:
+    if value is None:
+        return None
+    return cast(value)
