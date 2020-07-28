@@ -22,9 +22,7 @@ def test_content_type():
         '"2020-01-23T12:34:56+00:00"',
     ),
     (
-        DatetimeWithFormat(
-            datetime(2020, 12, 31, 12, 34, 56, 123456, tzinfo=timezone.utc),
-        ),
+        DatetimeWithFormat(datetime(2020, 12, 31, 12, 34, 56, 123456, tzinfo=timezone.utc)),
         '"2020-12-31T12:34:56.123456+00:00"',
     ),
 ])

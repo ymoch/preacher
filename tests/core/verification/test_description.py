@@ -55,7 +55,4 @@ def test_when_given_predicates(extractor):
 
     extractor.extract.assert_called_once_with(sentinel.analyzer)
     for predicate in predicates:
-        predicate.verify.assert_called_once_with(
-            sentinel.target,
-            sentinel.context,
-        )
+        predicate.verify.assert_called_once_with(sentinel.target, sentinel.context)

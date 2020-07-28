@@ -154,10 +154,7 @@ def test_ordered(
 
     sentinel.context.starts = sentinel.starts
 
-    scenario = Scenario(
-        cases=sentinel.cases,
-        subscenarios=[subscenario]
-    )
+    scenario = Scenario(cases=sentinel.cases, subscenarios=[subscenario])
 
     result = scenario.submit(
         executor,

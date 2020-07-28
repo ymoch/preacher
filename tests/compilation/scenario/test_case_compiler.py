@@ -1,4 +1,4 @@
-from unittest.mock import ANY, NonCallableMock, sentinel
+from unittest.mock import NonCallableMock, sentinel
 
 from pytest import fixture, mark, raises
 
@@ -54,11 +54,7 @@ def test_conditions_compilation_fails(compiler: CaseCompiler, desc):
     desc.compile.side_effect = CompilationError('msg', node=NamedNode('foo'))
     with raises(CompilationError) as error_info:
         compiler.compile({'when': 'xxx'})
-    assert error_info.value.path == [
-        NamedNode('when'),
-        IndexedNode(0),
-        NamedNode('foo'),
-    ]
+    assert error_info.value.path == [NamedNode('when'), IndexedNode(0), NamedNode('foo')]
 
     desc.compile.assert_called_once_with('xxx')
 
@@ -135,10 +131,8 @@ def test_given_hollow_default(mocker, req, res, desc, initial_default):
         request=req,
         response=res,
         description=desc,
-        default=ANY,
+        default=sentinel.new_default,
     )
-    default = ctor.call_args[1]['default']
-    assert default is sentinel.new_default
 
 
 def test_given_filled_default(mocker, req, res, desc, initial_default):
@@ -161,10 +155,8 @@ def test_given_filled_default(mocker, req, res, desc, initial_default):
         request=sentinel.default_req_compiler,
         response=sentinel.default_res_compiler,
         description=desc,
-        default=ANY,
+        default=sentinel.new_default,
     )
-    default = ctor.call_args[1]['default']
-    assert default is sentinel.new_default
 
 
 def test_compile_fixed(compiler: CaseCompiler, mocker):

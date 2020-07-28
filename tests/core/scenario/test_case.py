@@ -115,11 +115,7 @@ def test_when_given_no_response(mocker):
     assert result.execution is execution
     assert result.response is None
 
-    request.execute.assert_called_once_with(
-        sentinel.base_url,
-        timeout=None,
-        session=None,
-    )
+    request.execute.assert_called_once_with(sentinel.base_url, timeout=None, session=None)
     response.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
 

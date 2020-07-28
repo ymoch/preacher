@@ -56,10 +56,7 @@ def test_load_from_path(mocker):
 
     assert content.closed
     assert included_content.closed
-    open_mock.assert_has_calls([
-        call('path/to/scenario.yml'),
-        call('path/to/inner/foo.yml'),
-    ])
+    open_mock.assert_has_calls([call('path/to/scenario.yml'), call('path/to/inner/foo.yml')])
 
 
 def test_load_all_from_path_not_found(mocker):
@@ -87,7 +84,4 @@ def test_load_all_from_path(mocker):
 
     assert content.closed
     assert included_content.closed
-    open_mock.assert_has_calls([
-        call('path/to/scenario.yml'),
-        call('path/to/inner/foo.yml'),
-    ])
+    open_mock.assert_has_calls([call('path/to/scenario.yml'), call('path/to/inner/foo.yml')])

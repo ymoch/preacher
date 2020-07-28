@@ -59,9 +59,7 @@ def test_given_recursive_inclusion(mocker):
 
 def test_given_wildcard_inclusion(mocker):
     iglob_mock = mocker.patch('glob.iglob')
-    iglob_mock.side_effect = (
-        lambda path, recursive: iter([f'glob:{path}:{recursive}'])
-    )
+    iglob_mock.side_effect = lambda path, recursive: iter([f'glob:{path}:{recursive}'])
 
     stream = StringIO(r'''
     'asterisk': !include '*.yml'
