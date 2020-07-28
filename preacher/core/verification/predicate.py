@@ -13,9 +13,5 @@ class Predicate(ABC):
     """Predicate interface."""
 
     @abstractmethod
-    def verify(
-        self,
-        actual: object,
-        context: Optional[ValueContext] = None,
-    ) -> Verification:
+    def verify(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
         raise NotImplementedError()

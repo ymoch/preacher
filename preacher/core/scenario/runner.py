@@ -3,12 +3,7 @@ from typing import Iterable, Optional, Iterator
 
 from preacher.core.status import Status
 from .listener import Listener
-from .scenario import (
-    Scenario,
-    ScenarioResult,
-    ScenarioTask,
-    StaticScenarioTask,
-)
+from .scenario import Scenario, ScenarioResult, ScenarioTask, StaticScenarioTask
 
 
 class ScenarioRunner:
