@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from typing import Optional, List
 
-from preacher.compilation.error import CompilationError, on_key
+from preacher.compilation.error import on_key
 from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list, ensure_mapping, or_else
 from preacher.core.verification import ResponseDescription, Description, Predicate
@@ -95,10 +94,5 @@ class ResponseDescriptionCompiler:
         return list(map_compile(self._predicate.compile, obj))
 
     def _compile_descriptions(self, obj: object) -> List[Description]:
-        if isinstance(obj, Mapping):
-            obj = [obj]
-        if not isinstance(obj, list):
-            message = f'Must be a list or a map, given {type(obj)}'
-            raise CompilationError(message)
-
+        obj = ensure_list(obj)
         return list(map_compile(self._description.compile, obj))

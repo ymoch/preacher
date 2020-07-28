@@ -2,7 +2,7 @@ from unittest.mock import NonCallableMock, call, sentinel
 
 from pytest import fixture, mark, raises
 
-from preacher.compilation.error import CompilationError, NamedNode
+from preacher.compilation.error import CompilationError
 from preacher.compilation.verification.description import DescriptionCompiler
 from preacher.compilation.verification.predicate import PredicateCompiler
 from preacher.compilation.verification.response import ResponseDescriptionCompiled
@@ -32,8 +32,6 @@ def description():
 
 @mark.parametrize(('obj', 'expected_path'), (
     ('', []),
-    ({'headers': 'str'}, [NamedNode('headers')]),
-    ({'body': 'str'}, [NamedNode('body')]),
 ))
 def test_given_an_invalid_value(obj, expected_path, compiler):
     with raises(CompilationError) as error_info:
@@ -53,37 +51,37 @@ def test_given_an_empty_mapping(compiler, predicate, description):
 
 def test_given_simple_values(compiler, predicate, description):
     compiled = compiler.compile({
-        'status_code': 402,
-        'headers': {'k1': 'v1'},
-        'body': {'k2': 'v2'},
+        'status_code': sentinel.status_code,
+        'headers': sentinel.headers,
+        'body': sentinel.body,
     })
     assert compiled.status_code == [sentinel.predicate]
     assert compiled.headers == [sentinel.description]
     assert compiled.body == [sentinel.description]
 
-    predicate.compile.assert_called_once_with(402)
-    description.compile.assert_has_calls([call({'k1': 'v1'}), call({'k2': 'v2'})])
+    predicate.compile.assert_called_once_with(sentinel.status_code)
+    description.compile.assert_has_calls([call(sentinel.headers), call(sentinel.body)])
 
 
 def test_given_filled_values(compiler, predicate, description):
     compiled = compiler.compile({
-        'status_code': [{'k1': 'v1'}, {'k2': 'v2'}],
-        'headers': [{'k3': 'v3'}, {'k4': 'v4'}],
-        'body': [{'k5': 'v5'}, {'k6': 'v6'}],
+        'status_code': [sentinel.status_code_1, sentinel.status_code_2],
+        'headers': [sentinel.headers_1, sentinel.headers_2],
+        'body': [sentinel.body_1, sentinel.body_2],
     })
     assert compiled.status_code == [sentinel.predicate, sentinel.predicate]
     assert compiled.headers == [sentinel.description, sentinel.description]
     assert compiled.body == [sentinel.description, sentinel.description]
 
     predicate.compile.assert_has_calls([
-        call({'k1': 'v1'}),
-        call({'k2': 'v2'}),
+        call(sentinel.status_code_1),
+        call(sentinel.status_code_2),
     ])
     description.compile.assert_has_calls([
-        call({'k3': 'v3'}),
-        call({'k4': 'v4'}),
-        call({'k5': 'v5'}),
-        call({'k6': 'v6'}),
+        call(sentinel.headers_1),
+        call(sentinel.headers_2),
+        call(sentinel.body_1),
+        call(sentinel.body_2),
     ])
 
 
