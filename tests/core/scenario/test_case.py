@@ -6,12 +6,10 @@ from preacher.core.request.request import Request, ExecutionReport
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
-from preacher.core.verification import (
-    ResponseDescription,
-    ResponseVerification,
-    Description,
-    Verification,
-)
+from preacher.core.verification import Description
+from preacher.core.verification import ResponseDescription
+from preacher.core.verification import ResponseVerification
+from preacher.core.verification import Verification
 
 PKG = 'preacher.core.scenario.case'
 
