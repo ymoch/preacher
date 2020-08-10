@@ -8,7 +8,11 @@
     </div>
     <div class="grid-x">
       <dt class="cell small-4 medium-2 large-1">URL</dt>
-      <dd class="cell small-8 medium-10 large-11">{{ request.url }}</dd>
+      <dd class="cell small-8 medium-10 large-11">
+        <a href="{{request.url}}" target="_blank">
+          {{ request.url }}
+        </a>
+      </dd>
     </div>
     {% if request.headers %}
       <div class="grid-x">
