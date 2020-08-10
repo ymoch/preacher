@@ -48,7 +48,14 @@ codecov = "^2.1.8"  # For reporting from CI.
 testpaths = ["preacher", "tests"]
 flake8-max-line-length = 99
 mccabe-complexity = 10
-addopts = "--flake8 --mypy --mypy-ignore-missing-imports --mccabe --cov-report=term-missing --cov=preacher"
+addopts = [
+  "--flake8",
+  "--mypy",
+  "--mypy-ignore-missing-imports",
+  "--mccabe",
+  "--cov=preacher",
+  "--cov-report=term-missing",
+]
 
 [build-system]
 requires = ["poetry>=1.0"]
