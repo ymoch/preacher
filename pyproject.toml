@@ -44,6 +44,12 @@ flask = "^1.1.2"
 codecov = "^2.1.8"  # For reporting from CI.
 pytest = "^6.0.1"
 
+[tool.pytest.ini_options]
+testpaths = ["preacher", "tests"]
+flake8-max-line-length = 99
+mccabe-complexity = 10
+addopts = "--flake8 --mypy --mypy-ignore-missing-imports --mccabe --cov-report=term-missing --cov=preacher"
+
 [build-system]
 requires = ["poetry>=1.0"]
 build-backend = "poetry.masonry.api"
