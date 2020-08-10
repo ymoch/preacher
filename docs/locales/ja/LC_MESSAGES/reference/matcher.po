@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-27 01:27+0900\n"
+"POT-Creation-Date: 2020-08-10 15:53+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -257,72 +257,62 @@ msgstr ""
 msgid "Exactly matches the entire sequence."
 msgstr ""
 
-#: ../../reference/matcher.rst:79 b6629a03a1ef496182713dbf86bf58b3
-msgid "contain: ``List<Matcher>`` (Deprecated)"
-msgstr ""
-
-#: ../../reference/matcher.rst:80 ddc6e847cf73424bb33c586a1e757d93
-msgid "Same as ``contain_exactly``. ``contain`` will be removed in the future."
-msgstr ""
-
-#: ../../reference/matcher.rst:82 b5c05d2d669c4dc1823fb79a74cfdd18
+#: ../../reference/matcher.rst:80 b5c05d2d669c4dc1823fb79a74cfdd18
 msgid "contain_in_any_order: ``List<Matcher>``"
 msgstr ""
 
-#: ../../reference/matcher.rst:82 efffee56066d49428f1a2d83fadea3d7
+#: ../../reference/matcher.rst:80 efffee56066d49428f1a2d83fadea3d7
 msgid "Matches the entire sequence, but in any order."
 msgstr ""
 
-#: ../../reference/matcher.rst:85 9b13a0e9233f46f98944eb976f9a022a
+#: ../../reference/matcher.rst:83 9b13a0e9233f46f98944eb976f9a022a
 msgid "Logical Matchers"
 msgstr "論理演算"
 
-#: ../../reference/matcher.rst:86 d4160ff2eed74648a311fac4127a1145
+#: ../../reference/matcher.rst:84 d4160ff2eed74648a311fac4127a1145
 msgid "not: ``Matcher``"
 msgstr ""
 
-#: ../../reference/matcher.rst:87 5059beb2bf9d4117bf218dc2d8c2f6ee
+#: ../../reference/matcher.rst:85 5059beb2bf9d4117bf218dc2d8c2f6ee
 msgid "Matches a value that doesn't match the given matcher."
 msgstr "与えられた matcher にマッチしない値にマッチします."
 
-#: ../../reference/matcher.rst:88 f4d3ff5c7e694af6be0705a955fddaa2
+#: ../../reference/matcher.rst:86 f4d3ff5c7e694af6be0705a955fddaa2
 msgid "all_of: ``List<Matcher>``"
 msgstr ""
 
-#: ../../reference/matcher.rst:89 8ebb3b3da03240479ef7cd223fc68b03
+#: ../../reference/matcher.rst:87 8ebb3b3da03240479ef7cd223fc68b03
 msgid "Matches a value that matches all of the given matchers."
 msgstr "与えられた matcher すべてにマッチする値にマッチします."
 
-#: ../../reference/matcher.rst:90 77e7e143d92b45a1a80a4f864d09d7c7
+#: ../../reference/matcher.rst:88 77e7e143d92b45a1a80a4f864d09d7c7
 msgid "any_of: ``List<Matcher>``"
 msgstr ""
 
-#: ../../reference/matcher.rst:91 2f216ea59b884591ba80589769126645
+#: ../../reference/matcher.rst:89 2f216ea59b884591ba80589769126645
 msgid "Matches a value that matches any of the given matchers."
 msgstr "与えられた matcher のいずれかにマッチする値にマッチします."
 
-#: ../../reference/matcher.rst:93 73665170b8aa46c58d619cf1a2b7d37a
+#: ../../reference/matcher.rst:91 73665170b8aa46c58d619cf1a2b7d37a
 msgid "anything"
 msgstr ""
 
-#: ../../reference/matcher.rst:93 be085700e8d646458a08c28fb7b70366
+#: ../../reference/matcher.rst:91 be085700e8d646458a08c28fb7b70366
 msgid "Matches anything."
 msgstr "任意の値にマッチします."
 
-#: ../../reference/matcher.rst:96 ed92224611844508bbd1b3ace4d78c98
+#: ../../reference/matcher.rst:94 ed92224611844508bbd1b3ace4d78c98
 msgid "Custom matchers"
-msgstr ""
-"カスタム Matcher を使用する"
+msgstr "カスタム Matcher を使用する"
 
-#: ../../reference/matcher.rst:97 c58a0173138845278a016016031c0fba
+#: ../../reference/matcher.rst:95 c58a0173138845278a016016031c0fba
 msgid "You can define custom matchers and load as a plugins."
-msgstr ""
-"カスタム matcher を定義して, プラグインとしてロードすることもできます."
+msgstr "カスタム matcher を定義して, プラグインとしてロードすることもできます."
 
-#: ../../reference/matcher.rst:99 c72f119023384e3f9d2240d8a6ac4fff
+#: ../../reference/matcher.rst:97 c72f119023384e3f9d2240d8a6ac4fff
 msgid "First, implement a custom matcher plugin like below."
 msgstr "まず, 以下のように自作 matcher プラグインを定義します."
 
-#: ../../reference/matcher.rst:103 e83547fe1ee74de6803b31ed04be25d9
+#: ../../reference/matcher.rst:101 e83547fe1ee74de6803b31ed04be25d9
 msgid "And then, run Preacher with loading that plugin."
 msgstr "そして, そのプラグインをロードして Preacher を実行します."

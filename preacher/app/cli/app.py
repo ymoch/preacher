@@ -75,7 +75,6 @@ def app(
         verbosity
     )
 
-    logger.info('Load plugins.')
     plugin_manager = get_plugin_manager()
     try:
         load_plugins(plugin_manager, plugins, logger)

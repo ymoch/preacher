@@ -87,7 +87,9 @@ commands:
     steps:
       - run:
           name: Bootstrapping test
-          command: poetry run preacher-cli --help
+          command: |
+            poetry run preacher-cli --version
+            poetry run preacher-cli --help
   unit-test:
     description: Unit test
     steps:
@@ -107,12 +109,14 @@ commands:
 
             # Run normal scenarios.
             poetry run preacher-cli \
+              -vv \
               -uhttp://localhost:5000 \
               -Rreport/ \
               ./examples/scenario/success.yml
 
             # Run plugin scenarios.
             poetry run preacher-cli \
+              -vv \
               -uhttp://localhost:5000 \
               -pexamples/plugin/custom_matcher.py \
               ./examples/scenario/plugin.yml
@@ -120,6 +124,7 @@ commands:
             # Run plugin scenarios with installation.
             poetry run pip install ./examples/plugin
             poetry run preacher-cli \
+              -vv \
               -uhttp://localhost:5000 \
               ./examples/scenario/plugin.yml
 
