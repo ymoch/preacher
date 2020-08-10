@@ -28,7 +28,6 @@ def base_dir():
 @mark.parametrize('args', [
     ['-h'],
     ['--help'],
-    ['-v'],
     ['--version'],
 ])
 def test_show_and_exit(args):

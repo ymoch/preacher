@@ -37,12 +37,7 @@ _ENV_PLUGIN = f'{_ENV_PREFIX}PLUGIN'
 
 
 @command()
-@argument(
-    'paths',
-    metavar='path',
-    nargs=-1,
-    type=Path(exists=True),
-)
+@argument('paths', metavar='path', nargs=-1, type=Path(exists=True))
 @option(
     'base_url',
     '-u',
@@ -139,13 +134,13 @@ _ENV_PLUGIN = f'{_ENV_PREFIX}PLUGIN'
 )
 @option(
     'verbosity',
-    '-V',
+    '-v',
     '--verbose',
     help='make logging more verbose',
     count=True,
 )
 @help_option('-h', '--help')
-@version_option(_version, '-v', '--version')
+@version_option(_version)
 def main(
     paths: Sequence[str],
     base_url: str,
