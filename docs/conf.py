@@ -1,6 +1,6 @@
 import os
 
-import tomlkit
+import toml
 
 
 _DOC_ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -31,7 +31,7 @@ author = 'Yu Mochizuki'
 
 # The full version, including alpha/beta/rc tags
 with open(os.path.join(_PROJECT_ROOT_PATH, 'pyproject.toml')) as f:
-    project_properties = tomlkit.parse(f.read())
+    project_properties = toml.load(f)
 
 release = str(project_properties['tool']['poetry']['version'])
 

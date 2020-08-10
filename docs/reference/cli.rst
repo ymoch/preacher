@@ -24,13 +24,13 @@ Options
      -
      - Show the help message and exit.
      -
-   * - ``-v``
+   * -
      - ``--version``
      -
      - Show program's version number and exit.
      -
    * - ``-u URL``
-     - ``--url url``
+     - ``--base-url url``
      - string
      - Set the base URL.
      - ``''``
