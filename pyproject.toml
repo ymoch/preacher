@@ -25,24 +25,24 @@ requests = "^2.21"
 jq = "^1.0.2"
 lxml = "^4.4"
 pyyaml = "^5.3.1"
-jinja2 = "^2.10"
+jinja2 = "^2.11"
 click = "^7.1.2"
 colorama = "^0.4.1"
 pluggy = "^0.13.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.1"
-pytest-mock = "^3.2.0"
+pytest-mock = "^3.3.1"
 pytest-flake8 = "^1.0.6"
 pytest-mccabe = "^2.0"
-pytest-mypy = "^0.6.2"
+pytest-mypy = "^0.7.0"
 pytest-cov = "^2.10.0"
 sphinx = "^3.2.0"
 sphinx-intl = "^2.0.1"
 sphinx-autobuild = "^0.7.1"
 toml = "^0.10.1"
 flask = "^1.1.2"
-codecov = "^2.1.8"  # For reporting from CI.
+codecov = "^2.1.9"  # For reporting from CI.
 
 [tool.pytest.ini_options]
 testpaths = ["preacher", "tests"]
