@@ -10,10 +10,10 @@ from typing import Optional, List
 from requests import Session
 
 from preacher.core.datetime import now
-from preacher.core.executor import Executor
 from preacher.core.extraction import analyze_data_obj
 from preacher.core.request import Request, Response, ExecutionReport
 from preacher.core.status import Status, Statused, merge_statuses
+from preacher.core.unit import UnitRunner
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description
 from preacher.core.verification import ResponseDescription
@@ -112,7 +112,7 @@ class Case:
         if not conditions.status.is_succeeded:
             return CaseResult(self._label, conditions)
 
-        executor = Executor(
+        executor = UnitRunner(
             base_url=base_url,
             retry=retry,
             delay=delay,

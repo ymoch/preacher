@@ -10,10 +10,10 @@ from preacher.core.scenario.util.retry import retry_while_false
 from preacher.core.value import ValueContext
 from preacher.core.verification import ResponseDescription, ResponseVerification
 
-ExecutionResult = Tuple[ExecutionReport, Optional[Response], Optional[ResponseVerification]]
+Result = Tuple[ExecutionReport, Optional[Response], Optional[ResponseVerification]]
 
 
-def _predicate(result: ExecutionResult) -> bool:
+def predicate(result: Result) -> bool:
     execution, _, verification = result
     if not execution.status.is_succeeded:
         return False
@@ -22,7 +22,7 @@ def _predicate(result: ExecutionResult) -> bool:
     return verification.status.is_succeeded
 
 
-class Executor:
+class UnitRunner:
 
     def __init__(
         self,
@@ -41,15 +41,15 @@ class Executor:
         self._timeout = timeout
         self._session = session
 
-    def execute(self, request: Request, requirements: ResponseDescription) -> ExecutionResult:
+    def execute(self, request: Request, requirements: ResponseDescription) -> Result:
         return retry_while_false(
             partial(self._execute, request, requirements),
             attempts=self._retry + 1,
             delay=self._delay,
-            predicate=_predicate,
+            predicate=predicate,
         )
 
-    def _execute(self, request: Request, requirements: ResponseDescription) -> ExecutionResult:
+    def _execute(self, request: Request, requirements: ResponseDescription) -> Result:
         execution, response = request.execute(
             self._base_url,
             timeout=self._timeout,

@@ -99,7 +99,7 @@ def test_given_bad_condition(condition_verifications, expected_status):
 
 
 def test_when_given_no_response(mocker):
-    retry = mocker.patch('preacher.core.executor.retry_while_false', side_effect=_retry)
+    retry = mocker.patch('preacher.core.unit.runner.retry_while_false', side_effect=_retry)
 
     execution = ExecutionReport(status=Status.FAILURE)
     request = NonCallableMock(Request)
@@ -123,7 +123,7 @@ def test_when_given_no_response(mocker):
 
 
 def test_when_given_an_response(mocker):
-    retry = mocker.patch('preacher.core.executor.retry_while_false', side_effect=_retry)
+    retry = mocker.patch('preacher.core.unit.runner.retry_while_false', side_effect=_retry)
 
     execution = ExecutionReport(status=Status.SUCCESS, starts=sentinel.starts)
     request = NonCallableMock(Request)
