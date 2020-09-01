@@ -15,7 +15,7 @@ def retry_while_false(
     attempts: int = 1,
     delay: float = 0.1,
     predicate: Callable[[T], bool] = bool,
-):
+) -> T:
     if attempts < 1:
         raise ValueError(f'`attempts` must be positive, given {attempts}')
 

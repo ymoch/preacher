@@ -3,14 +3,14 @@ Test cases, which execute a given request and verify its response
 along the given descriptions.
 """
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from datetime import datetime
-from functools import partial
 from typing import Optional, List
 
 from requests import Session
 
 from preacher.core.datetime import now
+from preacher.core.executor import Executor, ExecutionListener
 from preacher.core.extraction import analyze_data_obj
 from preacher.core.request import Request, Response, ExecutionReport
 from preacher.core.status import Status, Statused, merge_statuses
@@ -19,10 +19,9 @@ from preacher.core.verification import Description
 from preacher.core.verification import ResponseDescription
 from preacher.core.verification import ResponseVerification
 from preacher.core.verification import Verification
-from .util.retry import retry_while_false
 
 
-class CaseListener:
+class CaseListener(ExecutionListener):
     """
     Interface to listen to running cases.
     Default implementations do nothing.
@@ -113,39 +112,18 @@ class Case:
             for condition in self._conditions
         )
         if not conditions.status.is_succeeded:
-            return CaseResult(label=self._label, conditions=conditions)
+            return CaseResult(self._label, conditions)
 
-        listener = listener or CaseListener()
-        func = partial(self._run, base_url, timeout, listener, session)
-        result = retry_while_false(func, attempts=retry + 1, delay=delay)
-        return replace(result, conditions=conditions)
-
-    def _run(
-        self,
-        base_url: str,
-        timeout: Optional[float],
-        listener: CaseListener,
-        session: Optional[Session],
-    ) -> CaseResult:
-        execution, response = self._request.execute(
-            base_url,
+        executor = Executor(
+            base_url=base_url,
+            retry=retry,
+            delay=delay,
             timeout=timeout,
             session=session,
         )
-        listener.on_execution(execution, response)
-
-        if not response:
-            return CaseResult(label=self._label, execution=execution)
-
-        response_verification = self._response.verify(
-            response,
-            ValueContext(origin_datetime=execution.starts),
-        )
-        return CaseResult(
-            label=self._label,
-            execution=execution,
-            response=response_verification,
-        )
+        listener = listener or CaseListener()
+        execution, response = executor.execute(self.request, self.response, listener)
+        return CaseResult(self._label, conditions, execution, response)
 
     @property
     def label(self) -> Optional[str]:

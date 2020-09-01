@@ -99,7 +99,7 @@ def test_given_bad_condition(condition_verifications, expected_status):
 
 
 def test_when_given_no_response(mocker):
-    retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
+    retry = mocker.patch('preacher.core.executor.retry_while_false', side_effect=_retry)
 
     execution = ExecutionReport(status=Status.FAILURE)
     request = NonCallableMock(Request)
@@ -117,13 +117,13 @@ def test_when_given_no_response(mocker):
 
     request.execute.assert_called_once_with(sentinel.base_url, timeout=None, session=None)
     response.verify.assert_not_called()
-    retry.assert_called_once_with(ANY, attempts=1, delay=0.1)
+    retry.assert_called_once_with(ANY, attempts=1, delay=0.1, predicate=ANY)
 
     listener.on_execution.assert_called_once_with(execution, None)
 
 
 def test_when_given_an_response(mocker):
-    retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
+    retry = mocker.patch('preacher.core.executor.retry_while_false', side_effect=_retry)
 
     execution = ExecutionReport(status=Status.SUCCESS, starts=sentinel.starts)
     request = NonCallableMock(Request)
@@ -164,5 +164,5 @@ def test_when_given_an_response(mocker):
         sentinel.response,
         ValueContext(origin_datetime=sentinel.starts),
     )
-    retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay)
+    retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay, predicate=ANY)
     listener.on_execution.assert_called_once_with(execution, sentinel.response)
