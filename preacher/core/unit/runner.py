@@ -30,7 +30,6 @@ class UnitRunner:
         retry: int = 0,
         delay: float = 0.1,
         timeout: Optional[float] = None,
-        session: Optional[requests.Session] = None,
     ):
         if retry < 0:
             raise ValueError(f'`retry` must be zero or positive, given {retry}')
@@ -39,21 +38,30 @@ class UnitRunner:
         self._retry = retry
         self._delay = delay
         self._timeout = timeout
-        self._session = session
 
-    def execute(self, request: Request, requirements: ResponseDescription) -> Result:
+    def run(
+        self,
+        request: Request,
+        requirements: ResponseDescription,
+        session: Optional[requests.Session] = None,
+    ) -> Result:
         return retry_while_false(
-            partial(self._execute, request, requirements),
+            partial(self._execute, request, requirements, session),
             attempts=self._retry + 1,
             delay=self._delay,
             predicate=predicate,
         )
 
-    def _execute(self, request: Request, requirements: ResponseDescription) -> Result:
+    def _execute(
+        self,
+        request: Request,
+        requirements: ResponseDescription,
+        session: Optional[requests.Session] = None,
+    ) -> Result:
         execution, response = request.execute(
             self._base_url,
             timeout=self._timeout,
-            session=self._session,
+            session=session,
         )
 
         if not response:

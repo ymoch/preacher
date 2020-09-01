@@ -112,16 +112,15 @@ class Case:
         if not conditions.status.is_succeeded:
             return CaseResult(self._label, conditions)
 
-        executor = UnitRunner(
+        runner = UnitRunner(
             base_url=base_url,
             retry=retry,
             delay=delay,
             timeout=timeout,
-            session=session,
         )
-
-        execution, response, verification = executor.execute(self.request, self.response)
+        execution, response, verification = runner.run(self._request, self._response, session)
         listener.on_execution(execution, response)
+
         return CaseResult(self._label, conditions, execution, verification)
 
     @property
