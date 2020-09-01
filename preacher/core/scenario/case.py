@@ -92,8 +92,6 @@ class Case:
         listener: Optional[CaseListener] = None,
         session: Optional[Session] = None,
     ) -> CaseResult:
-        listener = listener or CaseListener()
-
         if not self._enabled:
             return CaseResult(label=self._label)
 
@@ -119,7 +117,8 @@ class Case:
             timeout=timeout,
         )
         execution, response, verification = runner.run(self._request, self._response, session)
-        listener.on_execution(execution, response)
+        if listener:
+            listener.on_execution(execution, response)
 
         return CaseResult(self._label, conditions, execution, verification)
 
