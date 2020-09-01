@@ -10,7 +10,7 @@ from typing import Optional, List
 from requests import Session
 
 from preacher.core.datetime import now
-from preacher.core.executor import Executor, ExecutionListener
+from preacher.core.executor import Executor
 from preacher.core.extraction import analyze_data_obj
 from preacher.core.request import Request, Response, ExecutionReport
 from preacher.core.status import Status, Statused, merge_statuses
@@ -21,17 +21,13 @@ from preacher.core.verification import ResponseVerification
 from preacher.core.verification import Verification
 
 
-class CaseListener(ExecutionListener):
+class CaseListener:
     """
     Interface to listen to running cases.
     Default implementations do nothing.
     """
 
-    def on_execution(
-        self,
-        execution: ExecutionReport,
-        response: Optional[Response],
-    ) -> None:
+    def on_execution(self, execution: ExecutionReport, response: Optional[Response]) -> None:
         pass
 
 
@@ -96,6 +92,8 @@ class Case:
         listener: Optional[CaseListener] = None,
         session: Optional[Session] = None,
     ) -> CaseResult:
+        listener = listener or CaseListener()
+
         if not self._enabled:
             return CaseResult(label=self._label)
 
@@ -121,9 +119,10 @@ class Case:
             timeout=timeout,
             session=session,
         )
-        listener = listener or CaseListener()
-        execution, response = executor.execute(self.request, self.response, listener)
-        return CaseResult(self._label, conditions, execution, response)
+
+        execution, response, verification = executor.execute(self.request, self.response)
+        listener.on_execution(execution, response)
+        return CaseResult(self._label, conditions, execution, verification)
 
     @property
     def label(self) -> Optional[str]:
