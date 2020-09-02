@@ -58,9 +58,6 @@ class CaseResult(Statused):
 class CaseContext:
     starts: datetime = field(default_factory=now)
     base_url: str = ''
-    retry: int = 0
-    delay: float = 0.1
-    timeout: Optional[float] = None
 
 
 class Case:
@@ -85,22 +82,14 @@ class Case:
 
     def run(
         self,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
+        runner: UnitRunner,
         listener: Optional[CaseListener] = None,
         session: Optional[Session] = None,
     ) -> CaseResult:
         if not self._enabled:
             return CaseResult(label=self._label)
 
-        context = CaseContext(
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-        )
+        context = CaseContext(base_url=runner.base_url)
         context_analyzer = analyze_data_obj(context)
         value_context = ValueContext(origin_datetime=context.starts)
         conditions = Verification.collect(
@@ -110,12 +99,6 @@ class Case:
         if not conditions.status.is_succeeded:
             return CaseResult(self._label, conditions)
 
-        runner = UnitRunner(
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-        )
         execution, response, verification = runner.run(self._request, self._response, session)
         if listener:
             listener.on_execution(execution, response)

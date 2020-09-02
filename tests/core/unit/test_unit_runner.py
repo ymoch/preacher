@@ -52,8 +52,9 @@ def test_given_no_response(mocker):
     requirements = NonCallableMock(ResponseDescription)
 
     runner = UnitRunner(sentinel.base_url)
-    execution, response, verification = runner.run(request, requirements)
+    assert runner.base_url is sentinel.base_url
 
+    execution, response, verification = runner.run(request, requirements)
     assert execution is sentinel.execution
     assert response is None
     assert verification is None
@@ -78,8 +79,9 @@ def test_given_a_response(mocker):
         delay=sentinel.delay,
         timeout=sentinel.timeout,
     )
-    execution, response, verification = runner.run(request, requirements, sentinel.session)
+    assert runner.base_url is sentinel.base_url
 
+    execution, response, verification = runner.run(request, requirements, sentinel.session)
     assert execution is execution
     assert response is sentinel.response
     assert verification is sentinel.verification

@@ -115,15 +115,7 @@ def test_unordered(executor, mocker):
     assert not result.subscenarios.items
 
     condition.verify.assert_called_once()
-    task_ctor.assert_called_once_with(
-        executor,
-        [],
-        base_url='',
-        retry=0,
-        delay=0.1,
-        timeout=None,
-        listener=ANY,
-    )
+    task_ctor.assert_called_once_with(executor, [], ANY, ANY)
     task.result.assert_called_once_with()
     executor.submit.assert_not_called()
 
@@ -170,15 +162,7 @@ def test_ordered(
     assert result.cases is cases_result
     assert result.subscenarios.items[0] is subscenario_result
 
-    cases_task_ctor.assert_called_once_with(
-        executor,
-        sentinel.cases,
-        base_url='base-url',
-        retry=2,
-        delay=0.5,
-        timeout=1.0,
-        listener=sentinel.listener,
-    )
+    cases_task_ctor.assert_called_once_with(executor, sentinel.cases, ANY, sentinel.listener)
     cases_task.result.assert_called_once_with()
     subscenario.submit.assert_called_once_with(
         executor,

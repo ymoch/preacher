@@ -11,6 +11,7 @@ from typing import Callable, List, Optional
 from preacher.core.datetime import now
 from preacher.core.extraction import analyze_data_obj
 from preacher.core.status import Status, Statused, StatusedList, merge_statuses
+from preacher.core.unit import UnitRunner
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
 from .case import Case, CaseListener, CaseResult
@@ -144,19 +145,17 @@ class Scenario:
 
         listener = listener or ScenarioListener()
 
-        if self._ordered:
-            submit_cases: Callable = OrderedCasesTask
-        else:
-            submit_cases = UnorderedCasesTask
-        cases = submit_cases(
-            executor,
-            self._cases,
+        runner = UnitRunner(
             base_url=base_url,
             retry=retry,
             delay=delay,
             timeout=timeout,
-            listener=listener,
         )
+        if self._ordered:
+            submit_cases: Callable = OrderedCasesTask
+        else:
+            submit_cases = UnorderedCasesTask
+        cases = submit_cases(executor, self._cases, runner, listener)
 
         subscenarios = [
             subscenario.submit(

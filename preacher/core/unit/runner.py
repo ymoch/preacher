@@ -39,6 +39,10 @@ class UnitRunner:
         self._delay = delay
         self._timeout = timeout
 
+    @property
+    def base_url(self) -> str:
+        return self._base_url
+
     def run(
         self,
         request: Request,
