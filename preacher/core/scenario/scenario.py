@@ -85,9 +85,6 @@ class StaticScenarioTask(ScenarioTask):
 class ScenarioContext:
     starts: datetime = field(default_factory=now)
     base_url: str = ''
-    retry: int = 0
-    delay: float = 0.1
-    timeout: Optional[float] = None
 
 
 class Scenario:
@@ -113,18 +110,10 @@ class Scenario:
     def submit(
         self,
         executor: Executor,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
+        unit_runner: UnitRunner,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
-        context = ScenarioContext(
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-        )
+        context = ScenarioContext(base_url=unit_runner.base_url)
         context_analyzer = analyze_data_obj(context)
         value_context = ValueContext(origin_datetime=context.starts)
         conditions = Verification.collect(
@@ -145,27 +134,14 @@ class Scenario:
 
         listener = listener or ScenarioListener()
 
-        runner = UnitRunner(
-            base_url=base_url,
-            retry=retry,
-            delay=delay,
-            timeout=timeout,
-        )
         if self._ordered:
             submit_cases: Callable = OrderedCasesTask
         else:
             submit_cases = UnorderedCasesTask
-        cases = submit_cases(executor, self._cases, runner, listener)
+        cases = submit_cases(executor, self._cases, unit_runner, listener)
 
         subscenarios = [
-            subscenario.submit(
-                executor,
-                base_url=base_url,
-                retry=retry,
-                delay=delay,
-                timeout=timeout,
-                listener=listener,
-            )
+            subscenario.submit(executor, unit_runner, listener)
             for subscenario in self._subscenarios
         ]
         return RunningScenarioTask(

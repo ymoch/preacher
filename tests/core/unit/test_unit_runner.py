@@ -51,15 +51,15 @@ def test_given_no_response(mocker):
     request.execute.return_value = (sentinel.execution, None)
     requirements = NonCallableMock(ResponseDescription)
 
-    runner = UnitRunner(sentinel.base_url)
-    assert runner.base_url is sentinel.base_url
+    runner = UnitRunner()
+    assert runner.base_url == ''
 
     execution, response, verification = runner.run(request, requirements)
     assert execution is sentinel.execution
     assert response is None
     assert verification is None
 
-    request.execute.assert_called_once_with(sentinel.base_url, timeout=None, session=None)
+    request.execute.assert_called_once_with('', timeout=None, session=None)
     requirements.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1, predicate=predicate)
 

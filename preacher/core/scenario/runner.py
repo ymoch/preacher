@@ -2,6 +2,7 @@ from concurrent.futures import Executor
 from typing import Iterable, Optional, Iterator
 
 from preacher.core.status import Status
+from preacher.core.unit import UnitRunner
 from .listener import Listener
 from .scenario import Scenario, ScenarioResult, ScenarioTask, StaticScenarioTask
 
@@ -37,9 +38,15 @@ class ScenarioRunner:
         Returns:
             The execution status.
         """
+        unit_runner = UnitRunner(
+            base_url=self._base_url,
+            retry=self._retry,
+            delay=self._delay,
+            timeout=self._timeout,
+        )
         listener = listener or Listener()
 
-        tasks = self._submit_all(executor, scenarios, listener)
+        tasks = self._submit_all(executor, unit_runner, scenarios, listener)
         results = (task.result() for task in list(tasks))
 
         status = Status.SKIPPED
@@ -53,6 +60,7 @@ class ScenarioRunner:
     def _submit_all(
         self,
         executor: Executor,
+        unit_runner: UnitRunner,
         scenarios: Iterable[Scenario],
         listener: Optional[Listener] = None,
     ) -> Iterator[ScenarioTask]:
@@ -71,11 +79,4 @@ class ScenarioRunner:
                 yield StaticScenarioTask(result)
                 continue
 
-            yield scenario.submit(
-                executor,
-                base_url=self._base_url,
-                retry=self._retry,
-                delay=self._delay,
-                timeout=self._timeout,
-                listener=listener,
-            )
+            yield scenario.submit(executor, unit_runner, listener)
