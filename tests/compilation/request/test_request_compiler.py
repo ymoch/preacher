@@ -40,6 +40,8 @@ def compiler(body, default: RequestCompiled) -> RequestCompiler:
     ({'method': 'invalid'}, [NamedNode('method')]),
     ({'path': {'key': 'value'}}, [NamedNode('path')]),
     ({'headers': ''}, [NamedNode('headers')]),
+    ({'headers': {'int': 1}}, [NamedNode('headers')]),
+    ({'headers': {1: 'not-a-string-key'}}, [NamedNode('headers')]),
 ))
 def test_given_an_invalid_obj(compiler: RequestCompiler, obj, expected_path):
     with raises(CompilationError) as error_info:
@@ -69,15 +71,16 @@ def test_given_a_valid_method(compiler: RequestCompiler, method_obj, expected):
     assert compiled.method is expected
 
 
-@mark.parametrize('headers_obj', [
-    {},
-    {'name1': 'value1', 'name2': 'value2'},
+@mark.parametrize(('headers_obj', 'expected'), [
+    ({}, {}),
+    ({'null': None, 'empty': ''}, {'empty': ''}),
+    ({'n1': 'v1', 'n2': 'v2'}, {'n1': 'v1', 'n2': 'v2'}),
 ])
-def test_given_valid_headers(compiler: RequestCompiler, headers_obj):
+def test_given_valid_headers(compiler: RequestCompiler, headers_obj, expected):
     obj = {'headers': Argument('headers')}
     arguments = {'headers': headers_obj}
     compiled = compiler.compile(obj, arguments)
-    assert compiled.headers == headers_obj
+    assert compiled.headers == expected
 
 
 def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
