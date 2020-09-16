@@ -12,6 +12,8 @@ cases:
         header-string: xxx
         Header-String: yyy
         user-agent: custom
+        null-value: null
+        empty-string: ''
     response:
       headers:
         - describe:
@@ -30,6 +32,12 @@ cases:
         - describe: .headers."User-Agent"
           should:
             equal: custom
+        - describe: .headers."Null-Value"
+          should: be_null
+        - describe: .headers."Empty-String"
+          should:
+            - not: be_null
+            - be_empty
 
   - label: Sends params as a string
     request:
