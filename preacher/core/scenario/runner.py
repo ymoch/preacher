@@ -9,17 +9,8 @@ from .scenario import Scenario, ScenarioResult, ScenarioTask, StaticScenarioTask
 
 class ScenarioRunner:
 
-    def __init__(
-        self,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
-    ):
-        self._base_url = base_url
-        self._retry = retry
-        self._delay = delay
-        self._timeout = timeout
+    def __init__(self, unit_runner: UnitRunner):
+        self._unit_runner = unit_runner
 
     def run(
         self,
@@ -38,15 +29,9 @@ class ScenarioRunner:
         Returns:
             The execution status.
         """
-        unit_runner = UnitRunner(
-            base_url=self._base_url,
-            retry=self._retry,
-            delay=self._delay,
-            timeout=self._timeout,
-        )
         listener = listener or Listener()
 
-        tasks = self._submit_all(executor, unit_runner, scenarios, listener)
+        tasks = self._submit_all(executor, scenarios, listener)
         results = (task.result() for task in list(tasks))
 
         status = Status.SKIPPED
@@ -60,7 +45,6 @@ class ScenarioRunner:
     def _submit_all(
         self,
         executor: Executor,
-        unit_runner: UnitRunner,
         scenarios: Iterable[Scenario],
         listener: Optional[Listener] = None,
     ) -> Iterator[ScenarioTask]:
@@ -79,4 +63,4 @@ class ScenarioRunner:
                 yield StaticScenarioTask(result)
                 continue
 
-            yield scenario.submit(executor, unit_runner, listener)
+            yield scenario.submit(executor, self._unit_runner, listener)
