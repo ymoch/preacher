@@ -4,13 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
-from typing import Optional
+from typing import Optional, Tuple
 
-from preacher.compilation.argument import (
-    Argument,
-    Arguments,
-    inject_arguments,
-)
+from preacher.compilation.argument import Argument, Arguments, inject_arguments
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_str, ensure_mapping, or_else
 from preacher.core.request import Request, Method, UrlParams
@@ -30,7 +26,7 @@ _METHOD_MAP = {method.name: method for method in Method}
 class RequestCompiled:
     method: Optional[Method] = None
     path: Optional[str] = None
-    headers: Optional[Mapping] = None
+    headers: Optional[Mapping[str, str]] = None
     params: Optional[UrlParams] = None
     body: Optional[RequestBodyCompiled] = None
 
@@ -106,7 +102,7 @@ class RequestCompiler:
         if headers_obj is not None:
             with on_key(_KEY_HEADERS):
                 headers_obj = inject_arguments(headers_obj, arguments)
-                headers = ensure_mapping(headers_obj)
+                headers = _compile_headers(headers_obj)
             compiled = replace(compiled, headers=headers)
 
         params_obj = obj.get(_KEY_PARAMS)
@@ -141,3 +137,15 @@ def _compile_method(obj: object) -> Method:
         message = f'Must be in {list(_METHOD_MAP)}, but given: {obj}'
         raise CompilationError(message)
     return method
+
+
+def _compile_headers(obj: object) -> Mapping[str, str]:
+    obj = ensure_mapping(obj)
+    items = (_compile_header_item(k, v) for (k, v) in obj.items())
+    return dict(filter(None, items))
+
+
+def _compile_header_item(key: object, value: object) -> Optional[Tuple[str, str]]:
+    if value is None:
+        return None
+    return ensure_str(key), ensure_str(value)
