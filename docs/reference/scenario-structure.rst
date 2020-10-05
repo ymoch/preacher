@@ -11,8 +11,7 @@ Here is a scenario example.
       request:
         path: /path
       response:
-        body:
-          analyzed_as: json
+        status_code: 200
     when:
       - describe: .base_url
         should:
@@ -23,9 +22,9 @@ Here is a scenario example.
         response:
           status_code: 200
           body:
-            - describe: .foo
-              should:
-                equal: bar
+            describe: .foo
+            should:
+              equal: bar
       - label: A Little Complicated
         enabled: true
         request:
@@ -56,13 +55,11 @@ Here is a scenario example.
               should:
                 be_greater_than: 100
           body:
-            analyzed_as: xml
-            descriptions:
-              - describe:
-                  xpath: /html/body/h1
-                should:
-                  - start_with: x
-                  - end_with: y
+            - describe:
+                xpath: /html/body/h1
+              should:
+                - start_with: x
+                - end_with: y
 
 Scenario
 --------

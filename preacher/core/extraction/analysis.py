@@ -5,7 +5,7 @@ Value analysis.
 import json
 from abc import ABC, abstractmethod
 from dataclasses import asdict
-from typing import Any, Callable, Dict, Mapping, Optional, TypeVar
+from typing import Callable, Mapping, Optional, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, LxmlError, fromstring
 
@@ -100,14 +100,10 @@ class _LazyJsonLoader:
 
 class ResponseBodyAnalyzer(Analyzer):
 
-    _KEY_JSON = '_json'
-    _INVALID_JSON = object()
-
     def __init__(self, body: ResponseBody):
         self._body = body
         self._etree_loader = _LazyElementTreeLoader(body.content)
         self._json_loader = _LazyJsonLoader(body.text)
-        self._caches: Dict[str, Any] = {}
 
     def for_text(self, extract: Callable[[str], T]) -> T:
         return extract(self._body.text)

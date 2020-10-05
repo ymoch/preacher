@@ -43,8 +43,6 @@ _CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, Callable[[int], Executor]] = {
     'thread': ThreadPoolExecutor,
 }
 
-LEVEL_CHOICES = tuple(_LEVEL_MAP.keys())
-
 
 class ArgumentType(ParamType):
 

@@ -135,6 +135,7 @@ class Request:
         report = ExecutionReport(starts=starts)
         try:
             prepped = self._prepare_request(base_url, starts)
+            proxies = session.rebuild_proxies(prepped, proxies=None)
         except Exception as error:
             message = to_message(error)
             report = replace(report, status=Status.FAILURE, message=message)
@@ -146,8 +147,9 @@ class Request:
             headers=prepped.headers,
             body=prepped.body,
         ))
+
         try:
-            res = session.send(prepped, timeout=timeout)
+            res = session.send(prepped, proxies=proxies, timeout=timeout)
         except Exception as error:
             message = to_message(error)
             report = replace(report, status=Status.UNSTABLE, message=message)

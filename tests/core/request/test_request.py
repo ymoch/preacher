@@ -24,6 +24,7 @@ def session():
 
     session = NonCallableMagicMock(requests.Session)
     session.__enter__.return_value = session
+    session.rebuild_proxies.return_value = sentinel.proxies
     session.send.return_value = response
     return session
 
@@ -53,6 +54,7 @@ def test_default_request(mocker, session):
     assert prepped.url == 'http://base-url.org/'
     assert prepped.headers['User-Agent'].startswith('Preacher')
     assert prepped.body is None
+    assert kwargs['proxies'] is sentinel.proxies
     assert kwargs['timeout'] is None
 
     session.__enter__.assert_called_once()
@@ -74,6 +76,25 @@ def test_when_request_preparation_fails(mocker, session):
     assert execution.request is None
     assert execution.message == 'RuntimeError: msg'
 
+    session.rebuild_proxies.assert_not_called()
+    session.send.assert_not_called()
+
+
+def test_when_proxy_building_fails(mocker, session):
+    session.rebuild_proxies.side_effect = RuntimeError('message')
+
+    req = NonCallableMock(requests.Request)
+    req.prepare.return_value = sentinel.prepped
+    mocker.patch('requests.Request', return_value=req)
+
+    request = Request()
+    execution, response = request.execute('http://base-url', session=session)
+
+    assert execution.status is Status.FAILURE
+    assert execution.request is None
+    assert execution.message == 'RuntimeError: message'
+
+    session.rebuild_proxies.assert_called_once_with(sentinel.prepped, proxies=None)
     session.send.assert_not_called()
 
 
@@ -92,6 +113,7 @@ def test_when_request_fails(mocker, session):
     assert execution.request.body is None
     assert execution.message == 'RuntimeError: msg'
 
+    session.rebuild_proxies.assert_called_once()
     session.send.assert_called_once()
 
 
@@ -138,6 +160,8 @@ def test_when_request_succeeds(mocker, session, body):
     resolve_params.assert_called_once_with(sentinel.params, expected_context)
     body.resolve.assert_called_once_with(expected_context)
 
+    session.rebuild_proxies.assert_called_once()
+
     args, kwargs = session.send.call_args
     prepped = args[0]
     assert isinstance(prepped, requests.PreparedRequest)
@@ -147,6 +171,7 @@ def test_when_request_succeeds(mocker, session, body):
     assert prepped.headers['User-Agent'].startswith('Preacher')
     assert prepped.headers['k1'] == 'v1'
     assert prepped.body == 'x=y&name=%E6%9D%B1&name=%E4%BA%AC'
+    assert kwargs['proxies'] is sentinel.proxies
     assert kwargs['timeout'] == 5.0
 
 
