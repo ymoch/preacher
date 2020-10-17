@@ -2,23 +2,15 @@ from concurrent.futures import Executor
 from typing import Iterable, Optional, Iterator
 
 from preacher.core.status import Status
+from preacher.core.unit import UnitRunner
 from .listener import Listener
 from .scenario import Scenario, ScenarioResult, ScenarioTask, StaticScenarioTask
 
 
 class ScenarioRunner:
 
-    def __init__(
-        self,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
-    ):
-        self._base_url = base_url
-        self._retry = retry
-        self._delay = delay
-        self._timeout = timeout
+    def __init__(self, unit_runner: UnitRunner):
+        self._unit_runner = unit_runner
 
     def run(
         self,
@@ -71,11 +63,4 @@ class ScenarioRunner:
                 yield StaticScenarioTask(result)
                 continue
 
-            yield scenario.submit(
-                executor,
-                base_url=self._base_url,
-                retry=self._retry,
-                delay=self._delay,
-                timeout=self._timeout,
-                listener=listener,
-            )
+            yield scenario.submit(executor, self._unit_runner, listener)

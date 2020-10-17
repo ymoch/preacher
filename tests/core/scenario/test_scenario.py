@@ -6,6 +6,7 @@ from pytest import fixture, mark, raises
 from preacher.core.scenario.scenario import Scenario, ScenarioTask, ScenarioResult, ScenarioContext
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.status import Status, StatusedList
+from preacher.core.unit import UnitRunner
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
 
@@ -60,13 +61,8 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
         cases=sentinel.cases,
         subscenarios=[subscenario],
     )
-    result = scenario.submit(
-        executor,
-        base_url=sentinel.base_url,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=sentinel.timeout,
-    ).result()
+    runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    result = scenario.submit(executor, runner).result()
 
     assert result.label is sentinel.label
     assert result.status is expected_status
@@ -82,12 +78,7 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
             ValueContext(origin_datetime=sentinel.starts),
         )
 
-    context_ctor.assert_called_once_with(
-        base_url=sentinel.base_url,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=sentinel.timeout,
-    )
+    context_ctor.assert_called_once_with(base_url=sentinel.base_url)
     analyze_context.assert_called_once_with(context)
     ordered_task_ctor.assert_not_called()
     unordered_task_ctor.assert_not_called()
@@ -105,7 +96,8 @@ def test_unordered(executor, mocker):
     task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=task)
 
     scenario = Scenario(conditions=[condition], ordered=False)
-    result = scenario.submit(executor).result()
+    runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    result = scenario.submit(executor, runner).result()
 
     assert result.label is None
     assert result.status is Status.SKIPPED
@@ -115,15 +107,7 @@ def test_unordered(executor, mocker):
     assert not result.subscenarios.items
 
     condition.verify.assert_called_once()
-    task_ctor.assert_called_once_with(
-        executor,
-        [],
-        base_url='',
-        retry=0,
-        delay=0.1,
-        timeout=None,
-        listener=ANY,
-    )
+    task_ctor.assert_called_once_with(executor, [], runner, ANY)
     task.result.assert_called_once_with()
     executor.submit.assert_not_called()
 
@@ -156,36 +140,15 @@ def test_ordered(
 
     scenario = Scenario(cases=sentinel.cases, subscenarios=[subscenario])
 
-    result = scenario.submit(
-        executor,
-        base_url='base-url',
-        retry=2,
-        delay=0.5,
-        timeout=1.0,
-        listener=sentinel.listener,
-    ).result()
+    runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    result = scenario.submit(executor, runner, sentinel.listener).result()
 
     assert result.status == expected_status
     assert result.conditions.status is Status.SKIPPED
     assert result.cases is cases_result
     assert result.subscenarios.items[0] is subscenario_result
 
-    cases_task_ctor.assert_called_once_with(
-        executor,
-        sentinel.cases,
-        base_url='base-url',
-        retry=2,
-        delay=0.5,
-        timeout=1.0,
-        listener=sentinel.listener,
-    )
+    cases_task_ctor.assert_called_once_with(executor, sentinel.cases, ANY, sentinel.listener)
     cases_task.result.assert_called_once_with()
-    subscenario.submit.assert_called_once_with(
-        executor,
-        base_url='base-url',
-        retry=2,
-        delay=0.5,
-        timeout=1.0,
-        listener=sentinel.listener,
-    )
+    subscenario.submit.assert_called_once_with(executor, runner, sentinel.listener)
     subscenario_task.result.assert_called_once_with()

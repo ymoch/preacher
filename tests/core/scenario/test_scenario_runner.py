@@ -8,7 +8,7 @@ from preacher.core.status import Status
 
 
 def test_given_no_scenario():
-    runner = ScenarioRunner()
+    runner = ScenarioRunner(sentinel.unit_runner)
     status = runner.run(sentinel.executor, [])
 
     assert status == Status.SKIPPED
@@ -37,12 +37,10 @@ def test_given_construction_failure():
             successful.submit.return_value = successful_task
             return successful
 
-    runner = ScenarioRunner()
+    runner = ScenarioRunner(sentinel.unit_runner)
     listener = NonCallableMock(Listener)
     status = runner.run(sentinel.executor, _Scenarios(), listener)
     assert status is Status.FAILURE
-
-    print(listener.on_scenario.call_args_list)
 
     results = [c[0][0] for c in listener.on_scenario.call_args_list]
     assert len(results) == 3
@@ -74,24 +72,12 @@ def test_given_scenarios():
     ]
     listener = NonCallableMock(Listener)
 
-    runner = ScenarioRunner(
-        base_url=sentinel.base_url,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-        timeout=sentinel.timeout,
-    )
+    runner = ScenarioRunner(sentinel.unit_runner)
     status = runner.run(sentinel.executor, scenarios, listener=listener)
 
-    assert status == Status.FAILURE
+    assert status is Status.FAILURE
     for scenario in scenarios:
-        scenario.submit.assert_called_once_with(
-            sentinel.executor,
-            base_url=sentinel.base_url,
-            retry=sentinel.retry,
-            delay=sentinel.delay,
-            timeout=sentinel.timeout,
-            listener=listener,
-        )
+        scenario.submit.assert_called_once_with(sentinel.executor, sentinel.unit_runner, listener)
     for task in tasks:
         task.result.assert_called_once_with()
     listener.on_scenario.assert_has_calls([call(r) for r in results])

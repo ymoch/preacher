@@ -13,6 +13,7 @@ from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.logger import default_logger
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
+from preacher.core.unit import UnitRunner
 from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
@@ -87,7 +88,8 @@ def app(
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
-    runner = ScenarioRunner(base_url=base_url, retry=retry, delay=delay, timeout=timeout)
+    unit_runner = UnitRunner(base_url=base_url, retry=retry, delay=delay, timeout=timeout)
+    runner = ScenarioRunner(unit_runner)
     listener = create_listener(level, report_dir)
     try:
         logger.info('Start running scenarios.')
