@@ -1,7 +1,7 @@
 from .case import Case, CaseListener, CaseResult
 from .listener import Listener, MergingListener
-from .runner import ScenarioRunner
 from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
+from .scenario_runner import ScenarioRunner
 
 __all__ = [
     'Case',
@@ -9,9 +9,9 @@ __all__ = [
     'CaseResult',
     'Listener',
     'MergingListener',
-    'ScenarioRunner',
     'Scenario',
     'ScenarioTask',
     'ScenarioListener',
     'ScenarioResult',
+    'ScenarioRunner',
 ]
