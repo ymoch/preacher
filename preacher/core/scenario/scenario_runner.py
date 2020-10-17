@@ -2,15 +2,15 @@ from concurrent.futures import Executor
 from typing import Iterable, Optional, Iterator
 
 from preacher.core.status import Status
-from preacher.core.unit import UnitRunner
+from .case_runner import CaseRunner
 from .listener import Listener
 from .scenario import Scenario, ScenarioResult, ScenarioTask, StaticScenarioTask
 
 
 class ScenarioRunner:
 
-    def __init__(self, unit_runner: UnitRunner):
-        self._unit_runner = unit_runner
+    def __init__(self, case_runner: CaseRunner):
+        self._case_runner = case_runner
 
     def run(
         self,
@@ -63,4 +63,4 @@ class ScenarioRunner:
                 yield StaticScenarioTask(result)
                 continue
 
-            yield scenario.submit(executor, self._unit_runner, listener)
+            yield scenario.submit(executor, self._case_runner, listener)

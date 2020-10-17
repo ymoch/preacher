@@ -1,6 +1,6 @@
 from pytest import raises
 
-from preacher.core.scenario.case import CaseResult
+from preacher.core.scenario.case_runner import CaseResult
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.status import StatusedList
 

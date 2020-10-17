@@ -2,15 +2,14 @@ from typing import Iterable, Iterator
 from unittest.mock import Mock, NonCallableMock, call, sentinel
 
 from preacher.core.scenario.listener import Listener
-from preacher.core.scenario.runner import ScenarioRunner
 from preacher.core.scenario.scenario import Scenario, ScenarioResult, ScenarioTask
+from preacher.core.scenario.scenario_runner import ScenarioRunner
 from preacher.core.status import Status
 
 
 def test_given_no_scenario():
     runner = ScenarioRunner(sentinel.unit_runner)
     status = runner.run(sentinel.executor, [])
-
     assert status == Status.SKIPPED
 
 
@@ -37,7 +36,7 @@ def test_given_construction_failure():
             successful.submit.return_value = successful_task
             return successful
 
-    runner = ScenarioRunner(sentinel.unit_runner)
+    runner = ScenarioRunner(sentinel.case_runner)
     listener = NonCallableMock(Listener)
     status = runner.run(sentinel.executor, _Scenarios(), listener)
     assert status is Status.FAILURE
@@ -72,12 +71,12 @@ def test_given_scenarios():
     ]
     listener = NonCallableMock(Listener)
 
-    runner = ScenarioRunner(sentinel.unit_runner)
+    runner = ScenarioRunner(sentinel.case_runner)
     status = runner.run(sentinel.executor, scenarios, listener=listener)
 
     assert status is Status.FAILURE
     for scenario in scenarios:
-        scenario.submit.assert_called_once_with(sentinel.executor, sentinel.unit_runner, listener)
+        scenario.submit.assert_called_once_with(sentinel.executor, sentinel.case_runner, listener)
     for task in tasks:
         task.result.assert_called_once_with()
     listener.on_scenario.assert_has_calls([call(r) for r in results])
