@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "preacher"
-version = "0.15.1"
+version = "0.15.2"
 description = "Web API Verification without Coding."
 authors = ["Yu Mochizuki <ymoch.dev@gmail.com>"]
 readme = "README.md"
@@ -31,7 +31,7 @@ colorama = "^0.4.1"
 pluggy = "^0.13.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.0.1"
+pytest = "^6.1.1"
 pytest-mock = "^3.3.1"
 pytest-flake8 = "^1.0.6"
 pytest-mccabe = "^2.0"
@@ -39,10 +39,10 @@ pytest-mypy = "^0.7.0"
 pytest-cov = "^2.10.0"
 sphinx = "^3.2.0"
 sphinx-intl = "^2.0.1"
-sphinx-autobuild = "^0.7.1"
+sphinx-autobuild = "^2020.9.1"
 toml = "^0.10.1"
 flask = "^1.1.2"
-codecov = "^2.1.9"  # For reporting from CI.
+codecov = "^2.1.10"  # For reporting from CI.
 
 [tool.pytest.ini_options]
 testpaths = ["preacher", "tests"]
