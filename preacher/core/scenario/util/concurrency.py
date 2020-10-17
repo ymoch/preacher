@@ -4,7 +4,8 @@ from typing import Iterable
 
 from requests import Session
 
-from preacher.core.scenario.case import Case, CaseResult
+from preacher.core.scenario.case import Case
+from preacher.core.scenario.case_runner import CaseRunner, CaseResult
 from preacher.core.status import StatusedList
 
 
@@ -16,6 +17,7 @@ class CasesTask(ABC):
 
 
 def _run_cases_in_order(
+    case_runner: CaseRunner,
     cases: Iterable[Case],
     *args,
     **kwargs,
@@ -23,9 +25,9 @@ def _run_cases_in_order(
     if not kwargs.get('session'):
         with Session() as session:
             kwargs['session'] = session
-            return _run_cases_in_order(cases, *args, **kwargs)
+            return _run_cases_in_order(case_runner, cases, *args, **kwargs)
 
-    return StatusedList.collect(case.run(*args, **kwargs) for case in cases)
+    return StatusedList.collect(case_runner.run(case, *args, **kwargs) for case in cases)
 
 
 class OrderedCasesTask(CasesTask):
@@ -33,12 +35,14 @@ class OrderedCasesTask(CasesTask):
     def __init__(
         self,
         executor: Executor,
+        case_runner: CaseRunner,
         cases: Iterable[Case],
         *args,
         **kwargs,
     ):
         self._future = executor.submit(
             _run_cases_in_order,
+            case_runner,
             cases,
             *args,
             **kwargs,
@@ -53,12 +57,13 @@ class UnorderedCasesTask(CasesTask):
     def __init__(
         self,
         executor: Executor,
+        case_runner: CaseRunner,
         cases: Iterable[Case],
         *args,
         **kwargs,
     ):
         self._futures = [
-            executor.submit(case.run, *args, **kwargs)
+            executor.submit(case_runner.run, case, *args, **kwargs)
             for case in cases
         ]
 

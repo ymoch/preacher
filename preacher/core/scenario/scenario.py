@@ -14,7 +14,8 @@ from preacher.core.status import Status, Statused, StatusedList, merge_statuses
 from preacher.core.unit import UnitRunner
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
-from .case import Case, CaseListener, CaseResult
+from .case import Case
+from .case_runner import CaseRunner, CaseListener, CaseResult
 from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 
 
@@ -138,7 +139,8 @@ class Scenario:
             submit_cases: Callable = OrderedCasesTask
         else:
             submit_cases = UnorderedCasesTask
-        cases = submit_cases(executor, self._cases, unit_runner, listener)
+        case_runner = CaseRunner(unit_runner)
+        cases = submit_cases(executor, case_runner, self._cases, unit_runner, listener)
 
         subscenarios = [
             subscenario.submit(executor, unit_runner, listener)

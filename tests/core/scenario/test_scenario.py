@@ -96,8 +96,9 @@ def test_unordered(executor, mocker):
     task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=task)
 
     scenario = Scenario(conditions=[condition], ordered=False)
-    runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
-    result = scenario.submit(executor, runner).result()
+    unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner', return_value=sentinel.case_runner)
+    result = scenario.submit(executor, unit_runner).result()
 
     assert result.label is None
     assert result.status is Status.SKIPPED
@@ -107,7 +108,8 @@ def test_unordered(executor, mocker):
     assert not result.subscenarios.items
 
     condition.verify.assert_called_once()
-    task_ctor.assert_called_once_with(executor, [], runner, ANY)
+    case_runner_ctor.assert_called_once_with(unit_runner)
+    task_ctor.assert_called_once_with(executor, sentinel.case_runner, [], unit_runner, ANY)
     task.result.assert_called_once_with()
     executor.submit.assert_not_called()
 
@@ -140,15 +142,23 @@ def test_ordered(
 
     scenario = Scenario(cases=sentinel.cases, subscenarios=[subscenario])
 
-    runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
-    result = scenario.submit(executor, runner, sentinel.listener).result()
+    unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner', return_value=sentinel.case_runner)
+    result = scenario.submit(executor, unit_runner, sentinel.listener).result()
 
     assert result.status == expected_status
     assert result.conditions.status is Status.SKIPPED
     assert result.cases is cases_result
     assert result.subscenarios.items[0] is subscenario_result
 
-    cases_task_ctor.assert_called_once_with(executor, sentinel.cases, ANY, sentinel.listener)
+    case_runner_ctor.assert_called_once_with(unit_runner)
+    cases_task_ctor.assert_called_once_with(
+        executor,
+        sentinel.case_runner,
+        sentinel.cases,
+        ANY,
+        sentinel.listener,
+    )
     cases_task.result.assert_called_once_with()
-    subscenario.submit.assert_called_once_with(executor, runner, sentinel.listener)
+    subscenario.submit.assert_called_once_with(executor, unit_runner, sentinel.listener)
     subscenario_task.result.assert_called_once_with()

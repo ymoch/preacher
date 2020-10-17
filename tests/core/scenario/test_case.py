@@ -3,7 +3,9 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 from pytest import mark
 
 from preacher.core.request import ExecutionReport
-from preacher.core.scenario.case import Case, CaseListener
+from preacher.core.scenario import CaseListener
+from preacher.core.scenario.case import Case
+from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
 from preacher.core.verification import Description
@@ -45,12 +47,13 @@ def test_when_disabled():
         response=sentinel.response,
     )
 
-    runner = NonCallableMock(UnitRunner)
-    actual = case.run(runner)
+    unit_runner = NonCallableMock(UnitRunner)
+    runner = CaseRunner(unit_runner)
+    actual = runner.run(case)
     assert actual.label is sentinel.label
     assert actual.status is Status.SKIPPED
 
-    runner.run.assert_not_called()
+    unit_runner.run.assert_not_called()
 
 
 @mark.parametrize(('condition_verifications', 'expected_status'), [
@@ -83,14 +86,15 @@ def test_given_bad_condition(condition_verifications, expected_status):
         response=sentinel.response,
     )
 
-    runner = NonCallableMock(UnitRunner)
+    unit_runner = NonCallableMock(UnitRunner)
+    runner = CaseRunner(unit_runner)
     listener = NonCallableMock(CaseListener)
-    result = case.run(runner, listener=listener)
+    result = runner.run(case, listener=listener)
 
     assert result.label is sentinel.label
     assert result.status is expected_status
 
-    runner.run.assert_not_called()
+    unit_runner.run.assert_not_called()
     listener.on_execution.assert_not_called()
 
 
@@ -98,17 +102,22 @@ def test_when_given_no_response():
     execution = ExecutionReport(status=Status.FAILURE)
     case = Case(label=sentinel.label, request=sentinel.request, response=sentinel.response)
 
-    runner = NonCallableMock(UnitRunner)
-    runner.run.return_value = (execution, None, None)
+    unit_runner = NonCallableMock(UnitRunner)
+    unit_runner.run.return_value = (execution, None, None)
+    runner = CaseRunner(unit_runner)
     listener = NonCallableMock(spec=CaseListener)
-    result = case.run(runner, listener)
+    result = runner.run(case, listener)
 
     assert result.label is sentinel.label
     assert result.status is Status.FAILURE
     assert result.execution is execution
     assert result.response is None
 
-    runner.run.assert_called_once_with(sentinel.request, sentinel.response, None)
+    unit_runner.run.assert_called_once_with(
+        request=sentinel.request,
+        requirements=sentinel.response,
+        session=None,
+    )
     listener.on_execution.assert_called_once_with(execution, None)
 
 
@@ -123,15 +132,20 @@ def test_when_given_an_response():
 
     case = Case(label=sentinel.label, request=sentinel.request, response=sentinel.response)
 
-    runner = NonCallableMock(UnitRunner)
-    runner.run.return_value = (execution, sentinel.response, verification)
+    unit_runner = NonCallableMock(UnitRunner)
+    unit_runner.run.return_value = (execution, sentinel.response, verification)
+    runner = CaseRunner(unit_runner)
     listener = NonCallableMock(spec=CaseListener)
-    result = case.run(runner, listener, sentinel.session)
+    result = runner.run(case, listener, sentinel.session)
 
     assert result.label is sentinel.label
     assert result.status is Status.UNSTABLE
     assert result.execution is execution
     assert result.response is verification
 
-    runner.run.assert_called_once_with(sentinel.request, sentinel.response, sentinel.session)
+    unit_runner.run.assert_called_once_with(
+        request=sentinel.request,
+        requirements=sentinel.response,
+        session=sentinel.session,
+    )
     listener.on_execution.assert_called_once_with(execution, sentinel.response)
