@@ -20,7 +20,7 @@ from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .logging import ColoredFormatter
 
-__all__ = ['app', 'create_system_logger', 'create_listener', 'load_objs']
+__all__ = ['app', 'create_system_logger', 'create_listener', 'create_runner', 'load_objs']
 
 _REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 

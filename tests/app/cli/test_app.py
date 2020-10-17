@@ -17,6 +17,7 @@ from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
 from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
+from preacher.app.cli.app import create_runner
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario, ScenarioRunner, Listener
 from preacher.core.status import Status
@@ -68,12 +69,6 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
 
-    requester_ctor = mocker.patch(f'{PKG}.Requester')
-    requester_ctor.return_value = sentinel.requester
-
-    unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner')
-    unit_runner_ctor.return_value = sentinel.unit_runner
-
     def _run(
         executor_: Executor,
         scenarios: Iterable[Scenario],
@@ -86,7 +81,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
 
     runner = NonCallableMock(ScenarioRunner)
     runner.run.side_effect = _run
-    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    runner_ctor = mocker.patch(f'{PKG}.create_runner', return_value=runner)
 
     exit_code = app(
         paths=sentinel.paths,
@@ -113,13 +108,12 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
 
     objs_ctor.assert_called_once_with(sentinel.paths, logger)
-    requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
-    unit_runner_ctor.assert_called_once_with(
-        requester=sentinel.requester,
+    runner_ctor.assert_called_once_with(
+        base_url=sentinel.base_url,
+        timeout=sentinel.timeout,
         retry=sentinel.retry,
         delay=sentinel.delay,
     )
-    runner_ctor.assert_called_once_with(sentinel.unit_runner)
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
     executor_factory.assert_called_once_with(sentinel.concurrency)
     runner.run.assert_called_once()
@@ -189,6 +183,30 @@ def test_load_objs_filled(base_dir):
     assert next(objs) == 'bar'
     with raises(StopIteration):
         next(objs)
+
+
+def test_create_runner(mocker):
+    requester_ctor = mocker.patch(f'{PKG}.Requester')
+    requester_ctor.return_value = sentinel.requester
+    unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner')
+    unit_runner_ctor.return_value = sentinel.unit_runner
+    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=sentinel.runner)
+
+    runner = create_runner(
+        base_url=sentinel.base_url,
+        timeout=sentinel.timeout,
+        retry=sentinel.retry,
+        delay=sentinel.delay,
+    )
+    assert runner is sentinel.runner
+
+    requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
+    unit_runner_ctor.assert_called_once_with(
+        requester=sentinel.requester,
+        retry=sentinel.retry,
+        delay=sentinel.delay,
+    )
+    runner_ctor.assert_called_once_with(sentinel.unit_runner)
 
 
 @mark.parametrize(('level', 'expected_logging_level'), [
