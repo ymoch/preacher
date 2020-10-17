@@ -2,7 +2,7 @@ from unittest.mock import ANY, NonCallableMock, sentinel
 
 from pytest import mark, raises
 
-from preacher.core.request import ExecutionReport, Request
+from preacher.core.request import ExecutionReport, Requester
 from preacher.core.status import Status
 from preacher.core.unit.runner import predicate, UnitRunner
 from preacher.core.value import ValueContext
@@ -47,19 +47,23 @@ def test_given_invalid_retry_count(retry):
 def test_given_no_response(mocker):
     retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
 
-    request = NonCallableMock(Request)
-    request.execute.return_value = (sentinel.execution, None)
+    requester = NonCallableMock(Requester)
+    requester.base_url = sentinel.requester_base_url
+    requester.execute.return_value = (sentinel.execution, None)
+    requester_ctor = mocker.patch(f'{PKG}.Requester', return_value=requester)
+
     requirements = NonCallableMock(ResponseDescription)
 
     runner = UnitRunner()
-    assert runner.base_url == ''
+    assert runner.base_url is sentinel.requester_base_url
+    requester_ctor.assert_called_once_with(base_url='', timeout=None)
 
-    execution, response, verification = runner.run(request, requirements)
+    execution, response, verification = runner.run(sentinel.request, requirements)
     assert execution is sentinel.execution
     assert response is None
     assert verification is None
 
-    request.execute.assert_called_once_with('', timeout=None, session=None)
+    requester.execute.assert_called_once_with(sentinel.request, session=None)
     requirements.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1, predicate=predicate)
 
@@ -68,8 +72,11 @@ def test_given_a_response(mocker):
     retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
 
     execution = ExecutionReport(starts=sentinel.starts)
-    request = NonCallableMock(Request)
-    request.execute.return_value = (execution, sentinel.response)
+    requester = NonCallableMock(Requester)
+    requester.base_url = sentinel.requester_base_url
+    requester.execute.return_value = (execution, sentinel.response)
+    requester_ctor = mocker.patch(f'{PKG}.Requester', return_value=requester)
+
     requirements = NonCallableMock(ResponseDescription)
     requirements.verify.return_value = sentinel.verification
 
@@ -79,18 +86,19 @@ def test_given_a_response(mocker):
         delay=sentinel.delay,
         timeout=sentinel.timeout,
     )
-    assert runner.base_url is sentinel.base_url
+    assert runner.base_url is sentinel.requester_base_url
+    requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
 
-    execution, response, verification = runner.run(request, requirements, sentinel.session)
+    execution, response, verification = runner.run(
+        sentinel.request,
+        requirements,
+        sentinel.session,
+    )
     assert execution is execution
     assert response is sentinel.response
     assert verification is sentinel.verification
 
-    request.execute.assert_called_with(
-        sentinel.base_url,
-        timeout=sentinel.timeout,
-        session=sentinel.session,
-    )
+    requester.execute.assert_called_with(sentinel.request, session=sentinel.session)
     requirements.verify.assert_called_with(
         sentinel.response,
         ValueContext(origin_datetime=sentinel.starts),

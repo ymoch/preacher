@@ -2,7 +2,7 @@ from unittest.mock import Mock, NonCallableMock, sentinel
 
 from pytest import mark
 
-from preacher.core.request.request import ExecutionReport
+from preacher.core.request import ExecutionReport
 from preacher.core.scenario.case import Case, CaseListener
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
