@@ -41,7 +41,7 @@ def test_predicate(execution, verification, expected):
 @mark.parametrize('retry', [-2, -1])
 def test_given_invalid_retry_count(retry):
     with raises(ValueError):
-        UnitRunner(sentinel.base_url, retry=retry)
+        UnitRunner(sentinel.requester, retry=retry)
 
 
 def test_given_no_response(mocker):
@@ -50,13 +50,11 @@ def test_given_no_response(mocker):
     requester = NonCallableMock(Requester)
     requester.base_url = sentinel.requester_base_url
     requester.execute.return_value = (sentinel.execution, None)
-    requester_ctor = mocker.patch(f'{PKG}.Requester', return_value=requester)
 
     requirements = NonCallableMock(ResponseDescription)
 
-    runner = UnitRunner()
+    runner = UnitRunner(requester)
     assert runner.base_url is sentinel.requester_base_url
-    requester_ctor.assert_called_once_with(base_url='', timeout=None)
 
     execution, response, verification = runner.run(sentinel.request, requirements)
     assert execution is sentinel.execution
@@ -75,19 +73,12 @@ def test_given_a_response(mocker):
     requester = NonCallableMock(Requester)
     requester.base_url = sentinel.requester_base_url
     requester.execute.return_value = (execution, sentinel.response)
-    requester_ctor = mocker.patch(f'{PKG}.Requester', return_value=requester)
 
     requirements = NonCallableMock(ResponseDescription)
     requirements.verify.return_value = sentinel.verification
 
-    runner = UnitRunner(
-        base_url=sentinel.base_url,
-        retry=3,
-        delay=sentinel.delay,
-        timeout=sentinel.timeout,
-    )
+    runner = UnitRunner(requester=requester, retry=3, delay=sentinel.delay)
     assert runner.base_url is sentinel.requester_base_url
-    requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
 
     execution, response, verification = runner.run(
         sentinel.request,

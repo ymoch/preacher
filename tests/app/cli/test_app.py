@@ -2,6 +2,7 @@
 Tests only arguments and that whole process is run.
 Styles should be checked independently.
 """
+
 import logging
 import os
 from concurrent.futures import Executor
@@ -67,6 +68,9 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
 
+    requester_ctor = mocker.patch(f'{PKG}.Requester')
+    requester_ctor.return_value = sentinel.requester
+
     unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner')
     unit_runner_ctor.return_value = sentinel.unit_runner
 
@@ -109,11 +113,11 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
 
     objs_ctor.assert_called_once_with(sentinel.paths, logger)
+    requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
     unit_runner_ctor.assert_called_once_with(
-        base_url=sentinel.base_url,
+        requester=sentinel.requester,
         retry=sentinel.retry,
         delay=sentinel.delay,
-        timeout=sentinel.timeout,
     )
     runner_ctor.assert_called_once_with(sentinel.unit_runner)
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)

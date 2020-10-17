@@ -24,17 +24,11 @@ def predicate(result: Result) -> bool:
 
 class UnitRunner:
 
-    def __init__(
-        self,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
-    ):
+    def __init__(self, requester: Requester, retry: int = 0, delay: float = 0.1):
         if retry < 0:
             raise ValueError(f'`retry` must be zero or positive, given {retry}')
 
-        self._requester = Requester(base_url=base_url, timeout=timeout)
+        self._requester = requester
         self._retry = retry
         self._delay = delay
 

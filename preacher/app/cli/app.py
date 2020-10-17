@@ -11,6 +11,7 @@ from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.logger import default_logger
+from preacher.core.request import Requester
 from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
@@ -88,8 +89,7 @@ def app(
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
-    unit_runner = UnitRunner(base_url=base_url, retry=retry, delay=delay, timeout=timeout)
-    runner = ScenarioRunner(unit_runner)
+    runner = create_runner(base_url=base_url, timeout=timeout, retry=retry, delay=delay)
     listener = create_listener(level, report_dir)
     try:
         logger.info('Start running scenarios.')
@@ -136,6 +136,17 @@ def load_objs(paths: Sequence[str], logger: Logger = default_logger) -> Iterator
 def _hook_loading(path: str, logger: Logger) -> str:
     logger.debug('Load: %s', path)
     return path
+
+
+def create_runner(
+    base_url: str,
+    timeout: Optional[float],
+    retry: int,
+    delay: float,
+) -> ScenarioRunner:
+    requester = Requester(base_url=base_url, timeout=timeout)
+    unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
+    return ScenarioRunner(unit_runner)
 
 
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
