@@ -39,6 +39,12 @@ def test_default_construction(mocker):
     response_ctor.assert_called_once_with()
 
 
+def test_runner_properties():
+    unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    runner = CaseRunner(unit_runner)
+    assert runner.base_url is sentinel.base_url
+
+
 def test_when_disabled():
     case = Case(
         label=sentinel.label,

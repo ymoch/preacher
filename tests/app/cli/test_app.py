@@ -190,6 +190,8 @@ def test_create_runner(mocker):
     requester_ctor.return_value = sentinel.requester
     unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner')
     unit_runner_ctor.return_value = sentinel.unit_runner
+    case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner')
+    case_runner_ctor.return_value = sentinel.case_runner
     runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=sentinel.runner)
 
     runner = create_runner(
@@ -206,7 +208,8 @@ def test_create_runner(mocker):
         retry=sentinel.retry,
         delay=sentinel.delay,
     )
-    runner_ctor.assert_called_once_with(sentinel.unit_runner)
+    case_runner_ctor.assert_called_once_with(unit_runner=sentinel.unit_runner)
+    runner_ctor.assert_called_once_with(case_runner=sentinel.case_runner)
 
 
 @mark.parametrize(('level', 'expected_logging_level'), [

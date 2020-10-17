@@ -58,6 +58,10 @@ class CaseRunner:
     def __init__(self, unit_runner: UnitRunner):
         self._unit_runner = unit_runner
 
+    @property
+    def base_url(self) -> str:
+        return self._unit_runner.base_url
+
     def run(
         self,
         case: Case,

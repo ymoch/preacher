@@ -11,7 +11,6 @@ from typing import Callable, List, Optional
 from preacher.core.datetime import now
 from preacher.core.extraction import analyze_data_obj
 from preacher.core.status import Status, Statused, StatusedList, merge_statuses
-from preacher.core.unit import UnitRunner
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
 from .case import Case
@@ -111,10 +110,10 @@ class Scenario:
     def submit(
         self,
         executor: Executor,
-        unit_runner: UnitRunner,
+        case_runner: CaseRunner,
         listener: Optional[ScenarioListener] = None,
     ) -> ScenarioTask:
-        context = ScenarioContext(base_url=unit_runner.base_url)
+        context = ScenarioContext(base_url=case_runner.base_url)
         context_analyzer = analyze_data_obj(context)
         value_context = ValueContext(origin_datetime=context.starts)
         conditions = Verification.collect(
@@ -139,11 +138,10 @@ class Scenario:
             submit_cases: Callable = OrderedCasesTask
         else:
             submit_cases = UnorderedCasesTask
-        case_runner = CaseRunner(unit_runner)
-        cases = submit_cases(executor, case_runner, self._cases, unit_runner, listener)
+        cases = submit_cases(executor, case_runner, self._cases, listener)
 
         subscenarios = [
-            subscenario.submit(executor, unit_runner, listener)
+            subscenario.submit(executor, case_runner, listener)
             for subscenario in self._subscenarios
         ]
         return RunningScenarioTask(
