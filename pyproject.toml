@@ -42,7 +42,7 @@ sphinx-intl = "^2.0.1"
 sphinx-autobuild = "^2020.9.1"
 toml = "^0.10.1"
 flask = "^1.1.2"
-codecov = "^2.1.9"  # For reporting from CI.
+codecov = "^2.1.10"  # For reporting from CI.
 
 [tool.pytest.ini_options]
 testpaths = ["preacher", "tests"]
