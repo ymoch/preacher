@@ -1,15 +1,15 @@
 from typing import Iterable, Iterator
 from unittest.mock import Mock, NonCallableMock, call, sentinel
 
-from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask
+from preacher.core.scenario import Scenario, ScenarioRunner, ScenarioResult, ScenarioTask
 from preacher.core.scheduling.listener import Listener
 from preacher.core.scheduling.scenario_scheduler import ScenarioScheduler
 from preacher.core.status import Status
 
 
 def test_given_no_scenario():
-    scheduler = ScenarioScheduler(sentinel.unit_runner)
-    status = scheduler.run(sentinel.executor, [])
+    scheduler = ScenarioScheduler(sentinel.runner)
+    status = scheduler.run([])
     assert status == Status.SKIPPED
 
 
@@ -28,17 +28,19 @@ def test_given_construction_failure():
                 raise Exception('message')
             if self._count > 3:
                 raise StopIteration()
+            return sentinel.scenario
 
-            successful_result = ScenarioResult(status=Status.SUCCESS)
-            successful_task = NonCallableMock(ScenarioTask)
-            successful_task.result.return_value = successful_result
-            successful = NonCallableMock(Scenario)
-            successful.submit.return_value = successful_task
-            return successful
+    def _submit(_: Scenario) -> ScenarioTask:
+        result = ScenarioResult(status=Status.SUCCESS)
+        task = NonCallableMock(ScenarioTask)
+        task.result.return_value = result
+        return task
 
-    scheduler = ScenarioScheduler(sentinel.case_runner)
+    runner = NonCallableMock(ScenarioRunner)
+    runner.submit.side_effect = _submit
     listener = NonCallableMock(Listener)
-    status = scheduler.run(sentinel.executor, _Scenarios(), listener)
+    scheduler = ScenarioScheduler(runner, listener)
+    status = scheduler.run(_Scenarios())
     assert status is Status.FAILURE
 
     results = [c[0][0] for c in listener.on_scenario.call_args_list]
@@ -57,26 +59,18 @@ def test_given_construction_failure():
 
 
 def test_given_scenarios():
-    results = [
-        ScenarioResult(status=Status.UNSTABLE),
-        ScenarioResult(status=Status.FAILURE),
-    ]
-    tasks = [
-        NonCallableMock(ScenarioTask, result=Mock(return_value=results[0])),
-        NonCallableMock(ScenarioTask, result=Mock(return_value=results[1])),
-    ]
-    scenarios = [
-        NonCallableMock(Scenario, submit=Mock(return_value=tasks[0])),
-        NonCallableMock(Scenario, submit=Mock(return_value=tasks[1])),
-    ]
+    results = [ScenarioResult(status=Status.UNSTABLE), ScenarioResult(status=Status.FAILURE)]
+    tasks = [NonCallableMock(ScenarioTask, result=Mock(return_value=result)) for result in results]
+    scenarios = [NonCallableMock(Scenario) for _ in tasks]
     listener = NonCallableMock(Listener)
 
-    scheduler = ScenarioScheduler(sentinel.case_runner)
-    status = scheduler.run(sentinel.executor, scenarios, listener=listener)
-
+    runner = NonCallableMock(ScenarioRunner)
+    runner.submit.side_effect = tasks
+    scheduler = ScenarioScheduler(runner=runner, listener=listener)
+    status = scheduler.run(scenarios)
     assert status is Status.FAILURE
-    for scenario in scenarios:
-        scenario.submit.assert_called_once_with(sentinel.executor, sentinel.case_runner, listener)
+
+    runner.submit.assert_has_calls([call(scenario) for scenario in scenarios])
     for task in tasks:
         task.result.assert_called_once_with()
     listener.on_scenario.assert_has_calls([call(r) for r in results])

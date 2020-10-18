@@ -8,7 +8,7 @@ import os
 from concurrent.futures import Executor
 from io import StringIO
 from tempfile import TemporaryDirectory
-from typing import Iterable, Optional
+from typing import Iterable
 from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
 
 from pytest import fixture, raises, mark
@@ -20,7 +20,7 @@ from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario
-from preacher.core.scheduling import ScenarioScheduler, Listener
+from preacher.core.scheduling import ScenarioScheduler
 from preacher.core.status import Status
 
 PKG = 'preacher.app.cli.app'
@@ -70,14 +70,8 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
 
-    def _run(
-        executor_: Executor,
-        scenarios: Iterable[Scenario],
-        listener: Optional[Listener],
-    ) -> Status:
-        assert executor_ is executor
+    def _run(scenarios: Iterable[Scenario]) -> Status:
         assert list(scenarios) == [sentinel.scenario]
-        assert listener is sentinel.listener
         return Status.SUCCESS
 
     scheduler = NonCallableMock(ScenarioScheduler)
@@ -110,6 +104,8 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
 
     objs_ctor.assert_called_once_with(sentinel.paths, logger)
     scheduler_ctor.assert_called_once_with(
+        executor=executor,
+        listener=sentinel.listener,
         base_url=sentinel.base_url,
         timeout=sentinel.timeout,
         retry=sentinel.retry,
@@ -187,15 +183,15 @@ def test_load_objs_filled(base_dir):
 
 
 def test_create_scheduler(mocker):
-    requester_ctor = mocker.patch(f'{PKG}.Requester')
-    requester_ctor.return_value = sentinel.requester
-    unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner')
-    unit_runner_ctor.return_value = sentinel.unit_runner
-    case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner')
-    case_runner_ctor.return_value = sentinel.case_runner
+    requester_ctor = mocker.patch(f'{PKG}.Requester', return_value=sentinel.requester)
+    unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner', return_value=sentinel.unit_runner)
+    case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner', return_value=sentinel.case_runner)
+    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=sentinel.runner)
     scheduler_ctor = mocker.patch(f'{PKG}.ScenarioScheduler', return_value=sentinel.scheduler)
 
     scheduler = create_scheduler(
+        executor=sentinel.executor,
+        listener=sentinel.listener,
         base_url=sentinel.base_url,
         timeout=sentinel.timeout,
         retry=sentinel.retry,
@@ -210,7 +206,11 @@ def test_create_scheduler(mocker):
         delay=sentinel.delay,
     )
     case_runner_ctor.assert_called_once_with(unit_runner=sentinel.unit_runner)
-    scheduler_ctor.assert_called_once_with(case_runner=sentinel.case_runner)
+    runner_ctor.assert_called_once_with(
+        executor=sentinel.executor,
+        case_runner=sentinel.case_runner,
+    )
+    scheduler_ctor.assert_called_once_with(runner=sentinel.runner, listener=sentinel.listener)
 
 
 @mark.parametrize(('level', 'expected_logging_level'), [

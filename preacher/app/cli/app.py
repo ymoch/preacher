@@ -12,7 +12,7 @@ from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.logger import default_logger
 from preacher.core.request import Requester
-from preacher.core.scenario import CaseRunner
+from preacher.core.scenario import ScenarioRunner, CaseRunner
 from preacher.core.scheduling import ScenarioScheduler, Listener, MergingListener
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
@@ -90,12 +90,19 @@ def app(
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
-    scheduler = create_scheduler(base_url=base_url, timeout=timeout, retry=retry, delay=delay)
     listener = create_listener(level, report_dir)
     try:
         logger.info('Start running scenarios.')
         with executor_factory(concurrency) as executor:
-            status = scheduler.run(executor, scenarios, listener=listener)
+            scheduler = create_scheduler(
+                executor=executor,
+                listener=listener,
+                base_url=base_url,
+                timeout=timeout,
+                retry=retry,
+                delay=delay,
+            )
+            status = scheduler.run(scenarios)
     except Exception as error:
         logger.exception(error)
         return 3
@@ -140,6 +147,8 @@ def _hook_loading(path: str, logger: Logger) -> str:
 
 
 def create_scheduler(
+    executor: Executor,
+    listener: Listener,
     base_url: str,
     timeout: Optional[float],
     retry: int,
@@ -148,7 +157,8 @@ def create_scheduler(
     requester = Requester(base_url=base_url, timeout=timeout)
     unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
     case_runner = CaseRunner(unit_runner=unit_runner)
-    return ScenarioScheduler(case_runner=case_runner)
+    runner = ScenarioRunner(executor=executor, case_runner=case_runner)
+    return ScenarioScheduler(runner=runner, listener=listener)
 
 
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
