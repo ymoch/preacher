@@ -42,3 +42,31 @@ def test_running_scenario_task_empty():
     assert result.conditions is sentinel.conditions
     assert result.cases is cases_result
     assert not result.subscenarios.items
+
+    cases.result.assert_called_once_with()
+
+
+def test_running_scenario_task_filled():
+    cases_result = NonCallableMock(StatusedList, status=Status.UNSTABLE)
+    cases = NonCallableMock(CasesTask)
+    cases.result.return_value = cases_result
+
+    subscenario = NonCallableMock(ScenarioTask)
+    subscenario_result = ScenarioResult(status=Status.SUCCESS)
+    subscenario.result.return_value = subscenario_result
+
+    task = RunningScenarioTask(
+        label=sentinel.label,
+        conditions=sentinel.conditions,
+        cases=cases,
+        subscenarios=[subscenario],
+    )
+    result = task.result()
+
+    assert result.label is sentinel.label
+    assert result.status is Status.UNSTABLE
+    assert result.message is None
+    assert result.conditions is sentinel.conditions
+    assert result.cases is cases_result
+    assert len(result.subscenarios.items) == 1
+    assert result.subscenarios.items[0] is subscenario_result
