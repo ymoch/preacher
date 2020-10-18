@@ -12,7 +12,8 @@ from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.logger import default_logger
 from preacher.core.request import Requester
-from preacher.core.scenario import ScenarioRunner, CaseRunner, Listener, MergingListener
+from preacher.core.scenario import CaseRunner
+from preacher.core.scheduling import ScenarioRunner, Listener, MergingListener
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
 from preacher.plugin.loader import load_plugins

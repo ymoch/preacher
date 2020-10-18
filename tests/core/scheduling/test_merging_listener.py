@@ -2,7 +2,7 @@ from unittest.mock import NonCallableMock, sentinel
 
 from pytest import fixture
 
-from preacher.core.scenario.listener import Listener, MergingListener
+from preacher.core.scheduling.listener import Listener, MergingListener
 
 
 @fixture

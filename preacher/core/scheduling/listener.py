@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from preacher.core.request import Response, ExecutionReport
 from preacher.core.status import Status
-from .scenario import ScenarioListener, ScenarioResult
+from preacher.core.scenario.scenario import ScenarioListener, ScenarioResult
 
 
 class Listener(ScenarioListener):

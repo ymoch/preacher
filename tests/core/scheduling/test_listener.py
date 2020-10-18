@@ -1,6 +1,6 @@
 from unittest.mock import sentinel
 
-from preacher.core.scenario.listener import Listener
+from preacher.core.scheduling.listener import Listener
 
 
 def test_listener():

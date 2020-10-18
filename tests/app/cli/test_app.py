@@ -15,11 +15,12 @@ from pytest import fixture, raises, mark
 
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
+from preacher.app.cli.app import create_runner
 from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
-from preacher.app.cli.app import create_runner
 from preacher.compilation.scenario import ScenarioCompiler
-from preacher.core.scenario import Scenario, ScenarioRunner, Listener
+from preacher.core.scenario import Scenario
+from preacher.core.scheduling import ScenarioRunner, Listener
 from preacher.core.status import Status
 
 PKG = 'preacher.app.cli.app'
