@@ -90,16 +90,7 @@ def test_unordered(mocker):
     cases_task_ctor.assert_called_once_with(sentinel.executor, case_runner, [], ANY)
 
 
-@mark.parametrize('cases_status, subscenario_status, expected_status', [
-    (Status.SUCCESS, Status.UNSTABLE, Status.UNSTABLE),
-    (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
-])
-def test_ordered(
-    cases_status,
-    subscenario_status,
-    expected_status,
-    mocker,
-):
+def test_ordered(mocker):
     cases_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask', return_value=sentinel.cases_task)
     task_ctor = mocker.patch(f'{PKG}.RunningScenarioTask', return_value=sentinel.task)
 
@@ -115,7 +106,7 @@ def test_ordered(
 
     task_ctor.assert_called_once_with(
         label=sentinel.label,
-        conditions=Verification.collect([]),
+        conditions=Verification(status=Status.SKIPPED, children=[]),
         cases=sentinel.cases_task,
         subscenarios=[sentinel.subscenario_task],
     )
