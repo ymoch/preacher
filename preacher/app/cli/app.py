@@ -21,7 +21,7 @@ from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .logging import ColoredFormatter
 
-__all__ = ['app', 'create_system_logger', 'create_listener', 'create_runner', 'load_objs']
+__all__ = ['app', 'create_system_logger', 'create_listener', 'create_scheduler', 'load_objs']
 
 _REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
@@ -90,12 +90,12 @@ def app(
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
-    runner = create_runner(base_url=base_url, timeout=timeout, retry=retry, delay=delay)
+    scheduler = create_scheduler(base_url=base_url, timeout=timeout, retry=retry, delay=delay)
     listener = create_listener(level, report_dir)
     try:
         logger.info('Start running scenarios.')
         with executor_factory(concurrency) as executor:
-            status = runner.run(executor, scenarios, listener=listener)
+            status = scheduler.run(executor, scenarios, listener=listener)
     except Exception as error:
         logger.exception(error)
         return 3
@@ -139,7 +139,7 @@ def _hook_loading(path: str, logger: Logger) -> str:
     return path
 
 
-def create_runner(
+def create_scheduler(
     base_url: str,
     timeout: Optional[float],
     retry: int,
