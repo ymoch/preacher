@@ -38,8 +38,8 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     analyze_context = mocker.patch(f'{PKG}.analyze_data_obj')
     analyze_context.return_value = sentinel.context_analyzer
 
-    ordered_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask')
-    unordered_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask')
+    ordered_cases_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask')
+    unordered_cases_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask')
 
     verifications = [Verification(status) for status in statuses]
     conditions = [
@@ -73,8 +73,8 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
 
     context_ctor.assert_called_once_with(base_url=sentinel.base_url)
     analyze_context.assert_called_once_with(context)
-    ordered_task_ctor.assert_not_called()
-    unordered_task_ctor.assert_not_called()
+    ordered_cases_task_ctor.assert_not_called()
+    unordered_cases_task_ctor.assert_not_called()
     subscenario.submit.assert_not_called()
 
 
@@ -84,9 +84,9 @@ def test_unordered(executor, mocker):
     condition.verify.return_value = Verification(Status.SUCCESS)
 
     results = NonCallableMock(StatusedList, status=Status.SKIPPED)
-    task = NonCallableMock(CasesTask)
-    task.result.return_value = results
-    task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=task)
+    cases_task = NonCallableMock(CasesTask)
+    cases_task.result.return_value = results
+    cases_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=cases_task)
 
     scenario = Scenario(conditions=[condition], ordered=False)
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
@@ -100,8 +100,8 @@ def test_unordered(executor, mocker):
     assert not result.subscenarios.items
 
     condition.verify.assert_called_once()
-    task_ctor.assert_called_once_with(executor, case_runner, [], ANY)
-    task.result.assert_called_once_with()
+    cases_task_ctor.assert_called_once_with(executor, case_runner, [], ANY)
+    cases_task.result.assert_called_once_with()
     executor.submit.assert_not_called()
 
 
