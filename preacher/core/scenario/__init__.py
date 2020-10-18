@@ -1,7 +1,6 @@
 from .case import Case
 from .case_runner import CaseRunner, CaseListener, CaseResult
-from .scenario import Scenario, ScenarioListener, ScenarioResult
-from .scenario import ScenarioTask, StaticScenarioTask, RunningScenarioTask
+from .scenario import Scenario, ScenarioListener, ScenarioResult, ScenarioTask
 
 __all__ = [
     'Case',
@@ -12,6 +11,4 @@ __all__ = [
     'ScenarioListener',
     'ScenarioResult',
     'ScenarioTask',
-    'StaticScenarioTask',
-    'RunningScenarioTask',
 ]

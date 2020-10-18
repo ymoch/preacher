@@ -134,7 +134,7 @@ def test_app_compiler_creation_fails(mocker):
 def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioScheduler)
     runner.run.return_value = Status.UNSTABLE
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    mocker.patch(f'{PKG}.ScenarioScheduler', return_value=runner)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 1
@@ -145,7 +145,7 @@ def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
 def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
     runner = NonCallableMock(ScenarioScheduler)
     runner.run.side_effect = RuntimeError
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    mocker.patch(f'{PKG}.ScenarioScheduler', return_value=runner)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 3
@@ -193,7 +193,7 @@ def test_create_runner(mocker):
     unit_runner_ctor.return_value = sentinel.unit_runner
     case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner')
     case_runner_ctor.return_value = sentinel.case_runner
-    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=sentinel.runner)
+    runner_ctor = mocker.patch(f'{PKG}.ScenarioScheduler', return_value=sentinel.runner)
 
     runner = create_runner(
         base_url=sentinel.base_url,
