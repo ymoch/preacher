@@ -1,10 +1,12 @@
 from concurrent.futures import Executor, Future
 from unittest.mock import ANY, Mock, NonCallableMock, sentinel
 
-from pytest import fixture, mark, raises
+from pytest import fixture, mark
 
 from preacher.core.scenario.case_runner import CaseRunner
-from preacher.core.scenario.scenario import Scenario, ScenarioTask, ScenarioResult, ScenarioContext
+from preacher.core.scenario.scenario import Scenario, ScenarioContext
+from preacher.core.scenario.scenario_result import ScenarioResult
+from preacher.core.scenario.scenario_task import ScenarioTask
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.status import Status, StatusedList
 from preacher.core.value import ValueContext
@@ -23,15 +25,6 @@ def executor():
     executor = NonCallableMock(Executor)
     executor.submit.side_effect = _submit
     return executor
-
-
-def test_scenario_task_interface():
-    class _IncompleteScenarioTask(ScenarioTask):
-        def result(self) -> ScenarioResult:
-            return super().result()
-
-    with raises(NotImplementedError):
-        _IncompleteScenarioTask().result()
 
 
 @mark.parametrize('statuses, expected_status', [

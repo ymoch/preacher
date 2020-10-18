@@ -1,15 +1,15 @@
 from typing import Iterable, Iterator
 from unittest.mock import Mock, NonCallableMock, call, sentinel
 
-from preacher.core.scenario.listener import Listener
-from preacher.core.scenario.scenario import Scenario, ScenarioResult, ScenarioTask
-from preacher.core.scenario.scenario_runner import ScenarioRunner
+from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask
+from preacher.core.scheduling.listener import Listener
+from preacher.core.scheduling.scenario_scheduler import ScenarioScheduler
 from preacher.core.status import Status
 
 
 def test_given_no_scenario():
-    runner = ScenarioRunner(sentinel.unit_runner)
-    status = runner.run(sentinel.executor, [])
+    scheduler = ScenarioScheduler(sentinel.unit_runner)
+    status = scheduler.run(sentinel.executor, [])
     assert status == Status.SKIPPED
 
 
@@ -36,9 +36,9 @@ def test_given_construction_failure():
             successful.submit.return_value = successful_task
             return successful
 
-    runner = ScenarioRunner(sentinel.case_runner)
+    scheduler = ScenarioScheduler(sentinel.case_runner)
     listener = NonCallableMock(Listener)
-    status = runner.run(sentinel.executor, _Scenarios(), listener)
+    status = scheduler.run(sentinel.executor, _Scenarios(), listener)
     assert status is Status.FAILURE
 
     results = [c[0][0] for c in listener.on_scenario.call_args_list]
@@ -71,8 +71,8 @@ def test_given_scenarios():
     ]
     listener = NonCallableMock(Listener)
 
-    runner = ScenarioRunner(sentinel.case_runner)
-    status = runner.run(sentinel.executor, scenarios, listener=listener)
+    scheduler = ScenarioScheduler(sentinel.case_runner)
+    status = scheduler.run(sentinel.executor, scenarios, listener=listener)
 
     assert status is Status.FAILURE
     for scenario in scenarios:

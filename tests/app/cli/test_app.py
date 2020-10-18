@@ -15,11 +15,12 @@ from pytest import fixture, raises, mark
 
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
+from preacher.app.cli.app import create_scheduler
 from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
-from preacher.app.cli.app import create_runner
 from preacher.compilation.scenario import ScenarioCompiler
-from preacher.core.scenario import Scenario, ScenarioRunner, Listener
+from preacher.core.scenario import Scenario
+from preacher.core.scheduling import ScenarioScheduler, Listener
 from preacher.core.status import Status
 
 PKG = 'preacher.app.cli.app'
@@ -79,9 +80,9 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
         assert listener is sentinel.listener
         return Status.SUCCESS
 
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = _run
-    runner_ctor = mocker.patch(f'{PKG}.create_runner', return_value=runner)
+    scheduler = NonCallableMock(ScenarioScheduler)
+    scheduler.run.side_effect = _run
+    scheduler_ctor = mocker.patch(f'{PKG}.create_scheduler', return_value=scheduler)
 
     exit_code = app(
         paths=sentinel.paths,
@@ -108,7 +109,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
 
     objs_ctor.assert_called_once_with(sentinel.paths, logger)
-    runner_ctor.assert_called_once_with(
+    scheduler_ctor.assert_called_once_with(
         base_url=sentinel.base_url,
         timeout=sentinel.timeout,
         retry=sentinel.retry,
@@ -116,7 +117,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     )
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
     executor_factory.assert_called_once_with(sentinel.concurrency)
-    runner.run.assert_called_once()
+    scheduler.run.assert_called_once()
     executor.__exit__.assert_called_once()
 
 
@@ -131,9 +132,9 @@ def test_app_compiler_creation_fails(mocker):
 
 
 def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.return_value = Status.UNSTABLE
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    scheduler = NonCallableMock(ScenarioScheduler)
+    scheduler.run.return_value = Status.UNSTABLE
+    mocker.patch(f'{PKG}.ScenarioScheduler', return_value=scheduler)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 1
@@ -142,9 +143,9 @@ def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
 
 
 def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = RuntimeError
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    scheduler = NonCallableMock(ScenarioScheduler)
+    scheduler.run.side_effect = RuntimeError
+    mocker.patch(f'{PKG}.ScenarioScheduler', return_value=scheduler)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 3
@@ -185,22 +186,22 @@ def test_load_objs_filled(base_dir):
         next(objs)
 
 
-def test_create_runner(mocker):
+def test_create_scheduler(mocker):
     requester_ctor = mocker.patch(f'{PKG}.Requester')
     requester_ctor.return_value = sentinel.requester
     unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner')
     unit_runner_ctor.return_value = sentinel.unit_runner
     case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner')
     case_runner_ctor.return_value = sentinel.case_runner
-    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=sentinel.runner)
+    scheduler_ctor = mocker.patch(f'{PKG}.ScenarioScheduler', return_value=sentinel.scheduler)
 
-    runner = create_runner(
+    scheduler = create_scheduler(
         base_url=sentinel.base_url,
         timeout=sentinel.timeout,
         retry=sentinel.retry,
         delay=sentinel.delay,
     )
-    assert runner is sentinel.runner
+    assert scheduler is sentinel.scheduler
 
     requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
     unit_runner_ctor.assert_called_once_with(
@@ -209,7 +210,7 @@ def test_create_runner(mocker):
         delay=sentinel.delay,
     )
     case_runner_ctor.assert_called_once_with(unit_runner=sentinel.unit_runner)
-    runner_ctor.assert_called_once_with(case_runner=sentinel.case_runner)
+    scheduler_ctor.assert_called_once_with(case_runner=sentinel.case_runner)
 
 
 @mark.parametrize(('level', 'expected_logging_level'), [

@@ -12,7 +12,8 @@ from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.logger import default_logger
 from preacher.core.request import Requester
-from preacher.core.scenario import ScenarioRunner, CaseRunner, Listener, MergingListener
+from preacher.core.scenario import CaseRunner
+from preacher.core.scheduling import ScenarioScheduler, Listener, MergingListener
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
 from preacher.plugin.loader import load_plugins
@@ -20,7 +21,7 @@ from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .logging import ColoredFormatter
 
-__all__ = ['app', 'create_system_logger', 'create_listener', 'create_runner', 'load_objs']
+__all__ = ['app', 'create_system_logger', 'create_listener', 'create_scheduler', 'load_objs']
 
 _REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
@@ -89,12 +90,12 @@ def app(
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
-    runner = create_runner(base_url=base_url, timeout=timeout, retry=retry, delay=delay)
+    scheduler = create_scheduler(base_url=base_url, timeout=timeout, retry=retry, delay=delay)
     listener = create_listener(level, report_dir)
     try:
         logger.info('Start running scenarios.')
         with executor_factory(concurrency) as executor:
-            status = runner.run(executor, scenarios, listener=listener)
+            status = scheduler.run(executor, scenarios, listener=listener)
     except Exception as error:
         logger.exception(error)
         return 3
@@ -138,16 +139,16 @@ def _hook_loading(path: str, logger: Logger) -> str:
     return path
 
 
-def create_runner(
+def create_scheduler(
     base_url: str,
     timeout: Optional[float],
     retry: int,
     delay: float,
-) -> ScenarioRunner:
+) -> ScenarioScheduler:
     requester = Requester(base_url=base_url, timeout=timeout)
     unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
     case_runner = CaseRunner(unit_runner=unit_runner)
-    return ScenarioRunner(case_runner=case_runner)
+    return ScenarioScheduler(case_runner=case_runner)
 
 
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
