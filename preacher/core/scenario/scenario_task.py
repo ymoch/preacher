@@ -14,6 +14,15 @@ class ScenarioTask(ABC):
         raise NotImplementedError()
 
 
+class StaticScenarioTask(ScenarioTask):
+
+    def __init__(self, result: ScenarioResult):
+        self._result = result
+
+    def result(self) -> ScenarioResult:
+        return self._result
+
+
 class RunningScenarioTask(ScenarioTask):
 
     def __init__(
@@ -30,9 +39,7 @@ class RunningScenarioTask(ScenarioTask):
 
     def result(self) -> ScenarioResult:
         cases = self._cases.result()
-        subscenarios = StatusedList.collect(
-            s.result() for s in self._subscenarios
-        )
+        subscenarios = StatusedList.collect(s.result() for s in self._subscenarios)
         return ScenarioResult(
             label=self._label,
             status=merge_statuses([cases.status, subscenarios.status]),
@@ -40,12 +47,3 @@ class RunningScenarioTask(ScenarioTask):
             cases=cases,
             subscenarios=subscenarios,
         )
-
-
-class StaticScenarioTask(ScenarioTask):
-
-    def __init__(self, result: ScenarioResult):
-        self._result = result
-
-    def result(self) -> ScenarioResult:
-        return self._result
