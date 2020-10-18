@@ -1,30 +1,14 @@
-from concurrent.futures import Executor, Future
 from unittest.mock import ANY, Mock, NonCallableMock, sentinel
 
-from pytest import fixture, mark
+from pytest import mark
 
 from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.scenario.scenario import Scenario, ScenarioContext
-from preacher.core.scenario.scenario_result import ScenarioResult
-from preacher.core.scenario.scenario_task import ScenarioTask
-from preacher.core.scenario.util.concurrency import CasesTask
-from preacher.core.status import Status, StatusedList
+from preacher.core.status import Status
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
 
 PKG = 'preacher.core.scenario.scenario'
-
-
-@fixture
-def executor():
-    def _submit(func, *args, **kwargs) -> Future:
-        future: Future = Future()
-        future.set_result(func(*args, **kwargs))
-        return future
-
-    executor = NonCallableMock(Executor)
-    executor.submit.side_effect = _submit
-    return executor
 
 
 @mark.parametrize('statuses, expected_status', [
@@ -111,43 +95,34 @@ def test_unordered(mocker):
     (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
 ])
 def test_ordered(
-    executor,
     cases_status,
     subscenario_status,
     expected_status,
     mocker,
 ):
-    cases_result = NonCallableMock(StatusedList, status=cases_status)
-    cases_task = NonCallableMock(CasesTask)
-    cases_task.result.return_value = cases_result
-    cases_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask')
-    cases_task_ctor.return_value = cases_task
+    cases_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask', return_value=sentinel.cases_task)
+    task_ctor = mocker.patch(f'{PKG}.RunningScenarioTask', return_value=sentinel.task)
 
-    subscenario_result = NonCallableMock(ScenarioResult)
-    subscenario_result.status = subscenario_status
-    subscenario_task = NonCallableMock(ScenarioTask)
-    subscenario_task.result.return_value = subscenario_result
     subscenario = NonCallableMock(Scenario)
-    subscenario.submit.return_value = subscenario_task
+    subscenario.submit.return_value = sentinel.subscenario_task
 
     sentinel.context.starts = sentinel.starts
 
-    scenario = Scenario(cases=sentinel.cases, subscenarios=[subscenario])
-
+    scenario = Scenario(label=sentinel.label, cases=sentinel.cases, subscenarios=[subscenario])
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    result = scenario.submit(executor, case_runner, sentinel.listener).result()
+    task = scenario.submit(sentinel.executor, case_runner, sentinel.listener)
+    assert task is sentinel.task
 
-    assert result.status == expected_status
-    assert result.conditions.status is Status.SKIPPED
-    assert result.cases is cases_result
-    assert result.subscenarios.items[0] is subscenario_result
-
+    task_ctor.assert_called_once_with(
+        label=sentinel.label,
+        conditions=Verification.collect([]),
+        cases=sentinel.cases_task,
+        subscenarios=[sentinel.subscenario_task],
+    )
     cases_task_ctor.assert_called_once_with(
-        executor,
+        sentinel.executor,
         case_runner,
         sentinel.cases,
         sentinel.listener,
     )
-    cases_task.result.assert_called_once_with()
-    subscenario.submit.assert_called_once_with(executor, case_runner, sentinel.listener)
-    subscenario_task.result.assert_called_once_with()
+    subscenario.submit.assert_called_once_with(sentinel.executor, case_runner, sentinel.listener)
