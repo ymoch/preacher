@@ -1,6 +1,6 @@
 from unittest.mock import NonCallableMock, sentinel
 
-from pytest import raises
+from pytest import mark, raises
 
 from preacher.core.scenario.scenario_result import ScenarioResult
 from preacher.core.scenario.scenario_task import ScenarioTask
@@ -46,13 +46,17 @@ def test_running_scenario_task_empty():
     cases.result.assert_called_once_with()
 
 
-def test_running_scenario_task_filled():
-    cases_result = NonCallableMock(StatusedList, status=Status.UNSTABLE)
+@mark.parametrize('cases_status, subscenario_status, expected_status', [
+    (Status.SUCCESS, Status.UNSTABLE, Status.UNSTABLE),
+    (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
+])
+def test_running_scenario_task_filled(cases_status, subscenario_status, expected_status):
+    cases_result = NonCallableMock(StatusedList, status=cases_status)
     cases = NonCallableMock(CasesTask)
     cases.result.return_value = cases_result
 
     subscenario = NonCallableMock(ScenarioTask)
-    subscenario_result = ScenarioResult(status=Status.SUCCESS)
+    subscenario_result = ScenarioResult(status=subscenario_status)
     subscenario.result.return_value = subscenario_result
 
     task = RunningScenarioTask(
@@ -64,7 +68,7 @@ def test_running_scenario_task_filled():
     result = task.result()
 
     assert result.label is sentinel.label
-    assert result.status is Status.UNSTABLE
+    assert result.status is expected_status
     assert result.message is None
     assert result.conditions is sentinel.conditions
     assert result.cases is cases_result
