@@ -40,6 +40,7 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
 
     ordered_cases_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask')
     unordered_cases_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask')
+    task_ctor = mocker.patch(f'{PKG}.StaticScenarioTask', return_value=sentinel.task)
 
     verifications = [Verification(status) for status in statuses]
     conditions = [
@@ -55,8 +56,10 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
         subscenarios=[subscenario],
     )
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    result = scenario.submit(executor, case_runner).result()
+    task = scenario.submit(sentinel.executor, case_runner)
+    assert task is sentinel.task
 
+    result = task_ctor.call_args[0][0]
     assert result.label is sentinel.label
     assert result.status is expected_status
     assert result.conditions.children == verifications
