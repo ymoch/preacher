@@ -2,7 +2,7 @@ from concurrent.futures import Executor
 from typing import Iterable, Optional, Iterator
 
 from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask, CaseRunner
-from preacher.core.scenario.scenario import StaticScenarioTask
+from preacher.core.scenario.scenario_task import StaticScenarioTask
 from preacher.core.status import Status
 from .listener import Listener
 

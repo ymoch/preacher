@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -10,12 +9,15 @@ from typing import Callable, List, Optional
 
 from preacher.core.datetime import now
 from preacher.core.extraction import analyze_data_obj
-from preacher.core.status import Status, Statused, StatusedList, merge_statuses
+from preacher.core.status import Status
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
 from .case import Case
-from .case_runner import CaseRunner, CaseListener, CaseResult
-from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
+from .case_runner import CaseRunner, CaseListener
+from .scenario_result import ScenarioResult
+from .scenario_task import RunningScenarioTask, StaticScenarioTask
+from .scenario_task import ScenarioTask
+from .util.concurrency import OrderedCasesTask, UnorderedCasesTask
 
 
 class ScenarioListener(CaseListener):
@@ -23,62 +25,6 @@ class ScenarioListener(CaseListener):
     Interface to listen to scenario running.
     """
     pass
-
-
-@dataclass(frozen=True)
-class ScenarioResult(Statused):
-    label: Optional[str] = None
-    status: Status = Status.SKIPPED
-    message: Optional[str] = None
-    conditions: Verification = field(default_factory=Verification)
-    cases: StatusedList[CaseResult] = field(default_factory=StatusedList)
-    subscenarios: StatusedList[ScenarioResult] = field(
-        default_factory=StatusedList,
-    )
-
-
-class ScenarioTask(ABC):
-
-    @abstractmethod
-    def result(self) -> ScenarioResult:
-        raise NotImplementedError()
-
-
-class RunningScenarioTask(ScenarioTask):
-
-    def __init__(
-        self,
-        label: Optional[str],
-        conditions: Verification,
-        cases: CasesTask,
-        subscenarios: List[ScenarioTask],
-    ):
-        self._label = label
-        self._conditions = conditions
-        self._cases = cases
-        self._subscenarios = subscenarios
-
-    def result(self) -> ScenarioResult:
-        cases = self._cases.result()
-        subscenarios = StatusedList.collect(
-            s.result() for s in self._subscenarios
-        )
-        return ScenarioResult(
-            label=self._label,
-            status=merge_statuses([cases.status, subscenarios.status]),
-            conditions=self._conditions,
-            cases=cases,
-            subscenarios=subscenarios,
-        )
-
-
-class StaticScenarioTask(ScenarioTask):
-
-    def __init__(self, result: ScenarioResult):
-        self._result = result
-
-    def result(self) -> ScenarioResult:
-        return self._result
 
 
 @dataclass(frozen=True)
