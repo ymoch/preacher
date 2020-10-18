@@ -1,8 +1,8 @@
 from preacher.core.scheduling.listener import Listener, MergingListener
-from preacher.core.scheduling.scenario_runner import ScenarioRunner
+from preacher.core.scheduling.scenario_scheduler import ScenarioScheduler
 
 __all__ = [
-    'ScenarioRunner',
+    'ScenarioScheduler',
     'Listener',
     'MergingListener',
 ]

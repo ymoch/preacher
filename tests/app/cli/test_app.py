@@ -20,7 +20,7 @@ from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario
-from preacher.core.scheduling import ScenarioRunner, Listener
+from preacher.core.scheduling import ScenarioScheduler, Listener
 from preacher.core.status import Status
 
 PKG = 'preacher.app.cli.app'
@@ -80,7 +80,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
         assert listener is sentinel.listener
         return Status.SUCCESS
 
-    runner = NonCallableMock(ScenarioRunner)
+    runner = NonCallableMock(ScenarioScheduler)
     runner.run.side_effect = _run
     runner_ctor = mocker.patch(f'{PKG}.create_runner', return_value=runner)
 
@@ -132,7 +132,7 @@ def test_app_compiler_creation_fails(mocker):
 
 
 def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
-    runner = NonCallableMock(ScenarioRunner)
+    runner = NonCallableMock(ScenarioScheduler)
     runner.run.return_value = Status.UNSTABLE
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 
@@ -143,7 +143,7 @@ def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
 
 
 def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
-    runner = NonCallableMock(ScenarioRunner)
+    runner = NonCallableMock(ScenarioScheduler)
     runner.run.side_effect = RuntimeError
     mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
 

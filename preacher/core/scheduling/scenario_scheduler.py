@@ -7,7 +7,7 @@ from preacher.core.status import Status
 from .listener import Listener
 
 
-class ScenarioRunner:
+class ScenarioScheduler:
 
     def __init__(self, case_runner: CaseRunner):
         self._case_runner = case_runner
