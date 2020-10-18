@@ -81,31 +81,29 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     subscenario.submit.assert_not_called()
 
 
-def test_unordered(executor, mocker):
+def test_unordered(mocker):
     # Also tests successful conditions.
+    condition_verification = Verification(Status.SUCCESS)
     condition = NonCallableMock(Description)
-    condition.verify.return_value = Verification(Status.SUCCESS)
+    condition.verify.return_value = condition_verification
 
-    results = NonCallableMock(StatusedList, status=Status.SKIPPED)
-    cases_task = NonCallableMock(CasesTask)
-    cases_task.result.return_value = results
-    cases_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=cases_task)
+    cases_task_ctor = mocker.patch(f'{PKG}.UnorderedCasesTask', return_value=sentinel.cases_task)
+    task_ctor = mocker.patch(f'{PKG}.RunningScenarioTask', return_value=sentinel.task)
 
     scenario = Scenario(conditions=[condition], ordered=False)
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    result = scenario.submit(executor, case_runner).result()
+    task = scenario.submit(sentinel.executor, case_runner)
+    assert task is sentinel.task
 
-    assert result.label is None
-    assert result.status is Status.SKIPPED
-    assert result.conditions.status is Status.SUCCESS
-    assert result.cases is results
-    assert result.subscenarios.status is Status.SKIPPED
-    assert not result.subscenarios.items
+    task_ctor.assert_called_once_with(
+        label=None,
+        conditions=Verification(status=Status.SUCCESS, children=[condition_verification]),
+        cases=sentinel.cases_task,
+        subscenarios=[],
+    )
 
     condition.verify.assert_called_once()
-    cases_task_ctor.assert_called_once_with(executor, case_runner, [], ANY)
-    cases_task.result.assert_called_once_with()
-    executor.submit.assert_not_called()
+    cases_task_ctor.assert_called_once_with(sentinel.executor, case_runner, [], ANY)
 
 
 @mark.parametrize('cases_status, subscenario_status, expected_status', [
