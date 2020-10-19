@@ -1,4 +1,4 @@
-from unittest.mock import ANY, Mock, NonCallableMock, call, sentinel
+from unittest.mock import Mock, NonCallableMock, call, sentinel
 
 from pytest import mark
 
@@ -88,7 +88,7 @@ def test_unordered(mocker):
     )
 
     condition.verify.assert_called_once()
-    cases_task_ctor.assert_called_once_with(sentinel.executor, case_runner, [], ANY)
+    cases_task_ctor.assert_called_once_with(sentinel.executor, case_runner, [])
 
 
 def test_ordered(mocker):
@@ -110,8 +110,8 @@ def test_ordered(mocker):
     assert task is sentinel.task
 
     cases_task_ctor.assert_has_calls([
-        call(sentinel.executor, case_runner, sentinel.cases, sentinel.listener),
-        call(sentinel.executor, case_runner, [], sentinel.listener),
+        call(sentinel.executor, case_runner, sentinel.cases),
+        call(sentinel.executor, case_runner, []),
     ])
     task_ctor.assert_has_calls([
         call(

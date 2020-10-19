@@ -60,7 +60,7 @@ class ScenarioRunner:
             submit_cases: Callable = OrderedCasesTask
         else:
             submit_cases = UnorderedCasesTask
-        cases = submit_cases(self._executor, self._case_runner, scenario.cases, self._listener)
+        cases = submit_cases(self._executor, self._case_runner, scenario.cases)
         subscenarios = [self.submit(subscenario) for subscenario in scenario.subscenarios]
         return RunningScenarioTask(
             label=scenario.label,

@@ -55,19 +55,15 @@ class CaseContext:
 
 class CaseRunner:
 
-    def __init__(self, unit_runner: UnitRunner):
+    def __init__(self, unit_runner: UnitRunner, listener: Optional[CaseListener] = None):
         self._unit_runner = unit_runner
+        self._listener = listener or CaseListener()
 
     @property
     def base_url(self) -> str:
         return self._unit_runner.base_url
 
-    def run(
-        self,
-        case: Case,
-        listener: Optional[CaseListener] = None,
-        session: Optional[requests.Session] = None,
-    ) -> CaseResult:
+    def run(self, case: Case, session: Optional[requests.Session] = None) -> CaseResult:
         if not case.enabled:
             return CaseResult(label=case.label)
 
@@ -86,7 +82,6 @@ class CaseRunner:
             requirements=case.response,
             session=session,
         )
-        if listener:
-            listener.on_execution(execution, response)
+        self._listener.on_execution(execution, response)
 
         return CaseResult(case.label, conditions, execution, verification)

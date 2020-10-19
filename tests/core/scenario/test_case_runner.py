@@ -28,15 +28,10 @@ def test_runner_properties():
 
 
 def test_when_disabled():
-    case = Case(
-        label=sentinel.label,
-        enabled=False,
-        request=sentinel.request,
-        response=sentinel.response,
-    )
+    case = Case(label=sentinel.label, enabled=False)
 
     unit_runner = NonCallableMock(UnitRunner)
-    runner = CaseRunner(unit_runner)
+    runner = CaseRunner(unit_runner=unit_runner)
     actual = runner.run(case)
     assert actual.label is sentinel.label
     assert actual.status is Status.SKIPPED
@@ -75,9 +70,9 @@ def test_given_bad_condition(condition_verifications, expected_status):
     )
 
     unit_runner = NonCallableMock(UnitRunner)
-    runner = CaseRunner(unit_runner)
     listener = NonCallableMock(CaseListener)
-    result = runner.run(case, listener=listener)
+    runner = CaseRunner(unit_runner=unit_runner, listener=listener)
+    result = runner.run(case)
 
     assert result.label is sentinel.label
     assert result.status is expected_status
@@ -92,9 +87,9 @@ def test_when_given_no_response():
 
     unit_runner = NonCallableMock(UnitRunner)
     unit_runner.run.return_value = (execution, None, None)
-    runner = CaseRunner(unit_runner)
     listener = NonCallableMock(spec=CaseListener)
-    result = runner.run(case, listener)
+    runner = CaseRunner(unit_runner=unit_runner, listener=listener)
+    result = runner.run(case)
 
     assert result.label is sentinel.label
     assert result.status is Status.FAILURE
@@ -122,9 +117,9 @@ def test_when_given_an_response():
 
     unit_runner = NonCallableMock(UnitRunner)
     unit_runner.run.return_value = (execution, sentinel.response, verification)
-    runner = CaseRunner(unit_runner)
     listener = NonCallableMock(spec=CaseListener)
-    result = runner.run(case, listener, sentinel.session)
+    runner = CaseRunner(unit_runner=unit_runner, listener=listener)
+    result = runner.run(case, session=sentinel.session)
 
     assert result.label is sentinel.label
     assert result.status is Status.UNSTABLE

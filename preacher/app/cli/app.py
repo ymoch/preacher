@@ -146,21 +146,6 @@ def _hook_loading(path: str, logger: Logger) -> str:
     return path
 
 
-def create_scheduler(
-    executor: Executor,
-    listener: Listener,
-    base_url: str,
-    timeout: Optional[float],
-    retry: int,
-    delay: float,
-) -> ScenarioScheduler:
-    requester = Requester(base_url=base_url, timeout=timeout)
-    unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
-    case_runner = CaseRunner(unit_runner=unit_runner)
-    runner = ScenarioRunner(executor=executor, case_runner=case_runner)
-    return ScenarioScheduler(runner=runner, listener=listener)
-
-
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     merging = MergingListener()
 
@@ -187,3 +172,18 @@ def _status_to_logging_level(level: Status) -> int:
     if level is Status.UNSTABLE:
         return WARNING
     return ERROR
+
+
+def create_scheduler(
+    executor: Executor,
+    listener: Listener,
+    base_url: str,
+    timeout: Optional[float],
+    retry: int,
+    delay: float,
+) -> ScenarioScheduler:
+    requester = Requester(base_url=base_url, timeout=timeout)
+    unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
+    case_runner = CaseRunner(unit_runner=unit_runner, listener=listener)
+    runner = ScenarioRunner(executor=executor, case_runner=case_runner, listener=listener)
+    return ScenarioScheduler(runner=runner, listener=listener)
