@@ -1,5 +1,6 @@
 from .case import Case
-from .case_runner import CaseRunner, CaseListener, CaseResult
+from .case_result import CaseResult
+from .case_runner import CaseRunner, CaseListener
 from .scenario import Scenario
 from .scenario_result import ScenarioResult
 from .scenario_runner import ScenarioRunner, ScenarioListener

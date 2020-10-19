@@ -7,11 +7,11 @@ import requests
 from preacher.core.datetime import now
 from preacher.core.extraction import analyze_data_obj
 from preacher.core.request import ExecutionReport, Response
-from preacher.core.status import Statused, Status, merge_statuses
 from preacher.core.unit import UnitRunner
 from preacher.core.value import ValueContext
-from preacher.core.verification import Verification, ResponseVerification
+from preacher.core.verification import Verification
 from .case import Case
+from .case_result import CaseResult
 
 
 class CaseListener:
@@ -22,29 +22,6 @@ class CaseListener:
 
     def on_execution(self, execution: ExecutionReport, response: Optional[Response]) -> None:
         pass
-
-
-@dataclass(frozen=True)
-class CaseResult(Statused):
-    """
-    Results for the test cases.
-    """
-    label: Optional[str] = None
-    conditions: Verification = field(default_factory=Verification)
-    execution: ExecutionReport = field(default_factory=ExecutionReport)
-    response: Optional[ResponseVerification] = None
-
-    @property
-    def status(self) -> Status:  # HACK: should be cached
-        if self.conditions.status == Status.UNSTABLE:
-            return Status.SKIPPED
-        if self.conditions.status == Status.FAILURE:
-            return Status.FAILURE
-
-        return merge_statuses([
-            self.execution.status,
-            self.response.status if self.response else Status.SKIPPED,
-        ])
 
 
 @dataclass(frozen=True)

@@ -4,7 +4,8 @@ from unittest.mock import MagicMock, NonCallableMock, call, sentinel
 from pytest import fixture
 from requests import Session
 
-from preacher.core.scenario.case_runner import CaseRunner, CaseResult
+from preacher.core.scenario.case_result import CaseResult
+from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.scenario.util.concurrency import OrderedCasesTask
 from preacher.core.status import Status
 

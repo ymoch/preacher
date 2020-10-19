@@ -5,7 +5,8 @@ from typing import Iterable
 from requests import Session
 
 from preacher.core.scenario.case import Case
-from preacher.core.scenario.case_runner import CaseRunner, CaseResult
+from preacher.core.scenario.case_result import CaseResult
+from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.status import StatusedList
 
 
