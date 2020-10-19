@@ -101,11 +101,7 @@ def test_ordered(mocker):
     scenario = Scenario(label=sentinel.label, cases=sentinel.cases, subscenarios=[subscenario])
 
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    runner = ScenarioRunner(
-        executor=sentinel.executor,
-        case_runner=case_runner,
-        listener=sentinel.listener,
-    )
+    runner = ScenarioRunner(executor=sentinel.executor, case_runner=case_runner)
     task = runner.submit(scenario)
     assert task is sentinel.task
 

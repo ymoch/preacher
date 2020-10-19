@@ -231,6 +231,5 @@ def test_create_scheduler(mocker):
     runner_ctor.assert_called_once_with(
         executor=sentinel.executor,
         case_runner=sentinel.case_runner,
-        listener=sentinel.listener,
     )
     scheduler_ctor.assert_called_once_with(runner=sentinel.runner, listener=sentinel.listener)

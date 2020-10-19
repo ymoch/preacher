@@ -185,5 +185,5 @@ def create_scheduler(
     requester = Requester(base_url=base_url, timeout=timeout)
     unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
     case_runner = CaseRunner(unit_runner=unit_runner, listener=listener)
-    runner = ScenarioRunner(executor=executor, case_runner=case_runner, listener=listener)
+    runner = ScenarioRunner(executor=executor, case_runner=case_runner)
     return ScenarioScheduler(runner=runner, listener=listener)

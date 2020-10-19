@@ -1,25 +1,18 @@
 from concurrent.futures import Executor
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Callable, Optional
+from typing import Callable
 
 from preacher.core.datetime import now
 from preacher.core.extraction import analyze_data_obj
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
-from .case_runner import CaseRunner, CaseListener
+from .case_runner import CaseRunner
 from .scenario import Scenario
 from .scenario_result import ScenarioResult
 from .scenario_task import ScenarioTask, StaticScenarioTask, RunningScenarioTask
 from .util.concurrency import OrderedCasesTask, UnorderedCasesTask
-
-
-class ScenarioListener(CaseListener):
-    """
-    Interface to listen to scenario running.
-    """
-    pass
 
 
 @dataclass(frozen=True)
@@ -30,15 +23,9 @@ class ScenarioContext:
 
 class ScenarioRunner:
 
-    def __init__(
-        self,
-        executor: Executor,
-        case_runner: CaseRunner,
-        listener: Optional[ScenarioListener] = None,
-    ):
+    def __init__(self, executor: Executor, case_runner: CaseRunner):
         self._executor = executor
         self._case_runner = case_runner
-        self._listener = listener or ScenarioListener()
 
     def submit(self, scenario: Scenario) -> ScenarioTask:
         context = ScenarioContext(base_url=self._case_runner.base_url)
