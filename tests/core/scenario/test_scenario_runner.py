@@ -1,14 +1,15 @@
-from unittest.mock import ANY, Mock, NonCallableMock, sentinel
+from unittest.mock import ANY, Mock, NonCallableMock, call, sentinel
 
 from pytest import mark
 
 from preacher.core.scenario.case_runner import CaseRunner
-from preacher.core.scenario.scenario import Scenario, ScenarioContext
+from preacher.core.scenario.scenario import Scenario
+from preacher.core.scenario.scenario_runner import ScenarioRunner, ScenarioContext
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
 
-PKG = 'preacher.core.scenario.scenario'
+PKG = 'preacher.core.scenario.scenario_runner'
 
 
 @mark.parametrize('statuses, expected_status', [
@@ -31,16 +32,16 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
         NonCallableMock(Description, verify=Mock(return_value=v))
         for v in verifications
     ]
-    subscenario = NonCallableMock(Scenario)
 
     scenario = Scenario(
         label=sentinel.label,
         conditions=conditions,
         cases=sentinel.cases,
-        subscenarios=[subscenario],
+        subscenarios=[sentinel.subscenario],
     )
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    task = scenario.submit(sentinel.executor, case_runner)
+    runner = ScenarioRunner(executor=sentinel.executor, case_runner=case_runner)
+    task = runner.submit(scenario)
     assert task is sentinel.task
 
     result = task_ctor.call_args[0][0]
@@ -62,7 +63,6 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     analyze_context.assert_called_once_with(context)
     ordered_cases_task_ctor.assert_not_called()
     unordered_cases_task_ctor.assert_not_called()
-    subscenario.submit.assert_not_called()
 
 
 def test_unordered(mocker):
@@ -76,7 +76,8 @@ def test_unordered(mocker):
 
     scenario = Scenario(conditions=[condition], ordered=False)
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    task = scenario.submit(sentinel.executor, case_runner)
+    runner = ScenarioRunner(executor=sentinel.executor, case_runner=case_runner)
+    task = runner.submit(scenario)
     assert task is sentinel.task
 
     task_ctor.assert_called_once_with(
@@ -94,26 +95,35 @@ def test_ordered(mocker):
     cases_task_ctor = mocker.patch(f'{PKG}.OrderedCasesTask', return_value=sentinel.cases_task)
     task_ctor = mocker.patch(f'{PKG}.RunningScenarioTask', return_value=sentinel.task)
 
-    subscenario = NonCallableMock(Scenario)
-    subscenario.submit.return_value = sentinel.subscenario_task
-
     sentinel.context.starts = sentinel.starts
 
+    subscenario = Scenario(label=sentinel.subscenario_label)
     scenario = Scenario(label=sentinel.label, cases=sentinel.cases, subscenarios=[subscenario])
+
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    task = scenario.submit(sentinel.executor, case_runner, sentinel.listener)
+    runner = ScenarioRunner(
+        executor=sentinel.executor,
+        case_runner=case_runner,
+        listener=sentinel.listener,
+    )
+    task = runner.submit(scenario)
     assert task is sentinel.task
 
-    task_ctor.assert_called_once_with(
-        label=sentinel.label,
-        conditions=Verification(status=Status.SKIPPED, children=[]),
-        cases=sentinel.cases_task,
-        subscenarios=[sentinel.subscenario_task],
-    )
-    cases_task_ctor.assert_called_once_with(
-        sentinel.executor,
-        case_runner,
-        sentinel.cases,
-        sentinel.listener,
-    )
-    subscenario.submit.assert_called_once_with(sentinel.executor, case_runner, sentinel.listener)
+    cases_task_ctor.assert_has_calls([
+        call(sentinel.executor, case_runner, sentinel.cases, sentinel.listener),
+        call(sentinel.executor, case_runner, [], sentinel.listener),
+    ])
+    task_ctor.assert_has_calls([
+        call(
+            label=sentinel.subscenario_label,
+            conditions=Verification.collect([]),
+            cases=sentinel.cases_task,
+            subscenarios=[],
+        ),
+        call(
+            label=sentinel.label,
+            conditions=Verification(status=Status.SKIPPED, children=[]),
+            cases=sentinel.cases_task,
+            subscenarios=[sentinel.task],
+        ),
+    ])

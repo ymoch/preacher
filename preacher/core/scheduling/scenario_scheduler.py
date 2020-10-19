@@ -1,7 +1,6 @@
-from concurrent.futures import Executor
-from typing import Iterable, Optional, Iterator
+from typing import Iterable, Iterator, Optional
 
-from preacher.core.scenario import Scenario, ScenarioResult, ScenarioTask, CaseRunner
+from preacher.core.scenario import Scenario, ScenarioRunner, ScenarioResult, ScenarioTask
 from preacher.core.scenario.scenario_task import StaticScenarioTask
 from preacher.core.status import Status
 from .listener import Listener
@@ -9,45 +8,32 @@ from .listener import Listener
 
 class ScenarioScheduler:
 
-    def __init__(self, case_runner: CaseRunner):
-        self._case_runner = case_runner
+    def __init__(self, runner: ScenarioRunner, listener: Optional[Listener] = None):
+        self._runner = runner
+        self._listener = listener or Listener()
 
-    def run(
-        self,
-        executor: Executor,
-        scenarios: Iterable[Scenario],
-        listener: Optional[Listener] = None,
-    ) -> Status:
+    def run(self, scenarios: Iterable[Scenario]) -> Status:
         """
         Run the scenarios.
 
         Args:
-            executor: An executor to submit scenarios.
             scenarios: An iterator of scenarios,
                 which can raise `Exception` for each iteration.
-            listener: A listener for each scenario running.
         Returns:
             The execution status.
         """
-        listener = listener or Listener()
-
-        tasks = self._submit_all(executor, scenarios, listener)
+        tasks = self._submit_all(scenarios)
         results = (task.result() for task in list(tasks))
 
         status = Status.SKIPPED
         for result in results:
             status = status.merge(result.status)
-            listener.on_scenario(result)
+            self._listener.on_scenario(result)
 
-        listener.on_end(status)
+        self._listener.on_end(status)
         return status
 
-    def _submit_all(
-        self,
-        executor: Executor,
-        scenarios: Iterable[Scenario],
-        listener: Optional[Listener] = None,
-    ) -> Iterator[ScenarioTask]:
+    def _submit_all(self, scenarios: Iterable[Scenario]) -> Iterator[ScenarioTask]:
         iterator = iter(scenarios)
         while True:
             try:
@@ -63,4 +49,4 @@ class ScenarioScheduler:
                 yield StaticScenarioTask(result)
                 continue
 
-            yield scenario.submit(executor, self._case_runner, listener)
+            yield self._runner.submit(scenario)
