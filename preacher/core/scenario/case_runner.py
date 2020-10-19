@@ -6,22 +6,12 @@ import requests
 
 from preacher.core.datetime import now
 from preacher.core.extraction import analyze_data_obj
-from preacher.core.request import ExecutionReport, Response
 from preacher.core.unit import UnitRunner
 from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
 from .case import Case
+from .case_listener import CaseListener
 from .case_result import CaseResult
-
-
-class CaseListener:
-    """
-    Interface to listen to running cases.
-    Default implementations do nothing.
-    """
-
-    def on_execution(self, execution: ExecutionReport, response: Optional[Response]) -> None:
-        pass
 
 
 @dataclass(frozen=True)
