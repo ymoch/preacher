@@ -182,6 +182,25 @@ def test_load_objs_filled(base_dir):
         next(objs)
 
 
+@mark.parametrize(('level', 'expected_logging_level'), [
+    (Status.SKIPPED, logging.DEBUG),
+    (Status.SUCCESS, logging.INFO),
+    (Status.UNSTABLE, logging.WARNING),
+    (Status.FAILURE, logging.ERROR),
+])
+def test_create_listener_logging_level(level, expected_logging_level):
+    create_listener(level=level, report_dir=None)
+
+    logger = logging.getLogger('preacher.cli.report.logging')
+    assert logger.getEffectiveLevel() == expected_logging_level
+
+
+def test_create_listener_report_dir(base_dir):
+    report_dir = os.path.join(base_dir, 'report')
+    create_listener(level=Status.FAILURE, report_dir=report_dir)
+    assert os.path.isdir(report_dir)
+
+
 def test_create_scheduler(mocker):
     requester_ctor = mocker.patch(f'{PKG}.Requester', return_value=sentinel.requester)
     unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner', return_value=sentinel.unit_runner)
@@ -205,28 +224,12 @@ def test_create_scheduler(mocker):
         retry=sentinel.retry,
         delay=sentinel.delay,
     )
-    case_runner_ctor.assert_called_once_with(unit_runner=sentinel.unit_runner)
+    case_runner_ctor.assert_called_once_with(
+        unit_runner=sentinel.unit_runner,
+        listener=sentinel.listener,
+    )
     runner_ctor.assert_called_once_with(
         executor=sentinel.executor,
         case_runner=sentinel.case_runner,
     )
     scheduler_ctor.assert_called_once_with(runner=sentinel.runner, listener=sentinel.listener)
-
-
-@mark.parametrize(('level', 'expected_logging_level'), [
-    (Status.SKIPPED, logging.DEBUG),
-    (Status.SUCCESS, logging.INFO),
-    (Status.UNSTABLE, logging.WARNING),
-    (Status.FAILURE, logging.ERROR),
-])
-def test_create_listener_logging_level(level, expected_logging_level):
-    create_listener(level=level, report_dir=None)
-
-    logger = logging.getLogger('preacher.cli.report.logging')
-    assert logger.getEffectiveLevel() == expected_logging_level
-
-
-def test_create_listener_report_dir(base_dir):
-    report_dir = os.path.join(base_dir, 'report')
-    create_listener(level=Status.FAILURE, report_dir=report_dir)
-    assert os.path.isdir(report_dir)

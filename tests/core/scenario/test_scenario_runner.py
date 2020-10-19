@@ -1,4 +1,4 @@
-from unittest.mock import ANY, Mock, NonCallableMock, call, sentinel
+from unittest.mock import Mock, NonCallableMock, call, sentinel
 
 from pytest import mark
 
@@ -88,7 +88,7 @@ def test_unordered(mocker):
     )
 
     condition.verify.assert_called_once()
-    cases_task_ctor.assert_called_once_with(sentinel.executor, case_runner, [], ANY)
+    cases_task_ctor.assert_called_once_with(sentinel.executor, case_runner, [])
 
 
 def test_ordered(mocker):
@@ -101,17 +101,13 @@ def test_ordered(mocker):
     scenario = Scenario(label=sentinel.label, cases=sentinel.cases, subscenarios=[subscenario])
 
     case_runner = NonCallableMock(CaseRunner, base_url=sentinel.base_url)
-    runner = ScenarioRunner(
-        executor=sentinel.executor,
-        case_runner=case_runner,
-        listener=sentinel.listener,
-    )
+    runner = ScenarioRunner(executor=sentinel.executor, case_runner=case_runner)
     task = runner.submit(scenario)
     assert task is sentinel.task
 
     cases_task_ctor.assert_has_calls([
-        call(sentinel.executor, case_runner, sentinel.cases, sentinel.listener),
-        call(sentinel.executor, case_runner, [], sentinel.listener),
+        call(sentinel.executor, case_runner, sentinel.cases),
+        call(sentinel.executor, case_runner, []),
     ])
     task_ctor.assert_has_calls([
         call(

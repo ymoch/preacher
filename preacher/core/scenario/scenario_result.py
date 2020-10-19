@@ -5,7 +5,7 @@ from typing import Optional
 
 from preacher.core.status import Statused, Status, StatusedList
 from preacher.core.verification import Verification
-from .case_runner import CaseResult
+from .case_result import CaseResult
 
 
 @dataclass(frozen=True)
