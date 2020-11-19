@@ -50,13 +50,12 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - install-poetry
-      - run:
-          name: Build
-          command: poetry build
+      - prepare
       - run:
           name: Publish
-          command: poetry publish
+          command: |
+            poetry build
+            poetry publish
 
 commands:
   prepare:
