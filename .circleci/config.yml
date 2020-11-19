@@ -19,10 +19,22 @@ workflows:
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
           requires:
+            - test-39
             - test-38
             - test-37
 
 jobs:
+  test-39:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - prepare
+      - bootstrapping-test
+      - unit-test
+      - example-test
+      - document-build
+
   test-38:  # Primary
     docker:
       - image: circleci/python:3.8
@@ -34,7 +46,7 @@ jobs:
       - example-test
       - document-build
 
-  test-37:  # Secondary
+  test-37:
     docker:
       - image: circleci/python:3.7
     steps:
