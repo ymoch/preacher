@@ -4,6 +4,10 @@ workflows:
   version: 2
   test-and-deploy:
     jobs:
+      - test-39:
+          filters:
+            tags:
+              only: /.*/
       - test-38:
           filters:
             tags:
@@ -19,32 +23,40 @@ workflows:
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
           requires:
+            - test-39
             - test-38
             - test-37
 
 jobs:
+  test-39:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - prepare
+      - bootstrapping-test
+      - unit-test
+      - example-test
+      - document-build
+
   test-38:  # Primary
     docker:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - install-poetry
-      - prepare-production-env
+      - prepare
       - bootstrapping-test
-      - prepare-development-env
       - unit-test
       - example-test
       - document-build
 
-  test-37:  # Secondary
+  test-37:
     docker:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - install-poetry
-      - prepare-production-env
+      - prepare
       - bootstrapping-test
-      - prepare-development-env
       - unit-test
       - example-test
       - document-build
@@ -54,40 +66,27 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - install-poetry
-      - run:
-          name: Build
-          command: poetry build
+      - prepare
       - run:
           name: Publish
-          command: poetry publish
+          command: |
+            poetry build
+            poetry publish
 
 commands:
-  install-poetry:
-    description: Install Poetry
+  prepare:
+    description: Prepare
     steps:
       - run:
           name: Install Poetry
           command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-  prepare-production-env:
-    description: Prepare production environment
-    steps:
-      - run:
-          name: Install libraries for production
-          command: poetry install --no-dev
-  prepare-development-env:
-    description: Prepare development environment
-    steps:
-      - run:
-          name: Install libraries for development
-          command: |
-            poetry install
   bootstrapping-test:
     description: Bootstrapping test
     steps:
       - run:
           name: Bootstrapping test
           command: |
+            poetry install --no-dev
             poetry run preacher-cli --version
             poetry run preacher-cli --help
   unit-test:
@@ -96,7 +95,11 @@ commands:
       - run:
           name: Unit test
           command: |
+            poetry install
             poetry run pytest
+      - run:
+          name: Report
+          command: |
             poetry run codecov
   example-test:
     description: Example test
@@ -104,6 +107,7 @@ commands:
       - run:
           name: Example test
           command: |
+            poetry install
             poetry run python3 examples/server.py > examples/server.log 2>&1 &
             sleep 5
 
@@ -135,4 +139,6 @@ commands:
     steps:
       - run:
           name: Build documents
-          command: poetry run make html
+          command: |
+            poetry install
+            poetry run make html
