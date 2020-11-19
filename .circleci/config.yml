@@ -4,6 +4,10 @@ workflows:
   version: 2
   test-and-deploy:
     jobs:
+      - test-39:
+          filters:
+            tags:
+              only: /.*/
       - test-38:
           filters:
             tags:
