@@ -105,6 +105,7 @@ commands:
       - run:
           name: Example test
           command: |
+            poetry install --extras example
             poetry run python3 examples/server.py > examples/server.log 2>&1 &
             sleep 5
 
