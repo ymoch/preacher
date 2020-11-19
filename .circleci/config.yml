@@ -135,4 +135,6 @@ commands:
     steps:
       - run:
           name: Build documents
-          command: poetry run make html
+          command: |
+            poetry install --extras doc
+            poetry run make html

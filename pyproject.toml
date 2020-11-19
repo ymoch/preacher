@@ -37,12 +37,12 @@ pytest-flake8 = "^1.0.6"
 pytest-mccabe = "^2.0"
 pytest-mypy = "^0.7.0"
 pytest-cov = "^2.10.0"
-sphinx = "^3.2.0"
-sphinx-intl = "^2.0.1"
-sphinx-autobuild = "^2020.9.1"
-toml = "^0.10.1"
 flask = "^1.1.2"
 codecov = "^2.1.10"  # For reporting from CI.
+sphinx = {version = "^3.3.1", extras = ["doc"]}
+sphinx-intl = {version = "^2.0.1", extras = ["doc"]}
+sphinx-autobuild = {version = "^2020.9.1", extras = ["doc"]}
+toml = {version = "^0.10.2", extras = ["doc"]}
 
 [tool.pytest.ini_options]
 testpaths = ["preacher", "tests"]
