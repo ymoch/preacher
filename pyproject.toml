@@ -35,7 +35,7 @@ pytest = "^6.1.1"
 pytest-mock = "^3.3.1"
 pytest-flake8 = "^1.0.6"
 pytest-mccabe = "^2.0"
-pytest-mypy = "^0.7.0"
+pytest-mypy = "^0.8.0"
 pytest-cov = "^2.10.0"
 Flask = {version = "^1.1.2", extras = ["example"]}
 sphinx = {version = "^3.3.1", extras = ["doc"]}
