@@ -97,6 +97,7 @@ commands:
           name: Unit test
           command: |
             poetry run pytest
+            poetry install --extras reporting
             poetry run codecov
   example-test:
     description: Example test

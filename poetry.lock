@@ -711,7 +711,7 @@ testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "06a48b93d137addf65baea8714444ea2e1d32f3817cca2de8d2ee10a16e30618"
+content-hash = "537f8e5c5c53acdb10c34c2b863a516b6168b622be7cec773b6023c0eedbde45"
 
 [metadata.files]
 alabaster = [
