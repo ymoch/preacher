@@ -28,10 +28,8 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - install-poetry
-      - prepare-production-env
+      - prepare
       - bootstrapping-test
-      - prepare-development-env
       - unit-test
       - example-test
       - document-build
@@ -41,10 +39,8 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - install-poetry
-      - prepare-production-env
+      - prepare
       - bootstrapping-test
-      - prepare-development-env
       - unit-test
       - example-test
       - document-build
@@ -63,31 +59,19 @@ jobs:
           command: poetry publish
 
 commands:
-  install-poetry:
-    description: Install Poetry
+  prepare:
+    description: Prepare
     steps:
       - run:
           name: Install Poetry
           command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-  prepare-production-env:
-    description: Prepare production environment
-    steps:
-      - run:
-          name: Install libraries for production
-          command: poetry install --no-dev
-  prepare-development-env:
-    description: Prepare development environment
-    steps:
-      - run:
-          name: Install libraries for development
-          command: |
-            poetry install
   bootstrapping-test:
     description: Bootstrapping test
     steps:
       - run:
           name: Bootstrapping test
           command: |
+            poetry install --no-dev
             poetry run preacher-cli --version
             poetry run preacher-cli --help
   unit-test:
@@ -96,7 +80,11 @@ commands:
       - run:
           name: Unit test
           command: |
+            poetry install
             poetry run pytest
+      - run:
+          name: Report
+          command: |
             poetry install --extras reporting
             poetry run codecov
   example-test:
