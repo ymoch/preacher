@@ -100,7 +100,6 @@ commands:
       - run:
           name: Report
           command: |
-            poetry install --extras reporting
             poetry run codecov
   example-test:
     description: Example test
@@ -108,7 +107,7 @@ commands:
       - run:
           name: Example test
           command: |
-            poetry install --extras example
+            poetry install
             poetry run python3 examples/server.py > examples/server.log 2>&1 &
             sleep 5
 
@@ -141,5 +140,5 @@ commands:
       - run:
           name: Build documents
           command: |
-            poetry install --extras doc
+            poetry install
             poetry run make html

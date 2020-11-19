@@ -37,17 +37,12 @@ pytest-flake8 = "^1.0.6"
 pytest-mccabe = "^2.0"
 pytest-mypy = "^0.8.0"
 pytest-cov = "^2.10.1"
-flask = {version = "^1.1.2", optional = true}
-sphinx = {version = "^3.3.1", optional = true}
-sphinx-intl = {version = "^2.0.1", optional = true}
-sphinx-autobuild = {version = "^2020.9.1", optional = true}
-toml = {version = "^0.10.2", optional = true}
-codecov = {version = "^2.1.10", optional = true}
-
-[tool.poetry.extras]
-example = ["flask"]
-doc = ["sphinx", "sphinx-intl", "sphinx-autobuild", "toml"]
-reporting = ["codecov"]
+flask = "^1.1.2"
+sphinx = "^3.3.1"
+sphinx-intl = "^2.0.1"
+sphinx-autobuild = "^2020.9.1"
+toml = "^0.10.2"
+codecov = "^2.1.10"
 
 [tool.pytest.ini_options]
 testpaths = ["preacher", "tests"]
