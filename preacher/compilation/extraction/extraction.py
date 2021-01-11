@@ -24,6 +24,13 @@ _KEY_CAST_TO = 'cast_to'
 
 class ExtractionCompiler:
 
+    def __init__(self):
+        self._factory_map = {
+            _KEY_JQ: JqExtractor,
+            _KEY_XPATH: XPathExtractor,
+            _KEY_KEY: KeyExtractor,
+        }
+
     def compile(self, obj: object) -> Extractor:
         """`obj` should be a mapping or a string."""
 
@@ -33,6 +40,14 @@ class ExtractionCompiler:
         if not isinstance(obj, Mapping):
             message = f'Must be a map or a string, given {type(obj)}'
             raise CompilationError(message)
+
+        key_candidates = self._factory_map.keys() & obj.keys()
+        key_count = len(key_candidates)
+        if key_count != 1:
+            raise CompilationError(f'Must have only 1 extraction key, but has {key_count}')
+        factory_key = next(iter(key_candidates))
+        factory = self._factory_map[factory_key]
+        query = obj[factory_key]
 
         multiple_obj = obj.get(_KEY_MULTIPLE, False)
         with on_key(_KEY_MULTIPLE):
@@ -44,16 +59,7 @@ class ExtractionCompiler:
             with on_key(_KEY_CAST_TO):
                 cast = self._compile_cast(cast_obj)
 
-        if _KEY_JQ in obj:
-            query = obj[_KEY_JQ]
-            return JqExtractor(query, multiple=multiple, cast=cast)
-        if _KEY_XPATH in obj:
-            query = obj[_KEY_XPATH]
-            return XPathExtractor(query, multiple=multiple, cast=cast)
-        if _KEY_KEY in obj:
-            key = obj[_KEY_KEY]
-            return KeyExtractor(key, multiple=multiple, cast=cast)
-        raise CompilationError('Must have only 1 extraction key, but has 0')
+        return factory(query, multiple=multiple, cast=cast)
 
     @staticmethod
     def _compile_cast(obj: object) -> Callable[[object], Any]:

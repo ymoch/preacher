@@ -12,6 +12,7 @@ PKG = 'preacher.compilation.extraction.extraction'
     (1, '', []),
     ([], '', []),
     ({}, ' has 0', []),
+    ({'jq': '.foo', 'xpath': 'bar'}, 'has 2', []),
     ({'jq': '.xxx', 'multiple': 1}, '', [NamedNode('multiple')]),
     ({'jq': '.foo', 'cast_to': 1}, ' string', [NamedNode('cast_to')]),
     ({'jq': '.foo', 'cast_to': 'xxx'}, ': xxx', [NamedNode('cast_to')]),
@@ -35,11 +36,6 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
         call('.foo', multiple=False, cast=None),
     ),
     (
-        {'jq': '.foo', 'xpath': 'bar', 'key': 'baz'},
-        'JqExtractor',
-        call('.foo', multiple=False, cast=None),
-    ),
-    (
         {'jq': '.bar', 'multiple': False, 'cast_to': 'int'},
         'JqExtractor',
         call('.bar', multiple=False, cast=int),
@@ -51,11 +47,6 @@ def test_when_given_not_a_string(value, expected_message, expected_path):
     ),
     (
         {'xpath': './foo'},
-        'XPathExtractor',
-        call('./foo', multiple=False, cast=None),
-    ),
-    (
-        {'xpath': './foo', 'key': 'bar'},
         'XPathExtractor',
         call('./foo', multiple=False, cast=None),
     ),
