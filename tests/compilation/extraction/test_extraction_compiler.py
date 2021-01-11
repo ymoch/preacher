@@ -17,7 +17,7 @@ PKG = 'preacher.compilation.extraction.extraction'
     ({'jq': '.foo', 'cast_to': 1}, ' string', [NamedNode('cast_to')]),
     ({'jq': '.foo', 'cast_to': 'xxx'}, ': xxx', [NamedNode('cast_to')]),
 ))
-def test_when_given_not_a_string(compiler, value, expected_message, expected_path):
+def test_when_given_not_a_string(value, expected_message, expected_path):
     compiler = ExtractionCompiler()
     add_default_extractions(compiler)
     with raises(CompilationError) as error_info:
