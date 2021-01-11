@@ -25,11 +25,10 @@ _KEY_CAST_TO = 'cast_to'
 class ExtractionCompiler:
 
     def __init__(self):
-        self._factory_map = {
-            _KEY_JQ: JqExtractor,
-            _KEY_XPATH: XPathExtractor,
-            _KEY_KEY: KeyExtractor,
-        }
+        self._factory_map = {}
+
+    def add_factory(self, key: str, factory):
+        self._factory_map[key] = factory
 
     def compile(self, obj: object) -> Extractor:
         """`obj` should be a mapping or a string."""
@@ -71,3 +70,9 @@ class ExtractionCompiler:
             raise CompilationError(f'Invalid value: {key}')
 
         return cast
+
+
+def add_default_extractions(compiler: ExtractionCompiler) -> None:
+    compiler.add_factory(_KEY_JQ, JqExtractor)
+    compiler.add_factory(_KEY_XPATH, XPathExtractor)
+    compiler.add_factory(_KEY_KEY, KeyExtractor)
