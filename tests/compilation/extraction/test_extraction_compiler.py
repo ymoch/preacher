@@ -91,10 +91,10 @@ try:  # When jq exists.
     import jq  # noqa: F401
 
     default_extraction_cases.append(
-        ('.foo', 'JqExtractor', call('/foo', multiple=False, cast=None))
+        ('.foo', 'JqExtractor', call('.foo', multiple=False, cast=None))
     )
     default_extraction_cases.append(
-        ({'jq': '.foo'}, 'JqExtractor', call('/foo', multiple=False, cast=None))
+        ({'jq': '.foo'}, 'JqExtractor', call('.foo', multiple=False, cast=None))
     )
 except ImportError:
     pass
