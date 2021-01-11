@@ -5,7 +5,7 @@ from pytest import fixture, mark, raises
 
 from preacher.core.extraction.analysis import Analyzer
 from preacher.core.extraction.error import ExtractionError
-from preacher.core.extraction.impl.pyjq import JqExtractor
+from preacher.core.extraction.impl.jq_ import JqExtractor
 
 VALUE = json.dumps({
     'foo': 'bar',
