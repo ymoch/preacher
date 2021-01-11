@@ -3,7 +3,7 @@ from unittest.mock import NonCallableMock
 from pytest import fixture
 
 from preacher.core.extraction.analysis import Analyzer
-from preacher.core.extraction.extraction import KeyExtractor
+from preacher.core.extraction.impl.key import KeyExtractor
 
 DICTIONARY = {'int': 1, 'str': 'string'}
 

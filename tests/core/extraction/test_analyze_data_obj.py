@@ -5,7 +5,9 @@ from pytest import raises
 
 from preacher.core.extraction.analysis import analyze_data_obj
 from preacher.core.extraction.error import ExtractionError
-from preacher.core.extraction.extraction import JqExtractor, XPathExtractor, KeyExtractor
+from preacher.core.extraction.impl.key import KeyExtractor
+from preacher.core.extraction.impl.pyjq import JqExtractor
+from preacher.core.extraction.impl.xpath import XPathExtractor
 
 
 @dataclass(frozen=True)
