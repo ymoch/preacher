@@ -23,7 +23,7 @@ class PyJqEngine(JqEngine):
             compiled = self._compile(query)
         except ValueError:
             raise ExtractionError(f'Invalid jq script: {query}')
-        return compiled.input(text)
+        return compiled.input(text=text)
 
     @staticmethod
     def is_available() -> bool:

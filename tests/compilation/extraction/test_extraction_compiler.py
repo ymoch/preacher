@@ -97,7 +97,10 @@ if PyJqEngine.is_available():
     )
 
 
-@mark.parametrize(('value', 'expected_factory', 'expected_call'), default_extraction_cases)
+@mark.parametrize(('value', 'expected_factory', 'expected_call'), [
+    ({'xpath': '/foo'}, 'XPathExtractor', call('/foo', multiple=False, cast=None)),
+    ({'key': 'foo'}, 'KeyExtractor', call('foo', multiple=False, cast=None)),
+])
 def test_add_default_extractions(mocker, value, expected_factory, expected_call):
     factory = mocker.patch(f'{PKG}.{expected_factory}', return_value=sentinel.extraction)
     compiler = ExtractionCompiler()
@@ -105,3 +108,20 @@ def test_add_default_extractions(mocker, value, expected_factory, expected_call)
 
     assert compiler.compile(value) is sentinel.extraction
     factory.assert_has_calls([expected_call])
+
+
+if PyJqEngine.is_available():
+
+    @mark.parametrize(('value', 'expected_factory', 'expected_call'), (
+        ('.foo', 'JqExtractor', call(sentinel.engine, '.foo', multiple=False, cast=None)),
+        ({'jq': '.foo'}, 'JqExtractor', call(sentinel.engine, '.foo', multiple=False, cast=None)),
+    ))
+    def test_add_default_jq_extractions(mocker, value, expected_factory, expected_call):
+        engine_ctor = mocker.patch(f'{PKG}.PyJqEngine', return_value=sentinel.engine)
+        factory = mocker.patch(f'{PKG}.JqExtractor', return_value=sentinel.extraction)
+        compiler = ExtractionCompiler()
+        add_default_extractions(compiler)
+
+        assert compiler.compile(value) is sentinel.extraction
+        engine_ctor.assert_called_once_with()
+        factory.assert_has_calls([expected_call])

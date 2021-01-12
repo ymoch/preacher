@@ -20,7 +20,7 @@ if PyJqEngine.is_available():
         ],
     }, separators=(',', ':'))
 
-    def test_extract_invalid():
+    def test_given_an_invalid_query():
         engine = PyJqEngine()
         with raises(ExtractionError) as error_info:
             engine.iter('xxx', VALUE)
@@ -31,7 +31,7 @@ if PyJqEngine.is_available():
         ('.foo', ['bar']),
         ('.list[].key', ['value1', 'value2', None, 'value3']),
     ])
-    def test_extract_multiple(query, expected):
+    def test_given_a_valid_query(query, expected):
         engine = PyJqEngine()
         assert list(engine.iter(query, VALUE)) == expected
 
