@@ -2,7 +2,7 @@ from typing import Optional
 
 from pluggy import PluginManager
 
-from preacher.compilation.extraction import ExtractionCompiler
+from preacher.compilation.extraction import create_extraction_compiler
 from preacher.plugin.manager import get_plugin_manager
 from .description import DescriptionCompiler
 from .matcher import MatcherFactoryCompiler
@@ -33,8 +33,8 @@ def create_description_compiler(
     plugin_manager: Optional[PluginManager] = None,
 ) -> DescriptionCompiler:
     predicate = predicate or create_predicate_compiler(plugin_manager=plugin_manager)
+    extraction = create_extraction_compiler(plugin_manager=plugin_manager)
 
-    extraction = ExtractionCompiler()
     return DescriptionCompiler(extraction=extraction, predicate=predicate)
 
 
