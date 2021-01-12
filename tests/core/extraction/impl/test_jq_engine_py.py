@@ -3,7 +3,7 @@ import json
 from pytest import mark, raises
 
 from preacher.core.extraction import ExtractionError
-from preacher.core.extraction.impl.jq_ import PyJqEngine
+from preacher.core.extraction.impl.jq_engine import PyJqEngine
 
 VALUE = json.dumps({
     'foo': 'bar',

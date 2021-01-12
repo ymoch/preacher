@@ -5,7 +5,7 @@ from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.extraction.extraction import ExtractionCompiler, add_default_extractions
-from preacher.core.extraction.impl.jq_ import PyJqEngine
+from preacher.core.extraction.impl.jq_engine import PyJqEngine
 
 PKG = 'preacher.compilation.extraction.extraction'
 

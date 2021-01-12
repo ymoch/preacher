@@ -8,7 +8,8 @@ from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_bool, ensure_str
 from preacher.core.extraction.extraction import Extractor
 from preacher.core.extraction.impl.key import KeyExtractor
-from preacher.core.extraction.impl.jq_ import JqExtractor, PyJqEngine
+from preacher.core.extraction.impl.jq_ import JqExtractor
+from preacher.core.extraction.impl.jq_engine import PyJqEngine
 from preacher.core.extraction.impl.xpath import XPathExtractor
 
 _CAST_FUNC_MAP = {
