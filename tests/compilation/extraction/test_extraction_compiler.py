@@ -5,6 +5,7 @@ from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.extraction.extraction import ExtractionCompiler, add_default_extractions
+from preacher.core.extraction.impl.jq_ import PyJqEngine
 
 PKG = 'preacher.compilation.extraction.extraction'
 
@@ -87,17 +88,13 @@ default_extraction_cases: List[Tuple[object, str, tuple]] = [
     ({'xpath': '/foo'}, 'XPathExtractor', call('/foo', multiple=False, cast=None)),
     ({'key': 'foo'}, 'KeyExtractor', call('foo', multiple=False, cast=None)),
 ]
-try:  # When jq exists.
-    import jq  # noqa: F401
-
+if PyJqEngine.is_available():
     default_extraction_cases.append(
         ('.foo', 'JqExtractor', call('.foo', multiple=False, cast=None))
     )
     default_extraction_cases.append(
         ({'jq': '.foo'}, 'JqExtractor', call('.foo', multiple=False, cast=None))
     )
-except ImportError:
-    pass
 
 
 @mark.parametrize(('value', 'expected_factory', 'expected_call'), default_extraction_cases)

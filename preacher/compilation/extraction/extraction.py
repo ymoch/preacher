@@ -1,13 +1,14 @@
 """Extraction compilation."""
 
 from collections.abc import Mapping
+from functools import partial
 from typing import Any, Callable, Optional
 
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_bool, ensure_str
 from preacher.core.extraction.extraction import Extractor
 from preacher.core.extraction.impl.key import KeyExtractor
-from preacher.core.extraction.impl.jq_ import JqExtractor
+from preacher.core.extraction.impl.jq_ import JqExtractor, PyJqEngine
 from preacher.core.extraction.impl.xpath import XPathExtractor
 
 _CAST_FUNC_MAP = {
@@ -73,6 +74,7 @@ class ExtractionCompiler:
 
 
 def add_default_extractions(compiler: ExtractionCompiler) -> None:
-    compiler.add_factory(_KEY_JQ, JqExtractor)
+    if PyJqEngine.is_available():
+        compiler.add_factory(_KEY_JQ, partial(JqExtractor, PyJqEngine()))
     compiler.add_factory(_KEY_XPATH, XPathExtractor)
     compiler.add_factory(_KEY_KEY, KeyExtractor)
