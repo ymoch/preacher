@@ -7,7 +7,9 @@ when:
       contain_string: localhost
   - describe: .starts
     should:
-      be_after: 2019-12-07T00:00:00Z
+      - be_after: 2019-12-07T00:00:00Z
+      - be_after: 00:00+09:00
+      - be_before: 23:59:59.999999+09:00
 
 cases:
   - label: Request succeeds

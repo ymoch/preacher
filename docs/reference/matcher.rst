@@ -59,7 +59,10 @@ A naive datetime value is regarded as a UTC datetime.
 A "relative datetime" is given as a string value in the particular format.
 
 - When given ``now``, then uses the datetime just when the request starts.
-- When given an offset, then uses the datetime before or after the request starts.
+- When given time such like ``12:34+0100``,
+  then uses the datetime which is the combination of
+  date that the requests starts and the given time.
+- When given an offset, then uses the datetime that the request starts.
     - Days, hours, minutes and seconds offsets are available.
     - When given a positive offset like ``1 day`` or ``+2 hours``,
       then uses the future datetime.

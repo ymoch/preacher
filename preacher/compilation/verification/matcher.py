@@ -1,18 +1,18 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Callable, Dict, Iterable, Tuple, Union
 
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
-from preacher.compilation.datetime import compile_timedelta
+from preacher.compilation.datetime import compile_time, compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
-from preacher.core.datetime import DatetimeWithFormat
-from preacher.core.value import Value, StaticValue, RelativeDatetime
+from preacher.core.datetime import DatetimeWithFormat, system_timezone
+from preacher.core.value import Value, StaticValue, RelativeDatetime, OnlyTimeDatetime
 from preacher.core.verification.hamcrest import before, after
 from preacher.core.verification.matcher import MatcherFactory
 from preacher.core.verification.matcher import MatcherFunc
@@ -189,11 +189,22 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_recursive(('any_of',), hamcrest.any_of)
 
 
-def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
-    if isinstance(value, datetime):
-        if not value.tzinfo:
-            value = value.replace(tzinfo=timezone.utc)
-        return StaticValue(DatetimeWithFormat(value))
+def _compile_datetime_value(obj: object) -> Value[DatetimeWithFormat]:
+    if isinstance(obj, datetime):
+        if not obj.tzinfo:
+            obj = obj.replace(tzinfo=system_timezone())
+        return StaticValue(DatetimeWithFormat(obj))
 
-    delta = compile_timedelta(value)
-    return RelativeDatetime(delta)
+    try:
+        time = compile_time(obj)
+        return OnlyTimeDatetime(time)
+    except CompilationError:
+        pass  # Try to compile value as another format.
+
+    try:
+        delta = compile_timedelta(obj)
+        return RelativeDatetime(delta)
+    except CompilationError:
+        pass  # Try to compile value as another format.
+
+    raise CompilationError(f'Invalid format: {obj}')

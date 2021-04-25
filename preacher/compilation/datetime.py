@@ -1,9 +1,9 @@
 """Date and time compilation."""
 
 import re
-from datetime import timedelta
+from datetime import time, timedelta
 
-from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat
+from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat, system_timezone
 from .error import CompilationError
 from .util.type import ensure_str, ensure_optional_str
 
@@ -21,6 +21,24 @@ def compile_datetime_format(obj: object) -> DatetimeFormat:
     if format_string is None or format_string.lower() == 'iso8601':
         return ISO8601
     return StrftimeFormat(format_string)
+
+
+def compile_time(obj: object) -> time:
+    """
+    Args:
+        obj: The compiled value, which should be a string.
+    Raises:
+        CompilationError: When compilation fails.
+    """
+    obj = ensure_str(obj)
+    try:
+        compiled = time.fromisoformat(obj)
+    except ValueError:
+        raise CompilationError(f'Invalid time format: {obj}')
+
+    if not compiled.tzinfo:
+        compiled = compiled.replace(tzinfo=system_timezone())
+    return compiled
 
 
 def compile_timedelta(obj: object) -> timedelta:
