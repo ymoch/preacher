@@ -70,10 +70,12 @@ class DatetimeWithFormat:
 
 
 def now() -> datetime:
-    return datetime.now(_system_timezone())
+    """Returns the current datetime in the system timezone."""
+    return datetime.now(system_timezone())
 
 
-def _system_timezone() -> timezone:
+def system_timezone() -> timezone:
+    """Returns the system timezone."""
     localtime = time.localtime()
     return timezone(
         offset=timedelta(seconds=localtime.tm_gmtoff),

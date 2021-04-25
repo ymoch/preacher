@@ -4,7 +4,7 @@ Value interpretation.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from typing import Generic, Optional, TypeVar
 
 from preacher.core.datetime import DatetimeWithFormat, DatetimeFormat, ISO8601, now
@@ -33,6 +33,17 @@ class StaticValue(Value[T]):
         return self._value
 
 
+class OnlyTimeDatetime(Value[DatetimeWithFormat]):
+
+    def __init__(self, tm: time, fmt: Optional[DatetimeFormat] = None):
+        self._tm = tm
+        self._fmt = fmt or ISO8601
+
+    def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
+        origin = _select_origin(context)
+        return DatetimeWithFormat(datetime.combine(origin.date(), self._tm), self._fmt)
+
+
 class RelativeDatetime(Value[DatetimeWithFormat]):
 
     def __init__(
@@ -43,12 +54,12 @@ class RelativeDatetime(Value[DatetimeWithFormat]):
         self._delta = delta or timedelta()
         self._fmt = fmt or ISO8601
 
-    def resolve(
-        self,
-        context: Optional[ValueContext] = None,
-    ) -> DatetimeWithFormat:
-        if not context:
-            context = ValueContext()
-
-        origin = context.origin_datetime or now()
+    def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
+        origin = _select_origin(context)
         return DatetimeWithFormat(origin + self._delta, self._fmt)
+
+
+def _select_origin(context: Optional[ValueContext]) -> datetime:
+    if not context:
+        context = ValueContext()
+    return context.origin_datetime or now()
