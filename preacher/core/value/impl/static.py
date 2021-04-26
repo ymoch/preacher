@@ -1,6 +1,8 @@
-from typing import Type, Optional
+from typing import Optional, Type, TypeVar
 
-from preacher.core.value import Value, T, ValueContext
+from preacher.core.value import Value, ValueContext
+
+T = TypeVar('T')
 
 
 class StaticValue(Value[T]):
