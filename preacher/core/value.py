@@ -5,7 +5,7 @@ Value interpretation.
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta
-from typing import Generic, Optional, TypeVar
+from typing import Generic, Optional, TypeVar, Type
 
 from preacher.core.datetime import DatetimeWithFormat, DatetimeFormat, ISO8601, now
 
@@ -19,6 +19,11 @@ class ValueContext:
 
 class Value(ABC, Generic[T]):
 
+    @property
+    @abstractmethod
+    def type(self) -> Type[T]:
+        raise NotImplementedError()
+
     @abstractmethod
     def resolve(self, context: Optional[ValueContext] = None) -> T:
         raise NotImplementedError()
@@ -29,6 +34,10 @@ class StaticValue(Value[T]):
     def __init__(self, value: T):
         self._value = value
 
+    @property
+    def type(self) -> Type[T]:
+        return type(self._value)
+
     def resolve(self, context: Optional[ValueContext] = None) -> T:
         return self._value
 
@@ -38,6 +47,10 @@ class OnlyTimeDatetime(Value[DatetimeWithFormat]):
     def __init__(self, tm: time, fmt: Optional[DatetimeFormat] = None):
         self._tm = tm
         self._fmt = fmt or ISO8601
+
+    @property
+    def type(self) -> Type[DatetimeWithFormat]:
+        return DatetimeWithFormat
 
     def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
         origin = _select_origin(context)
@@ -53,6 +66,10 @@ class RelativeDatetime(Value[DatetimeWithFormat]):
     ):
         self._delta = delta or timedelta()
         self._fmt = fmt or ISO8601
+
+    @property
+    def type(self) -> Type[DatetimeWithFormat]:
+        return DatetimeWithFormat
 
     def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
         origin = _select_origin(context)
