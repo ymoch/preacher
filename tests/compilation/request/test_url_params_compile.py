@@ -5,7 +5,7 @@ from pytest import raises, mark
 from preacher.compilation.argument import Argument
 from preacher.compilation.error import CompilationError, IndexedNode, NamedNode
 from preacher.compilation.request.url_param import compile_url_params
-from preacher.core.value import RelativeDatetime
+from preacher.core.value.impl.datetime import RelativeDatetime
 
 DATE = date(2019, 12, 31)
 DATETIME = datetime.fromisoformat('2020-04-01T01:23:45+09:00')

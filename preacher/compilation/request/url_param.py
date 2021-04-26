@@ -7,7 +7,7 @@ from preacher.compilation.argument import Arguments, inject_arguments
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.functional import map_compile
 from preacher.core.request import UrlParams, UrlParam, UrlParamValue
-from preacher.core.value import RelativeDatetime
+from preacher.core.value.impl.datetime import RelativeDatetime
 
 
 def compile_url_param_value(value: object) -> UrlParamValue:

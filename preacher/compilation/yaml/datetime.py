@@ -5,7 +5,7 @@ from yaml import BaseLoader, MappingNode, ScalarNode, Node
 
 from preacher.compilation.datetime import compile_timedelta, compile_datetime_format
 from preacher.core.datetime import DatetimeFormat
-from preacher.core.value import RelativeDatetime
+from preacher.core.value.impl.datetime import RelativeDatetime
 from .error import YamlError, on_node
 
 _KEY_DELTA = 'delta'
