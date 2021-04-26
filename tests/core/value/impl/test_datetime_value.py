@@ -1,40 +1,10 @@
-from datetime import datetime, time, timedelta, timezone
-from typing import Optional, Type
+from datetime import datetime, timezone, time, timedelta
 
-from pytest import raises
+from preacher.core.datetime import DatetimeWithFormat, StrftimeFormat
+from preacher.core.value import ValueContext
+from preacher.core.value.impl.datetime import OnlyTimeDatetime, RelativeDatetime
 
-from preacher.core.datetime import StrftimeFormat, DatetimeWithFormat
-from preacher.core.value import (
-    Value,
-    ValueContext,
-    OnlyTimeDatetime,
-    RelativeDatetime,
-    StaticValue,
-)
-
-PKG = 'preacher.core.value'
-
-
-def test_incomplete_value():
-    class IncompleteValue(Value[object]):
-        @property
-        def type(self) -> Type[object]:
-            return super().type
-
-        def resolve(self, context: Optional[ValueContext] = None) -> object:
-            return super().resolve(context)
-
-    value = IncompleteValue()
-    with raises(NotImplementedError):
-        assert value.type == object
-    with raises(NotImplementedError):
-        value.resolve(ValueContext())
-
-
-def test_static_value():
-    value = StaticValue(1)
-    assert issubclass(value.type, int)
-    assert value.resolve() == 1
+PKG = 'preacher.core.value.impl.datetime'
 
 
 def test_only_time_datetime_value_default(mocker):

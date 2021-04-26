@@ -1,45 +1,8 @@
-"""
-Value interpretation.
-"""
-
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from datetime import datetime, time, timedelta
-from typing import Generic, Optional, TypeVar, Type
+from datetime import time, datetime, timedelta
+from typing import Optional, Type
 
 from preacher.core.datetime import DatetimeWithFormat, DatetimeFormat, ISO8601, now
-
-T = TypeVar('T')
-
-
-@dataclass(frozen=True)
-class ValueContext:
-    origin_datetime: Optional[datetime] = None
-
-
-class Value(ABC, Generic[T]):
-
-    @property
-    @abstractmethod
-    def type(self) -> Type[T]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def resolve(self, context: Optional[ValueContext] = None) -> T:
-        raise NotImplementedError()
-
-
-class StaticValue(Value[T]):
-
-    def __init__(self, value: T):
-        self._value = value
-
-    @property
-    def type(self) -> Type[T]:
-        return type(self._value)
-
-    def resolve(self, context: Optional[ValueContext] = None) -> T:
-        return self._value
+from preacher.core.value import Value, ValueContext
 
 
 class OnlyTimeDatetime(Value[DatetimeWithFormat]):
