@@ -20,7 +20,7 @@ class OnlyTimeDatetime(Value[DatetimeWithFormat]):
         return DatetimeWithFormat(datetime.combine(origin.date(), self._tm), self._fmt)
 
 
-class RelativeDatetime(Value[DatetimeWithFormat]):
+class RelativeDatetimeWithFormat(Value[DatetimeWithFormat]):
 
     def __init__(
         self,

@@ -2,7 +2,7 @@ from datetime import datetime, timezone, time, timedelta
 
 from preacher.core.datetime import DatetimeWithFormat, StrftimeFormat
 from preacher.core.value import ValueContext
-from preacher.core.value.impl.datetime import OnlyTimeDatetime, RelativeDatetime
+from preacher.core.value.impl.datetime import OnlyTimeDatetime, RelativeDatetimeWithFormat
 
 PKG = 'preacher.core.value.impl.datetime'
 
@@ -38,7 +38,7 @@ def test_relative_datetime_value_default(mocker):
     mocker.patch(f'{PKG}.now', return_value=now)
 
     delta = timedelta(seconds=1)
-    value = RelativeDatetime(delta=delta)
+    value = RelativeDatetimeWithFormat(delta=delta)
     assert issubclass(value.type, DatetimeWithFormat)
 
     resolved = value.resolve()
@@ -50,7 +50,7 @@ def test_relative_datetime_value_contextual():
     now = datetime(2020, 12, 31, 1, 23, 45, 123456, tzinfo=timezone.utc)
 
     delta = timedelta(minutes=-1)
-    value = RelativeDatetime(delta, fmt=StrftimeFormat('%H:%M:%S'))
+    value = RelativeDatetimeWithFormat(delta, fmt=StrftimeFormat('%H:%M:%S'))
     assert issubclass(value.type, DatetimeWithFormat)
 
     resolved = value.resolve(ValueContext(origin_datetime=now))
