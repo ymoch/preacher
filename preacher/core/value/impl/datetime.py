@@ -20,6 +20,20 @@ class OnlyTimeDatetime(Value[DatetimeWithFormat]):
         return DatetimeWithFormat(datetime.combine(origin.date(), self._tm), self._fmt)
 
 
+class RelativeDatetime(Value[datetime]):
+
+    def __init__(self, delta: Optional[timedelta] = None):
+        self._delta = delta or timedelta()
+
+    @property
+    def type(self) -> Type[datetime]:
+        return datetime
+
+    def resolve(self, context: Optional[ValueContext] = None) -> datetime:
+        origin = _select_origin(context)
+        return origin + self._delta
+
+
 class RelativeDatetimeWithFormat(Value[DatetimeWithFormat]):
 
     def __init__(
@@ -27,7 +41,7 @@ class RelativeDatetimeWithFormat(Value[DatetimeWithFormat]):
         delta: Optional[timedelta] = None,
         fmt: Optional[DatetimeFormat] = None,
     ):
-        self._delta = delta or timedelta()
+        self._value = RelativeDatetime(delta)
         self._fmt = fmt or ISO8601
 
     @property
@@ -35,8 +49,8 @@ class RelativeDatetimeWithFormat(Value[DatetimeWithFormat]):
         return DatetimeWithFormat
 
     def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
-        origin = _select_origin(context)
-        return DatetimeWithFormat(origin + self._delta, self._fmt)
+        resolved = self._value.resolve(context)
+        return DatetimeWithFormat(resolved, self._fmt)
 
 
 def _select_origin(context: Optional[ValueContext]) -> datetime:
