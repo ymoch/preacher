@@ -201,7 +201,7 @@ def _compile_datetime_value(obj: object) -> Value[DatetimeWithFormat]:
 
     try:
         time = compile_time(obj)
-        return OnlyTimeDatetime(time)
+        return DatetimeValueWithFormat(OnlyTimeDatetime(time))
     except CompilationError:
         pass  # Try to compile value as another format.
 

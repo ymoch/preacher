@@ -5,19 +5,18 @@ from preacher.core.datetime import DatetimeWithFormat, DatetimeFormat, ISO8601, 
 from preacher.core.value import Value, ValueContext
 
 
-class OnlyTimeDatetime(Value[DatetimeWithFormat]):
+class OnlyTimeDatetime(Value[datetime]):
 
-    def __init__(self, tm: time, fmt: Optional[DatetimeFormat] = None):
+    def __init__(self, tm: time):
         self._tm = tm
-        self._fmt = fmt or ISO8601
 
     @property
-    def type(self) -> Type[DatetimeWithFormat]:
-        return DatetimeWithFormat
+    def type(self) -> Type[datetime]:
+        return datetime
 
-    def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
+    def resolve(self, context: Optional[ValueContext] = None) -> datetime:
         origin = _select_origin(context)
-        return DatetimeWithFormat(datetime.combine(origin.date(), self._tm), self._fmt)
+        return datetime.combine(origin.date(), self._tm)
 
 
 class RelativeDatetime(Value[datetime]):
@@ -36,8 +35,8 @@ class RelativeDatetime(Value[datetime]):
 
 class DatetimeValueWithFormat(Value[DatetimeWithFormat]):
 
-    def __init__(self, value: Value[datetime], fmt: Optional[DatetimeFormat] = None):
-        self._value = value
+    def __init__(self, original: Value[datetime], fmt: Optional[DatetimeFormat] = None):
+        self._original = original
         self._fmt = fmt or ISO8601
 
     @property
@@ -45,7 +44,7 @@ class DatetimeValueWithFormat(Value[DatetimeWithFormat]):
         return DatetimeWithFormat
 
     def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
-        resolved = self._value.resolve(context)
+        resolved = self._original.resolve(context)
         return DatetimeWithFormat(resolved, self._fmt)
 
 
