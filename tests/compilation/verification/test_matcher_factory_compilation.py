@@ -144,6 +144,7 @@ def test_matcher_matchers(compiler, obj, item, expected):
     {'be_after': 'XYZ'},
 ])
 def test_matcher_compilation_failure(compiler, obj):
+    # TODO delegate tests.
     with raises(CompilationError):
         compiler.compile(obj)
 
@@ -175,10 +176,12 @@ def test_matcher_matching_failure(compiler, obj, item):
     ({'be_after': NOW}, NOW, after),
 ])
 def test_verification_with_datetime(compiler, mocker, obj, expected_value, expected_func):
+    # TODO delegate tests.
+    base_pkg = 'preacher.compilation.value.datetime'
     matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory', return_value=sentinel.matcher)
-    value_ctor = mocker.patch(f'{PKG}.StaticValue', return_value=sentinel.value)
-    datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat', return_value=sentinel.datetime)
-    mocker.patch(f'{PKG}.system_timezone', return_value=timezone.utc)
+    value_ctor = mocker.patch(f'{base_pkg}.StaticValue', return_value=sentinel.value)
+    datetime_ctor = mocker.patch(f'{base_pkg}.DatetimeWithFormat', return_value=sentinel.datetime)
+    mocker.patch(f'{base_pkg}.system_timezone', return_value=timezone.utc)
 
     actual = compiler.compile(obj)
     assert actual == sentinel.matcher
@@ -193,9 +196,11 @@ def test_verification_with_datetime(compiler, mocker, obj, expected_value, expec
     ({'be_after': '01:02+09:00'}, time(1, 2, tzinfo=timezone(timedelta(hours=9), 'JST')), after),
 ])
 def test_verification_with_time(compiler, mocker, obj, expected_value, expected_func):
+    # TODO delegate tests.
+    base_pkg = 'preacher.compilation.value.datetime'
     matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory', return_value=sentinel.matcher)
-    dt_ctor = mocker.patch(f'{PKG}.OnlyTimeDatetime', return_value=sentinel.dt)
-    value_ctor = mocker.patch(f'{PKG}.DatetimeValueWithFormat', return_value=sentinel.value)
+    dt_ctor = mocker.patch(f'{base_pkg}.OnlyTimeDatetime', return_value=sentinel.dt)
+    value_ctor = mocker.patch(f'{base_pkg}.DatetimeValueWithFormat', return_value=sentinel.value)
     mocker.patch('preacher.compilation.datetime.system_timezone', return_value=timezone.utc)
 
     actual = compiler.compile(obj)
@@ -211,10 +216,12 @@ def test_verification_with_time(compiler, mocker, obj, expected_value, expected_
     ({'be_after': '1 second'}, timedelta(seconds=1), after),
 ])
 def test_verification_with_timedelta(compiler, mocker, obj, expected_value, expected_func):
+    # TODO delegate tests.
+    base_pkg = 'preacher.compilation.value.datetime'
     matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory', return_value=sentinel.matcher)
-    dt_ctor = mocker.patch(f'{PKG}.RelativeDatetime', return_value=sentinel.dt)
-    value_ctor = mocker.patch(f'{PKG}.DatetimeValueWithFormat', return_value=sentinel.value)
-    mocker.patch(f'{PKG}.system_timezone', return_value=timezone.utc)
+    dt_ctor = mocker.patch(f'{base_pkg}.RelativeDatetime', return_value=sentinel.dt)
+    value_ctor = mocker.patch(f'{base_pkg}.DatetimeValueWithFormat', return_value=sentinel.value)
+    mocker.patch(f'{base_pkg}.system_timezone', return_value=timezone.utc)
 
     actual = compiler.compile(obj)
     assert actual == sentinel.matcher

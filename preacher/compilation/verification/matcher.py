@@ -1,21 +1,16 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from datetime import datetime
 from typing import Callable, Dict, Iterable, Tuple, Union
 
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
-from preacher.compilation.datetime import compile_time, compile_timedelta
+from preacher.compilation.value.datetime import compile_datetime_value_with_format
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
-from preacher.core.datetime import DatetimeWithFormat, system_timezone
 from preacher.core.value import Value
-from preacher.core.value.impl.datetime import DatetimeValueWithFormat
-from preacher.core.value.impl.datetime import OnlyTimeDatetime
-from preacher.core.value.impl.datetime import RelativeDatetime
 from preacher.core.value.impl.static import StaticValue
 from preacher.core.verification.hamcrest import before, after
 from preacher.core.verification.matcher import MatcherFactory
@@ -141,7 +136,7 @@ class MatcherFactoryCompiler:
     @staticmethod
     def _ensure_keys(keys: Union[str, Iterable[str]]) -> Iterable[str]:
         if isinstance(keys, str):
-            return (keys,)
+            return keys,
         return keys
 
 
@@ -180,8 +175,8 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_recursive(('contain_in_any_order',), hamcrest.contains_inanyorder)
 
     # For datetime.
-    compiler.add_taking_value(('be_before',), before, _compile_datetime_value)
-    compiler.add_taking_value(('be_after',), after, _compile_datetime_value)
+    compiler.add_taking_value(('be_before',), before, compile_datetime_value_with_format)
+    compiler.add_taking_value(('be_after',), after, compile_datetime_value_with_format)
 
     # For collections.
     compiler.add_static(('be_empty',), StaticMatcherFactory(hamcrest.empty()))
@@ -191,24 +186,3 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_recursive(('not',), hamcrest.not_, multiple=False)
     compiler.add_recursive(('all_of',), hamcrest.all_of)
     compiler.add_recursive(('any_of',), hamcrest.any_of)
-
-
-def _compile_datetime_value(obj: object) -> Value[DatetimeWithFormat]:
-    if isinstance(obj, datetime):
-        if not obj.tzinfo:
-            obj = obj.replace(tzinfo=system_timezone())
-        return StaticValue(DatetimeWithFormat(obj))
-
-    try:
-        time = compile_time(obj)
-        return DatetimeValueWithFormat(OnlyTimeDatetime(time))
-    except CompilationError:
-        pass  # Try to compile value as another format.
-
-    try:
-        delta = compile_timedelta(obj)
-        return DatetimeValueWithFormat(RelativeDatetime(delta))
-    except CompilationError:
-        pass  # Try to compile value as another format.
-
-    raise CompilationError(f'Invalid format: {obj}')
