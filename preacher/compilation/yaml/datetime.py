@@ -5,14 +5,14 @@ from yaml import BaseLoader, MappingNode, ScalarNode, Node
 
 from preacher.compilation.datetime import compile_timedelta, compile_datetime_format
 from preacher.core.datetime import DatetimeFormat
-from preacher.core.value.impl.datetime import RelativeDatetimeWithFormat
+from preacher.core.value.impl.datetime import DatetimeValueWithFormat, RelativeDatetime
 from .error import YamlError, on_node
 
 _KEY_DELTA = 'delta'
 _KEY_FORMAT = 'format'
 
 
-def construct_relative_datetime(loader: BaseLoader, node: Node) -> RelativeDatetimeWithFormat:
+def construct_relative_datetime(loader: BaseLoader, node: Node) -> DatetimeValueWithFormat:
     if isinstance(node, ScalarNode):
         return _construct_relative_datetime_of_scalar(loader, node)
     elif isinstance(node, MappingNode):
@@ -25,17 +25,17 @@ def construct_relative_datetime(loader: BaseLoader, node: Node) -> RelativeDatet
 def _construct_relative_datetime_of_scalar(
     loader: BaseLoader,
     node: ScalarNode,
-) -> RelativeDatetimeWithFormat:
+) -> DatetimeValueWithFormat:
     obj = loader.construct_scalar(node)
     with on_node(node):
         delta = compile_timedelta(obj)
-    return RelativeDatetimeWithFormat(delta)
+    return DatetimeValueWithFormat(RelativeDatetime(delta))
 
 
 def _construct_relative_datetime_of_mapping(
     loader: BaseLoader,
     node: MappingNode,
-) -> RelativeDatetimeWithFormat:
+) -> DatetimeValueWithFormat:
     delta: Optional[timedelta] = None
     format: Optional[DatetimeFormat] = None
 
@@ -51,4 +51,4 @@ def _construct_relative_datetime_of_mapping(
                 format = compile_datetime_format(obj)
             continue
 
-    return RelativeDatetimeWithFormat(delta, format)
+    return DatetimeValueWithFormat(RelativeDatetime(delta), format)

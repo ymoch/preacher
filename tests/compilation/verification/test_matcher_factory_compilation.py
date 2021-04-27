@@ -210,11 +210,13 @@ def test_verification_with_time(compiler, mocker, obj, expected_value, expected_
 ])
 def test_verification_with_timedelta(compiler, mocker, obj, expected_value, expected_func):
     matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory', return_value=sentinel.matcher)
-    value_ctor = mocker.patch(f'{PKG}.RelativeDatetimeWithFormat', return_value=sentinel.value)
+    dt_ctor = mocker.patch(f'{PKG}.RelativeDatetime', return_value=sentinel.dt)
+    value_ctor = mocker.patch(f'{PKG}.DatetimeValueWithFormat', return_value=sentinel.value)
     mocker.patch(f'{PKG}.system_timezone', return_value=timezone.utc)
 
     actual = compiler.compile(obj)
     assert actual == sentinel.matcher
 
-    value_ctor.assert_called_once_with(expected_value)
+    dt_ctor.assert_called_once_with(expected_value)
+    value_ctor.assert_called_once_with(sentinel.dt)
     matcher_ctor.assert_called_once_with(expected_func, sentinel.value)

@@ -13,7 +13,9 @@ from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
 from preacher.core.datetime import DatetimeWithFormat, system_timezone
 from preacher.core.value import Value
-from preacher.core.value.impl.datetime import OnlyTimeDatetime, RelativeDatetimeWithFormat
+from preacher.core.value.impl.datetime import DatetimeValueWithFormat
+from preacher.core.value.impl.datetime import OnlyTimeDatetime
+from preacher.core.value.impl.datetime import RelativeDatetime
 from preacher.core.value.impl.static import StaticValue
 from preacher.core.verification.hamcrest import before, after
 from preacher.core.verification.matcher import MatcherFactory
@@ -205,7 +207,7 @@ def _compile_datetime_value(obj: object) -> Value[DatetimeWithFormat]:
 
     try:
         delta = compile_timedelta(obj)
-        return RelativeDatetimeWithFormat(delta)
+        return DatetimeValueWithFormat(RelativeDatetime(delta))
     except CompilationError:
         pass  # Try to compile value as another format.
 

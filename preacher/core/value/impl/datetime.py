@@ -34,14 +34,10 @@ class RelativeDatetime(Value[datetime]):
         return origin + self._delta
 
 
-class RelativeDatetimeWithFormat(Value[DatetimeWithFormat]):
+class DatetimeValueWithFormat(Value[DatetimeWithFormat]):
 
-    def __init__(
-        self,
-        delta: Optional[timedelta] = None,
-        fmt: Optional[DatetimeFormat] = None,
-    ):
-        self._value = RelativeDatetime(delta)
+    def __init__(self, value: Value[datetime], fmt: Optional[DatetimeFormat] = None):
+        self._value = value
         self._fmt = fmt or ISO8601
 
     @property
