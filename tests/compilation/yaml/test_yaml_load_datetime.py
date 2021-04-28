@@ -5,7 +5,7 @@ from pytest import mark, raises
 
 from preacher.compilation.yaml import YamlError, load
 from preacher.core.value import ValueContext
-from preacher.core.value.impl.datetime import RelativeDatetime
+from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 
 
 def test_given_datetime_that_is_offset_naive():
@@ -41,7 +41,7 @@ def test_given_invalid_relative_datetime(content, expected_message):
 
 def test_given_an_empty_relative_datetime():
     actual = load(StringIO('!relative_datetime'))
-    assert isinstance(actual, RelativeDatetime)
+    assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime.now()
     resolved = actual.resolve(ValueContext(origin_datetime=now))
@@ -50,7 +50,7 @@ def test_given_an_empty_relative_datetime():
 
 def test_given_a_valid_string_relative_datetime():
     actual = load(StringIO('!relative_datetime -1 hour'))
-    assert isinstance(actual, RelativeDatetime)
+    assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime.now()
     resolved = actual.resolve(ValueContext(origin_datetime=now))
@@ -59,7 +59,7 @@ def test_given_a_valid_string_relative_datetime():
 
 def test_given_an_empty_mapping_relative_datetime():
     actual = load(StringIO('!relative_datetime {}'))
-    assert isinstance(actual, RelativeDatetime)
+    assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime.now()
     resolved = actual.resolve(ValueContext(origin_datetime=now))
@@ -74,7 +74,7 @@ def test_given_a_filled_mapping_relative_datetime():
         '  foo: bar',  # Invalid one will be ignored.
     ])
     actual = load(StringIO(content))
-    assert isinstance(actual, RelativeDatetime)
+    assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime(2020, 1, 23, 12, 34, 56)
     resolved = actual.resolve(ValueContext(origin_datetime=now))
