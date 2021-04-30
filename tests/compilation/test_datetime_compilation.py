@@ -33,6 +33,7 @@ def test_compile_datetime_format_strftime(mocker, obj):
 
 @mark.parametrize('obj', (None, 1, [], {}, 'invalid', 'now', '1', '1:2', '1:2:3'))
 def test_compile_time_given_an_invalid_format(obj):
+    # HACK delegate tests.
     with raises(CompilationError):
         compile_time(obj)
 
@@ -47,7 +48,8 @@ def test_compile_time_given_an_invalid_format(obj):
     ('01:02:03.012345', time(hour=1, minute=2, second=3, microsecond=12345, tzinfo=timezone.utc)),
 ))
 def test_compile_time(mocker, obj, expected):
-    mocker.patch(f'{PKG}.system_timezone', return_value=timezone.utc)
+    # HACK delegate tests.
+    mocker.patch('preacher.core.datetime.system_timezone', return_value=timezone.utc)
     assert compile_time(obj) == expected
 
 

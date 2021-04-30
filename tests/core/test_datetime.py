@@ -6,6 +6,8 @@ from pytest import mark, raises
 
 from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat, now
 
+PKG = 'preacher.core.datetime'
+
 
 def test_date_time_format_interface():
     class _Incomplete(DatetimeFormat):
@@ -93,7 +95,7 @@ def test_strftime_parse_datetime(format_string, value, expected):
 
 def test_now_jst(mocker):
     localtime = NonCallableMock(spec=time.struct_time, tm_zone='JST', tm_gmtoff=32400)
-    mocker.patch('time.localtime', return_value=localtime)
+    mocker.patch(f'{PKG}.localtime', return_value=localtime)
 
     current = now()
     assert current.tzname() == 'JST'
@@ -102,7 +104,7 @@ def test_now_jst(mocker):
 
 def test_now_pdt(mocker):
     localtime = NonCallableMock(spec=time.struct_time, tm_zone='PDT', tm_gmtoff=-28800)
-    mocker.patch('time.localtime', return_value=localtime)
+    mocker.patch(f'{PKG}.localtime', return_value=localtime)
 
     current = now()
     assert current.tzname() == 'PDT'

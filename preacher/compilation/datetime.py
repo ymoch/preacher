@@ -3,7 +3,11 @@
 import re
 from datetime import time, timedelta
 
-from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat, system_timezone
+from preacher.core.datetime import DatetimeFormat
+from preacher.core.datetime import StrftimeFormat
+from preacher.core.datetime import ISO8601
+from preacher.core.datetime import parse_time
+from preacher.core.datetime import parse_timedelta
 from .error import CompilationError
 from .util.type import ensure_str, ensure_optional_str
 
@@ -30,15 +34,11 @@ def compile_time(obj: object) -> time:
     Raises:
         CompilationError: When compilation fails.
     """
-    obj = ensure_str(obj)
+    value = ensure_str(obj)
     try:
-        compiled = time.fromisoformat(obj)
-    except ValueError:
-        raise CompilationError(f'Invalid time format: {obj}')
-
-    if not compiled.tzinfo:
-        compiled = compiled.replace(tzinfo=system_timezone())
-    return compiled
+        return parse_time(value)
+    except ValueError as error:
+        raise CompilationError(f'Invalid time format: {obj}', cause=error)
 
 
 def compile_timedelta(obj: object) -> timedelta:
@@ -48,14 +48,8 @@ def compile_timedelta(obj: object) -> timedelta:
     Raises:
         CompilationError: When compilation fails.
     """
-    obj = ensure_str(obj)
-    normalized = obj.strip().lower()
-    if not normalized or normalized == 'now':
-        return timedelta()
-
-    match = TIMEDELTA_PATTERN.match(normalized)
-    if not match:
-        raise CompilationError(f'Invalid timedelta format: {obj}')
-    offset = int(match.group(1))
-    unit = match.group(2) + 's'
-    return timedelta(**{unit: offset})
+    value = ensure_str(obj)
+    try:
+        return parse_timedelta(value)
+    except ValueError as error:
+        raise CompilationError(f'Invalid timedelta format: {obj}', cause=error)
