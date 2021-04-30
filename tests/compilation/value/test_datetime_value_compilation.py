@@ -1,7 +1,7 @@
 from datetime import datetime, time, timedelta, timezone
 from unittest.mock import sentinel
 
-from pytest import raises
+from pytest import mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.value.datetime import compile_datetime_value_with_format
@@ -59,6 +59,7 @@ def test_datetime_value_with_format_given_timedelta(mocker):
     value_ctor.assert_called_once_with(sentinel.dt)
 
 
-def test_datetime_value_with_format_given_invalid_one():
+@mark.parametrize('value', (None, 1, [], 'xyz'))
+def test_datetime_value_with_format_given_invalid_one(value):
     with raises(CompilationError):
-        compile_datetime_value_with_format('xyz')
+        compile_datetime_value_with_format(value)

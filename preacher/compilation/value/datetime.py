@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from preacher.compilation.datetime import compile_time, compile_timedelta
 from preacher.compilation.error import CompilationError
-from preacher.core.datetime import DatetimeWithFormat, system_timezone
+from preacher.compilation.util.type import ensure_str
+from preacher.core.datetime import DatetimeWithFormat, system_timezone, parse_time, parse_timedelta
 from preacher.core.value import Value
 from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 from preacher.core.value.impl.datetime import OnlyTimeDatetime
@@ -22,16 +22,23 @@ def compile_datetime_value_with_format(obj: object) -> Value[DatetimeWithFormat]
             obj = obj.replace(tzinfo=system_timezone())
         return StaticValue(DatetimeWithFormat(obj))
 
+    # Try to parse `obj` as a datetime-compatible string below.
     try:
-        tm = compile_time(obj)
+        value = ensure_str(obj)
+    except CompilationError as error:
+        message = f'Must be a datetime-compatible value, but given {type(obj)}: {obj}'
+        raise CompilationError(message, cause=error)
+
+    try:
+        tm = parse_time(value)
         return DatetimeValueWithFormat(OnlyTimeDatetime(tm))
-    except CompilationError:
+    except ValueError:
         pass  # Try to compile value as another format.
 
     try:
-        delta = compile_timedelta(obj)
+        delta = parse_timedelta(value)
         return DatetimeValueWithFormat(RelativeDatetime(delta))
-    except CompilationError:
+    except ValueError:
         pass  # Try to compile value as another format.
 
     raise CompilationError(f'Invalid format: {obj}')
