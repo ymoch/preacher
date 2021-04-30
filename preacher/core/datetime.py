@@ -2,12 +2,15 @@
 Datetime utilities for Preacher core.
 """
 
-import time
+import re
 from abc import ABC
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, time, timedelta, timezone
+from time import localtime
 from typing import Optional
 
 from dateutil.parser import isoparse
+
+_TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
 
 
 class DatetimeFormat(ABC):
@@ -76,8 +79,41 @@ def now() -> datetime:
 
 def system_timezone() -> timezone:
     """Returns the system timezone."""
-    localtime = time.localtime()
-    return timezone(
-        offset=timedelta(seconds=localtime.tm_gmtoff),
-        name=localtime.tm_zone,
-    )
+    localtime_ = localtime()
+    return timezone(offset=timedelta(seconds=localtime_.tm_gmtoff), name=localtime_.tm_zone)
+
+
+def parse_time(value: str) -> time:
+    """
+    Parse a time string.
+
+    Args:
+        value: The parsed value.
+    Raises:
+        ValueError: when given an invalid time string.
+    """
+    result = time.fromisoformat(value)
+    if not result.tzinfo:
+        result = result.replace(tzinfo=system_timezone())
+    return result
+
+
+def parse_timedelta(value: str) -> timedelta:
+    """
+    Parse a timedelta string.
+
+    Args:
+        value: The parsed value.
+    Raises:
+        ValueError: when given an invalid time string.
+    """
+    normalized = value.strip().lower()
+    if not normalized or normalized == 'now':
+        return timedelta()
+
+    match = _TIMEDELTA_PATTERN.match(normalized)
+    if not match:
+        raise ValueError(f'Invalid timedelta format: {value}')
+    offset = int(match.group(1))
+    unit = match.group(2) + 's'
+    return timedelta(**{unit: offset})
