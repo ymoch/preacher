@@ -17,7 +17,6 @@ RUN apk --no-cache add python3 yaml libxml2 libxslt && \
         automake \
         make \
         gcc \
-        rust \
         cargo \
         && \
     \
@@ -27,9 +26,7 @@ RUN apk --no-cache add python3 yaml libxml2 libxslt && \
     export LDFLAGS='-flto' && \
     pip3 --no-cache-dir install ./preacher && \
     \
-    pip3 --no-cache-dir uninstall -y setuptools pip && \
     rm -rf ./preacher ~/.cache ~/.cargo && \
-    \
     apk --no-cache del .build-deps && \
     \
     preacher-cli --version
