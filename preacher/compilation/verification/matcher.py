@@ -6,11 +6,11 @@ from typing import Callable, Dict, Iterable, Tuple, Union
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
-from preacher.compilation.value.datetime import compile_datetime_value_with_format
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
 from preacher.core.value import Value
+from preacher.core.value.impl.datetime import parse_datetime_value_with_format
 from preacher.core.value.impl.static import StaticValue
 from preacher.core.verification.hamcrest import before, after
 from preacher.core.verification.matcher import MatcherFactory
@@ -175,8 +175,8 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_recursive(('contain_in_any_order',), hamcrest.contains_inanyorder)
 
     # For datetime.
-    compiler.add_taking_value(('be_before',), before, compile_datetime_value_with_format)
-    compiler.add_taking_value(('be_after',), after, compile_datetime_value_with_format)
+    compiler.add_taking_value(('be_before',), before, parse_datetime_value_with_format)
+    compiler.add_taking_value(('be_after',), after, parse_datetime_value_with_format)
 
     # For collections.
     compiler.add_static(('be_empty',), StaticMatcherFactory(hamcrest.empty()))

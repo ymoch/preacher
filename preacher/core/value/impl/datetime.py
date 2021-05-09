@@ -1,8 +1,15 @@
 from datetime import time, datetime, timedelta
 from typing import Optional, Type
 
-from preacher.core.datetime import DatetimeWithFormat, DatetimeFormat, ISO8601, now
+from preacher.core.datetime import DatetimeWithFormat
+from preacher.core.datetime import DatetimeFormat
+from preacher.core.datetime import ISO8601
+from preacher.core.datetime import now
+from preacher.core.datetime import parse_time
+from preacher.core.datetime import parse_timedelta
+from preacher.core.datetime import system_timezone
 from preacher.core.value import Value, ValueContext
+from .static import StaticValue
 
 
 class OnlyTimeDatetime(Value[datetime]):
@@ -46,6 +53,39 @@ class DatetimeValueWithFormat(Value[DatetimeWithFormat]):
     def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
         resolved = self._original.resolve(context)
         return DatetimeWithFormat(resolved, self._fmt)
+
+
+def parse_datetime_value_with_format(
+    value: object,
+    fmt: Optional[DatetimeFormat] = None,
+) -> Value[DatetimeWithFormat]:
+    """
+    Args:
+        value: The compiled value, which should be a datetime or a string.
+        fmt: The datetime format.
+    Raises:
+        ValueError: When parsing fails.
+    """
+    if isinstance(value, datetime):
+        if not value.tzinfo:
+            value = value.replace(tzinfo=system_timezone())
+        return StaticValue(DatetimeWithFormat(value, fmt))
+
+    # Try to parse `obj` as a datetime-compatible string below.
+    if not isinstance(value, str):
+        raise ValueError(f'Must be a datetime-compatible value, but given {type(value)}: {value}')
+
+    try:
+        tm = parse_time(value)
+        return DatetimeValueWithFormat(OnlyTimeDatetime(tm), fmt)
+    except ValueError:
+        pass  # Try to compile value as another format.
+
+    try:
+        delta = parse_timedelta(value)
+        return DatetimeValueWithFormat(RelativeDatetime(delta), fmt)
+    except ValueError:
+        raise ValueError(f'Invalid format: {value}')
 
 
 def _select_origin(context: Optional[ValueContext]) -> datetime:
