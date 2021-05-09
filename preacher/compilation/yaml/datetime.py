@@ -3,9 +3,9 @@ from typing import Optional
 from yaml import BaseLoader, MappingNode, ScalarNode, Node
 
 from preacher.compilation.datetime import compile_datetime_format
-from preacher.compilation.value.datetime import compile_datetime_value_with_format
 from preacher.core.datetime import DatetimeFormat, DatetimeWithFormat
 from preacher.core.value import Value
+from preacher.core.value.impl.datetime import parse_datetime_value_with_format
 from .error import YamlError, on_node
 
 _KEY_DELTA = 'delta'
@@ -28,7 +28,7 @@ def _construct_relative_datetime_of_scalar(
 ) -> Value[DatetimeWithFormat]:
     obj = loader.construct_scalar(node)
     with on_node(node):
-        return compile_datetime_value_with_format(obj)
+        return parse_datetime_value_with_format(obj)
 
 
 def _construct_relative_datetime_of_mapping(
@@ -54,5 +54,5 @@ def _construct_relative_datetime_of_mapping(
     if datetime_value_node:
         datetime_value = loader.construct_scalar(datetime_value_node)
         with on_node(datetime_value_node):
-            return compile_datetime_value_with_format(datetime_value, format)
-    return compile_datetime_value_with_format('now', format)
+            return parse_datetime_value_with_format(datetime_value, format)
+    return parse_datetime_value_with_format('now', format)

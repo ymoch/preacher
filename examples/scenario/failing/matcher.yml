@@ -7,4 +7,7 @@ cases:
       body:
         - describe: .foo
           should:
+            be_after: xxx
+        - describe: .foo
+          should:
             be_after: now
