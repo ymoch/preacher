@@ -119,9 +119,7 @@ class MatcherFactoryCompiler:
 
     def _compile_taking_value(self, key: str, obj: object):
         matcher_func, value_func = self._taking_value[key]
-        with on_key(key):
-            value = value_func(obj)
-        return ValueMatcherFactory(matcher_func, value)
+        return ValueMatcherFactory(matcher_func, arg=obj, value_func=value_func)
 
     def _compile_recursive(self, key: str, obj: object):
         matcher_func, multiple = self._recursive[key]

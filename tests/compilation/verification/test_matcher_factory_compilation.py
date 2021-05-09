@@ -6,6 +6,7 @@ from pytest import fixture, mark, raises
 from preacher.compilation.error import CompilationError
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 from preacher.compilation.verification.matcher import add_default_matchers
+from preacher.core.value.impl.datetime import parse_datetime_value_with_format
 from preacher.core.verification.hamcrest import after, before
 
 PKG = 'preacher.compilation.verification.matcher'
@@ -171,4 +172,8 @@ def test_verification_with_datetime(compiler, mocker, obj, expected_func):
     actual = compiler.compile(obj)
     assert actual == sentinel.matcher
 
-    matcher_ctor.assert_called_once_with(expected_func, ANY)
+    matcher_ctor.assert_called_once_with(
+        expected_func,
+        arg=ANY,
+        value_func=parse_datetime_value_with_format,
+    )
