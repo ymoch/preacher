@@ -1,11 +1,10 @@
 import os
-from concurrent.futures.process import ProcessPoolExecutor
-from concurrent.futures.thread import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
 
 from click.testing import CliRunner
 from pytest import fixture, mark
 
+from preacher.app.cli.executor import PROCESS_POOL_FACTORY, THREAD_POOL_FACTORY
 from preacher.app.cli.main import main
 from preacher.core.status import Status
 
@@ -91,7 +90,7 @@ def test_default(mocker, env):
         delay=0.1,
         timeout=None,
         concurrency=1,
-        executor_factory=ProcessPoolExecutor,
+        executor_factory=PROCESS_POOL_FACTORY,
         plugins=(),
         verbosity=0,
     )
@@ -142,7 +141,7 @@ def test_arguments(mocker, base_dir):
         delay=2.5,
         timeout=3.5,
         concurrency=4,
-        executor_factory=ThreadPoolExecutor,
+        executor_factory=THREAD_POOL_FACTORY,
         plugins=(os.path.join(base_dir, 'plugin.py'), os.path.join(base_dir, 'dir')),
         verbosity=1,
     )
@@ -178,7 +177,7 @@ def test_environ(mocker, base_dir):
         delay=1.2,
         timeout=3.4,
         concurrency=5,
-        executor_factory=ThreadPoolExecutor,
+        executor_factory=THREAD_POOL_FACTORY,
         plugins=(os.path.join(base_dir, 'plugin.py'), os.path.join(base_dir, 'dir')),
         verbosity=0,
     )

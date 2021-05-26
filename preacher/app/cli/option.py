@@ -3,28 +3,23 @@
 import logging
 import re
 import shlex
-from concurrent.futures import (
-    Executor,
-    ProcessPoolExecutor,
-    ThreadPoolExecutor,
-)
 from enum import IntEnum
-from typing import Callable, Iterable, Mapping, Optional, Tuple, Union, Any
+from typing import Iterable, Mapping, Optional, Tuple, Union, Any
 
-from click import (
-    Choice,
-    Context,
-    BadParameter,
-    Parameter,
-    ParamType,
-    Option,
-    STRING,
-)
+from click import Choice
+from click import Context
+from click import BadParameter
+from click import Parameter
+from click import ParamType
+from click import Option
+from click import STRING
+
 from yaml import safe_load
 from yaml.error import MarkedYAMLError
 
 from preacher.compilation.argument import Arguments
 from preacher.core.status import Status
+from .executor import ExecutorFactory, PROCESS_POOL_FACTORY, THREAD_POOL_FACTORY
 
 
 class Level(IntEnum):
@@ -37,12 +32,10 @@ class Level(IntEnum):
         return self.name.lower()
 
 
-ExecutorFactory = Callable[[int], Executor]
-
 _LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
 _CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, ExecutorFactory] = {
-    'process': ProcessPoolExecutor,
-    'thread': ThreadPoolExecutor,
+    'process': PROCESS_POOL_FACTORY,
+    'thread': THREAD_POOL_FACTORY,
 }
 
 
@@ -97,7 +90,7 @@ class ExecutorFactoryType(ParamType):
         param: Optional[Parameter],
         ctx: Optional[Context],
     ) -> ExecutorFactory:
-        if hasattr(value, '__call__'):
+        if isinstance(value, ExecutorFactory):
             return value
         key = self._choice.convert(value, param, ctx)
         return _CONCURRENT_EXECUTOR_FACTORY_MAP[key.lower()]
