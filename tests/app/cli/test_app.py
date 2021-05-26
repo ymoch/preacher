@@ -9,7 +9,7 @@ from concurrent.futures import Executor
 from io import StringIO
 from tempfile import TemporaryDirectory
 from typing import Iterable
-from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
+from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 
 from pytest import fixture, raises, mark
 
@@ -18,6 +18,7 @@ from preacher.app.cli.app import create_listener
 from preacher.app.cli.app import create_scheduler
 from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
+from preacher.app.cli.executor import ExecutorFactory
 from preacher.compilation.scenario import ScenarioCompiler
 from preacher.core.scenario import Scenario
 from preacher.core.scheduling import ScenarioScheduler
@@ -47,7 +48,9 @@ def executor():
 
 @fixture
 def executor_factory(executor):
-    return Mock(return_value=executor)
+    factory = NonCallableMock(ExecutorFactory)
+    factory.create.return_value = executor
+    return factory
 
 
 def test_app_normal(mocker, base_dir, executor, executor_factory):
@@ -112,7 +115,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
         delay=sentinel.delay,
     )
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
-    executor_factory.assert_called_once_with(sentinel.concurrency)
+    executor_factory.create.assert_called_once_with(sentinel.concurrency)
     scheduler.run.assert_called_once()
     executor.__exit__.assert_called_once()
 

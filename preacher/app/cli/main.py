@@ -1,8 +1,7 @@
 """Preacher CLI."""
 
 import sys
-from concurrent.futures import Executor
-from typing import Callable, Iterable, Optional, Sequence
+from typing import Iterable, Optional, Sequence
 
 from click import FloatRange
 from click import IntRange
@@ -17,6 +16,7 @@ from preacher import __version__ as _version
 from preacher.compilation.argument import Arguments
 from preacher.core.status import Status
 from .app import app
+from .executor import ExecutorFactory
 from .option import ArgumentType
 from .option import ExecutorFactoryType
 from .option import LevelType
@@ -151,7 +151,7 @@ def main(
     delay: float,
     timeout: Optional[float],
     concurrency: int,
-    executor_factory: Callable[[int], Executor],
+    executor_factory: ExecutorFactory,
     plugins: Iterable[str],
     verbosity: int,
 ) -> None:
