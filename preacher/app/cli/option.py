@@ -9,7 +9,7 @@ from concurrent.futures import (
     ThreadPoolExecutor,
 )
 from enum import IntEnum
-from typing import Callable, Iterable, Mapping, Optional, Tuple, Union
+from typing import Callable, Iterable, Mapping, Optional, Tuple, Union, Any
 
 from click import (
     Choice,
@@ -37,8 +37,10 @@ class Level(IntEnum):
         return self.name.lower()
 
 
+ExecutorFactory = Callable[[int], Executor]
+
 _LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
-_CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, Callable[[int], Executor]] = {
+_CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, ExecutorFactory] = {
     'process': ProcessPoolExecutor,
     'thread': ThreadPoolExecutor,
 }
@@ -59,19 +61,18 @@ class ArgumentType(ParamType):
 
 class LevelType(ParamType):
 
-    _choice = Choice(
-        tuple(item.name.lower() for item in Status),
-        case_sensitive=False,
-    )
+    _choice = Choice(tuple(item.name.lower() for item in Status), case_sensitive=False)
     name = _choice.name
 
-    def get_metavar(self, param):
+    def get_metavar(self, param: Parameter) -> str:
         return self._choice.get_metavar(param)
 
-    def get_missing_message(self, param):
+    def get_missing_message(self, param: Parameter) -> str:
         return self._choice.get_missing_message(param)
 
-    def convert(self, value, param, ctx):
+    def convert(self, value: Any, param: Optional[Parameter], ctx: Optional[Context]) -> Status:
+        if isinstance(value, Status):
+            return value
         key = self._choice.convert(value, param, ctx).lower()
         return next(item for item in Status if item.name.lower() == key)
 
@@ -90,7 +91,14 @@ class ExecutorFactoryType(ParamType):
     def get_missing_message(self, param):
         return self._choice.get_missing_message(param)
 
-    def convert(self, value, param, ctx):
+    def convert(
+        self,
+        value: Any,
+        param: Optional[Parameter],
+        ctx: Optional[Context],
+    ) -> ExecutorFactory:
+        if hasattr(value, '__call__'):
+            return value
         key = self._choice.convert(value, param, ctx)
         return _CONCURRENT_EXECUTOR_FACTORY_MAP[key.lower()]
 
