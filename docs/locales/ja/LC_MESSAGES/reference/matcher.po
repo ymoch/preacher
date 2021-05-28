@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-29 02:04+0900\n"
+"POT-Creation-Date: 2021-05-29 03:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,344 +35,442 @@ msgstr "``Matcher`` として与えられた ``Value`` は ``{\"equal\": it}`` �
 msgid "For Objects"
 msgstr "オブジェクト向け"
 
-#: ../../reference/matcher.rst:9 d3183f45cb06459d9cd61d27a7127a5d
-msgid "be: ``Matcher``"
+#: ../../reference/matcher.rst:9 b17c662cfb014719a531c344b23d5715
+msgid "Matchers for Objects"
+msgstr "オブジェクト向け matcher."
+
+#: ../../reference/matcher.rst:13 ../../reference/matcher.rst:38
+#: ../../reference/matcher.rst:60 ../../reference/matcher.rst:85
+#: ../../reference/matcher.rst:142 ../../reference/matcher.rst:167
+#: 0315f33bc6ee45c0a94b447b6e41cd2e 92f0724347714cf9ab8cee7e062a8e39
+#: d9aa12a8fafe45cfb002ec8535923ac1
+msgid "Name"
+msgstr "名前"
+
+#: ../../reference/matcher.rst:14 ../../reference/matcher.rst:39
+#: ../../reference/matcher.rst:61 ../../reference/matcher.rst:86
+#: ../../reference/matcher.rst:143 ../../reference/matcher.rst:168
+#: 092c7e2dba7048b2a2ec873c55c9df35 3cf6376880bf47ceb0e229b3f5d043be
+#: 48bfd043801b4b7cb57eae3a28580f14 61791bbf365b4abdac94e995d1b94fe6
+#: a02d0da7822f42c7a0a0dbcacf26c767 b4bbc09eda6d43299e988667c5e5a5e3
+msgid "Arguments"
+msgstr "引数"
+
+#: ../../reference/matcher.rst:15 ../../reference/matcher.rst:40
+#: ../../reference/matcher.rst:62 ../../reference/matcher.rst:87
+#: ../../reference/matcher.rst:144 ../../reference/matcher.rst:169
+#: 3dea5e7f88164d1ea25bf60d1fe70898 445e9356ff1f433aa3839c3c77a817ec
+#: 48b5b730770b4d78b5fad7ee9da75e29 768808c0ab1548caa850960b527a8943
+#: ddc4c7b14f6b4196bafd184a883855b2 dfa916e308bc4878a897f342b3519fe7
+msgid "Description"
+msgstr "説明"
+
+#: ../../reference/matcher.rst:16 19f16bd679904dd088ab392b3323d5ad
+msgid "be"
 msgstr ""
 
-#: ../../reference/matcher.rst:10 a84eb331f01d43b5958a7b7d2d017810
+#: ../../reference/matcher.rst:17 ../../reference/matcher.rst:20
+#: ../../reference/matcher.rst:23 ../../reference/matcher.rst:89
+#: ../../reference/matcher.rst:92 ../../reference/matcher.rst:95
+#: ../../reference/matcher.rst:98 ../../reference/matcher.rst:101
+#: ../../reference/matcher.rst:104 ../../reference/matcher.rst:107
+#: ../../reference/matcher.rst:146 ../../reference/matcher.rst:180
+#: 3d7b5db99cbb47558a53c49bf0b77bf7 44f0f92266ca403399483a9524b8f2a1
+#: 4c63b6e8b7db49bb85438a5472c8f981 a34804083a364fa8bf27a4a2fd9b0163
+#: a44022e601cf4685b977b824f279efa0 af1df075d32c48e485d4d809480d267d
+#: b1629af25765434bb156b2c20f3e1552 bebd15774cac47d98de4777c482d895e
+#: bee5a894dd68400ca897e6fd7416a13b c16ee906dc214f11b648afd8be94a80e
+#: c25ec565e8204728a4e08c4b7fd92690 ec5c0204803e4bde80e3bae7d6d4f5ba
+msgid "none"
+msgstr ""
+
+#: ../../reference/matcher.rst:18 a84eb331f01d43b5958a7b7d2d017810
 msgid "Matches an object that matches the given matcher."
 msgstr "与えられた matcher にマッチするオブジェクトにマッチします."
 
-#: ../../reference/matcher.rst:11 6363ab7813c347308f66d7894efb723f
+#: ../../reference/matcher.rst:19 6363ab7813c347308f66d7894efb723f
 msgid "be_null"
 msgstr ""
 
-#: ../../reference/matcher.rst:12 43574bac347542049ab2b574af0bedd6
+#: ../../reference/matcher.rst:21 43574bac347542049ab2b574af0bedd6
 msgid "Matches ``null``."
 msgstr "``null`` にマッチします."
 
-#: ../../reference/matcher.rst:13 3b7934aee56e480ab1afa22e7eb7a1c3
+#: ../../reference/matcher.rst:22 3b7934aee56e480ab1afa22e7eb7a1c3
 msgid "not_be_null"
 msgstr ""
 
-#: ../../reference/matcher.rst:14 d821ce6b2637427e9ddb3057e85b304e
+#: ../../reference/matcher.rst:24 d821ce6b2637427e9ddb3057e85b304e
 msgid "Matches not ``null``."
 msgstr "``null`` 以外にマッチします."
 
-#: ../../reference/matcher.rst:15 05a05ff30f744217a53923eb179e38ee
-msgid "equal: ``Value``"
+#: ../../reference/matcher.rst:25 6363ab7813c347308f66d7894efb723f
+msgid "equal"
 msgstr ""
 
-#: ../../reference/matcher.rst:16 b17c662cfb014719a531c344b23d5715
-msgid "Matches an equal object."
+#: ../../reference/matcher.rst:26 05a05ff30f744217a53923eb179e38ee
+msgid "``Value``"
+msgstr ""
+
+#: ../../reference/matcher.rst:27 b17c662cfb014719a531c344b23d5715
+msgid "Matches an equal object"
 msgstr "等価なオブジェクトにマッチします."
 
-#: ../../reference/matcher.rst:18 12a17b4424ef4c2e8c6246c55e902466
-msgid "have_length: ``Integer``"
+#: ../../reference/matcher.rst:28 12a17b4424ef4c2e8c6246c55e902466
+msgid "have_length"
 msgstr ""
 
-#: ../../reference/matcher.rst:18 a6ba4d0fa26d41e384699f0f6f80e4cb
+#: ../../reference/matcher.rst:29 d3183f45cb06459d9cd61d27a7127a5d
+msgid "``Integer``"
+msgstr ""
+
+#: ../../reference/matcher.rst:30 a6ba4d0fa26d41e384699f0f6f80e4cb
 msgid ""
 "Matches an object that has a length and whose length matches the given "
 "matcher."
 msgstr "長さを持ち, その長さが与えられた matcher にマッチするときにマッチします."
 
-#: ../../reference/matcher.rst:21 d6fe7ee37a2a446ca9e316ecd1464689
+#: ../../reference/matcher.rst:33 d6fe7ee37a2a446ca9e316ecd1464689
 msgid "For Comparable Values"
 msgstr "比較可能な値向け"
 
-#: ../../reference/matcher.rst:22 7355847e850a455bb9fb1e88eb0fd015
-msgid "be_greater_than: ``Comparable``"
+#: ../../reference/matcher.rst:34 2a5e4511e8824402a2e27fca70d60f81
+msgid "Matchers for Comparable Values"
+msgstr "比較可能な値向け matcher"
+
+#: ../../reference/matcher.rst:41 7355847e850a455bb9fb1e88eb0fd015
+msgid "be_greater_than"
 msgstr ""
 
-#: ../../reference/matcher.rst:23 4ae467ea123a437697473c357c505e05
-msgid "Matches a value that is greater than the given value (it > argument)."
-msgstr "与えられた値よりも大きい値にマッチします (it > argument)."
-
-#: ../../reference/matcher.rst:24 55ed537fe85a4448ad3267a524440ab2
-msgid "be_greater_than_or_equal_to: ``Comparable``"
+#: ../../reference/matcher.rst:42 ../../reference/matcher.rst:45
+#: ../../reference/matcher.rst:48 ../../reference/matcher.rst:51
+#: 9bcf571077c14dc6b8db9966bdacb361
+msgid "``Comparable``"
 msgstr ""
 
-#: ../../reference/matcher.rst:25 ed45a10ec3a44ca9b98df215ae047b03
+#: ../../reference/matcher.rst:43 4ae467ea123a437697473c357c505e05
+msgid "Matches a value that is greater than the given value ``(it > argument)``."
+msgstr "与えられた値よりも大きい値にマッチします ``(it > argument)``."
+
+#: ../../reference/matcher.rst:44 55ed537fe85a4448ad3267a524440ab2
+msgid "be_greater_than_or_equal_to"
+msgstr ""
+
+#: ../../reference/matcher.rst:46 ed45a10ec3a44ca9b98df215ae047b03
 msgid ""
-"Matches a value that is greater than or equal to the given value (it >= "
-"argument)."
-msgstr "与えられた値と同じか, それよりも大きい値にマッチします (it >= argument)."
+"Matches a value that is greater than or equal to the given value ``(it >="
+" argument)``."
+msgstr "与えられた値と同じか, それよりも大きい値にマッチします ``(it >= argument)``."
 
-#: ../../reference/matcher.rst:26 9bcf571077c14dc6b8db9966bdacb361
-msgid "be_less_than: ``Comparable``"
+#: ../../reference/matcher.rst:47 9bcf571077c14dc6b8db9966bdacb361
+msgid "be_less_than"
 msgstr ""
 
-#: ../../reference/matcher.rst:27 2dd3f8db9cb342fb9eb26a7edcb32a4b
-msgid "Matches a value that is less than the given value (it < argument)."
-msgstr "与えられた値よりも小さい値にマッチします (it < argument)."
+#: ../../reference/matcher.rst:49 2dd3f8db9cb342fb9eb26a7edcb32a4b
+msgid "Matches a value that is less than the given value ``(it < argument)``."
+msgstr "与えられた値よりも小さい値にマッチします ``(it < argument)``."
 
-#: ../../reference/matcher.rst:29 5775caf27e4b486dabd394ab64bad4ec
-msgid "be_less_than_or_equal_to: ``Comparable``"
+#: ../../reference/matcher.rst:50 5775caf27e4b486dabd394ab64bad4ec
+msgid "be_less_than_or_equal_to"
 msgstr ""
 
-#: ../../reference/matcher.rst:29 1d3c618e953b4e72a1c1f67a3f0a0a82
+#: ../../reference/matcher.rst:52 1d3c618e953b4e72a1c1f67a3f0a0a82
 msgid ""
-"Matches a value that is less than or equal to the given value (it < "
-"argument)."
-msgstr "与えられた値と同じか, それよりも小さい値にマッチします (it <= argument)."
+"Matches a value that is less than or equal to the given value ``(it <= "
+"argument)``."
+msgstr "与えられた値と同じか, それよりも小さい値にマッチします ``(it <= argument)``."
 
-#: ../../reference/matcher.rst:32 025b13cd15aa4af58b153e0de842c851
+#: ../../reference/matcher.rst:55 025b13cd15aa4af58b153e0de842c851
 msgid "For String Values"
 msgstr "文字列向け"
 
-#: ../../reference/matcher.rst:33 ad93f810e9324faa8643a902eeaf92e7
-msgid "contain_string: ``String``"
+#: ../../reference/matcher.rst:56 57deb0e510984036bbcdaf75fb473cec
+msgid "Matchers for String Values"
+msgstr "文字列向け matcher"
+
+#: ../../reference/matcher.rst:63 ad93f810e9324faa8643a902eeaf92e7
+msgid "contain_string"
 msgstr ""
 
-#: ../../reference/matcher.rst:34 19f4be74199f4076b25691d5e8bc7f4f
-msgid "Matches an string that contains the given string."
+#: ../../reference/matcher.rst:64 ../../reference/matcher.rst:67
+#: ../../reference/matcher.rst:70 ../../reference/matcher.rst:73
+#: 46cba469957f464e89bae1f8b9176b13
+msgid "``String``"
+msgstr ""
+
+#: ../../reference/matcher.rst:65 19f4be74199f4076b25691d5e8bc7f4f
+msgid "Matches a string that contains the given string."
 msgstr "与えられた文字列を含む文字列にマッチします."
 
-#: ../../reference/matcher.rst:35 6e7e7d7392624f8b85a85521d33c6983
-msgid "start_with: ``String``"
+#: ../../reference/matcher.rst:66 6e7e7d7392624f8b85a85521d33c6983
+msgid "start_with"
 msgstr ""
 
-#: ../../reference/matcher.rst:36 0b0b579f639147ea92490d140d90be41
-msgid "Matches an string that starts with the given string."
+#: ../../reference/matcher.rst:68 0b0b579f639147ea92490d140d90be41
+msgid "Matches a string that starts with the given string."
 msgstr "与えられた文字列から始まる文字列にマッチします."
 
-#: ../../reference/matcher.rst:37 46cba469957f464e89bae1f8b9176b13
-msgid "end_with: ``String``"
+#: ../../reference/matcher.rst:69 46cba469957f464e89bae1f8b9176b13
+msgid "end_with"
 msgstr ""
 
-#: ../../reference/matcher.rst:38 36e1aee7e65f4762a4830af670e1b382
-msgid "Matches an string that ends with the given string."
+#: ../../reference/matcher.rst:71 36e1aee7e65f4762a4830af670e1b382
+msgid "Matches a string that ends with the given string."
 msgstr "与えられた文字列で終わる文字列にマッチします."
 
-#: ../../reference/matcher.rst:40 ae448a6a330c4cef8731ffe34aa0627a
-msgid "match_regexp: ``String``"
+#: ../../reference/matcher.rst:72 ae448a6a330c4cef8731ffe34aa0627a
+msgid "match_regexp"
 msgstr ""
 
-#: ../../reference/matcher.rst:40 c8666326f1284076a6ca8f5eed57c17d
-msgid "Matches an string that matches the given regular expression."
+#: ../../reference/matcher.rst:74 c8666326f1284076a6ca8f5eed57c17d
+msgid "Matches a string that matches the given regular expression."
 msgstr "与えられた正規表現にマッチする文字列にマッチします."
 
-#: ../../reference/matcher.rst:43 cd71f698ca4449cab8b1ad2b8be5a596
+#: ../../reference/matcher.rst:77 cd71f698ca4449cab8b1ad2b8be5a596
 msgid "For Datetime Values"
-msgstr "日時型向け"
+msgstr "日時向け"
 
-#: ../../reference/matcher.rst:44 92fcd3bf326b47eea4172118961139c6
-msgid "be_monday"
-msgstr ""
-
-#: ../../reference/matcher.rst:45 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime on Monday."
-msgstr "月曜日の日時にマッチします."
-
-#: ../../reference/matcher.rst:46 92fcd3bf326b47eea4172118961139c6
-msgid "be_tuesday"
-msgstr ""
-
-#: ../../reference/matcher.rst:47 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime on Tuesday."
-msgstr "火曜日の日時にマッチします."
-
-#: ../../reference/matcher.rst:48 43a22714ae854caeb98549802ee38206
-msgid "be_wednesday"
-msgstr ""
-
-#: ../../reference/matcher.rst:49 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime on Wednesday."
-msgstr "水曜日の日時にマッチします."
-
-#: ../../reference/matcher.rst:50 42d5edcae2de4f90ac4fcaafa0eec96a
-msgid "be_thursday"
-msgstr ""
-
-#: ../../reference/matcher.rst:51 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime on Thursday."
-msgstr "木曜日の日時にマッチします."
-
-#: ../../reference/matcher.rst:52 92fcd3bf326b47eea4172118961139c6
-msgid "be_friday"
-msgstr ""
-
-#: ../../reference/matcher.rst:53 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime on Friday."
-msgstr "金曜日の日時にマッチします."
-
-#: ../../reference/matcher.rst:54 c40219baa7784bfca5d2dd613d8e998f
-msgid "be_saturday"
-msgstr ""
-
-#: ../../reference/matcher.rst:55 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime on Saturday."
-msgstr "木曜日の日時にマッチします."
-
-#: ../../reference/matcher.rst:56 92fcd3bf326b47eea4172118961139c6
-msgid "be_sunday"
-msgstr ""
-
-#: ../../reference/matcher.rst:57 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime on Sunday."
-msgstr "日曜日の日時にマッチします."
-
-#: ../../reference/matcher.rst:58 b2d1912b5be64cb4a21a3ac6cab43f13
-msgid "be_before: :ref:`datetime`"
-msgstr ""
-
-#: ../../reference/matcher.rst:59 c97e6c9b5c004dce82f76dcdfe4357fe
-msgid "Matches a datetime before the given datetime."
-msgstr "与えられた日時よりも前の日時にマッチします."
-
-#: ../../reference/matcher.rst:61 aa39ce29c3194d78b737e7a4960754c6
-msgid "be_after: :ref:`datetime`"
-msgstr ""
-
-#: ../../reference/matcher.rst:61 56ee7cbcf6a44af9b1ce388caa7474ac
-msgid "Matches a datetime after the given datetime."
-msgstr "与えられた日時よりも後の日時にマッチします."
-
-#: ../../reference/matcher.rst:63 9e02dd5cdbe44e6aa17ce71ddf0b4a99
+#: ../../reference/matcher.rst:78 9e02dd5cdbe44e6aa17ce71ddf0b4a99
 msgid ""
 "Validated datetime values must be in ISO 8601 format like "
 "``2019-01-23T12:34:56Z``."
 msgstr "検証される日時は IOS 8601 形式 (``2019-01-23T12:34:56Z``) である必要があります."
 
-#: ../../reference/matcher.rst:69 92f0724347714cf9ab8cee7e062a8e39
+#: ../../reference/matcher.rst:81 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matchers for Datetime Values"
+msgstr "日時向け matcher"
+
+#: ../../reference/matcher.rst:88 92fcd3bf326b47eea4172118961139c6
+msgid "be_monday"
+msgstr ""
+
+#: ../../reference/matcher.rst:90 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime on Monday."
+msgstr "月曜日の日時にマッチします."
+
+#: ../../reference/matcher.rst:91 92fcd3bf326b47eea4172118961139c6
+msgid "be_tuesday"
+msgstr ""
+
+#: ../../reference/matcher.rst:93 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime on Tuesday."
+msgstr "火曜日の日時にマッチします."
+
+#: ../../reference/matcher.rst:94 43a22714ae854caeb98549802ee38206
+msgid "be_wednesday"
+msgstr ""
+
+#: ../../reference/matcher.rst:96 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime on Wednesday."
+msgstr "水曜日の日時にマッチします."
+
+#: ../../reference/matcher.rst:97 42d5edcae2de4f90ac4fcaafa0eec96a
+msgid "be_thursday"
+msgstr ""
+
+#: ../../reference/matcher.rst:99 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime on Thursday."
+msgstr "木曜日の日時にマッチします."
+
+#: ../../reference/matcher.rst:100 92fcd3bf326b47eea4172118961139c6
+msgid "be_friday"
+msgstr ""
+
+#: ../../reference/matcher.rst:102 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime on Friday."
+msgstr "金曜日の日時にマッチします."
+
+#: ../../reference/matcher.rst:103 c40219baa7784bfca5d2dd613d8e998f
+msgid "be_saturday"
+msgstr ""
+
+#: ../../reference/matcher.rst:105 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime on Saturday."
+msgstr "土曜日の日時にマッチします."
+
+#: ../../reference/matcher.rst:106 92fcd3bf326b47eea4172118961139c6
+msgid "be_sunday"
+msgstr ""
+
+#: ../../reference/matcher.rst:108 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime on Sunday."
+msgstr "日曜日の日時にマッチします."
+
+#: ../../reference/matcher.rst:109 92fcd3bf326b47eea4172118961139c6
+msgid "be_before"
+msgstr ""
+
+#: ../../reference/matcher.rst:110 ../../reference/matcher.rst:113
+#: aa39ce29c3194d78b737e7a4960754c6
+msgid ":ref:`datetime`"
+msgstr ""
+
+#: ../../reference/matcher.rst:111 c97e6c9b5c004dce82f76dcdfe4357fe
+msgid "Matches a datetime before the given datetime."
+msgstr "与えられた日時よりも前の日時にマッチします."
+
+#: ../../reference/matcher.rst:112 c40219baa7784bfca5d2dd613d8e998f
+msgid "be_after"
+msgstr ""
+
+#: ../../reference/matcher.rst:114 56ee7cbcf6a44af9b1ce388caa7474ac
+msgid "Matches a datetime after the given datetime."
+msgstr "与えられた日時よりも後の日時にマッチします."
+
+#: ../../reference/matcher.rst:119 92f0724347714cf9ab8cee7e062a8e39
 msgid "Datetime"
 msgstr ""
 
-#: ../../reference/matcher.rst:70 2b940b3b9aa24504a9f32ec1da6298af
+#: ../../reference/matcher.rst:120 2b940b3b9aa24504a9f32ec1da6298af
 msgid ""
 "An \"absolute datetime\" is given as a YAML timestamp value. A naive "
 "datetime value is regarded as a UTC datetime."
 msgstr "\"絶対日時\"は YAML のタイムスタンプ型で与えられます. 時間帯指定がない日時は UTC 日時とみなされます."
 
-#: ../../reference/matcher.rst:73 bc4206d992af46a9a11cef7c4e77aa32
+#: ../../reference/matcher.rst:123 bc4206d992af46a9a11cef7c4e77aa32
 msgid ""
 "A \"relative datetime\" is given as a string value in the particular "
 "format."
 msgstr "\"相対日時\" は特定形式の文字列で与えられます."
 
-#: ../../reference/matcher.rst:75 beec190fe198475abbe4a89b94528a12
+#: ../../reference/matcher.rst:125 beec190fe198475abbe4a89b94528a12
 msgid "When given ``now``, then uses the datetime just when the request starts."
 msgstr "``now`` を指定すると, リクエスト実行時刻を用います."
 
-#: ../../reference/matcher.rst:76 74014b1a37ae49b2b200b521b63934e8
+#: ../../reference/matcher.rst:126 74014b1a37ae49b2b200b521b63934e8
 msgid ""
 "When given time such like ``12:34+0100``, then uses the datetime which is"
 " the combination of date that the requests starts and the given time."
 msgstr "``12:34+0100`` のように時間を指定すると, リクエスト実行日と与えられた時間を組み合わせた時刻を用います."
 
-#: ../../reference/matcher.rst:84 2bb01c73d5114860b7612873c5edc816
+#: ../../reference/matcher.rst:134 2bb01c73d5114860b7612873c5edc816
 msgid "When given an offset, then uses the datetime that the request starts."
 msgstr "``now`` を指定すると, リクエスト実行時刻を用います."
 
-#: ../../reference/matcher.rst:80 211678d737ba4aaebbe02db46ee75548
+#: ../../reference/matcher.rst:130 211678d737ba4aaebbe02db46ee75548
 msgid "Days, hours, minutes and seconds offsets are available."
 msgstr "日 (days), 時 (hours), 分 (minutes), 秒 (seconds) の日時差分を利用できます."
 
-#: ../../reference/matcher.rst:81 ebe7135ae88f4256a91722af7b20f543
+#: ../../reference/matcher.rst:131 ebe7135ae88f4256a91722af7b20f543
 msgid ""
 "When given a positive offset like ``1 day`` or ``+2 hours``, then uses "
 "the future datetime."
 msgstr "``1 day`` や ``+2 hours`` のような正の差分を用いると, 未来の時刻を用います."
 
-#: ../../reference/matcher.rst:83 89db767cb4e2417289627efd30e4ff89
+#: ../../reference/matcher.rst:133 89db767cb4e2417289627efd30e4ff89
 msgid ""
 "When given a negative offset like ``-1 minute`` or ``-2 seconds``, then "
 "uses the past datetime."
 msgstr "``-1 minute`` や ``-2 seconds`` のような負の差分を用いると, 過去の時刻を用います."
 
-#: ../../reference/matcher.rst:87 2f4ccd229f8f4c438887b87553a45320
-msgid "For Sequence values"
+#: ../../reference/matcher.rst:137 2f4ccd229f8f4c438887b87553a45320
+msgid "For Sequence Values"
 msgstr "シーケンス向け"
 
-#: ../../reference/matcher.rst:88 92fcd3bf326b47eea4172118961139c6
+#: ../../reference/matcher.rst:138 1d93fb14dfa7449d875378aaba3869ca
+msgid "Matchers for Sequence Values"
+msgstr "シーケンス向け"
+
+#: ../../reference/matcher.rst:145 92fcd3bf326b47eea4172118961139c6
 msgid "be_empty"
 msgstr ""
 
-#: ../../reference/matcher.rst:89 101ed738a6694230b1e6c12fffa992d5
+#: ../../reference/matcher.rst:147 101ed738a6694230b1e6c12fffa992d5
 msgid "Matches an empty sequence."
 msgstr "空のシーケンスにマッチします."
 
-#: ../../reference/matcher.rst:90 b84ca1769d8248cd873fd503a27050dc
-msgid "have_item: ``Matcher``"
+#: ../../reference/matcher.rst:148 b84ca1769d8248cd873fd503a27050dc
+msgid "have_item"
 msgstr ""
 
-#: ../../reference/matcher.rst:91 a562bf94c5f94bceaa3a3b0c87cb82cb
-msgid "Matches a collection that has an item that matches the given item."
+#: ../../reference/matcher.rst:149 ../../reference/matcher.rst:171
+#: d4160ff2eed74648a311fac4127a1145
+msgid "``Matcher``"
+msgstr ""
+
+#: ../../reference/matcher.rst:150 a562bf94c5f94bceaa3a3b0c87cb82cb
+msgid "Matches a collection that has an item matching the given item."
 msgstr "与えられた matcher にマッチする要素を持っているコレクションにマッチします."
 
-#: ../../reference/matcher.rst:92 6f103d7d2bc448e2984b20a26e49f10e
-msgid "have_items: ``List<Matcher>``"
+#: ../../reference/matcher.rst:151 b84ca1769d8248cd873fd503a27050dc
+msgid "have_items"
 msgstr ""
 
-#: ../../reference/matcher.rst:93 e98e3eb792604bab819b880c33f25093
+#: ../../reference/matcher.rst:152 ../../reference/matcher.rst:155
+#: ../../reference/matcher.rst:158 ../../reference/matcher.rst:174
+#: ../../reference/matcher.rst:177 f4d3ff5c7e694af6be0705a955fddaa2
+msgid "``List<Matcher>``"
+msgstr ""
+
+#: ../../reference/matcher.rst:153 e98e3eb792604bab819b880c33f25093
 msgid "Matches if all given items appear in the list, in any order."
 msgstr ""
 
-#: ../../reference/matcher.rst:94 fd298f302c674df3891e9099c93eb3d9
-msgid "contain_exactly: ``List<Matcher>``"
+#: ../../reference/matcher.rst:154 fd298f302c674df3891e9099c93eb3d9
+msgid "contain_exactly"
 msgstr ""
 
-#: ../../reference/matcher.rst:95 e0c81e42af1e492ea4e5aee44ca35d80
+#: ../../reference/matcher.rst:156 e0c81e42af1e492ea4e5aee44ca35d80
 msgid "Exactly matches the entire sequence."
 msgstr ""
 
-#: ../../reference/matcher.rst:97 b5c05d2d669c4dc1823fb79a74cfdd18
-msgid "contain_in_any_order: ``List<Matcher>``"
+#: ../../reference/matcher.rst:157 b5c05d2d669c4dc1823fb79a74cfdd18
+msgid "contain_in_any_order"
 msgstr ""
 
-#: ../../reference/matcher.rst:97 efffee56066d49428f1a2d83fadea3d7
+#: ../../reference/matcher.rst:159 efffee56066d49428f1a2d83fadea3d7
 msgid "Matches the entire sequence, but in any order."
 msgstr ""
 
-#: ../../reference/matcher.rst:100 9b13a0e9233f46f98944eb976f9a022a
+#: ../../reference/matcher.rst:162 ../../reference/matcher.rst:163
+#: 9b13a0e9233f46f98944eb976f9a022a f7717029d23a49ca9a33fa739c270c72
 msgid "Logical Matchers"
 msgstr "論理演算"
 
-#: ../../reference/matcher.rst:101 d4160ff2eed74648a311fac4127a1145
-msgid "not: ``Matcher``"
+#: ../../reference/matcher.rst:170 eb0cc5cd44ee4f9cb1069c93a396cd71
+msgid "not"
 msgstr ""
 
-#: ../../reference/matcher.rst:102 5059beb2bf9d4117bf218dc2d8c2f6ee
+#: ../../reference/matcher.rst:172 5059beb2bf9d4117bf218dc2d8c2f6ee
 msgid "Matches a value that doesn't match the given matcher."
 msgstr "与えられた matcher にマッチしない値にマッチします."
 
-#: ../../reference/matcher.rst:103 f4d3ff5c7e694af6be0705a955fddaa2
-msgid "all_of: ``List<Matcher>``"
+#: ../../reference/matcher.rst:173 1dc5a792b4524f2386de64586f109f7a
+msgid "all_of"
 msgstr ""
 
-#: ../../reference/matcher.rst:104 8ebb3b3da03240479ef7cd223fc68b03
+#: ../../reference/matcher.rst:175 8ebb3b3da03240479ef7cd223fc68b03
 msgid "Matches a value that matches all of the given matchers."
 msgstr "与えられた matcher すべてにマッチする値にマッチします."
 
-#: ../../reference/matcher.rst:105 77e7e143d92b45a1a80a4f864d09d7c7
-msgid "any_of: ``List<Matcher>``"
+#: ../../reference/matcher.rst:176 73665170b8aa46c58d619cf1a2b7d37a
+msgid "any_of"
 msgstr ""
 
-#: ../../reference/matcher.rst:106 2f216ea59b884591ba80589769126645
+#: ../../reference/matcher.rst:178 2f216ea59b884591ba80589769126645
 msgid "Matches a value that matches any of the given matchers."
 msgstr "与えられた matcher のいずれかにマッチする値にマッチします."
 
-#: ../../reference/matcher.rst:108 73665170b8aa46c58d619cf1a2b7d37a
+#: ../../reference/matcher.rst:179 73665170b8aa46c58d619cf1a2b7d37a
 msgid "anything"
 msgstr ""
 
-#: ../../reference/matcher.rst:108 be085700e8d646458a08c28fb7b70366
+#: ../../reference/matcher.rst:181 be085700e8d646458a08c28fb7b70366
 msgid "Matches anything."
 msgstr "任意の値にマッチします."
 
-#: ../../reference/matcher.rst:111 ed92224611844508bbd1b3ace4d78c98
+#: ../../reference/matcher.rst:184 ed92224611844508bbd1b3ace4d78c98
 msgid "Custom matchers"
 msgstr "カスタム Matcher を使用する"
 
-#: ../../reference/matcher.rst:112 c58a0173138845278a016016031c0fba
+#: ../../reference/matcher.rst:185 c58a0173138845278a016016031c0fba
 msgid "You can define custom matchers and load as a plugins."
 msgstr "カスタム matcher を定義して, プラグインとしてロードすることもできます."
 
-#: ../../reference/matcher.rst:114 c72f119023384e3f9d2240d8a6ac4fff
+#: ../../reference/matcher.rst:187 c72f119023384e3f9d2240d8a6ac4fff
 msgid "First, implement a custom matcher plugin like below."
 msgstr "まず, 以下のように自作 matcher プラグインを定義します."
 
-#: ../../reference/matcher.rst:118 e83547fe1ee74de6803b31ed04be25d9
+#: ../../reference/matcher.rst:191 e83547fe1ee74de6803b31ed04be25d9
 msgid "And then, run Preacher with loading that plugin."
 msgstr "そして, そのプラグインをロードして Preacher を実行します."
