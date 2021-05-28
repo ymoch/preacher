@@ -1,16 +1,11 @@
 from datetime import datetime, timezone
-from unittest.mock import ANY, sentinel
 
 from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 from preacher.compilation.verification.matcher import add_default_matchers
-from preacher.core.value.impl.datetime import parse_datetime_value_with_format
-from preacher.core.verification.hamcrest import after, before
-
-PKG = 'preacher.compilation.verification.matcher'
-NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
+from preacher.core.value import ValueContext
 
 
 @fixture
@@ -29,7 +24,7 @@ def test_invalid_mapping(compiler, obj):
         compiler.compile(obj)
 
 
-@mark.parametrize(('obj', 'item', 'expected'), [
+@mark.parametrize(('obj', 'item', 'expected'), (
     ('_undefined_string', 1, False),
     ('_undefined_string', 'value', False),
     ('_undefined_string', '_undefined_string', True),
@@ -153,10 +148,15 @@ def test_invalid_mapping(compiler, obj):
     ('be_sunday', '2021-05-29T23:59:59.999999', False),
     ('be_sunday', '2021-05-29T23:59:59.999999Z', False),
     ('be_sunday', '2021-05-29T23:59:59.999999+09:00', False),
-])
+    ({'be_before': 'now'}, '2020-05-16T12:34:55.999999Z', True),
+    ({'be_before': 'now'}, '2020-05-16T12:34:56.000000Z', False),
+    ({'be_after': '1 second'}, '2020-05-16T12:34:57.000000Z', False),
+    ({'be_after': 'now'}, '2021-05-16T12:34:57.000001Z', True),
+))
 def test_matcher_matchers(compiler, obj, item, expected):
     factory = compiler.compile(obj)
-    matcher = factory.create()
+    context = ValueContext(origin_datetime=datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc))
+    matcher = factory.create(context)
     assert matcher.matches(item) == expected
 
 
@@ -180,21 +180,3 @@ def test_matcher_matching_failure(compiler, obj, item):
     matcher = factory.create()
     with raises(TypeError):
         matcher.matches(item)
-
-
-@mark.parametrize(('obj', 'expected_func'), [
-    ({'be_before': NOW}, before),
-    ({'be_after': NOW}, after),
-])
-def test_verification_with_datetime(compiler, mocker, obj, expected_func):
-    # HACK make this test richer
-    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory', return_value=sentinel.matcher)
-
-    actual = compiler.compile(obj)
-    assert actual == sentinel.matcher
-
-    matcher_ctor.assert_called_once_with(
-        expected_func,
-        arg=ANY,
-        value_func=parse_datetime_value_with_format,
-    )
