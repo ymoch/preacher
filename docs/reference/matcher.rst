@@ -1,8 +1,9 @@
 Matcher
 =======
-A string or a dictionary is given as a ``Matcher``. Allowed matchers are below.
+A matcher taking no argument is given as a string such like ``"be_null"``.
+A matcher taking an argument is given as a dictionary such like ``equal: 1``.
 
-.. note:: A ``Value`` given as a ``Matcher`` is equivalent to ``{"equal": it}``.
+A ``Value`` given as a ``Matcher`` is equivalent to ``equal: it``.
 
 For Objects
 -----------
