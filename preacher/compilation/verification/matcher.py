@@ -12,7 +12,7 @@ from preacher.compilation.util.type import ensure_list
 from preacher.core.value import Value
 from preacher.core.value.impl.datetime import parse_datetime_value_with_format
 from preacher.core.value.impl.static import StaticValue
-from preacher.core.verification.hamcrest import before, after
+from preacher.core.verification.hamcrest import before, after, day_of_week
 from preacher.core.verification.matcher import MatcherFactory
 from preacher.core.verification.matcher import MatcherFunc
 from preacher.core.verification.matcher import RecursiveMatcherFactory
@@ -151,6 +151,13 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     # For objects.
     compiler.add_static(('be_null',), hamcrest.none())
     compiler.add_static(('not_be_null',), hamcrest.not_none())
+    compiler.add_static(('be_monday',), day_of_week(0))
+    compiler.add_static(('be_tuesday',), day_of_week(1))
+    compiler.add_static(('be_wednesday',), day_of_week(2))
+    compiler.add_static(('be_thursday',), day_of_week(3))
+    compiler.add_static(('be_friday',), day_of_week(4))
+    compiler.add_static(('be_saturday',), day_of_week(5))
+    compiler.add_static(('be_sunday',), day_of_week(6))
     compiler.add_taking_value(('equal',), hamcrest.equal_to)
     compiler.add_recursive(('have_length',), hamcrest.has_length, multiple=False)
 

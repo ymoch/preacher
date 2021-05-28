@@ -41,6 +41,20 @@ For String Values
 
 For Datetime Values
 -------------------
+- be_monday
+    - Matches a datetime on Monday.
+- be_tuesday
+    - Matches a datetime on Tuesday.
+- be_wednesday
+    - Matches a datetime on Wednesday.
+- be_thursday
+    - Matches a datetime on Thursday.
+- be_friday
+    - Matches a datetime on Friday.
+- be_saturday
+    - Matches a datetime on Saturday.
+- be_sunday
+    - Matches a datetime on Sunday.
 - be_before: :ref:`datetime`
     - Matches a datetime before the given datetime.
 - be_after: :ref:`datetime`
