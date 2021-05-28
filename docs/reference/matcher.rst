@@ -9,7 +9,6 @@ For Objects
 -----------
 .. list-table:: Matchers for Objects
     :header-rows: 1
-    :widths: 20 20 60
 
     * - Name
       - Arguments
@@ -34,7 +33,6 @@ For Comparable Values
 ---------------------
 .. list-table:: Matchers for Comparable Values
     :header-rows: 1
-    :widths: 20 20 60
 
     * - Name
       - Arguments
@@ -56,7 +54,6 @@ For String Values
 -----------------
 .. list-table:: Matchers for String Values
     :header-rows: 1
-    :widths: 20 20 60
 
     * - Name
       - Arguments
@@ -81,7 +78,6 @@ For Datetime Values
 
 .. list-table:: Matchers for Datetime Values
     :header-rows: 1
-    :widths: 20 20 60
 
     * - Name
       - Arguments
@@ -138,7 +134,6 @@ For Sequence Values
 -------------------
 .. list-table:: Matchers for Sequence Values
     :header-rows: 1
-    :widths: 20 20 60
 
     * - Name
       - Arguments
@@ -163,7 +158,6 @@ Logical Matchers
 ----------------
 .. list-table:: Logical Matchers
     :header-rows: 1
-    :widths: 20 20 60
 
     * - Name
       - Arguments

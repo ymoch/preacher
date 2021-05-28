@@ -96,7 +96,6 @@ Each verification result has a "Verification Status."
 
 .. list-table:: The List of Verification Statuses
    :header-rows: 1
-   :widths: 10 20 50
 
    * - Value
      - Will Succeed?
