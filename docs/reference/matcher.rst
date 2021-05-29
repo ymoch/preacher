@@ -114,21 +114,15 @@ For Datetime Values
 
 Datetime
 ^^^^^^^^
-An "absolute datetime" is given as a YAML timestamp value.
-A naive datetime value is regarded as a UTC datetime.
+The format of a datetime value is the same as :ref:`duration`. Here are some examples.
 
-A "relative datetime" is given as a string value in the particular format.
+.. code-block:: yaml
 
-- When given ``now``, then uses the datetime just when the request starts.
-- When given time such like ``12:34+0100``,
-  then uses the datetime which is the combination of
-  date that the requests starts and the given time.
-- When given an offset, then uses the datetime that the request starts.
-    - Days, hours, minutes and seconds offsets are available.
-    - When given a positive offset like ``1 day`` or ``+2 hours``,
-      then uses the future datetime.
-    - When given a negative offset like ``-1 minute`` or ``-2 seconds``,
-      then uses the past datetime.
+    - be_before: 2021-01-23T12:34:56Z  # Absolute
+    - be_after: -2 days  # Relative
+    - be_after: !relative_datetime  # Relative, with a format.
+        delta: 1 second
+        format: "%Y/%m/%d %H:%M:%S"
 
 For Sequence Values
 -------------------
