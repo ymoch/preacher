@@ -69,7 +69,6 @@ Scenarios can be nested by using "subscenarios."
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -158,7 +157,6 @@ A "case" is the basic unit of verification, which executes a request and verify 
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -197,7 +195,6 @@ When given only a string, that is equivalent to ``{path: it}``.
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -264,7 +261,6 @@ RequestBody
 ^^^^^^^^^^^
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -290,7 +286,6 @@ ResponseDescription
 -------------------
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -332,7 +327,6 @@ Description
 -----------
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -362,7 +356,6 @@ See :ref:`parameterized-test` for more information.
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type

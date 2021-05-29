@@ -13,7 +13,6 @@ Here is the definition of ``Extraction`` as a mapping.
 
 .. list-table:: The definition of ``Extraction`` Object
    :header-rows: 1
-   :widths: 10 10 10 30 20
 
    * - Key
      - Type
