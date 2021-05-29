@@ -5,12 +5,13 @@ from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 import requests
 from pytest import fixture
 
-from preacher.core.request.request import Request, ResponseWrapper, Method
+from preacher.core.request.request import Request, Method
 from preacher.core.request.request_body import RequestBody
+from preacher.core.request.requester import Requester, ResponseWrapper
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
 
-PKG = 'preacher.core.request.request'
+PKG = 'preacher.core.request.requester'
 
 
 @fixture
@@ -24,6 +25,7 @@ def session():
 
     session = NonCallableMagicMock(requests.Session)
     session.__enter__.return_value = session
+    session.rebuild_proxies.return_value = sentinel.proxies
     session.send.return_value = response
     return session
 
@@ -39,8 +41,11 @@ def body():
 def test_default_request(mocker, session):
     mocker.patch('requests.Session', return_value=session)
 
+    requester = Requester(base_url='http://base-url.org')
+    assert requester.base_url == 'http://base-url.org'
+
     request = Request()
-    report, _res = request.execute('http://base-url.org')
+    report, _res = requester.execute(request)
     assert report.request.method == 'GET'
     assert report.request.url == 'http://base-url.org/'
     assert report.request.headers['User-Agent'].startswith('Preacher')
@@ -53,6 +58,7 @@ def test_default_request(mocker, session):
     assert prepped.url == 'http://base-url.org/'
     assert prepped.headers['User-Agent'].startswith('Preacher')
     assert prepped.body is None
+    assert kwargs['proxies'] is sentinel.proxies
     assert kwargs['timeout'] is None
 
     session.__enter__.assert_called_once()
@@ -67,13 +73,34 @@ def test_when_request_preparation_fails(mocker, session):
     mocker.patch('requests.Request', return_value=req)
 
     request = Request()
-    execution, response = request.execute('base-url', session=session)
+    requester = Requester('base-url')
+    execution, response = requester.execute(request, session=session)
 
     assert execution.status is Status.FAILURE
     assert execution.starts is sentinel.now
     assert execution.request is None
     assert execution.message == 'RuntimeError: msg'
 
+    session.rebuild_proxies.assert_not_called()
+    session.send.assert_not_called()
+
+
+def test_when_proxy_building_fails(mocker, session):
+    session.rebuild_proxies.side_effect = RuntimeError('message')
+
+    req = NonCallableMock(requests.Request)
+    req.prepare.return_value = sentinel.prepped
+    mocker.patch('requests.Request', return_value=req)
+
+    request = Request()
+    requester = Requester('http://base-url')
+    execution, response = requester.execute(request, session=session)
+
+    assert execution.status is Status.FAILURE
+    assert execution.request is None
+    assert execution.message == 'RuntimeError: message'
+
+    session.rebuild_proxies.assert_called_once_with(sentinel.prepped, proxies=None)
     session.send.assert_not_called()
 
 
@@ -82,7 +109,8 @@ def test_when_request_fails(mocker, session):
     session.send.side_effect = RuntimeError('msg')
 
     request = Request()
-    execution, response = request.execute('http://base.org/', session=session)
+    requester = Requester('http://base.org/')
+    execution, response = requester.execute(request, session=session)
 
     assert execution.status is Status.UNSTABLE
     assert execution.starts is sentinel.now
@@ -92,6 +120,7 @@ def test_when_request_fails(mocker, session):
     assert execution.request.body is None
     assert execution.message == 'RuntimeError: msg'
 
+    session.rebuild_proxies.assert_called_once()
     session.send.assert_called_once()
 
 
@@ -112,7 +141,8 @@ def test_when_request_succeeds(mocker, session, body):
         params=sentinel.params,
         body=body,
     )
-    report, response = request.execute('https://a.com', timeout=5.0, session=session)
+    requester = Requester('https://a.com', timeout=5.0)
+    report, response = requester.execute(request, session=session)
     assert report.status is Status.SUCCESS
     assert report.request
     assert report.request.method == 'POST'
@@ -138,6 +168,8 @@ def test_when_request_succeeds(mocker, session, body):
     resolve_params.assert_called_once_with(sentinel.params, expected_context)
     body.resolve.assert_called_once_with(expected_context)
 
+    session.rebuild_proxies.assert_called_once()
+
     args, kwargs = session.send.call_args
     prepped = args[0]
     assert isinstance(prepped, requests.PreparedRequest)
@@ -147,6 +179,7 @@ def test_when_request_succeeds(mocker, session, body):
     assert prepped.headers['User-Agent'].startswith('Preacher')
     assert prepped.headers['k1'] == 'v1'
     assert prepped.body == 'x=y&name=%E6%9D%B1&name=%E4%BA%AC'
+    assert kwargs['proxies'] is sentinel.proxies
     assert kwargs['timeout'] == 5.0
 
 
@@ -158,7 +191,8 @@ def test_request_overwrites_default_headers(session, body):
         },
         body=body,
     )
-    report, _res = request.execute('https://base-url.net', session=session)
+    requester = Requester('https://base-url.net')
+    report, _res = requester.execute(request, session=session)
     assert report.request
     assert report.request.headers['User-Agent'] == 'custom-user-agent'
     assert report.request.headers['Content-Type'] == 'custom-content-type'
@@ -169,7 +203,7 @@ def test_request_overwrites_default_headers(session, body):
 
     # Doesn't change the state.
     request = Request(body=body)
-    report, _res = request.execute('https://base-url.net', session=session)
+    report, _res = requester.execute(request, session=session)
     assert report.request
     assert report.request.headers['User-Agent'].startswith('Preacher')
     assert report.request.headers['Content-Type'] == 'text/plain'

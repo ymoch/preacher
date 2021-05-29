@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import List, Optional
 
 from preacher.core.request import Response, ExecutionReport
-from preacher.core.scenario import ScenarioResult, Listener
+from preacher.core.scenario import ScenarioResult
+from preacher.core.scheduling import Listener
 from preacher.core.status import Status
 from preacher.presentation.html import HtmlReporter
 

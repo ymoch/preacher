@@ -1,10 +1,17 @@
-import time
-from datetime import datetime, timedelta, timezone
+from time import struct_time
+from datetime import datetime, time, timedelta, timezone
 from unittest.mock import NonCallableMock
 
 from pytest import mark, raises
 
-from preacher.core.datetime import DatetimeFormat, ISO8601, StrftimeFormat, now
+from preacher.core.datetime import DatetimeFormat
+from preacher.core.datetime import StrftimeFormat
+from preacher.core.datetime import ISO8601
+from preacher.core.datetime import now
+from preacher.core.datetime import parse_time
+from preacher.core.datetime import parse_timedelta
+
+PKG = 'preacher.core.datetime'
 
 
 def test_date_time_format_interface():
@@ -92,8 +99,8 @@ def test_strftime_parse_datetime(format_string, value, expected):
 
 
 def test_now_jst(mocker):
-    localtime = NonCallableMock(spec=time.struct_time, tm_zone='JST', tm_gmtoff=32400)
-    mocker.patch('time.localtime', return_value=localtime)
+    localtime = NonCallableMock(spec=struct_time, tm_zone='JST', tm_gmtoff=32400)
+    mocker.patch(f'{PKG}.localtime', return_value=localtime)
 
     current = now()
     assert current.tzname() == 'JST'
@@ -101,9 +108,64 @@ def test_now_jst(mocker):
 
 
 def test_now_pdt(mocker):
-    localtime = NonCallableMock(spec=time.struct_time, tm_zone='PDT', tm_gmtoff=-28800)
-    mocker.patch('time.localtime', return_value=localtime)
+    localtime = NonCallableMock(spec=struct_time, tm_zone='PDT', tm_gmtoff=-28800)
+    mocker.patch(f'{PKG}.localtime', return_value=localtime)
 
     current = now()
     assert current.tzname() == 'PDT'
     assert current.utcoffset().total_seconds() == -28800
+
+
+@mark.parametrize('value', ('invalid', 'now', '1', '1:2', '1:2:3'))
+def test_parse_time_given_an_invalid_value(value):
+    with raises(ValueError):
+        parse_time(value)
+
+
+@mark.parametrize(('value', 'expected'), (
+    ('01', time(hour=1, tzinfo=timezone.utc)),
+    ('01+09:00', time(hour=1, tzinfo=timezone(timedelta(hours=9)))),
+    ('01:02', time(hour=1, minute=2, tzinfo=timezone.utc)),
+    ('01:02+09:00', time(hour=1, minute=2, tzinfo=timezone(timedelta(hours=9)))),
+    ('01:02:03', time(hour=1, minute=2, second=3, tzinfo=timezone.utc)),
+    ('01:02:03.012', time(hour=1, minute=2, second=3, microsecond=12000, tzinfo=timezone.utc)),
+    ('01:02:03.012345', time(hour=1, minute=2, second=3, microsecond=12345, tzinfo=timezone.utc)),
+))
+def test_parse_time(mocker, value, expected):
+    mocker.patch(f'{PKG}.system_timezone', return_value=timezone.utc)
+    assert parse_time(value) == expected
+
+
+@mark.parametrize('value', ('invalid', 'now +1 day'))
+def test_parse_timedelta_given_an_invalid_value(value):
+    with raises(ValueError):
+        parse_timedelta(value)
+
+
+@mark.parametrize(('value', 'expected'), (
+    ('', timedelta()),
+    ('now', timedelta()),
+    (' now ', timedelta()),
+    ('0day', timedelta()),
+    ('1day', timedelta(days=1)),
+    ('2 DaYs', timedelta(days=2)),
+    ('+365 days', timedelta(days=365)),
+    (' -1  days ', timedelta(days=-1)),
+    ('0 hour', timedelta()),
+    ('1 hour', timedelta(hours=1)),
+    ('-2 hours', timedelta(hours=-2)),
+    ('24 hours', timedelta(days=1)),
+    ('-48 hours', timedelta(days=-2)),
+    ('0 minute', timedelta()),
+    ('1 minute', timedelta(minutes=1)),
+    ('-2 minutes', timedelta(minutes=-2)),
+    ('+60 minutes', timedelta(hours=1)),
+    ('-120 minutes', timedelta(hours=-2)),
+    ('0 second', timedelta()),
+    ('1 seconds', timedelta(seconds=1)),
+    ('-2 seconds', timedelta(seconds=-2)),
+    ('+60 seconds', timedelta(minutes=1)),
+    ('-120 seconds', timedelta(minutes=-2)),
+))
+def test_parse_timedelta(value, expected):
+    assert parse_timedelta(value) == expected

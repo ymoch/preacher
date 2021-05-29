@@ -1,24 +1,28 @@
 """CLI Application implementation."""
 
 import sys
-from concurrent.futures import Executor, ProcessPoolExecutor
+from concurrent.futures import Executor
 from itertools import chain
 from logging import DEBUG, INFO, WARNING, ERROR
 from logging import Logger, StreamHandler, getLogger
-from typing import Callable, Iterable, Iterator, Optional, Sequence
+from typing import Iterable, Iterator, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
 from preacher.compilation.yaml import load_all, load_all_from_path
 from preacher.core.logger import default_logger
-from preacher.core.scenario import ScenarioRunner, Listener, MergingListener
+from preacher.core.request import Requester
+from preacher.core.scenario import ScenarioRunner, CaseRunner
+from preacher.core.scheduling import ScenarioScheduler, Listener, MergingListener
 from preacher.core.status import Status
+from preacher.core.unit import UnitRunner
 from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
+from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
 from .logging import ColoredFormatter
 
-__all__ = ['app', 'create_system_logger', 'create_listener', 'load_objs']
+__all__ = ['app', 'create_system_logger', 'create_listener', 'create_scheduler', 'load_objs']
 
 _REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
@@ -33,7 +37,7 @@ def app(
     retry: int = 0,
     timeout: Optional[float] = None,
     concurrency: int = 1,
-    executor_factory: Callable[[int], Executor] = ProcessPoolExecutor,
+    executor_factory: Optional[ExecutorFactory] = None,
     plugins: Iterable[str] = (),
     verbosity: int = 0,
 ) -> int:
@@ -87,12 +91,20 @@ def app(
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
-    runner = ScenarioRunner(base_url=base_url, retry=retry, delay=delay, timeout=timeout)
     listener = create_listener(level, report_dir)
+    executor_factory = executor_factory or PROCESS_POOL_FACTORY
     try:
         logger.info('Start running scenarios.')
-        with executor_factory(concurrency) as executor:
-            status = runner.run(executor, scenarios, listener=listener)
+        with executor_factory.create(concurrency) as executor:
+            scheduler = create_scheduler(
+                executor=executor,
+                listener=listener,
+                base_url=base_url,
+                timeout=timeout,
+                retry=retry,
+                delay=delay,
+            )
+            status = scheduler.run(scenarios)
     except Exception as error:
         logger.exception(error)
         return 3
@@ -162,3 +174,18 @@ def _status_to_logging_level(level: Status) -> int:
     if level is Status.UNSTABLE:
         return WARNING
     return ERROR
+
+
+def create_scheduler(
+    executor: Executor,
+    listener: Listener,
+    base_url: str,
+    timeout: Optional[float],
+    retry: int,
+    delay: float,
+) -> ScenarioScheduler:
+    requester = Requester(base_url=base_url, timeout=timeout)
+    unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
+    case_runner = CaseRunner(unit_runner=unit_runner, listener=listener)
+    runner = ScenarioRunner(executor=executor, case_runner=case_runner)
+    return ScenarioScheduler(runner=runner, listener=listener)

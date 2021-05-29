@@ -48,6 +48,7 @@ cases:
             - be_before: 1 minute
             - be_after: -2 minutes
             - be_after: 1 second  # Must be processed after 1 seconds.
+            - be_after: !relative_datetime 1 second
 
   - label: Matches sequences
     request: /json

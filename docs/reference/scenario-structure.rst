@@ -11,8 +11,7 @@ Here is a scenario example.
       request:
         path: /path
       response:
-        body:
-          analyzed_as: json
+        status_code: 200
     when:
       - describe: .base_url
         should:
@@ -23,9 +22,9 @@ Here is a scenario example.
         response:
           status_code: 200
           body:
-            - describe: .foo
-              should:
-                equal: bar
+            describe: .foo
+            should:
+              equal: bar
       - label: A Little Complicated
         enabled: true
         request:
@@ -56,13 +55,11 @@ Here is a scenario example.
               should:
                 be_greater_than: 100
           body:
-            analyzed_as: xml
-            descriptions:
-              - describe:
-                  xpath: /html/body/h1
-                should:
-                  - start_with: x
-                  - end_with: y
+            - describe:
+                xpath: /html/body/h1
+              should:
+                - start_with: x
+                - end_with: y
 
 Scenario
 --------
@@ -72,7 +69,6 @@ Scenarios can be nested by using "subscenarios."
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -161,7 +157,6 @@ A "case" is the basic unit of verification, which executes a request and verify 
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -200,7 +195,6 @@ When given only a string, that is equivalent to ``{path: it}``.
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -267,7 +261,6 @@ RequestBody
 ^^^^^^^^^^^
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -293,7 +286,6 @@ ResponseDescription
 -------------------
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -335,7 +327,6 @@ Description
 -----------
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -365,7 +356,6 @@ See :ref:`parameterized-test` for more information.
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 15 60
 
     * - Key
       - Type
@@ -379,37 +369,6 @@ See :ref:`parameterized-test` for more information.
       - Map
       - ``{}``
       - An argument map of argument names to their values.
-
-Including other files
----------------------
-Using ``!include`` tag, you can include other YAML files.
-This macro is available anywhere in your scenario.
-
-.. code-block:: yaml
-
-    !include path/to/other.yaml
-
-A good practice of this feature is locating subscenarios on subdirectories.
-
-.. code-block:: yaml
-
-    label: Subscenario inclusion example
-    subscenarios:
-      - !include subscenarios/subscenario1.yml
-      - !include subscenarios/subscenario2.yml
-
-UNIX-like wildcard expansion is available.
-A wildcard inclusion results in the list of matching inclusion.
-
-.. code-block:: yaml
-
-    !include path/to/*.yml
-
-.. note:: Anchors in a included YAML are not available in including YAMLs,
-          because the included YAMLs are parsed after the including YAML is parsed.
-
-.. note:: Names of included files should not contain any wildcard characters
-          because not all of the wildcard expansion rules are covered.
 
 .. _YAML: https://yaml.org/
 .. _jq: https://stedolan.github.io/jq/

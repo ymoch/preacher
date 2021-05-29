@@ -19,8 +19,5 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-livehtml:
-	sphinx-autobuild -b html $(SPHINXOPTS) "$(SOURCEDIR)" $(BUILDDIR)/html
-
 intl:
 	make gettext && sphinx-intl -c $(SOURCEDIR)/conf.py update -l ja -p $(BUILDDIR)/gettext

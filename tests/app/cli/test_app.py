@@ -2,22 +2,26 @@
 Tests only arguments and that whole process is run.
 Styles should be checked independently.
 """
+
 import logging
 import os
 from concurrent.futures import Executor
 from io import StringIO
 from tempfile import TemporaryDirectory
-from typing import Iterable, Optional
-from unittest.mock import Mock, NonCallableMock, NonCallableMagicMock, sentinel
+from typing import Iterable
+from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 
 from pytest import fixture, raises, mark
 
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
+from preacher.app.cli.app import create_scheduler
 from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
+from preacher.app.cli.executor import ExecutorFactory
 from preacher.compilation.scenario import ScenarioCompiler
-from preacher.core.scenario import Scenario, ScenarioRunner, Listener
+from preacher.core.scenario import Scenario
+from preacher.core.scheduling import ScenarioScheduler
 from preacher.core.status import Status
 
 PKG = 'preacher.app.cli.app'
@@ -44,7 +48,9 @@ def executor():
 
 @fixture
 def executor_factory(executor):
-    return Mock(return_value=executor)
+    factory = NonCallableMock(ExecutorFactory)
+    factory.create.return_value = executor
+    return factory
 
 
 def test_app_normal(mocker, base_dir, executor, executor_factory):
@@ -67,19 +73,13 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
 
-    def _run(
-        executor_: Executor,
-        scenarios: Iterable[Scenario],
-        listener: Optional[Listener],
-    ) -> Status:
-        assert executor_ is executor
+    def _run(scenarios: Iterable[Scenario]) -> Status:
         assert list(scenarios) == [sentinel.scenario]
-        assert listener is sentinel.listener
         return Status.SUCCESS
 
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = _run
-    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    scheduler = NonCallableMock(ScenarioScheduler)
+    scheduler.run.side_effect = _run
+    scheduler_ctor = mocker.patch(f'{PKG}.create_scheduler', return_value=scheduler)
 
     exit_code = app(
         paths=sentinel.paths,
@@ -106,15 +106,17 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
 
     objs_ctor.assert_called_once_with(sentinel.paths, logger)
-    runner_ctor.assert_called_once_with(
+    scheduler_ctor.assert_called_once_with(
+        executor=executor,
+        listener=sentinel.listener,
         base_url=sentinel.base_url,
+        timeout=sentinel.timeout,
         retry=sentinel.retry,
         delay=sentinel.delay,
-        timeout=sentinel.timeout,
     )
     listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
-    executor_factory.assert_called_once_with(sentinel.concurrency)
-    runner.run.assert_called_once()
+    executor_factory.create.assert_called_once_with(sentinel.concurrency)
+    scheduler.run.assert_called_once()
     executor.__exit__.assert_called_once()
 
 
@@ -129,9 +131,9 @@ def test_app_compiler_creation_fails(mocker):
 
 
 def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.return_value = Status.UNSTABLE
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    scheduler = NonCallableMock(ScenarioScheduler)
+    scheduler.run.return_value = Status.UNSTABLE
+    mocker.patch(f'{PKG}.ScenarioScheduler', return_value=scheduler)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 1
@@ -140,9 +142,9 @@ def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
 
 
 def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
-    runner = NonCallableMock(ScenarioRunner)
-    runner.run.side_effect = RuntimeError
-    mocker.patch(f'{PKG}.ScenarioRunner', return_value=runner)
+    scheduler = NonCallableMock(ScenarioScheduler)
+    scheduler.run.side_effect = RuntimeError
+    mocker.patch(f'{PKG}.ScenarioScheduler', return_value=scheduler)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 3
@@ -200,3 +202,37 @@ def test_create_listener_report_dir(base_dir):
     report_dir = os.path.join(base_dir, 'report')
     create_listener(level=Status.FAILURE, report_dir=report_dir)
     assert os.path.isdir(report_dir)
+
+
+def test_create_scheduler(mocker):
+    requester_ctor = mocker.patch(f'{PKG}.Requester', return_value=sentinel.requester)
+    unit_runner_ctor = mocker.patch(f'{PKG}.UnitRunner', return_value=sentinel.unit_runner)
+    case_runner_ctor = mocker.patch(f'{PKG}.CaseRunner', return_value=sentinel.case_runner)
+    runner_ctor = mocker.patch(f'{PKG}.ScenarioRunner', return_value=sentinel.runner)
+    scheduler_ctor = mocker.patch(f'{PKG}.ScenarioScheduler', return_value=sentinel.scheduler)
+
+    scheduler = create_scheduler(
+        executor=sentinel.executor,
+        listener=sentinel.listener,
+        base_url=sentinel.base_url,
+        timeout=sentinel.timeout,
+        retry=sentinel.retry,
+        delay=sentinel.delay,
+    )
+    assert scheduler is sentinel.scheduler
+
+    requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
+    unit_runner_ctor.assert_called_once_with(
+        requester=sentinel.requester,
+        retry=sentinel.retry,
+        delay=sentinel.delay,
+    )
+    case_runner_ctor.assert_called_once_with(
+        unit_runner=sentinel.unit_runner,
+        listener=sentinel.listener,
+    )
+    runner_ctor.assert_called_once_with(
+        executor=sentinel.executor,
+        case_runner=sentinel.case_runner,
+    )
+    scheduler_ctor.assert_called_once_with(runner=sentinel.runner, listener=sentinel.listener)

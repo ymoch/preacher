@@ -13,8 +13,7 @@ class HtmlReporter:
         self._path = path
         self._responses_path = os.path.join(self._path, 'responses')
 
-        loader = jinja2.PackageLoader('preacher', 'resources/report/html')
-        self._env = jinja2.Environment(loader=loader, autoescape=True)
+        self._loader = jinja2.PackageLoader('preacher', 'resources/report/html')
 
         self._initialize()
 
@@ -26,13 +25,15 @@ class HtmlReporter:
         name = f'{response.id}.html'
         path = os.path.join(self._responses_path, name)
 
-        template = self._env.get_template('response-view.html')
+        env = jinja2.Environment(loader=self._loader, autoescape=True)
+        template = env.get_template('response-view.html')
         with open(path, 'w') as f:
             template.stream(execution=execution, response=response).dump(f)
 
     def export_results(self, results: Iterable[ScenarioResult]) -> None:
         html_path = os.path.join(self._path, 'index.html')
 
-        template = self._env.get_template('index.html')
+        env = jinja2.Environment(loader=self._loader, autoescape=True)
+        template = env.get_template('index.html')
         with open(html_path, 'w') as f:
             template.stream(scenarios=results).dump(f)

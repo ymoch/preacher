@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 
 import requests
 
-from preacher.core.request import Request, Response, ExecutionReport
+from preacher.core.request import Request, Response, Requester, ExecutionReport
 from preacher.core.scenario.util.retry import retry_while_false
 from preacher.core.value import ValueContext
 from preacher.core.verification import ResponseDescription, ResponseVerification
@@ -24,20 +24,17 @@ def predicate(result: Result) -> bool:
 
 class UnitRunner:
 
-    def __init__(
-        self,
-        base_url: str = '',
-        retry: int = 0,
-        delay: float = 0.1,
-        timeout: Optional[float] = None,
-    ):
+    def __init__(self, requester: Requester, retry: int = 0, delay: float = 0.1):
         if retry < 0:
             raise ValueError(f'`retry` must be zero or positive, given {retry}')
 
-        self._base_url = base_url
+        self._requester = requester
         self._retry = retry
         self._delay = delay
-        self._timeout = timeout
+
+    @property
+    def base_url(self) -> str:
+        return self._requester.base_url
 
     def run(
         self,
@@ -58,12 +55,7 @@ class UnitRunner:
         requirements: ResponseDescription,
         session: Optional[requests.Session] = None,
     ) -> Result:
-        execution, response = request.execute(
-            self._base_url,
-            timeout=self._timeout,
-            session=session,
-        )
-
+        execution, response = self._requester.execute(request, session=session)
         if not response:
             return execution, None, None
 

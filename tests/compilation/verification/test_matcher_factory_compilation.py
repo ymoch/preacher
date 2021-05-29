@@ -1,15 +1,11 @@
-from datetime import datetime, timedelta, timezone
-from unittest.mock import sentinel
+from datetime import datetime, timezone
 
 from pytest import fixture, mark, raises
 
 from preacher.compilation.error import CompilationError
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 from preacher.compilation.verification.matcher import add_default_matchers
-from preacher.core.verification.hamcrest import after, before
-
-PKG = 'preacher.compilation.verification.matcher'
-NOW = datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)
+from preacher.core.value import ValueContext
 
 
 @fixture
@@ -28,7 +24,7 @@ def test_invalid_mapping(compiler, obj):
         compiler.compile(obj)
 
 
-@mark.parametrize(('obj', 'item', 'expected'), [
+@mark.parametrize(('obj', 'item', 'expected'), (
     ('_undefined_string', 1, False),
     ('_undefined_string', 'value', False),
     ('_undefined_string', '_undefined_string', True),
@@ -131,10 +127,36 @@ def test_invalid_mapping(compiler, obj):
     ('anything', 1, True),
     ('anything', [1], True),
     ('anything', {'key': 'value'}, True),
-])
+    ('be_monday', '2021-05-30', False),
+    ('be_monday', '2021-05-31', True),
+    ('be_monday', '2021-06-01', False),
+    ('be_tuesday', '2021-05-31', False),
+    ('be_tuesday', '2021-06-01', True),
+    ('be_tuesday', '2021-06-02', False),
+    ('be_wednesday', '2021-06-01', False),
+    ('be_wednesday', '2021-06-02', True),
+    ('be_wednesday', '2021-06-03', False),
+    ('be_thursday', '2021-06-02', False),
+    ('be_thursday', '2021-06-03', True),
+    ('be_thursday', '2021-06-04', False),
+    ('be_friday', '2021-06-03', False),
+    ('be_friday', '2021-06-04', True),
+    ('be_friday', '2021-06-05', False),
+    ('be_saturday', '2021-06-04', False),
+    ('be_saturday', '2021-06-05', True),
+    ('be_saturday', '2021-06-06', False),
+    ('be_sunday', '2021-05-29T23:59:59.999999', False),
+    ('be_sunday', '2021-05-29T23:59:59.999999Z', False),
+    ('be_sunday', '2021-05-29T23:59:59.999999+09:00', False),
+    ({'be_before': 'now'}, '2020-05-16T12:34:55.999999Z', True),
+    ({'be_before': 'now'}, '2020-05-16T12:34:56.000000Z', False),
+    ({'be_after': '1 second'}, '2020-05-16T12:34:57.000000Z', False),
+    ({'be_after': 'now'}, '2021-05-16T12:34:57.000001Z', True),
+))
 def test_matcher_matchers(compiler, obj, item, expected):
     factory = compiler.compile(obj)
-    matcher = factory.create()
+    context = ValueContext(origin_datetime=datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc))
+    matcher = factory.create(context)
     assert matcher.matches(item) == expected
 
 
@@ -158,40 +180,3 @@ def test_matcher_matching_failure(compiler, obj, item):
     matcher = factory.create()
     with raises(TypeError):
         matcher.matches(item)
-
-
-@mark.parametrize(('obj', 'expected_value', 'expected_func'), [
-    ({'be_before': NOW.replace(tzinfo=None)}, NOW, before),
-    ({'be_after': NOW}, NOW, after),
-])
-def test_verification_with_datetime(compiler, mocker, obj, expected_value, expected_func):
-    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
-    matcher_ctor.return_value = sentinel.matcher
-    value_ctor = mocker.patch(f'{PKG}.StaticValue')
-    value_ctor.return_value = sentinel.value
-    datetime_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat')
-    datetime_ctor.return_value = sentinel.datetime
-
-    actual = compiler.compile(obj)
-    assert actual == sentinel.matcher
-
-    datetime_ctor.assert_called_once_with(expected_value)
-    value_ctor.assert_called_once_with(sentinel.datetime)
-    matcher_ctor.assert_called_once_with(expected_func, sentinel.value)
-
-
-@mark.parametrize(('obj', 'expected_value', 'expected_func'), [
-    ({'be_before': 'now'}, timedelta(), before),
-    ({'be_after': '1 second'}, timedelta(seconds=1), after),
-])
-def test_verification_with_timedelta(compiler, mocker, obj, expected_value, expected_func):
-    matcher_ctor = mocker.patch(f'{PKG}.ValueMatcherFactory')
-    matcher_ctor.return_value = sentinel.matcher
-    value_ctor = mocker.patch(f'{PKG}.RelativeDatetime')
-    value_ctor.return_value = sentinel.value
-
-    actual = compiler.compile(obj)
-    assert actual == sentinel.matcher
-
-    value_ctor.assert_called_once_with(expected_value)
-    matcher_ctor.assert_called_once_with(expected_func, sentinel.value)

@@ -1,19 +1,18 @@
 """Matcher compilation."""
 
 from collections.abc import Mapping
-from datetime import datetime, timezone
 from typing import Callable, Dict, Iterable, Tuple, Union
 
 import hamcrest
 from hamcrest.core.matcher import Matcher
 
-from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.functional import map_compile
 from preacher.compilation.util.type import ensure_list
-from preacher.core.datetime import DatetimeWithFormat
-from preacher.core.value import Value, StaticValue, RelativeDatetime
-from preacher.core.verification.hamcrest import before, after
+from preacher.core.value import Value
+from preacher.core.value.impl.datetime import parse_datetime_value_with_format
+from preacher.core.value.impl.static import StaticValue
+from preacher.core.verification.hamcrest import before, after, day_of_week
 from preacher.core.verification.matcher import MatcherFactory
 from preacher.core.verification.matcher import MatcherFunc
 from preacher.core.verification.matcher import RecursiveMatcherFactory
@@ -120,9 +119,7 @@ class MatcherFactoryCompiler:
 
     def _compile_taking_value(self, key: str, obj: object):
         matcher_func, value_func = self._taking_value[key]
-        with on_key(key):
-            value = value_func(obj)
-        return ValueMatcherFactory(matcher_func, value)
+        return ValueMatcherFactory(matcher_func, arg=obj, value_func=value_func)
 
     def _compile_recursive(self, key: str, obj: object):
         matcher_func, multiple = self._recursive[key]
@@ -137,7 +134,7 @@ class MatcherFactoryCompiler:
     @staticmethod
     def _ensure_keys(keys: Union[str, Iterable[str]]) -> Iterable[str]:
         if isinstance(keys, str):
-            return (keys,)
+            return keys,
         return keys
 
 
@@ -154,6 +151,13 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     # For objects.
     compiler.add_static(('be_null',), hamcrest.none())
     compiler.add_static(('not_be_null',), hamcrest.not_none())
+    compiler.add_static(('be_monday',), day_of_week(0))
+    compiler.add_static(('be_tuesday',), day_of_week(1))
+    compiler.add_static(('be_wednesday',), day_of_week(2))
+    compiler.add_static(('be_thursday',), day_of_week(3))
+    compiler.add_static(('be_friday',), day_of_week(4))
+    compiler.add_static(('be_saturday',), day_of_week(5))
+    compiler.add_static(('be_sunday',), day_of_week(6))
     compiler.add_taking_value(('equal',), hamcrest.equal_to)
     compiler.add_recursive(('have_length',), hamcrest.has_length, multiple=False)
 
@@ -176,8 +180,8 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_recursive(('contain_in_any_order',), hamcrest.contains_inanyorder)
 
     # For datetime.
-    compiler.add_taking_value(('be_before',), before, _compile_datetime_value)
-    compiler.add_taking_value(('be_after',), after, _compile_datetime_value)
+    compiler.add_taking_value(('be_before',), before, parse_datetime_value_with_format)
+    compiler.add_taking_value(('be_after',), after, parse_datetime_value_with_format)
 
     # For collections.
     compiler.add_static(('be_empty',), StaticMatcherFactory(hamcrest.empty()))
@@ -187,13 +191,3 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
     compiler.add_recursive(('not',), hamcrest.not_, multiple=False)
     compiler.add_recursive(('all_of',), hamcrest.all_of)
     compiler.add_recursive(('any_of',), hamcrest.any_of)
-
-
-def _compile_datetime_value(value: object) -> Value[DatetimeWithFormat]:
-    if isinstance(value, datetime):
-        if not value.tzinfo:
-            value = value.replace(tzinfo=timezone.utc)
-        return StaticValue(DatetimeWithFormat(value))
-
-    delta = compile_timedelta(value)
-    return RelativeDatetime(delta)

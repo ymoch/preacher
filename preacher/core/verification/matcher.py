@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Callable, Generic, List, Optional, TypeVar
+from typing import Callable, List, Optional, TypeVar
 
 from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher
 
 from preacher.core.status import Status
 from preacher.core.value import Value, ValueContext
+from preacher.core.value.impl.static import StaticValue
 from .predicate import Predicate
 from .verification import Verification
 
@@ -52,15 +53,26 @@ class StaticMatcherFactory(MatcherFactory):
         return self._matcher
 
 
-class ValueMatcherFactory(MatcherFactory, Generic[T]):
+class ValueMatcherFactory(MatcherFactory):
 
-    def __init__(self, matcher_func: MatcherFunc, value: Value[T]):
+    def __init__(
+        self,
+        matcher_func: MatcherFunc,
+        arg: object,
+        value_func: Callable[[object], Value] = StaticValue,
+    ):
         self._inner_factory = matcher_func
-        self._value = value
+        self._arg = arg
+        self._value_func = value_func
 
     def create(self, context: Optional[ValueContext] = None) -> Matcher:
-        resolved_value = self._value.resolve(context)
+        resolved_value = self._ensure_value().resolve(context)
         return self._inner_factory(resolved_value)
+
+    def _ensure_value(self) -> Value:
+        if isinstance(self._arg, Value):
+            return self._arg
+        return self._value_func(self._arg)
 
 
 class RecursiveMatcherFactory(MatcherFactory):

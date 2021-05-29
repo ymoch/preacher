@@ -2,7 +2,7 @@
 Functional utilities.
 """
 
-from typing import Callable, TypeVar
+from typing import Any, Callable, TypeVar
 
 T = TypeVar('T')
 
@@ -22,3 +22,10 @@ def recursive_map(func: Callable, obj: object) -> object:
     if isinstance(obj, list):
         return [recursive_map(func, v) for v in obj]
     return func(obj)
+
+
+def apply_if_not_none(func: Callable[[object], Any], value: object) -> Any:
+    """Apply `func` if `value` is not `None`."""
+    if value is None:
+        return None
+    return func(value)
