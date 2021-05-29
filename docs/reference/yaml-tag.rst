@@ -1,6 +1,13 @@
 YAML Tag
 ========
 
+``!argument``: Define an argument
+---------------------------------
+Using ``!argument`` tag, you can define an argument placeholder,
+which is filled with argument options given on run time or :ref:`parameterized-test`.
+
+A not filled argument is regarded as ``null`` value.
+
 ``!include``: Including other YAML files
 ----------------------------------------
 Using ``!include`` tag, you can include other YAML files.
