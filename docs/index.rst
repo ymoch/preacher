@@ -43,6 +43,7 @@ The Reference Guide
     reference/extraction
     reference/matcher
     reference/context
+    reference/yaml-tag
     reference/cli
 
 .. _YAML: https://yaml.org/

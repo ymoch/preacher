@@ -1,0 +1,59 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019, Yu Mochizuki
+# This file is distributed under the same license as the Preacher package.
+# Yu Mochizuki <ymoch.dev@gmail.com>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Preacher \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-05-29 18:30+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../reference/yaml-tag.rst:2 1844e1481cb046f6b7602ef561e27365
+msgid "YAML Tag"
+msgstr "YAML タグ"
+
+#: ../../reference/yaml-tag.rst:5 b8ab6095043c43cda122f0f5fe0b6bbb
+msgid "``!include``: Including other YAML files"
+msgstr "``!include``: 他の YAML ファイルを取り込む"
+
+#: ../../reference/yaml-tag.rst:6 92a9c1588a724f1b84b432fc32a86f1d
+msgid ""
+"Using ``!include`` tag, you can include other YAML files. This tag is "
+"available anywhere in your scenario."
+msgstr "``!include`` タグを用いることで, 他の YAML ファイルを取り込むことができます. このタグはシナリオのどこでも使用できます."
+
+#: ../../reference/yaml-tag.rst:13 e48a556b8aa242648af5c308cffcceca
+msgid ""
+"A good practice of this feature is locating subscenarios on "
+"subdirectories."
+msgstr "この機能のよい利用例として, サブシナリオをサブディレクトリに配置することができます."
+
+#: ../../reference/yaml-tag.rst:22 1f0546206dbb414aa6cb7789f51b18dd
+msgid ""
+"UNIX-like wildcard expansion is available. A wildcard inclusion results "
+"in the list of matching inclusion."
+msgstr "UNIX-like なワイルドカード展開も利用できます. ワイルドカードを利用したインクルードの結果は, マッチするインクルードのリストになります."
+
+#: ../../reference/yaml-tag.rst:29 2d48447ae73e40e88550878ed79ccec7
+msgid ""
+"Anchors in a included YAML are not available in including YAMLs, because "
+"the included YAMLs are parsed after the including YAML is parsed."
+msgstr ""
+"取り込まれる YAML のアンカーは、インクルードする側の YAML では使用できません. インクルードする側の YAML が解析された後に, "
+"インクルードされる YAML が解析されるためです."
+
+#: ../../reference/yaml-tag.rst:32 224812e524dc40de886ea7a876694b06
+msgid ""
+"Names of included files should not contain any wildcard characters "
+"because not all of the wildcard expansion rules are covered."
+msgstr "インクルードされるファイルの名前にはワイルドカード文字を含めないでください. ワイルドカード展開ルールのすべてが網羅されているわけではないためです。"
+
