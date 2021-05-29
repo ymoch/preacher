@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-29 18:30+0900\n"
+"POT-Creation-Date: 2021-05-30 02:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,33 +17,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: ../../reference/yaml-tag.rst:2 1844e1481cb046f6b7602ef561e27365
+#: ../../reference/yaml-tag.rst:2 d08c633f79bb45bca9dad6109e32c28c
 msgid "YAML Tag"
 msgstr "YAML タグ"
 
-#: ../../reference/yaml-tag.rst:5 b8ab6095043c43cda122f0f5fe0b6bbb
+#: ../../reference/yaml-tag.rst:5 0335c6b78a91488f8563a835f3e9438b
 msgid "``!include``: Including other YAML files"
 msgstr "``!include``: 他の YAML ファイルを取り込む"
 
-#: ../../reference/yaml-tag.rst:6 92a9c1588a724f1b84b432fc32a86f1d
+#: ../../reference/yaml-tag.rst:6 be6c7504f5d8416bb107b29210ef2061
 msgid ""
 "Using ``!include`` tag, you can include other YAML files. This tag is "
 "available anywhere in your scenario."
 msgstr "``!include`` タグを用いることで, 他の YAML ファイルを取り込むことができます. このタグはシナリオのどこでも使用できます."
 
-#: ../../reference/yaml-tag.rst:13 e48a556b8aa242648af5c308cffcceca
+#: ../../reference/yaml-tag.rst:13 0c5f26135fe34424bf6cbf4f3d6dd701
 msgid ""
 "A good practice of this feature is locating subscenarios on "
 "subdirectories."
 msgstr "この機能のよい利用例として, サブシナリオをサブディレクトリに配置することができます."
 
-#: ../../reference/yaml-tag.rst:22 1f0546206dbb414aa6cb7789f51b18dd
+#: ../../reference/yaml-tag.rst:22 a6ed45fed8e54c2a9443c15d7f9311cd
 msgid ""
 "UNIX-like wildcard expansion is available. A wildcard inclusion results "
 "in the list of matching inclusion."
 msgstr "UNIX-like なワイルドカード展開も利用できます. ワイルドカードを利用したインクルードの結果は, マッチするインクルードのリストになります."
 
-#: ../../reference/yaml-tag.rst:29 2d48447ae73e40e88550878ed79ccec7
+#: ../../reference/yaml-tag.rst:29 951fc8a5a20a444fa8b0b0785e6d5a70
 msgid ""
 "Anchors in a included YAML are not available in including YAMLs, because "
 "the included YAMLs are parsed after the including YAML is parsed."
@@ -51,9 +51,138 @@ msgstr ""
 "取り込まれる YAML のアンカーは、インクルードする側の YAML では使用できません. インクルードする側の YAML が解析された後に, "
 "インクルードされる YAML が解析されるためです."
 
-#: ../../reference/yaml-tag.rst:32 224812e524dc40de886ea7a876694b06
+#: ../../reference/yaml-tag.rst:32 24954ecf7d04401a9f83a818b60c60d5
 msgid ""
 "Names of included files should not contain any wildcard characters "
 "because not all of the wildcard expansion rules are covered."
 msgstr "インクルードされるファイルの名前にはワイルドカード文字を含めないでください. ワイルドカード展開ルールのすべてが網羅されているわけではないためです。"
 
+#: ../../reference/yaml-tag.rst:36 c202eaa97be84a3999373c29ddf74168
+msgid "``!relative_datetime``: Give a relative datetime value with a format"
+msgstr "``!relative_datetime``: 相対日時 (フォーマット付き) を与える"
+
+#: ../../reference/yaml-tag.rst:37 003c41439950415f9296e18775fcaba6
+msgid ""
+"Using ``!relative_datetime`` tag, you can give a datetime with a format "
+"relating to the executing datetime."
+msgstr "``!relative_datetime`` タグを用いると, 実行日時からの相対的な時刻をフォーマット付きで与えることができます."
+
+#: ../../reference/yaml-tag.rst:46 28f49b5cf65541cca5de675cab76a91b
+msgid "The Definition of Relative Datetime"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:50 9a79b3a300d344579cffa92d4cfd8449
+msgid "Key"
+msgstr "キー"
+
+#: ../../reference/yaml-tag.rst:51 e6cfa892ad874967b57818807c476979
+msgid "Type"
+msgstr "型"
+
+#: ../../reference/yaml-tag.rst:52 c9924af6eced4ca388ecdc296bb9b321
+msgid "Default"
+msgstr "デフォルト"
+
+#: ../../reference/yaml-tag.rst:53 bd6566e5064d4920b560da304325a7c1
+msgid "Description"
+msgstr "説明"
+
+#: ../../reference/yaml-tag.rst:54 c38a02eb3f7c467298ef248547a7f88c
+msgid "delta"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:55 8ea17d7064df433a8d9fe1a2e89c64f8
+msgid ":ref:`duration`"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:56 b714c994bbd7481d940abac2ff63e35f
+msgid "``now``"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:57 3d65caf14ffa480682ba3ca3b8f0afd6
+msgid "The duration from the origin to the desired datetime."
+msgstr "起点から求めたい時間までの差"
+
+#: ../../reference/yaml-tag.rst:58 586f8858a0354ed280ebd577e708d5ef
+msgid "format"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:59 a0562ecfc10740ff86c6f735f7420030
+msgid ":ref:`datetime-format`"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:60 9e48d0f15a114bfb8f563ed6b8490ddd
+msgid "``iso8601``"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:61 ca28376acdeb41fd973a90aa7489802f
+msgid ""
+"The datetime format, Which is used not only to dump a datetime value but "
+"also to parse the compared datetime value."
+msgstr "日時フォーマット. 日時を文字列化するときだけでなく, 比較対象の時刻をパースするときにも使われます."
+
+#: ../../reference/yaml-tag.rst:65 3f79b99e96b441dbb8c1fad4ac657b79
+msgid "When simply given as a string, the value is regarded as ``delta``."
+msgstr "単に文字列で与えられたときは, それが ``delta`` の値として扱われます."
+
+#: ../../reference/yaml-tag.rst:77 3f04bd868ff640f59a1aeea8c2934c10
+msgid "Duration"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:78 1e5a76a6a6e44469ae82ac77aa3fe1ec
+msgid "A ``Duration`` is given as a string value in the particular format."
+msgstr "``Duration`` (時間差分) は特定形式の文字列で与えられます."
+
+#: ../../reference/yaml-tag.rst:80 02978f4c7b614962aeff55e1b7e563f8
+msgid "When given ``now``, then uses the datetime just when the request starts."
+msgstr "``now`` を指定すると, リクエスト実行時刻を用います."
+
+#: ../../reference/yaml-tag.rst:81 bd2995a678d145ef8ec923ede0dfb981
+msgid ""
+"When given time such like ``12:34+0100``, then uses the datetime which is"
+" the combination of date that the requests starts and the given time."
+msgstr "``12:34+0100`` のように時間を指定すると, リクエスト実行日と与えられた時間を組み合わせた時刻を用います."
+
+#: ../../reference/yaml-tag.rst:89 1d0d0bf8f5c64f34a10362ffc7e6c1f3
+msgid "When given an offset, then uses the datetime that the request starts."
+msgstr "時刻差分を指定すると, リクエスト開始日時を用います."
+
+#: ../../reference/yaml-tag.rst:85 48d5bbb2d61947baa5c22cc3c7b2f7f4
+msgid "Days, hours, minutes and seconds offsets are available."
+msgstr "日 (days), 時 (hours), 分 (minutes), 秒 (seconds) の時間差分を利用できます."
+
+#: ../../reference/yaml-tag.rst:86 e0a6211576de4e778d2c998afbb03c8b
+msgid ""
+"When given a positive offset like ``1 day`` or ``+2 hours``, then uses "
+"the future datetime."
+msgstr "``1 day`` や ``+2 hours`` のような正の差分を用いると, 未来の日時を用います."
+
+#: ../../reference/yaml-tag.rst:88 f6ab76efee2c4db895f6827a1ff5da9b
+msgid ""
+"When given a negative offset like ``-1 minute`` or ``-2 seconds``, then "
+"uses the past datetime."
+msgstr "``-1 minute`` や ``-2 seconds`` のような負の差分を用いると, 過去の日時を用います."
+
+#: ../../reference/yaml-tag.rst:91 4ce9e59bcd5e411581f304d8618ec419
+msgid ""
+"A ``Duration`` can also be an absolute datetime to be compatible with "
+"matcher arguments such like ``be_before``."
+msgstr ""
+"``Duration`` は絶対時刻にすることもできます."
+" これは ``be_before`` のような matcher の引数と互換性をもたせるためです."
+
+#: ../../reference/yaml-tag.rst:97 625eb428c6f74402ac30fc16d724ba2b
+msgid "Timestamp Format"
+msgstr ""
+
+#: ../../reference/yaml-tag.rst:98 3a017fa3e57f48858587c57d4f1ee2c8
+msgid "When given ``iso8601``, then the format is an `ISO 8601`_ format."
+msgstr "``iso8601`` を指定すると, `ISO 8601`_ フォーマットを用います."
+
+#: ../../reference/yaml-tag.rst:99 023bb1bcec73415fa3d38367218d0279
+msgid ""
+"When given another string, then the format is regarded as a format string"
+" in `format codes`_, almost all of which are required by 1989 C standard."
+msgstr ""
+"それ以外の文字列を指定すると, `format codes`_ に従ったフォーマット文字列とみなされます."
+" このほとんどは 1989 C 標準で要求されているものです."
