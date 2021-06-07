@@ -33,10 +33,7 @@ class Loader:
 
         _Ctor.add_constructor('!include', self._include)
         _Ctor.add_constructor('!argument', construct_argument)
-        _Ctor.add_constructor(
-            '!relative_datetime',
-            construct_relative_datetime,
-        )
+        _Ctor.add_constructor('!relative_datetime', construct_relative_datetime)
 
         class _Loader(Reader, Scanner, Parser, Composer, _Ctor, Resolver):
             def __init__(self, stream):
