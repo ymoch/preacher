@@ -1,15 +1,19 @@
 """YAML loaders."""
 
+from __future__ import annotations
+
 import glob
 import os
 import re
+from abc import ABC, abstractmethod
 from contextlib import contextmanager
+from functools import partial
 from typing import Iterator, TextIO
 
 from yaml import Node, BaseLoader, MarkedYAMLError
 from yaml import load as _load, load_all as _load_all
 from yaml.composer import Composer
-from yaml.constructor import SafeConstructor
+from yaml.constructor import BaseConstructor, SafeConstructor
 from yaml.parser import Parser
 from yaml.reader import Reader
 from yaml.resolver import Resolver
@@ -21,6 +25,19 @@ from .datetime import construct_relative_datetime
 from .error import YamlError, on_node
 
 _WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
+
+
+class Tag(ABC):
+
+    @abstractmethod
+    def construct(
+        self,
+        loader: Loader,
+        constructor: BaseConstructor,
+        node: Node,
+        origin: str = '.',
+    ) -> object:
+        """Construct a tag."""
 
 
 class Loader:
@@ -43,7 +60,11 @@ class Loader:
                 Composer.__init__(self)
                 SafeConstructor.__init__(self)
 
+        self._ctor = _Ctor
         self._Loader = _Loader
+
+    def add_tag_constructor(self, name: str, tag: Tag) -> None:
+        self._ctor.add_constructor(name, partial(self._apply_tag, tag))
 
     def load(self, stream: TextIO, origin: str = '.') -> object:
         try:
@@ -74,6 +95,10 @@ class Loader:
                 yield from self.load_all(stream, origin)
         except FileNotFoundError as error:
             raise YamlError(cause=error)
+
+    def _apply_tag(self, tag: Tag, ctor: BaseConstructor, node: Node) -> object:
+        with on_node(node):
+            return tag.construct(self, ctor, node, origin=self._origin)
 
     def _include(self, loader: BaseLoader, node: Node) -> object:
         obj = loader.construct_scalar(node)
