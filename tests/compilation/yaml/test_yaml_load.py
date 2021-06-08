@@ -1,9 +1,18 @@
 from io import StringIO
 from unittest.mock import call
 
-from pytest import mark, raises
+from pytest import fixture, mark, raises
 
-from preacher.compilation.yaml import YamlError, load, load_from_path, load_all, load_all_from_path
+from preacher.compilation.yaml.error import YamlError
+from preacher.compilation.yaml.loader import Loader
+from preacher.compilation.yaml.impl import add_default_tags
+
+
+@fixture
+def loader() -> Loader:
+    loader = Loader()
+    add_default_tags(loader)
+    return loader
 
 
 @mark.parametrize(('content', 'expected_message'), (
@@ -12,21 +21,21 @@ from preacher.compilation.yaml import YamlError, load, load_from_path, load_all,
     ('\nkey: !argument []\n', '", line 2, column 6'),
     ('key:\n- !argument {}', '", line 2, column 3'),
 ))
-def test_load_given_invalid_content(content, expected_message):
+def test_load_given_invalid_content(loader, content, expected_message):
     stream = StringIO(content)
     with raises(YamlError) as error_info:
-        load(stream)
+        loader.load(stream)
     assert expected_message in str(error_info.value)
 
 
-def test_load_all(mocker):
+def test_load_all(mocker, loader):
     stream = StringIO('1\n---\n!include inner/foo.yml\n---\n!x\n---\n2')
     included_content = StringIO('foo')
 
     open_mock = mocker.patch('builtins.open')
     open_mock.return_value = included_content
 
-    actual = load_all(stream)
+    actual = loader.load_all(stream)
     assert next(actual) == 1
     assert next(actual) == 'foo'
     with raises(YamlError):
@@ -38,20 +47,20 @@ def test_load_all(mocker):
     open_mock.assert_called_once_with('./inner/foo.yml')
 
 
-def test_load_from_path_not_found(mocker):
+def test_load_from_path_not_found(mocker, loader):
     mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
     with raises(YamlError):
-        load_from_path('/////foo/bar/baz')
+        loader.load_from_path('/////foo/bar/baz')
 
 
-def test_load_from_path(mocker):
+def test_load_from_path(mocker, loader):
     content = StringIO('!include inner/foo.yml')
     included_content = StringIO('foo')
 
     open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = [content, included_content]
 
-    actual = load_from_path('path/to/scenario.yml')
+    actual = loader.load_from_path('path/to/scenario.yml')
     assert actual == 'foo'
 
     assert content.closed
@@ -59,22 +68,22 @@ def test_load_from_path(mocker):
     open_mock.assert_has_calls([call('path/to/scenario.yml'), call('path/to/inner/foo.yml')])
 
 
-def test_load_all_from_path_not_found(mocker):
+def test_load_all_from_path_not_found(mocker, loader):
     mocker.patch('builtins.open', side_effect=FileNotFoundError('message'))
 
-    objs = load_all_from_path('/////foo/bar/baz')
+    objs = loader.load_all_from_path('/////foo/bar/baz')
     with raises(YamlError):
         next(objs)
 
 
-def test_load_all_from_path(mocker):
+def test_load_all_from_path(mocker, loader):
     content = StringIO('1\n---\n!include inner/foo.yml\n---\n!x\n---\n2\n')
     included_content = StringIO('foo')
 
     open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = [content, included_content]
 
-    actual = load_all_from_path('path/to/scenario.yml')
+    actual = loader.load_all_from_path('path/to/scenario.yml')
     assert next(actual) == 1
     assert next(actual) == 'foo'
     with raises(YamlError):

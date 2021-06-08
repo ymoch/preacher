@@ -119,19 +119,3 @@ class Loader:
             yield
         finally:
             self._origin = original
-
-
-def load(stream: TextIO, origin: str = '.') -> object:
-    return Loader().load(stream, origin)
-
-
-def load_from_path(path: str) -> object:
-    return Loader().load_from_path(path)
-
-
-def load_all(stream: TextIO, origin: str = '.') -> Iterator:
-    return Loader().load_all(stream, origin)
-
-
-def load_all_from_path(path: str) -> Iterator:
-    return Loader().load_all_from_path(path)
