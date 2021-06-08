@@ -680,7 +680,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "b2b541a16e4b49f08858e584f9de5af6c14d9797848fafdf00062e3e58ec60d8"
+content-hash = "5441abbf9f193aa8e21ff32c007c366de3ed1e628e716b3b2ff324a49d653939"
 
 [metadata.files]
 alabaster = [
