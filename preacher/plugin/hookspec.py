@@ -24,3 +24,13 @@ def preacher_add_extractions(compiler: ExtractionCompiler) -> None:
     Args:
         compiler: A compiler to modify.
     """
+
+
+@hookspec
+def preacher_modify_yaml_loader(loader) -> None:  # TODO type.
+    """
+    Modify a YAML loader.
+
+    Args:
+        loader: A loader to be modified.
+    """
