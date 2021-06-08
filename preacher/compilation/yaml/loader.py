@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-import glob
 import os
-import re
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from functools import partial
 from typing import Iterator, TextIO
 
-from yaml import Node, BaseLoader, MarkedYAMLError
+from yaml import Node, MarkedYAMLError
 from yaml import load as _load, load_all as _load_all
 from yaml.composer import Composer
 from yaml.constructor import BaseConstructor, SafeConstructor
@@ -19,12 +17,9 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.compilation.util.type import ensure_str
 from .argument import construct_argument
 from .datetime import construct_relative_datetime
 from .error import YamlError, on_node
-
-_WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
 
 
 class Tag(ABC):
@@ -48,7 +43,6 @@ class Loader:
         class _Ctor(SafeConstructor):
             pass
 
-        _Ctor.add_constructor('!include', self._include)
         _Ctor.add_constructor('!argument', construct_argument)
         _Ctor.add_constructor('!relative_datetime', construct_relative_datetime)
 
@@ -99,17 +93,6 @@ class Loader:
     def _apply_tag(self, tag: Tag, ctor: BaseConstructor, node: Node) -> object:
         with on_node(node):
             return tag.construct(self, ctor, node, origin=self._origin)
-
-    def _include(self, loader: BaseLoader, node: Node) -> object:
-        obj = loader.construct_scalar(node)
-
-        with on_node(node):
-            base = ensure_str(obj)
-            path = os.path.join(self._origin, base)
-            if _WILDCARDS_REGEX.match(path):
-                paths = glob.iglob(path, recursive=True)
-                return [self.load_from_path(p) for p in paths]
-            return self.load_from_path(path)
 
     @contextmanager
     def _on_origin(self, origin: str) -> Iterator:
