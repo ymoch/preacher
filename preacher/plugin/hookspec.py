@@ -2,6 +2,7 @@ from pluggy.hooks import HookspecMarker
 
 from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
+from preacher.compilation.yaml.loader import Loader
 
 hookspec = HookspecMarker('preacher')
 
@@ -27,7 +28,7 @@ def preacher_add_extractions(compiler: ExtractionCompiler) -> None:
 
 
 @hookspec
-def preacher_modify_yaml_loader(loader) -> None:  # TODO type.
+def preacher_modify_yaml_loader(loader: Loader) -> None:
     """
     Modify a YAML loader.
 

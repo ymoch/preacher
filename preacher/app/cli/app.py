@@ -9,7 +9,8 @@ from typing import Iterable, Iterator, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
-from preacher.compilation.yaml import Loader, create_yaml_loader
+from preacher.compilation.yaml import Loader
+from preacher.compilation.yaml.factory import create_yaml_loader
 from preacher.core.logger import default_logger
 from preacher.core.request import Requester
 from preacher.core.scenario import ScenarioRunner, CaseRunner
