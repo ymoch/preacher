@@ -4,7 +4,7 @@ from io import StringIO
 from pytest import fixture, mark, raises
 
 from preacher.compilation.yaml.error import YamlError
-from preacher.compilation.yaml.inclusion import InclusionTag
+from preacher.compilation.yaml.impl.inclusion import InclusionTag
 from preacher.compilation.yaml.loader import Loader
 
 

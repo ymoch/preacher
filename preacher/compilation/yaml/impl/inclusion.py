@@ -6,7 +6,7 @@ from yaml import Node
 from yaml.constructor import BaseConstructor
 
 from preacher.compilation.util.type import ensure_str
-from .loader import Loader, Tag
+from preacher.compilation.yaml.loader import Loader, Tag
 
 _WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+]).*$')
 
