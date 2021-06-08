@@ -17,5 +17,5 @@ def preacher_add_extractions(compiler: ExtractionCompiler) -> None:
 
 
 @hookimpl(tryfirst=True)
-def preacher_modify_loader(loader: Loader) -> None:
+def preacher_modify_yaml_loader(loader: Loader) -> None:
     add_default_tags(loader)
