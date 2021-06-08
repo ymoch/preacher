@@ -1,26 +1,38 @@
 """YAML loaders."""
 
-import glob
+from __future__ import annotations
+
 import os
-import re
+from abc import ABC, abstractmethod
 from contextlib import contextmanager
+from functools import partial
 from typing import Iterator, TextIO
 
-from yaml import Node, BaseLoader, MarkedYAMLError
+from yaml import Node, MarkedYAMLError
 from yaml import load as _load, load_all as _load_all
 from yaml.composer import Composer
-from yaml.constructor import SafeConstructor
+from yaml.constructor import BaseConstructor, SafeConstructor
 from yaml.parser import Parser
 from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from preacher.compilation.util.type import ensure_str
 from .argument import construct_argument
 from .datetime import construct_relative_datetime
 from .error import YamlError, on_node
 
-_WILDCARDS_REGEX = re.compile(r'^.*(\*|\?|\[!?.+\]).*$')
+
+class Tag(ABC):
+
+    @abstractmethod
+    def construct(
+        self,
+        loader: Loader,
+        constructor: BaseConstructor,
+        node: Node,
+        origin: str = '.',
+    ) -> object:
+        """Construct a tag."""
 
 
 class Loader:
@@ -31,12 +43,8 @@ class Loader:
         class _Ctor(SafeConstructor):
             pass
 
-        _Ctor.add_constructor('!include', self._include)
         _Ctor.add_constructor('!argument', construct_argument)
-        _Ctor.add_constructor(
-            '!relative_datetime',
-            construct_relative_datetime,
-        )
+        _Ctor.add_constructor('!relative_datetime', construct_relative_datetime)
 
         class _Loader(Reader, Scanner, Parser, Composer, _Ctor, Resolver):
             def __init__(self, stream):
@@ -46,7 +54,11 @@ class Loader:
                 Composer.__init__(self)
                 SafeConstructor.__init__(self)
 
+        self._ctor = _Ctor
         self._Loader = _Loader
+
+    def add_tag_constructor(self, name: str, tag: Tag) -> None:
+        self._ctor.add_constructor(name, partial(self._apply_tag, tag))
 
     def load(self, stream: TextIO, origin: str = '.') -> object:
         try:
@@ -78,16 +90,9 @@ class Loader:
         except FileNotFoundError as error:
             raise YamlError(cause=error)
 
-    def _include(self, loader: BaseLoader, node: Node) -> object:
-        obj = loader.construct_scalar(node)
-
+    def _apply_tag(self, tag: Tag, ctor: BaseConstructor, node: Node) -> object:
         with on_node(node):
-            base = ensure_str(obj)
-            path = os.path.join(self._origin, base)
-            if _WILDCARDS_REGEX.match(path):
-                paths = glob.iglob(path, recursive=True)
-                return [self.load_from_path(p) for p in paths]
-            return self.load_from_path(path)
+            return tag.construct(self, ctor, node, origin=self._origin)
 
     @contextmanager
     def _on_origin(self, origin: str) -> Iterator:
@@ -97,19 +102,3 @@ class Loader:
             yield
         finally:
             self._origin = original
-
-
-def load(stream: TextIO, origin: str = '.') -> object:
-    return Loader().load(stream, origin)
-
-
-def load_from_path(path: str) -> object:
-    return Loader().load_from_path(path)
-
-
-def load_all(stream: TextIO, origin: str = '.') -> Iterator:
-    return Loader().load_all(stream, origin)
-
-
-def load_all_from_path(path: str) -> Iterator:
-    return Loader().load_all_from_path(path)

@@ -9,7 +9,8 @@ from typing import Iterable, Iterator, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
-from preacher.compilation.yaml import load_all, load_all_from_path
+from preacher.compilation.yaml import Loader
+from preacher.compilation.yaml.factory import create_yaml_loader
 from preacher.core.logger import default_logger
 from preacher.core.request import Requester
 from preacher.core.scenario import ScenarioRunner, CaseRunner
@@ -87,7 +88,8 @@ def app(
         logger.exception(error)
         return 3
 
-    objs = load_objs(paths, logger)
+    loader = create_yaml_loader(plugin_manager=plugin_manager)
+    objs = load_objs(loader, paths, logger)
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
@@ -136,11 +138,19 @@ def _verbosity_to_logging_level(verbosity: int) -> int:
     return WARNING
 
 
-def load_objs(paths: Sequence[str], logger: Logger = default_logger) -> Iterator[object]:
+def load_objs(
+    loader: Loader,
+    paths: Sequence[str],
+    logger: Logger = default_logger,
+) -> Iterator[object]:
     if not paths:
         logger.info('No scenario file is given. Load scenarios from stdin.')
-        return load_all(sys.stdin)
-    return chain.from_iterable(load_all_from_path(_hook_loading(path, logger)) for path in paths)
+        return loader.load_all(sys.stdin)
+
+    return chain.from_iterable(
+        loader.load_all_from_path(_hook_loading(path, logger))
+        for path in paths
+    )
 
 
 def _hook_loading(path: str, logger: Logger) -> str:
