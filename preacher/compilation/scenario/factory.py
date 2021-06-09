@@ -14,7 +14,7 @@ def create_scenario_compiler(plugin_manager: Optional[PluginManager] = None) -> 
     request = create_request_compiler()
 
     predicate = create_predicate_compiler(plugin_manager=plugin_manager)
-    description = create_description_compiler(predicate=predicate)
+    description = create_description_compiler(predicate=predicate, plugin_manager=plugin_manager)
     response = create_response_description_compiler(predicate=predicate, description=description)
 
     case = CaseCompiler(request=request, response=response, description=description)
