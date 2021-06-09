@@ -35,6 +35,7 @@ def _construct_relative_datetime_of_mapping(
     loader: BaseLoader,
     node: MappingNode,
 ) -> Value[DatetimeWithFormat]:
+    # HACK fix typing.
     format_node: Optional[Node] = None
     datetime_value_node: Optional[Node] = None
     for key_node, value_node in node.value:
@@ -47,12 +48,12 @@ def _construct_relative_datetime_of_mapping(
 
     format: Optional[DatetimeFormat] = None
     if format_node:
-        obj = loader.construct_scalar(format_node)
+        obj = loader.construct_scalar(format_node)  # type: ignore
         with on_node(node):
             format = compile_datetime_format(obj)
 
     if datetime_value_node:
-        datetime_value = loader.construct_scalar(datetime_value_node)
+        datetime_value = loader.construct_scalar(datetime_value_node)  # type: ignore
         with on_node(datetime_value_node):
             return parse_datetime_value_with_format(datetime_value, format)
     return parse_datetime_value_with_format('now', format)

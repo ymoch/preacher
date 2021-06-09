@@ -20,7 +20,8 @@ class InclusionTag(Tag):
         node: Node,
         origin: str = '.',
     ) -> object:
-        obj = constructor.construct_scalar(node)
+        # HACK fix typing.
+        obj = constructor.construct_scalar(node)  # type: ignore
 
         base = ensure_str(obj)
         path = os.path.join(origin, base)
