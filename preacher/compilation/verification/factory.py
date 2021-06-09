@@ -19,9 +19,12 @@ def create_matcher_factory_compiler(
 
 
 def create_predicate_compiler(
+    matcher_factory: Optional[PluginManager] = None,
     plugin_manager: Optional[PluginManager] = None,
 ) -> PredicateCompiler:
-    matcher_factory = create_matcher_factory_compiler(plugin_manager=plugin_manager)
+    matcher_factory = matcher_factory or create_matcher_factory_compiler(
+        plugin_manager=plugin_manager,
+    )
     return PredicateCompiler(matcher_factory)
 
 
