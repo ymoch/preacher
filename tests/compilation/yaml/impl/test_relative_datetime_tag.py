@@ -4,6 +4,7 @@ from io import StringIO
 from pytest import fixture, mark, raises
 
 from preacher.compilation.yaml.error import YamlError
+from preacher.compilation.yaml.impl.datetime import RelativeDatetimeTag
 from preacher.compilation.yaml.loader import Loader
 from preacher.core.value import ValueContext
 from preacher.core.value.impl.datetime import DatetimeValueWithFormat
@@ -11,7 +12,9 @@ from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 
 @fixture
 def loader() -> Loader:
-    return Loader()
+    loader = Loader()
+    loader.add_tag("!relative_datetime", RelativeDatetimeTag())
+    return loader
 
 
 def test_given_datetime_that_is_offset_naive(loader: Loader):

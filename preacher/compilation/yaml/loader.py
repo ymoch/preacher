@@ -17,8 +17,6 @@ from yaml.reader import Reader
 from yaml.resolver import Resolver
 from yaml.scanner import Scanner
 
-from .argument import construct_argument
-from .datetime import construct_relative_datetime
 from .error import YamlError, on_node
 
 
@@ -43,9 +41,6 @@ class Loader:
         class _Ctor(SafeConstructor):
             pass
 
-        _Ctor.add_constructor('!argument', construct_argument)
-        _Ctor.add_constructor('!relative_datetime', construct_relative_datetime)
-
         class _Loader(Reader, Scanner, Parser, Composer, _Ctor, Resolver):
             def __init__(self, stream):
                 Reader.__init__(self, stream)
@@ -57,7 +52,7 @@ class Loader:
         self._ctor = _Ctor
         self._Loader = _Loader
 
-    def add_tag_constructor(self, name: str, tag: Tag) -> None:
+    def add_tag(self, name: str, tag: Tag) -> None:
         self._ctor.add_constructor(name, partial(self._apply_tag, tag))
 
     def load(self, stream: TextIO, origin: str = '.') -> object:
