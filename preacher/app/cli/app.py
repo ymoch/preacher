@@ -20,9 +20,9 @@ from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
 from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
-from .logging import ColoredFormatter
+from .logging import ColoredFormatter, create_system_logger
 
-__all__ = ['app', 'create_system_logger', 'create_listener', 'create_scheduler', 'load_objs']
+__all__ = ['app', 'create_listener', 'create_scheduler', 'load_objs']
 
 _REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
@@ -116,25 +116,6 @@ def app(
         return 1
 
     return 0
-
-
-def create_system_logger(verbosity: int) -> Logger:
-    level = _verbosity_to_logging_level(verbosity)
-    handler = StreamHandler()
-    handler.setLevel(level)
-    handler.setFormatter(ColoredFormatter(fmt='[%(levelname)s] %(message)s'))
-    logger = getLogger(__name__)
-    logger.setLevel(level)
-    logger.addHandler(handler)
-    return logger
-
-
-def _verbosity_to_logging_level(verbosity: int) -> int:
-    if verbosity > 1:
-        return DEBUG
-    if verbosity > 0:
-        return INFO
-    return WARNING
 
 
 def load_objs(

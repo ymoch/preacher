@@ -16,7 +16,6 @@ from pytest import fixture, raises, mark
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
 from preacher.app.cli.app import create_scheduler
-from preacher.app.cli.app import create_system_logger
 from preacher.app.cli.app import load_objs
 from preacher.app.cli.executor import ExecutorFactory
 from preacher.compilation.scenario import ScenarioCompiler
@@ -151,17 +150,6 @@ def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factor
     assert exit_code == 3
 
     executor.__exit__.assert_called_once()
-
-
-@mark.parametrize(('verbosity', 'expected_level'), [
-    (0, logging.WARNING),
-    (1, logging.INFO),
-    (2, logging.DEBUG),
-    (3, logging.DEBUG),
-])
-def test_create_system_logger(verbosity, expected_level):
-    logger = create_system_logger(verbosity=verbosity)
-    assert logger.getEffectiveLevel() == expected_level
 
 
 def test_load_objs_empty(mocker):
