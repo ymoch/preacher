@@ -6,7 +6,8 @@ from .error import on_node
 
 
 def construct_argument(loader: BaseLoader, node: Node) -> Argument:
-    obj = loader.construct_scalar(node)
+    # HACK fix typing.
+    obj = loader.construct_scalar(node)  # type: ignore
     with on_node(node):
         key = ensure_str(obj)
     return Argument(key)
