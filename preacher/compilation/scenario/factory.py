@@ -2,7 +2,6 @@ from typing import Optional
 
 from pluggy import PluginManager
 
-from preacher.compilation.extraction import create_extraction_compiler
 from preacher.compilation.request import create_request_compiler
 from preacher.compilation.verification import create_description_compiler
 from preacher.compilation.verification import create_predicate_compiler
@@ -14,9 +13,8 @@ from .scenario import ScenarioCompiler
 def create_scenario_compiler(plugin_manager: Optional[PluginManager] = None) -> ScenarioCompiler:
     request = create_request_compiler()
 
-    extraction = create_extraction_compiler(plugin_manager=plugin_manager)
     predicate = create_predicate_compiler(plugin_manager=plugin_manager)
-    description = create_description_compiler(extraction=extraction, predicate=predicate)
+    description = create_description_compiler(predicate=predicate, plugin_manager=plugin_manager)
     response = create_response_description_compiler(predicate=predicate, description=description)
 
     case = CaseCompiler(request=request, response=response, description=description)
