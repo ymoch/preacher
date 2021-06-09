@@ -1,37 +1,46 @@
 import os
 from io import StringIO
 
-from pytest import mark, raises
+from pytest import fixture, mark, raises
 
-from preacher.compilation.yaml import YamlError, load
+from preacher.compilation.yaml.error import YamlError
+from preacher.compilation.yaml.impl.inclusion import InclusionTag
+from preacher.compilation.yaml.loader import Loader
+
+
+@fixture
+def loader():
+    loader = Loader()
+    loader.add_tag('!include', InclusionTag())
+    return loader
 
 
 @mark.parametrize(('content', 'expected_message'), [
     ('!include []', '", line 1, column 1'),
     ('!include {}', '", line 1, column 1'),
 ])
-def test_given_invalid_inclusion(content, expected_message):
+def test_given_invalid_inclusion(loader, content, expected_message):
     stream = StringIO(content)
     with raises(YamlError) as error_info:
-        load(stream)
+        loader.load(stream)
     assert expected_message in str(error_info.value)
 
 
-def test_given_recursive_inclusion_error(mocker):
+def test_given_recursive_inclusion_error(mocker, loader):
     included_stream = StringIO('\n !foo')
     open_mock = mocker.patch('builtins.open')
     open_mock.return_value = included_stream
 
     stream = StringIO('!include foo.yml')
     with raises(YamlError) as error_info:
-        load(stream)
+        loader.load(stream)
     message = str(error_info.value)
     assert '!foo' in message
     assert '", line 1, column 1' in message
     assert '", line 2, column 2' in message
 
 
-def test_given_recursive_inclusion(mocker):
+def test_given_recursive_inclusion(mocker, loader):
     stream = StringIO('''
     list:
       - !include item.yml
@@ -47,7 +56,7 @@ def test_given_recursive_inclusion(mocker):
     open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = lambda path: StringIO(answer_map[path])
 
-    actual = load(stream, origin=os.path.join('base', 'dir'))
+    actual = loader.load(stream, origin=os.path.join('base', 'dir'))
     assert actual == {
         'list': [
             'item',
@@ -57,7 +66,7 @@ def test_given_recursive_inclusion(mocker):
     }
 
 
-def test_given_wildcard_inclusion(mocker):
+def test_given_wildcard_inclusion(mocker, loader):
     iglob_mock = mocker.patch('glob.iglob')
     iglob_mock.side_effect = lambda path, recursive: iter([f'glob:{path}:{recursive}'])
 
@@ -73,7 +82,7 @@ def test_given_wildcard_inclusion(mocker):
     open_mock = mocker.patch('builtins.open')
     open_mock.side_effect = lambda path: StringIO(path)
 
-    actual = load(stream, origin='base/path/')
+    actual = loader.load(stream, origin='base/path/')
     assert isinstance(actual, dict)
     assert actual['asterisk'] == ['glob:base/path/*.yml:True']
     assert actual['double-asterisk'] == ['glob:base/path/**.yml:True']
