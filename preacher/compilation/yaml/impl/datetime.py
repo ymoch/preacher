@@ -4,11 +4,11 @@ from yaml import MappingNode, ScalarNode, Node
 from yaml.constructor import BaseConstructor
 
 from preacher.compilation.datetime import compile_datetime_format
+from preacher.compilation.yaml.error import YamlError, on_node
 from preacher.compilation.yaml.loader import Loader, Tag
 from preacher.core.datetime import DatetimeFormat, DatetimeWithFormat
 from preacher.core.value import Value
 from preacher.core.value.impl.datetime import parse_datetime_value_with_format
-from preacher.compilation.yaml.error import YamlError, on_node
 
 _KEY_DELTA = 'delta'
 _KEY_FORMAT = 'format'
