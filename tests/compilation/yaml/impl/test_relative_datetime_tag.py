@@ -13,7 +13,7 @@ from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 @fixture
 def loader() -> Loader:
     loader = Loader()
-    loader.add_tag_constructor("!relative_datetime", RelativeDatetimeTag())
+    loader.add_tag("!relative_datetime", RelativeDatetimeTag())
     return loader
 
 

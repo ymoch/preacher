@@ -11,7 +11,7 @@ from preacher.compilation.yaml.loader import Loader
 @fixture
 def loader():
     loader = Loader()
-    loader.add_tag_constructor('!include', InclusionTag())
+    loader.add_tag('!include', InclusionTag())
     return loader
 
 

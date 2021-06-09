@@ -52,7 +52,7 @@ class Loader:
         self._ctor = _Ctor
         self._Loader = _Loader
 
-    def add_tag_constructor(self, name: str, tag: Tag) -> None:
+    def add_tag(self, name: str, tag: Tag) -> None:
         self._ctor.add_constructor(name, partial(self._apply_tag, tag))
 
     def load(self, stream: TextIO, origin: str = '.') -> object:

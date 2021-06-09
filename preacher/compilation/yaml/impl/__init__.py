@@ -7,6 +7,6 @@ __all__ = ["add_default_tags"]
 
 
 def add_default_tags(loader: Loader) -> None:
-    loader.add_tag_constructor("!argument", ArgumentTag())
-    loader.add_tag_constructor("!include", InclusionTag())
-    loader.add_tag_constructor("!relative_datetime", RelativeDatetimeTag())
+    loader.add_tag("!argument", ArgumentTag())
+    loader.add_tag("!include", InclusionTag())
+    loader.add_tag("!relative_datetime", RelativeDatetimeTag())

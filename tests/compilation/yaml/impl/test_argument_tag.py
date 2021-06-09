@@ -10,7 +10,7 @@ from preacher.compilation.yaml.loader import Loader
 @fixture
 def loader() -> Loader:
     loader = Loader()
-    loader.add_tag_constructor("!argument", ArgumentTag())
+    loader.add_tag("!argument", ArgumentTag())
     return loader
 
 
