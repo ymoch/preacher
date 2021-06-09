@@ -3,12 +3,15 @@ from io import StringIO
 from pytest import fixture, raises, mark
 
 from preacher.compilation.yaml.error import YamlError
+from preacher.compilation.yaml.impl.argument import ArgumentTag
 from preacher.compilation.yaml.loader import Loader
 
 
 @fixture
 def loader() -> Loader:
-    return Loader()
+    loader = Loader()
+    loader.add_tag_constructor("!argument", ArgumentTag())
+    return loader
 
 
 @mark.parametrize(('content', 'expected_message'), [
