@@ -9,7 +9,7 @@ from typing import Iterable, Iterator, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
-from preacher.compilation.yaml import Loader, create_yaml_loader
+from preacher.compilation.yaml import Loader, create_loader
 from preacher.core.logger import default_logger
 from preacher.core.request import Requester
 from preacher.core.scenario import ScenarioRunner, CaseRunner
@@ -87,7 +87,7 @@ def app(
         logger.exception(error)
         return 3
 
-    loader = create_yaml_loader(plugin_manager=plugin_manager)
+    loader = create_loader(plugin_manager=plugin_manager)
     objs = load_objs(loader, paths, logger)
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)

@@ -67,7 +67,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     compiler.compile_flattening.return_value = iter([sentinel.scenario])
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler', return_value=compiler)
 
-    loader_ctor = mocker.patch(f'{PKG}.create_yaml_loader', return_value=sentinel.loader)
+    loader_ctor = mocker.patch(f'{PKG}.create_loader', return_value=sentinel.loader)
     objs_ctor = mocker.patch(f'{PKG}.load_objs', return_value=iter([sentinel.objs]))
 
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
