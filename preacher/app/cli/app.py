@@ -2,13 +2,12 @@
 
 import sys
 from concurrent.futures import Executor
-from itertools import chain
 from logging import DEBUG, INFO, WARNING, ERROR
 from logging import StreamHandler, getLogger
 from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
-from preacher.compilation.scenario import create_scenario_compiler
+from preacher.compilation.scenario import compile_scenarios
 from preacher.compilation.yaml import load_from_paths
 from preacher.core.request import Requester
 from preacher.core.scenario import ScenarioRunner, CaseRunner
@@ -81,14 +80,12 @@ def app(
     plugin_manager = get_plugin_manager()
     try:
         load_plugins(plugin_manager, plugins, logger)
-        compiler = create_scenario_compiler(plugin_manager=plugin_manager)
     except Exception as error:
         logger.exception(error)
         return 3
 
     objs = load_from_paths(paths, plugin_manager=plugin_manager, logger=logger)
-    scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
-    scenarios = chain.from_iterable(scenario_groups)
+    scenarios = compile_scenarios(objs, arguments=arguments, plugin_manager=plugin_manager)
 
     listener = create_listener(level, report_dir)
     executor_factory = executor_factory or PROCESS_POOL_FACTORY
