@@ -6,20 +6,17 @@ Styles should be checked independently.
 import logging
 import os
 from concurrent.futures import Executor
-from io import StringIO
 from tempfile import TemporaryDirectory
 from typing import Iterable
 from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 
-from pytest import fixture, raises, mark
+from pytest import fixture, mark
 
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
 from preacher.app.cli.app import create_scheduler
-from preacher.app.cli.app import load_objs
 from preacher.app.cli.executor import ExecutorFactory
 from preacher.compilation.scenario import ScenarioCompiler
-from preacher.compilation.yaml import Loader
 from preacher.core.scenario import Scenario
 from preacher.core.scheduling import ScenarioScheduler
 from preacher.core.status import Status
@@ -66,8 +63,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     compiler.compile_flattening.return_value = iter([sentinel.scenario])
     compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler', return_value=compiler)
 
-    loader_ctor = mocker.patch(f'{PKG}.create_loader', return_value=sentinel.loader)
-    objs_ctor = mocker.patch(f'{PKG}.load_objs', return_value=iter([sentinel.objs]))
+    load_from_paths = mocker.patch(f'{PKG}.load_from_paths', return_value=iter([sentinel.objs]))
 
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
@@ -104,8 +100,11 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
     compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
 
-    loader_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
-    objs_ctor.assert_called_once_with(sentinel.loader, sentinel.paths, logger)
+    load_from_paths.assert_called_once_with(
+        sentinel.paths,
+        plugin_manager=sentinel.plugin_manager,
+        logger=logger,
+    )
     scheduler_ctor.assert_called_once_with(
         executor=executor,
         listener=sentinel.listener,
@@ -150,28 +149,6 @@ def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factor
     assert exit_code == 3
 
     executor.__exit__.assert_called_once()
-
-
-def test_load_objs_empty(mocker):
-    mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
-
-    paths = ()
-    objs = load_objs(Loader(), paths)
-
-    assert next(objs) == 'foo'
-    assert next(objs) == 'bar'
-    with raises(StopIteration):
-        next(objs)
-
-
-def test_load_objs_filled(base_dir):
-    paths = (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml'))
-    objs = load_objs(Loader(), paths)
-
-    assert next(objs) == 'foo'
-    assert next(objs) == 'bar'
-    with raises(StopIteration):
-        next(objs)
 
 
 @mark.parametrize(('level', 'expected_logging_level'), [

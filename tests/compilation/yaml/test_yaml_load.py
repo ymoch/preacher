@@ -1,11 +1,14 @@
+import os
 from io import StringIO
+from tempfile import TemporaryDirectory
 from unittest.mock import call
 
 from pytest import fixture, mark, raises
 
 from preacher.compilation.yaml.error import YamlError
-from preacher.compilation.yaml.loader import Loader
 from preacher.compilation.yaml.impl import add_default_tags
+from preacher.compilation.yaml.integration import load_from_paths
+from preacher.compilation.yaml.loader import Loader
 
 
 @fixture
@@ -13,6 +16,18 @@ def loader() -> Loader:
     loader = Loader()
     add_default_tags(loader)
     return loader
+
+
+@fixture
+def base_dir():
+    with TemporaryDirectory() as path:
+        with open(os.path.join(path, 'foo.yml'), 'w') as f:
+            f.write('foo')
+        with open(os.path.join(path, 'bar.yml'), 'w') as f:
+            f.write('bar')
+        with open(os.path.join(path, 'empty.yml'), 'w') as f:
+            f.write('[]')
+        yield path
 
 
 @mark.parametrize(('content', 'expected_message'), (
@@ -94,3 +109,25 @@ def test_load_all_from_path(mocker, loader):
     assert content.closed
     assert included_content.closed
     open_mock.assert_has_calls([call('path/to/scenario.yml'), call('path/to/inner/foo.yml')])
+
+
+def test_load_objs_empty(mocker):
+    mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
+
+    paths = ()
+    objs = load_from_paths(paths)
+
+    assert next(objs) == 'foo'
+    assert next(objs) == 'bar'
+    with raises(StopIteration):
+        next(objs)
+
+
+def test_load_objs_filled(base_dir):
+    paths = (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml'))
+    objs = load_from_paths(paths)
+
+    assert next(objs) == 'foo'
+    assert next(objs) == 'bar'
+    with raises(StopIteration):
+        next(objs)

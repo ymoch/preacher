@@ -4,13 +4,12 @@ import sys
 from concurrent.futures import Executor
 from itertools import chain
 from logging import DEBUG, INFO, WARNING, ERROR
-from logging import Logger, StreamHandler, getLogger
-from typing import Iterable, Iterator, Optional, Sequence
+from logging import StreamHandler, getLogger
+from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import create_scenario_compiler
-from preacher.compilation.yaml import Loader, create_loader
-from preacher.core.logger import default_logger
+from preacher.compilation.yaml import load_from_paths
 from preacher.core.request import Requester
 from preacher.core.scenario import ScenarioRunner, CaseRunner
 from preacher.core.scheduling import ScenarioScheduler, Listener, MergingListener
@@ -22,7 +21,7 @@ from preacher.presentation.listener import LoggingReportingListener, HtmlReporti
 from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
 from .logging import ColoredFormatter, create_system_logger
 
-__all__ = ['app', 'create_listener', 'create_scheduler', 'load_objs']
+__all__ = ['app', 'create_listener', 'create_scheduler']
 
 _REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
 
@@ -87,8 +86,7 @@ def app(
         logger.exception(error)
         return 3
 
-    loader = create_loader(plugin_manager=plugin_manager)
-    objs = load_objs(loader, paths, logger)
+    objs = load_from_paths(paths, plugin_manager=plugin_manager, logger=logger)
     scenario_groups = (compiler.compile_flattening(obj, arguments=arguments) for obj in objs)
     scenarios = chain.from_iterable(scenario_groups)
 
@@ -116,26 +114,6 @@ def app(
         return 1
 
     return 0
-
-
-def load_objs(
-    loader: Loader,
-    paths: Sequence[str],
-    logger: Logger = default_logger,
-) -> Iterator[object]:
-    if not paths:
-        logger.info('No scenario file is given. Load scenarios from stdin.')
-        return loader.load_all(sys.stdin)
-
-    return chain.from_iterable(
-        loader.load_all_from_path(_hook_loading(path, logger))
-        for path in paths
-    )
-
-
-def _hook_loading(path: str, logger: Logger) -> str:
-    logger.debug('Load: %s', path)
-    return path
 
 
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
