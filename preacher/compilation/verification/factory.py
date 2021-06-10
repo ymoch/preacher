@@ -43,7 +43,10 @@ def create_description_compiler(
     plugin_manager: Optional[PluginManager] = None,
     logger: Optional[Logger] = None,
 ) -> DescriptionCompiler:
-    extraction = extraction or create_extraction_compiler(plugin_manager=plugin_manager)
+    extraction = extraction or create_extraction_compiler(
+        plugin_manager=plugin_manager,
+        logger=logger,
+    )
     predicate = predicate or create_predicate_compiler(
         plugin_manager=plugin_manager,
         logger=logger,
