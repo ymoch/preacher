@@ -2,8 +2,7 @@
 
 import sys
 from concurrent.futures import Executor
-from logging import DEBUG, INFO, WARNING, ERROR
-from logging import StreamHandler, getLogger
+from logging import StreamHandler, getLogger, DEBUG, INFO, WARNING, ERROR
 from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
