@@ -103,6 +103,7 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
         sentinel.objs,
         arguments=sentinel.args,
         plugin_manager=sentinel.plugin_manager,
+        logger=logger,
     )
     scheduler_ctor.assert_called_once_with(
         executor=executor,

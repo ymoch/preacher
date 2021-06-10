@@ -85,7 +85,12 @@ def app(
         return 3
 
     objs = load_from_paths(paths, plugin_manager=plugin_manager, logger=logger)
-    scenarios = compile_scenarios(objs, arguments=arguments, plugin_manager=plugin_manager)
+    scenarios = compile_scenarios(
+        objs,
+        arguments=arguments,
+        plugin_manager=plugin_manager,
+        logger=logger,
+    )
 
     listener = create_listener(level, report_dir)
     executor_factory = executor_factory or PROCESS_POOL_FACTORY

@@ -15,8 +15,12 @@ def test_compile_scenario(mocker):
         iter([sentinel.objs]),
         arguments=sentinel.args,
         plugin_manager=sentinel.plugin_manager,
+        logger=sentinel.logger,
     )
     assert list(scenarios) == [sentinel.scenario]
 
-    compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
+    compiler_ctor.assert_called_once_with(
+        plugin_manager=sentinel.plugin_manager,
+        logger=sentinel.logger,
+    )
     compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
