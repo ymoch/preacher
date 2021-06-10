@@ -1,3 +1,4 @@
+from logging import Logger
 from typing import Optional
 
 from pluggy import PluginManager
@@ -10,12 +11,23 @@ from .case import CaseCompiler
 from .scenario import ScenarioCompiler
 
 
-def create_scenario_compiler(plugin_manager: Optional[PluginManager] = None) -> ScenarioCompiler:
+def create_scenario_compiler(
+    plugin_manager: Optional[PluginManager] = None,
+    logger: Optional[Logger] = None,
+) -> ScenarioCompiler:
     request = create_request_compiler()
 
-    predicate = create_predicate_compiler(plugin_manager=plugin_manager)
-    description = create_description_compiler(predicate=predicate, plugin_manager=plugin_manager)
-    response = create_response_description_compiler(predicate=predicate, description=description)
+    predicate = create_predicate_compiler(plugin_manager=plugin_manager, logger=logger)
+    description = create_description_compiler(
+        predicate=predicate,
+        plugin_manager=plugin_manager,
+        logger=logger,
+    )
+    response = create_response_description_compiler(
+        predicate=predicate,
+        description=description,
+        logger=logger,
+    )
 
     case = CaseCompiler(request=request, response=response, description=description)
     return ScenarioCompiler(description=description, case=case)
