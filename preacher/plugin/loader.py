@@ -25,7 +25,7 @@ def load_plugins(
         plugins: Plugin paths to load.
         logger: A logger.
     Raises:
-        RuntimeException: when a given plugin cannot be loaded as a module.
+        RuntimeError: when a given plugin cannot be loaded as a module.
         Exception: when loading a plugin fails.
     """
     modules = (_load_module(path, logger) for path in plugins)

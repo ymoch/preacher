@@ -2,8 +2,9 @@ import logging
 from io import StringIO
 
 from colorama import Fore, Style
+from pytest import mark
 
-from preacher.app.cli.logging import ColoredFormatter
+from preacher.app.cli.logging import ColoredFormatter, create_system_logger
 
 
 def test_colored_formatter():
@@ -29,3 +30,14 @@ def test_colored_formatter():
     assert next(stream) == f'{Fore.YELLOW}unstable{Style.RESET_ALL}\n'
     assert next(stream) == f'{Fore.RED}failure{Style.RESET_ALL}\n'
     assert next(stream) == f'{Fore.RED}{Style.BRIGHT}critical{Style.RESET_ALL}\n'
+
+
+@mark.parametrize(('verbosity', 'expected_level'), (
+    (0, logging.WARNING),
+    (1, logging.INFO),
+    (2, logging.DEBUG),
+    (3, logging.DEBUG),
+))
+def test_create_system_logger(verbosity: int, expected_level: int):
+    logger = create_system_logger(verbosity=verbosity)
+    assert logger.getEffectiveLevel() == expected_level

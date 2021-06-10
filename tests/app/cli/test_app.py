@@ -6,21 +6,16 @@ Styles should be checked independently.
 import logging
 import os
 from concurrent.futures import Executor
-from io import StringIO
 from tempfile import TemporaryDirectory
 from typing import Iterable
 from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 
-from pytest import fixture, raises, mark
+from pytest import fixture, mark
 
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
 from preacher.app.cli.app import create_scheduler
-from preacher.app.cli.app import create_system_logger
-from preacher.app.cli.app import load_objs
 from preacher.app.cli.executor import ExecutorFactory
-from preacher.compilation.scenario import ScenarioCompiler
-from preacher.compilation.yaml import Loader
 from preacher.core.scenario import Scenario
 from preacher.core.scheduling import ScenarioScheduler
 from preacher.core.status import Status
@@ -63,12 +58,9 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
 
     load_plugins_func = mocker.patch(f'{PKG}.load_plugins')
 
-    compiler = NonCallableMock(ScenarioCompiler)
-    compiler.compile_flattening.return_value = iter([sentinel.scenario])
-    compiler_ctor = mocker.patch(f'{PKG}.create_scenario_compiler', return_value=compiler)
-
-    loader_ctor = mocker.patch(f'{PKG}.create_loader', return_value=sentinel.loader)
-    objs_ctor = mocker.patch(f'{PKG}.load_objs', return_value=iter([sentinel.objs]))
+    load_from_paths = mocker.patch(f'{PKG}.load_from_paths', return_value=sentinel.objs)
+    compile_scenarios = mocker.patch(f'{PKG}.compile_scenarios')
+    compile_scenarios.return_value = iter([sentinel.scenario])
 
     listener_ctor = mocker.patch(f'{PKG}.create_listener')
     listener_ctor.return_value = sentinel.listener
@@ -102,11 +94,17 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
     plugin_manager_ctor.assert_called_once_with()
     load_plugins_func.assert_called_once_with(sentinel.plugin_manager, sentinel.plugins, logger)
 
-    compiler_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
-    compiler.compile_flattening.assert_called_once_with(sentinel.objs, arguments=sentinel.args)
-
-    loader_ctor.assert_called_once_with(plugin_manager=sentinel.plugin_manager)
-    objs_ctor.assert_called_once_with(sentinel.loader, sentinel.paths, logger)
+    load_from_paths.assert_called_once_with(
+        sentinel.paths,
+        plugin_manager=sentinel.plugin_manager,
+        logger=logger,
+    )
+    compile_scenarios.assert_called_once_with(
+        sentinel.objs,
+        arguments=sentinel.args,
+        plugin_manager=sentinel.plugin_manager,
+        logger=logger,
+    )
     scheduler_ctor.assert_called_once_with(
         executor=executor,
         listener=sentinel.listener,
@@ -123,11 +121,6 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
 
 def test_app_plugin_loading_fails(mocker):
     mocker.patch(f'{PKG}.load_plugins', side_effect=RuntimeError('msg'))
-    assert app() == 3
-
-
-def test_app_compiler_creation_fails(mocker):
-    mocker.patch(f'{PKG}.create_scenario_compiler', side_effect=RuntimeError('msg'))
     assert app() == 3
 
 
@@ -151,39 +144,6 @@ def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factor
     assert exit_code == 3
 
     executor.__exit__.assert_called_once()
-
-
-@mark.parametrize(('verbosity', 'expected_level'), [
-    (0, logging.WARNING),
-    (1, logging.INFO),
-    (2, logging.DEBUG),
-    (3, logging.DEBUG),
-])
-def test_create_system_logger(verbosity, expected_level):
-    logger = create_system_logger(verbosity=verbosity)
-    assert logger.getEffectiveLevel() == expected_level
-
-
-def test_load_objs_empty(mocker):
-    mocker.patch('sys.stdin', StringIO('foo\n---\nbar'))
-
-    paths = ()
-    objs = load_objs(Loader(), paths)
-
-    assert next(objs) == 'foo'
-    assert next(objs) == 'bar'
-    with raises(StopIteration):
-        next(objs)
-
-
-def test_load_objs_filled(base_dir):
-    paths = (os.path.join(base_dir, 'foo.yml'), os.path.join(base_dir, 'bar.yml'))
-    objs = load_objs(Loader(), paths)
-
-    assert next(objs) == 'foo'
-    assert next(objs) == 'bar'
-    with raises(StopIteration):
-        next(objs)
 
 
 @mark.parametrize(('level', 'expected_logging_level'), [
