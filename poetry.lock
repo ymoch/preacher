@@ -653,7 +653,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-requests"
-version = "0.1.9"
+version = "0.1.10"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
@@ -717,7 +717,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "92083eeea1e9ad58b222a4a80b054420eae1a66be664bfd338874f7f259386b9"
+content-hash = "d370019d0b94e0150dd3a7a718f0694eb589ac42d8567120eaf992c3a96a7022"
 
 [metadata.files]
 alabaster = [
@@ -1178,7 +1178,7 @@ types-pyyaml = [
     {file = "types_PyYAML-0.1.6-py2.py3-none-any.whl", hash = "sha256:8620045462a0ae1ecff7e97041905abdedc7afdff7ea66cac31df29fb1af6fa3"},
 ]
 types-requests = [
-    {file = "types_requests-0.1.9-py2.py3-none-any.whl", hash = "sha256:24a51b692d36101e5b81f08733d74b944ccae3e90589fb712e4dfc6f36965c35"},
+    {file = "types_requests-0.1.10-py2.py3-none-any.whl", hash = "sha256:5b1864f1564adb810123c563b4de86236c14058978ec1294b07a988c532cb079"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.0-py2-none-any.whl", hash = "sha256:0ac0f89795dd19de6b97debb0c6af1c70987fd80a2d62d1958f7e56fcc31b497"},
