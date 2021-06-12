@@ -3,7 +3,7 @@ from io import StringIO
 from pytest import fixture, raises, mark
 from yamlen import Loader, YamlenError
 
-from preacher.compilation.yaml.impl.argument import ArgumentTag
+from preacher.compilation.yaml.tag.argument import ArgumentTag
 
 
 @fixture

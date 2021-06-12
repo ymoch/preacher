@@ -4,7 +4,7 @@ from io import StringIO
 from pytest import fixture, mark, raises
 from yamlen import Loader, YamlenError
 
-from preacher.compilation.yaml.impl.datetime import RelativeDatetimeTag
+from preacher.compilation.yaml.tag.datetime import RelativeDatetimeTag
 from preacher.core.value import ValueContext
 from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 
