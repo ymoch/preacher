@@ -2,8 +2,8 @@ from logging import Logger
 from typing import Optional
 
 from pluggy import PluginManager
+from yamlen import Loader
 
-from preacher.compilation.yaml.loader import Loader
 from preacher.core.logger import default_logger
 
 

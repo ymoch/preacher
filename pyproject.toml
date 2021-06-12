@@ -29,6 +29,7 @@ click = "^8.0.1"
 colorama = "^0.4.1"
 pluggy = "^0.13.1"
 Jinja2 = "^3.0.1"
+yamlen = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
