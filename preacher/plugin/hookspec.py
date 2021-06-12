@@ -1,8 +1,8 @@
 from pluggy.hooks import HookspecMarker
+from yaml import Loader
 
 from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
-from preacher.compilation.yaml.loader import Loader
 
 hookspec = HookspecMarker('preacher')
 

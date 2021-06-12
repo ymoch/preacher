@@ -2,10 +2,9 @@ from datetime import datetime, timezone, timedelta
 from io import StringIO
 
 from pytest import fixture, mark, raises
+from yamlen import Loader, YamlenError
 
-from preacher.compilation.yaml.error import YamlError
-from preacher.compilation.yaml.impl.datetime import RelativeDatetimeTag
-from preacher.compilation.yaml.loader import Loader
+from preacher.compilation.yaml.tag.datetime import RelativeDatetimeTag
 from preacher.core.value import ValueContext
 from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 
@@ -43,7 +42,7 @@ def test_given_datetime_that_is_offset_aware(loader: Loader):
 ])
 def test_given_invalid_relative_datetime(loader: Loader, content, expected_message):
     stream = StringIO(content)
-    with raises(YamlError) as error_info:
+    with raises(YamlenError) as error_info:
         loader.load(stream)
     assert expected_message in str(error_info.value)
 
