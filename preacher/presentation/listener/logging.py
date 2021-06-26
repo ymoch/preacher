@@ -9,7 +9,6 @@ from preacher.presentation.logging import LoggingReporter
 
 
 class LoggingReportingListener(Listener):
-
     def __init__(self, reporter: LoggingReporter):
         self._reporter = reporter
 
