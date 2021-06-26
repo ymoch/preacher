@@ -34,8 +34,8 @@ class Level(IntEnum):
 
 _LEVEL_MAP: Mapping[str, Level] = {str(level): level for level in Level}
 _CONCURRENT_EXECUTOR_FACTORY_MAP: Mapping[str, ExecutorFactory] = {
-    'process': PROCESS_POOL_FACTORY,
-    'thread': THREAD_POOL_FACTORY,
+    "process": PROCESS_POOL_FACTORY,
+    "thread": THREAD_POOL_FACTORY,
 }
 
 
@@ -113,19 +113,19 @@ def positive_float_callback(
         return value
 
     if value <= 0.0:
-        raise BadParameter(f'must be positive, given {value}')
+        raise BadParameter(f"must be positive, given {value}")
     return value
 
 
 def _parse_argument(value: str) -> Tuple[str, object]:
-    match = re.match(r'^([^=]+)=(.*)$', value)
+    match = re.match(r"^([^=]+)=(.*)$", value)
     if not match:
-        raise BadParameter(f'Invalid format argument: {value}')
+        raise BadParameter(f"Invalid format argument: {value}")
 
     key = match.group(1)
     try:
         value = safe_load(match.group(2))
     except MarkedYAMLError as error:
-        raise BadParameter(f'Invalid YAML format: {value}\n{error}')
+        raise BadParameter(f"Invalid YAML format: {value}\n{error}")
 
     return key, value

@@ -19,14 +19,14 @@ from preacher.presentation.listener import LoggingReportingListener, HtmlReporti
 from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
 from .logging import ColoredFormatter, create_system_logger
 
-__all__ = ['app', 'create_listener', 'create_scheduler']
+__all__ = ["app", "create_listener", "create_scheduler"]
 
-_REPORT_LOGGER_NAME = 'preacher.cli.report.logging'
+_REPORT_LOGGER_NAME = "preacher.cli.report.logging"
 
 
 def app(
     paths: Sequence[str] = (),
-    base_url: str = '',
+    base_url: str = "",
     arguments: Optional[Arguments] = None,
     level: Status = Status.SUCCESS,
     report_dir: Optional[str] = None,
@@ -51,18 +51,18 @@ def app(
     logger = create_system_logger(verbosity)
 
     logger.debug(
-        'Running condition\n'
-        '  Paths: %s\n'
-        '  Arguments: %s\n'
-        '  Base URL: %s\n'
-        '  Logging report level: %s\n'
-        '  Reporting directory path: %s\n'
-        '  Max retry count: %d\n'
-        '  Delay between attempts in seconds: %s\n'
-        '  Timeout in seconds: %s\n'
-        '  Concurrency: %s\n'
-        '  Executor: %s\n'
-        '  Verbosity: %d',
+        "Running condition\n"
+        "  Paths: %s\n"
+        "  Arguments: %s\n"
+        "  Base URL: %s\n"
+        "  Logging report level: %s\n"
+        "  Reporting directory path: %s\n"
+        "  Max retry count: %d\n"
+        "  Delay between attempts in seconds: %s\n"
+        "  Timeout in seconds: %s\n"
+        "  Concurrency: %s\n"
+        "  Executor: %s\n"
+        "  Verbosity: %d",
         paths,
         arguments,
         base_url,
@@ -73,7 +73,7 @@ def app(
         timeout,
         concurrency,
         executor_factory,
-        verbosity
+        verbosity,
     )
 
     plugin_manager = get_plugin_manager()
@@ -94,7 +94,7 @@ def app(
     listener = create_listener(level, report_dir)
     executor_factory = executor_factory or PROCESS_POOL_FACTORY
     try:
-        logger.info('Start running scenarios.')
+        logger.info("Start running scenarios.")
         with executor_factory.create(concurrency) as executor:
             scheduler = create_scheduler(
                 executor=executor,
@@ -109,7 +109,7 @@ def app(
         logger.exception(error)
         return 3
     finally:
-        logger.info('End running scenarios.')
+        logger.info("End running scenarios.")
 
     if not status.is_succeeded:
         return 1
