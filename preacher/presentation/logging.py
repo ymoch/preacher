@@ -1,7 +1,9 @@
 import contextlib
 import io
 import logging
-from typing import Iterator
+import sys
+import uuid
+from typing import Iterable, Iterator, Optional
 
 from preacher.core.request import ExecutionReport
 from preacher.core.scenario import ScenarioResult, CaseResult
@@ -121,3 +123,47 @@ class LoggingReporter:
         self._indent += ".."
         yield
         self._indent = original
+
+
+def create_logging_reporter(
+    logger: Optional[logging.Logger] = None,
+    logger_name: str = "",
+    level: Status = Status.SUCCESS,
+    handlers: Optional[Iterable[logging.Handler]] = None,
+    formatter: Optional[logging.Formatter] = None,
+) -> LoggingReporter:
+    """
+    Create a logging reporter.
+
+    Args:
+        logger: A logger where reports logged. When given this, the other parameters are ignored.
+        logger_name: The logger name. When not given, it will be automatically generated.
+        level: The minimum level to report.
+        handlers: The logging handlers. When given, `formatter` is ignored.
+        formatter: The logging formatter.
+    """
+    if not logger:
+        logging_level = _status_to_logging_level(level)
+        logger = logging.getLogger(logger_name or str(uuid.uuid4()))
+        logger.setLevel(logging_level)
+
+        if not handlers:
+            default_handler = logging.StreamHandler(sys.stdout)
+            default_handler.setLevel(logging_level)
+            if formatter:
+                default_handler.setFormatter(formatter)
+            handlers = (default_handler,)
+        for handler in handlers:
+            logger.addHandler(handler)
+
+    return LoggingReporter(logger)
+
+
+def _status_to_logging_level(level: Status) -> int:
+    if level is Status.SKIPPED:
+        return logging.DEBUG
+    if level is Status.SUCCESS:
+        return logging.INFO
+    if level is Status.UNSTABLE:
+        return logging.WARNING
+    return logging.ERROR
