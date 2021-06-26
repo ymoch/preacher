@@ -9,7 +9,6 @@ from .case import Case
 
 
 class Scenario:
-
     def __init__(
         self,
         label: Optional[str] = None,

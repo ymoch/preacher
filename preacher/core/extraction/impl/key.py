@@ -6,7 +6,6 @@ from preacher.core.util.functional import identity, apply_if_not_none
 
 
 class KeyExtractor(Extractor):
-
     def __init__(
         self,
         key: str,

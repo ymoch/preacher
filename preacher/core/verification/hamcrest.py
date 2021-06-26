@@ -15,7 +15,6 @@ from preacher.core.datetime import DatetimeWithFormat, ISO8601
 
 
 class _ConvertingMatcher(BaseMatcher):
-
     def __init__(self, matcher: BaseMatcher, convert: Callable):
         self._matcher = matcher
         self._convert = convert
@@ -29,11 +28,10 @@ class _ConvertingMatcher(BaseMatcher):
 
     def describe_mismatch(self, item, mismatch_description: Description) -> None:
         converted_item = self._convert(item)
-        mismatch_description.append_text('was ').append_description_of(converted_item)
+        mismatch_description.append_text("was ").append_description_of(converted_item)
 
 
 class _DayOfWeekMatcher(BaseMatcher[datetime]):
-
     def __init__(self, day: int):
         self._day = day
 
@@ -42,20 +40,20 @@ class _DayOfWeekMatcher(BaseMatcher[datetime]):
 
     def describe_to(self, description: Description) -> None:
         name = calendar.day_name[self._day]
-        description.append_text(f'is {name}')
+        description.append_text(f"is {name}")
 
 
 def before(value: object) -> Matcher:
     """`value` should be a datetime or DateTimeWithFormat."""
     origin = _ensure_datetime(value)
-    matcher = OrderingComparison(origin.value, operator.lt, 'before')
+    matcher = OrderingComparison(origin.value, operator.lt, "before")
     return _ConvertingMatcher(matcher, lambda obj: origin.fmt.parse_datetime(_ensure_str(obj)))
 
 
 def after(value: object) -> Matcher:
     """`value` should be a datetime or DateTimeWithFormat."""
     origin = _ensure_datetime(value)
-    matcher = OrderingComparison(origin.value, operator.gt, 'after')
+    matcher = OrderingComparison(origin.value, operator.gt, "after")
     return _ConvertingMatcher(matcher, lambda obj: origin.fmt.parse_datetime(_ensure_str(obj)))
 
 
@@ -72,7 +70,7 @@ def day_of_week(day: int) -> Matcher:
 
 def _ensure_str(obj: object) -> str:
     if not isinstance(obj, str):
-        raise TypeError(f'Must be a str, but given {type(obj)}: {obj}')
+        raise TypeError(f"Must be a str, but given {type(obj)}: {obj}")
     return obj
 
 
@@ -81,5 +79,5 @@ def _ensure_datetime(obj: object) -> DatetimeWithFormat:
         return obj
 
     if not isinstance(obj, datetime):
-        raise TypeError(f'Must be a datetime, but given {type(obj)}: {obj}')
+        raise TypeError(f"Must be a datetime, but given {type(obj)}: {obj}")
     return DatetimeWithFormat(obj)

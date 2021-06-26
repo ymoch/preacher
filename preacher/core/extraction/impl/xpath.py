@@ -8,7 +8,6 @@ from preacher.core.util.functional import identity, apply_if_not_none
 
 
 class XPathExtractor(Extractor):
-
     def __init__(
         self,
         query: str,
@@ -40,4 +39,4 @@ class XPathExtractor(Extractor):
         try:
             return elem.xpath(self._query)
         except XPathEvalError:
-            raise ExtractionError(f'Invalid XPath: {self._query}')
+            raise ExtractionError(f"Invalid XPath: {self._query}")

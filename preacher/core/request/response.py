@@ -5,7 +5,6 @@ from typing import Mapping
 
 
 class ResponseBody(ABC):
-
     @property
     @abstractmethod
     def text(self) -> str:
@@ -18,7 +17,6 @@ class ResponseBody(ABC):
 
 
 class Response(ABC):
-
     @property
     @abstractmethod
     def id(self) -> str:

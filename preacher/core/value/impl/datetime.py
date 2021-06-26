@@ -13,7 +13,6 @@ from .static import StaticValue
 
 
 class OnlyTimeDatetime(Value[datetime]):
-
     def __init__(self, tm: time):
         self._tm = tm
 
@@ -27,7 +26,6 @@ class OnlyTimeDatetime(Value[datetime]):
 
 
 class RelativeDatetime(Value[datetime]):
-
     def __init__(self, delta: Optional[timedelta] = None):
         self._delta = delta or timedelta()
 
@@ -41,7 +39,6 @@ class RelativeDatetime(Value[datetime]):
 
 
 class DatetimeValueWithFormat(Value[DatetimeWithFormat]):
-
     def __init__(self, original: Value[datetime], fmt: Optional[DatetimeFormat] = None):
         self._original = original
         self._fmt = fmt or ISO8601
@@ -73,7 +70,7 @@ def parse_datetime_value_with_format(
 
     # Try to parse `obj` as a datetime-compatible string below.
     if not isinstance(value, str):
-        raise ValueError(f'Must be a datetime-compatible value, but given {type(value)}: {value}')
+        raise ValueError(f"Must be a datetime-compatible value, but given {type(value)}: {value}")
 
     try:
         tm = parse_time(value)
@@ -85,7 +82,7 @@ def parse_datetime_value_with_format(
         delta = parse_timedelta(value)
         return DatetimeValueWithFormat(RelativeDatetime(delta), fmt)
     except ValueError:
-        raise ValueError(f'Invalid format: {value}')
+        raise ValueError(f"Invalid format: {value}")
 
 
 def _select_origin(context: Optional[ValueContext]) -> datetime:

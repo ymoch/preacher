@@ -14,16 +14,16 @@ from .type import require_type
 from .verification import Verification
 
 __all__ = [
-    'Description',
-    'MatcherWrappingPredicate',
-    'MatcherFactory',
-    'StaticMatcherFactory',
-    'ValueMatcherFactory',
-    'RecursiveMatcherFactory',
-    'MatcherFunc',
-    'Predicate',
-    'ResponseDescription',
-    'ResponseVerification',
-    'require_type',
-    'Verification',
+    "Description",
+    "MatcherWrappingPredicate",
+    "MatcherFactory",
+    "StaticMatcherFactory",
+    "ValueMatcherFactory",
+    "RecursiveMatcherFactory",
+    "MatcherFunc",
+    "Predicate",
+    "ResponseDescription",
+    "ResponseVerification",
+    "require_type",
+    "Verification",
 ]

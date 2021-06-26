@@ -15,11 +15,10 @@ from .request import Request
 from .response import Response, ResponseBody
 from .url_param import resolve_url_params
 
-_DEFAULT_HEADERS = {'User-Agent': f'Preacher {_version}'}
+_DEFAULT_HEADERS = {"User-Agent": f"Preacher {_version}"}
 
 
 class ResponseBodyWrapper(ResponseBody):
-
     def __init__(self, res: requests.Response):
         self._res = res
 
@@ -33,7 +32,6 @@ class ResponseBodyWrapper(ResponseBody):
 
 
 class ResponseWrapper(Response):
-
     def __init__(self, id: str, res: requests.Response):
         self._id = id
         self._res = res
@@ -55,9 +53,7 @@ class ResponseWrapper(Response):
     def headers(self) -> Mapping[str, str]:
         # Convert to the normal dictionary to adapt jq.
         # Names are converted to lower case to normalize.
-        return {
-            name.lower(): value for (name, value) in self._res.headers.items()
-        }
+        return {name.lower(): value for (name, value) in self._res.headers.items()}
 
     @property
     def body(self) -> ResponseBody:
@@ -81,10 +77,9 @@ class ExecutionReport(Statused):
 
 
 class Requester:
-
     def __init__(
         self,
-        base_url: str = '',
+        base_url: str = "",
         timeout: Optional[float] = None,
     ):
         """
@@ -128,12 +123,15 @@ class Requester:
             report = replace(report, status=Status.FAILURE, message=message)
             return report, None
 
-        report = replace(report, request=PreparedRequest(
-            method=prepped.method or '',
-            url=prepped.url or '',
-            headers=prepped.headers,
-            body=prepped.body,
-        ))
+        report = replace(
+            report,
+            request=PreparedRequest(
+                method=prepped.method or "",
+                url=prepped.url or "",
+                headers=prepped.headers,
+                body=prepped.body,
+            ),
+        )
 
         try:
             res = session.send(prepped, proxies=proxies, timeout=self._timeout)
@@ -159,7 +157,7 @@ class Requester:
         data = None
         if request.body:
             content_type = request.body.content_type
-            headers['Content-Type'] = content_type
+            headers["Content-Type"] = content_type
             data = request.body.resolve(context)
 
         headers.update(request.headers)

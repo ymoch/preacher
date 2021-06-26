@@ -14,7 +14,7 @@ from preacher.core.value.impl.static import StaticValue
 from .predicate import Predicate
 from .verification import Verification
 
-T = TypeVar('T')
+T = TypeVar("T")
 MatcherFunc = Callable[..., Matcher]
 
 
@@ -38,14 +38,12 @@ class MatcherWrappingPredicate(Predicate):
 
 
 class MatcherFactory(ABC):
-
     @abstractmethod
     def create(self, context: Optional[ValueContext] = None) -> Matcher:
         raise NotImplementedError()
 
 
 class StaticMatcherFactory(MatcherFactory):
-
     def __init__(self, matcher: Matcher):
         self._matcher = matcher
 
@@ -54,7 +52,6 @@ class StaticMatcherFactory(MatcherFactory):
 
 
 class ValueMatcherFactory(MatcherFactory):
-
     def __init__(
         self,
         matcher_func: MatcherFunc,
@@ -76,7 +73,6 @@ class ValueMatcherFactory(MatcherFactory):
 
 
 class RecursiveMatcherFactory(MatcherFactory):
-
     def __init__(self, matcher_func: MatcherFunc, inner_factories: List[MatcherFactory]):
         self._matcher_func = matcher_func
         self._inner_factories = inner_factories

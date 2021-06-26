@@ -5,11 +5,10 @@ from typing import TypeVar
 
 from .analysis import Analyzer
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Extractor(ABC):
-
     @abstractmethod
     def extract(self, analyzer: Analyzer) -> object:
         """

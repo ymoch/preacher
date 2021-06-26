@@ -2,7 +2,7 @@
 
 from logging import Logger, getLogger, CRITICAL
 
-__all__ = ['default_logger']
+__all__ = ["default_logger"]
 
 
 def _create_logger() -> Logger:

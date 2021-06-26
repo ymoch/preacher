@@ -40,14 +40,13 @@ def merge_statuses(statuses: Iterable[Status]) -> Status:
 
 
 class Statused(ABC):
-
     @property
     @abstractmethod
     def status(self) -> Status:
         raise NotImplementedError()
 
 
-StatusedType = TypeVar('StatusedType', bound=Statused)
+StatusedType = TypeVar("StatusedType", bound=Statused)
 
 
 @dataclass(frozen=True)

@@ -19,7 +19,6 @@ class Listener(CaseListener):
 
 
 class MergingListener(Listener):
-
     def __init__(self):
         self._listeners: List[Listener] = []
 
