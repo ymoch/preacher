@@ -15,8 +15,7 @@ from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
 from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
-from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
-from preacher.presentation.logging import create_logging_reporter
+from preacher.presentation.listener import HtmlReportingListener, create_logging_reporting_listener
 from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
 from .logging import ColoredFormatter, create_system_logger
 
@@ -124,12 +123,10 @@ def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     handler = StreamHandler(sys.stdout)
     handler.setFormatter(ColoredFormatter())
     merging.append(
-        LoggingReportingListener(
-            create_logging_reporter(
-                logger_name=_REPORT_LOGGER_NAME,
-                level=level,
-                handlers=[handler],
-            )
+        create_logging_reporting_listener(
+            logger_name=_REPORT_LOGGER_NAME,
+            level=level,
+            handlers=[handler],
         )
     )
 
