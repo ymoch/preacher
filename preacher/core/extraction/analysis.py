@@ -24,15 +24,15 @@ class Analyzer(ABC):
 
     @abstractmethod
     def for_text(self, extract: Callable[[str], T]) -> T:
-        raise NotImplementedError()
+        ...   # pragma: no cover
 
     @abstractmethod
     def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
-        raise NotImplementedError()
+        ...   # pragma: no cover
 
     @abstractmethod
     def for_etree(self, extract: Callable[[Element], T]) -> T:
-        raise NotImplementedError()
+        ...   # pragma: no cover
 
 
 class _LazyElementTreeLoader:

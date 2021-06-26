@@ -12,11 +12,11 @@ class RequestBody(ABC):
     @property
     @abstractmethod
     def content_type(self) -> str:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def resolve(self, context: Optional[ValueContext] = None) -> Any:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 class UrlencodedRequestBody(RequestBody):

@@ -23,15 +23,15 @@ _KEY_DATA = "data"
 class RequestBodyCompiled(ABC):
     @abstractmethod
     def replace(self, other: RequestBodyCompiled) -> RequestBodyCompiled:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def compile_and_replace(self, obj: Mapping) -> RequestBodyCompiled:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def fix(self) -> RequestBody:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 @dataclass(frozen=True)

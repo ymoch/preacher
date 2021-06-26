@@ -8,36 +8,36 @@ class ResponseBody(ABC):
     @property
     @abstractmethod
     def text(self) -> str:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @property
     @abstractmethod
     def content(self) -> bytes:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 class Response(ABC):
     @property
     @abstractmethod
     def id(self) -> str:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @property
     @abstractmethod
     def elapsed(self) -> float:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @property
     @abstractmethod
     def status_code(self) -> int:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @property
     @abstractmethod
     def headers(self) -> Mapping[str, str]:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @property
     @abstractmethod
     def body(self) -> ResponseBody:
-        raise NotImplementedError()
+        ...  # pragma: no cover

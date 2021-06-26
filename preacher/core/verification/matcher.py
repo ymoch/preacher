@@ -40,7 +40,7 @@ class MatcherWrappingPredicate(Predicate):
 class MatcherFactory(ABC):
     @abstractmethod
     def create(self, context: Optional[ValueContext] = None) -> Matcher:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 class StaticMatcherFactory(MatcherFactory):

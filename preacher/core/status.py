@@ -43,7 +43,7 @@ class Statused(ABC):
     @property
     @abstractmethod
     def status(self) -> Status:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 StatusedType = TypeVar("StatusedType", bound=Statused)

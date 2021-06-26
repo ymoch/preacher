@@ -15,4 +15,4 @@ class Extractor(ABC):
         Raises:
             EvaluationError: when the evaluation of this extractor fails.
         """
-        raise NotImplementedError()
+        ...  # pragma: no cover
