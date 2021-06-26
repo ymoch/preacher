@@ -9,7 +9,7 @@ from pluggy import PluginManager
 
 from preacher.core.logger import default_logger
 
-__all__ = ['load_plugins']
+__all__ = ["load_plugins"]
 
 
 def load_plugins(
@@ -39,7 +39,7 @@ def _load_module(path: str, logger: Logger) -> types.ModuleType:
 
     spec = spec_from_file_location(name, path)
     if not spec:
-        raise RuntimeError(f'Could not load as a module: {path}')
+        raise RuntimeError(f"Could not load as a module: {path}")
     module = module_from_spec(spec)
     spec.loader.exec_module(module)  # type: ignore
     sys.modules[name] = module  # To enable sub-processes use this module.
