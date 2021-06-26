@@ -28,7 +28,6 @@ class ResponseVerification(Statused):
 
 
 class ResponseDescription:
-
     def __init__(
         self,
         status_code: Optional[List[Predicate]] = None,
@@ -49,14 +48,10 @@ class ResponseDescription:
         )
 
         header_analyzer = MappingAnalyzer(response.headers)
-        headers = Verification.collect(
-            d.verify(header_analyzer, context) for d in self._headers
-        )
+        headers = Verification.collect(d.verify(header_analyzer, context) for d in self._headers)
 
         body_analyzer = ResponseBodyAnalyzer(response.body)
-        body = Verification.collect(
-            d.verify(body_analyzer, context) for d in self._body
-        )
+        body = Verification.collect(d.verify(body_analyzer, context) for d in self._body)
 
         return ResponseVerification(
             response_id=response.id,

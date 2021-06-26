@@ -8,7 +8,7 @@ from preacher.compilation.verification.predicate import PredicateCompiler
 from preacher.compilation.verification.response import ResponseDescriptionCompiled
 from preacher.compilation.verification.response import ResponseDescriptionCompiler
 
-PKG = 'preacher.compilation.verification.response'
+PKG = "preacher.compilation.verification.response"
 
 
 @fixture
@@ -30,9 +30,7 @@ def description():
     return compiler
 
 
-@mark.parametrize(('obj', 'expected_path'), (
-    ('', []),
-))
+@mark.parametrize(("obj", "expected_path"), (("", []),))
 def test_given_an_invalid_value(obj, expected_path, compiler):
     with raises(CompilationError) as error_info:
         compiler.compile(obj)
@@ -50,11 +48,13 @@ def test_given_an_empty_mapping(compiler, predicate, description):
 
 
 def test_given_simple_values(compiler, predicate, description):
-    compiled = compiler.compile({
-        'status_code': sentinel.status_code,
-        'headers': sentinel.headers,
-        'body': sentinel.body,
-    })
+    compiled = compiler.compile(
+        {
+            "status_code": sentinel.status_code,
+            "headers": sentinel.headers,
+            "body": sentinel.body,
+        }
+    )
     assert compiled.status_code == [sentinel.predicate]
     assert compiled.headers == [sentinel.description]
     assert compiled.body == [sentinel.description]
@@ -64,25 +64,31 @@ def test_given_simple_values(compiler, predicate, description):
 
 
 def test_given_filled_values(compiler, predicate, description):
-    compiled = compiler.compile({
-        'status_code': [sentinel.status_code_1, sentinel.status_code_2],
-        'headers': [sentinel.headers_1, sentinel.headers_2],
-        'body': [sentinel.body_1, sentinel.body_2],
-    })
+    compiled = compiler.compile(
+        {
+            "status_code": [sentinel.status_code_1, sentinel.status_code_2],
+            "headers": [sentinel.headers_1, sentinel.headers_2],
+            "body": [sentinel.body_1, sentinel.body_2],
+        }
+    )
     assert compiled.status_code == [sentinel.predicate, sentinel.predicate]
     assert compiled.headers == [sentinel.description, sentinel.description]
     assert compiled.body == [sentinel.description, sentinel.description]
 
-    predicate.compile.assert_has_calls([
-        call(sentinel.status_code_1),
-        call(sentinel.status_code_2),
-    ])
-    description.compile.assert_has_calls([
-        call(sentinel.headers_1),
-        call(sentinel.headers_2),
-        call(sentinel.body_1),
-        call(sentinel.body_2),
-    ])
+    predicate.compile.assert_has_calls(
+        [
+            call(sentinel.status_code_1),
+            call(sentinel.status_code_2),
+        ]
+    )
+    description.compile.assert_has_calls(
+        [
+            call(sentinel.headers_1),
+            call(sentinel.headers_2),
+            call(sentinel.body_1),
+            call(sentinel.body_2),
+        ]
+    )
 
 
 @fixture
@@ -93,7 +99,7 @@ def initial_default():
 
 
 def test_given_hollow_default(mocker, predicate, description, initial_default):
-    compiler_ctor = mocker.patch(f'{PKG}.ResponseDescriptionCompiler')
+    compiler_ctor = mocker.patch(f"{PKG}.ResponseDescriptionCompiler")
     compiler_ctor.return_value = sentinel.compiler_of_default
 
     compiler = ResponseDescriptionCompiler(
@@ -115,7 +121,7 @@ def test_given_hollow_default(mocker, predicate, description, initial_default):
 
 
 def test_given_filled_default(mocker, predicate, description, initial_default):
-    compiler_ctor = mocker.patch(f'{PKG}.ResponseDescriptionCompiler')
+    compiler_ctor = mocker.patch(f"{PKG}.ResponseDescriptionCompiler")
     compiler_ctor.return_value = sentinel.compiler_of_default
 
     compiler = ResponseDescriptionCompiler(

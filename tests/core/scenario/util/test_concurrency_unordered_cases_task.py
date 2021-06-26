@@ -42,13 +42,15 @@ def test_given_cases(executor):
     case_runner.run.side_effect = case_results
     cases = [sentinel.case1, sentinel.case2]
 
-    task = UnorderedCasesTask(executor, case_runner, cases, 1, foo='bar')
+    task = UnorderedCasesTask(executor, case_runner, cases, 1, foo="bar")
     result = task.result()
     assert result.status is Status.FAILURE
     assert result.items == case_results
 
     assert executor.submit.call_count == 2
-    case_runner.run.assert_has_calls([
-        call(sentinel.case1, 1, foo='bar'),
-        call(sentinel.case2, 1, foo='bar'),
-    ])
+    case_runner.run.assert_has_calls(
+        [
+            call(sentinel.case1, 1, foo="bar"),
+            call(sentinel.case2, 1, foo="bar"),
+        ]
+    )

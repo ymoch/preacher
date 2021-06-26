@@ -7,7 +7,6 @@ from .listener import Listener
 
 
 class ScenarioScheduler:
-
     def __init__(self, runner: ScenarioRunner, listener: Optional[Listener] = None):
         self._runner = runner
         self._listener = listener or Listener()
@@ -42,9 +41,9 @@ class ScenarioScheduler:
                 break
             except Exception as error:
                 result = ScenarioResult(
-                    label='Not a constructed scenario',
+                    label="Not a constructed scenario",
                     status=Status.FAILURE,
-                    message=f'{error.__class__.__name__}: {error}',
+                    message=f"{error.__class__.__name__}: {error}",
                 )
                 yield StaticScenarioTask(result)
                 continue

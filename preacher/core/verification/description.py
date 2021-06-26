@@ -12,7 +12,6 @@ from .verification import Verification
 
 
 class Description:
-
     def __init__(self, extractor: Extractor, predicates: List[Predicate]):
         self._extractor = extractor
         self._predicates = predicates
@@ -24,6 +23,5 @@ class Description:
             return Verification.of_error(error)
 
         return Verification.collect(
-            predicate.verify(verified_value, context)
-            for predicate in self._predicates
+            predicate.verify(verified_value, context) for predicate in self._predicates
         )

@@ -106,7 +106,7 @@ class MatcherFactoryCompiler:
 
         if isinstance(obj, Mapping):
             if len(obj) != 1:
-                message = f'Must have only 1 element, but has {len(obj)}'
+                message = f"Must have only 1 element, but has {len(obj)}"
                 raise CompilationError(message)
 
             key, value_obj = next(iter(obj.items()))
@@ -134,7 +134,7 @@ class MatcherFactoryCompiler:
     @staticmethod
     def _ensure_keys(keys: Union[str, Iterable[str]]) -> Iterable[str]:
         if isinstance(keys, str):
-            return keys,
+            return (keys,)
         return keys
 
 
@@ -146,48 +146,48 @@ def add_default_matchers(compiler: MatcherFactoryCompiler) -> None:
         compiler: A compiler to be modified.
     """
 
-    compiler.add_recursive(('be',), hamcrest.is_, multiple=False)
+    compiler.add_recursive(("be",), hamcrest.is_, multiple=False)
 
     # For objects.
-    compiler.add_static(('be_null',), hamcrest.none())
-    compiler.add_static(('not_be_null',), hamcrest.not_none())
-    compiler.add_static(('be_monday',), day_of_week(0))
-    compiler.add_static(('be_tuesday',), day_of_week(1))
-    compiler.add_static(('be_wednesday',), day_of_week(2))
-    compiler.add_static(('be_thursday',), day_of_week(3))
-    compiler.add_static(('be_friday',), day_of_week(4))
-    compiler.add_static(('be_saturday',), day_of_week(5))
-    compiler.add_static(('be_sunday',), day_of_week(6))
-    compiler.add_taking_value(('equal',), hamcrest.equal_to)
-    compiler.add_recursive(('have_length',), hamcrest.has_length, multiple=False)
+    compiler.add_static(("be_null",), hamcrest.none())
+    compiler.add_static(("not_be_null",), hamcrest.not_none())
+    compiler.add_static(("be_monday",), day_of_week(0))
+    compiler.add_static(("be_tuesday",), day_of_week(1))
+    compiler.add_static(("be_wednesday",), day_of_week(2))
+    compiler.add_static(("be_thursday",), day_of_week(3))
+    compiler.add_static(("be_friday",), day_of_week(4))
+    compiler.add_static(("be_saturday",), day_of_week(5))
+    compiler.add_static(("be_sunday",), day_of_week(6))
+    compiler.add_taking_value(("equal",), hamcrest.equal_to)
+    compiler.add_recursive(("have_length",), hamcrest.has_length, multiple=False)
 
     # For comparable values.
-    compiler.add_taking_value(('be_greater_than',), hamcrest.greater_than)
-    compiler.add_taking_value(('be_greater_than_or_equal_to',), hamcrest.greater_than_or_equal_to)
-    compiler.add_taking_value(('be_less_than',), hamcrest.less_than)
-    compiler.add_taking_value(('be_less_than_or_equal_to',), hamcrest.less_than_or_equal_to)
+    compiler.add_taking_value(("be_greater_than",), hamcrest.greater_than)
+    compiler.add_taking_value(("be_greater_than_or_equal_to",), hamcrest.greater_than_or_equal_to)
+    compiler.add_taking_value(("be_less_than",), hamcrest.less_than)
+    compiler.add_taking_value(("be_less_than_or_equal_to",), hamcrest.less_than_or_equal_to)
 
     # For strings.
-    compiler.add_taking_value(('contain_string',), require_type(str, hamcrest.contains_string))
-    compiler.add_taking_value(('start_with',), require_type(str, hamcrest.starts_with))
-    compiler.add_taking_value(('end_with',), require_type(str, hamcrest.ends_with))
-    compiler.add_taking_value(('match_regexp',), require_type(str, hamcrest.matches_regexp))
+    compiler.add_taking_value(("contain_string",), require_type(str, hamcrest.contains_string))
+    compiler.add_taking_value(("start_with",), require_type(str, hamcrest.starts_with))
+    compiler.add_taking_value(("end_with",), require_type(str, hamcrest.ends_with))
+    compiler.add_taking_value(("match_regexp",), require_type(str, hamcrest.matches_regexp))
 
     # For collections.
-    compiler.add_recursive(('have_item',), hamcrest.has_item, multiple=False)
-    compiler.add_recursive(('have_items',), hamcrest.has_items)
-    compiler.add_recursive(('contain_exactly',), hamcrest.contains_exactly)
-    compiler.add_recursive(('contain_in_any_order',), hamcrest.contains_inanyorder)
+    compiler.add_recursive(("have_item",), hamcrest.has_item, multiple=False)
+    compiler.add_recursive(("have_items",), hamcrest.has_items)
+    compiler.add_recursive(("contain_exactly",), hamcrest.contains_exactly)
+    compiler.add_recursive(("contain_in_any_order",), hamcrest.contains_inanyorder)
 
     # For datetime.
-    compiler.add_taking_value(('be_before',), before, parse_datetime_value_with_format)
-    compiler.add_taking_value(('be_after',), after, parse_datetime_value_with_format)
+    compiler.add_taking_value(("be_before",), before, parse_datetime_value_with_format)
+    compiler.add_taking_value(("be_after",), after, parse_datetime_value_with_format)
 
     # For collections.
-    compiler.add_static(('be_empty',), StaticMatcherFactory(hamcrest.empty()))
+    compiler.add_static(("be_empty",), StaticMatcherFactory(hamcrest.empty()))
 
     # Logical.
-    compiler.add_static('anything', StaticMatcherFactory(hamcrest.anything()))
-    compiler.add_recursive(('not',), hamcrest.not_, multiple=False)
-    compiler.add_recursive(('all_of',), hamcrest.all_of)
-    compiler.add_recursive(('any_of',), hamcrest.any_of)
+    compiler.add_static("anything", StaticMatcherFactory(hamcrest.anything()))
+    compiler.add_recursive(("not",), hamcrest.not_, multiple=False)
+    compiler.add_recursive(("all_of",), hamcrest.all_of)
+    compiler.add_recursive(("any_of",), hamcrest.any_of)

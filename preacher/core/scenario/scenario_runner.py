@@ -18,11 +18,10 @@ from .util.concurrency import OrderedCasesTask, UnorderedCasesTask
 @dataclass(frozen=True)
 class ScenarioContext:
     starts: datetime = field(default_factory=now)
-    base_url: str = ''
+    base_url: str = ""
 
 
 class ScenarioRunner:
-
     def __init__(self, executor: Executor, case_runner: CaseRunner):
         self._executor = executor
         self._case_runner = case_runner
@@ -32,8 +31,7 @@ class ScenarioRunner:
         context_analyzer = analyze_data_obj(context)
         value_context = ValueContext(origin_datetime=context.starts)
         conditions = Verification.collect(
-            condition.verify(context_analyzer, value_context)
-            for condition in scenario.conditions
+            condition.verify(context_analyzer, value_context) for condition in scenario.conditions
         )
         if not conditions.status.is_succeeded:
             status = Status.SKIPPED

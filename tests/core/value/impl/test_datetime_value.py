@@ -10,12 +10,12 @@ from preacher.core.value.impl.datetime import OnlyTimeDatetime
 from preacher.core.value.impl.datetime import RelativeDatetime
 from preacher.core.value.impl.datetime import parse_datetime_value_with_format
 
-PKG = 'preacher.core.value.impl.datetime'
+PKG = "preacher.core.value.impl.datetime"
 
 
 def test_only_time_datetime_value_default(mocker):
     now = datetime(2020, 1, 23, 12, 34, 56, 0, tzinfo=timezone.utc)
-    mocker.patch(f'{PKG}.now', return_value=now)
+    mocker.patch(f"{PKG}.now", return_value=now)
 
     tm = time(1, 23, 45, 678901)
     value = OnlyTimeDatetime(tm)
@@ -28,7 +28,7 @@ def test_only_time_datetime_value_default(mocker):
 def test_only_time_datetime_value_contextual():
     now = datetime(2020, 12, 31, 1, 23, 45, 123456, tzinfo=timezone.utc)
 
-    tz = timezone(timedelta(hours=9), 'JST')
+    tz = timezone(timedelta(hours=9), "JST")
     tm = time(12, 34, 56, 0, tzinfo=tz)
     value = OnlyTimeDatetime(tm)
     assert issubclass(value.type, datetime)
@@ -39,7 +39,7 @@ def test_only_time_datetime_value_contextual():
 
 def test_relative_datetime_value_default(mocker):
     now = datetime(2020, 1, 23, 12, 34, 56, 0, tzinfo=timezone.utc)
-    mocker.patch(f'{PKG}.now', return_value=now)
+    mocker.patch(f"{PKG}.now", return_value=now)
 
     delta = timedelta(seconds=1)
     value = RelativeDatetime(delta=delta)
@@ -89,9 +89,9 @@ def test_datetime_with_format_contextual():
 
 
 def test_parse_datetime_value_with_format_given_a_naive_datetime(mocker):
-    dt_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat', return_value=sentinel.dt)
-    value_ctor = mocker.patch(f'{PKG}.StaticValue', return_value=sentinel.value)
-    mocker.patch(f'{PKG}.system_timezone', return_value=timezone.utc)
+    dt_ctor = mocker.patch(f"{PKG}.DatetimeWithFormat", return_value=sentinel.dt)
+    value_ctor = mocker.patch(f"{PKG}.StaticValue", return_value=sentinel.value)
+    mocker.patch(f"{PKG}.system_timezone", return_value=timezone.utc)
 
     obj = datetime(2021, 1, 23)
     value = parse_datetime_value_with_format(obj)
@@ -102,8 +102,8 @@ def test_parse_datetime_value_with_format_given_a_naive_datetime(mocker):
 
 
 def test_parse_datetime_value_with_format_given_an_aware_datetime(mocker):
-    dt_ctor = mocker.patch(f'{PKG}.DatetimeWithFormat', return_value=sentinel.dt)
-    value_ctor = mocker.patch(f'{PKG}.StaticValue', return_value=sentinel.value)
+    dt_ctor = mocker.patch(f"{PKG}.DatetimeWithFormat", return_value=sentinel.dt)
+    value_ctor = mocker.patch(f"{PKG}.StaticValue", return_value=sentinel.value)
 
     tz = timezone(timedelta(hours=9))
     obj = datetime(2021, 1, 23, tzinfo=tz)
@@ -115,10 +115,10 @@ def test_parse_datetime_value_with_format_given_an_aware_datetime(mocker):
 
 
 def test_parse_datetime_value_with_format_given_time(mocker):
-    dt_ctor = mocker.patch(f'{PKG}.OnlyTimeDatetime', return_value=sentinel.dt)
-    value_ctor = mocker.patch(f'{PKG}.DatetimeValueWithFormat', return_value=sentinel.value)
+    dt_ctor = mocker.patch(f"{PKG}.OnlyTimeDatetime", return_value=sentinel.dt)
+    value_ctor = mocker.patch(f"{PKG}.DatetimeValueWithFormat", return_value=sentinel.value)
 
-    obj = '01:02+09:00'
+    obj = "01:02+09:00"
     value = parse_datetime_value_with_format(obj, sentinel.fmt)
     assert value is sentinel.value
 
@@ -127,10 +127,10 @@ def test_parse_datetime_value_with_format_given_time(mocker):
 
 
 def test_parse_datetime_value_with_format_given_timedelta(mocker):
-    dt_ctor = mocker.patch(f'{PKG}.RelativeDatetime', return_value=sentinel.dt)
-    value_ctor = mocker.patch(f'{PKG}.DatetimeValueWithFormat', return_value=sentinel.value)
+    dt_ctor = mocker.patch(f"{PKG}.RelativeDatetime", return_value=sentinel.dt)
+    value_ctor = mocker.patch(f"{PKG}.DatetimeValueWithFormat", return_value=sentinel.value)
 
-    obj = '+1 day'
+    obj = "+1 day"
     value = parse_datetime_value_with_format(obj, sentinel.fmt)
     assert value is sentinel.value
 
@@ -138,7 +138,7 @@ def test_parse_datetime_value_with_format_given_timedelta(mocker):
     value_ctor.assert_called_once_with(sentinel.dt, sentinel.fmt)
 
 
-@mark.parametrize('value', (None, 1, [], 'xyz'))
+@mark.parametrize("value", (None, 1, [], "xyz"))
 def test_parse_datetime_value_with_format_given_invalid_one(value):
     with raises(ValueError):
         parse_datetime_value_with_format(value)

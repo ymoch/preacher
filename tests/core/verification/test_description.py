@@ -18,12 +18,12 @@ def extractor():
 
 
 def test_when_analysis_fails(extractor):
-    extractor.extract.side_effect = Exception('message')
+    extractor.extract.side_effect = Exception("message")
 
     description = Description(extractor=extractor, predicates=[])
     verification = description.verify(sentinel.analyzer)
     assert verification.status == Status.FAILURE
-    assert verification.message == 'Exception: message'
+    assert verification.message == "Exception: message"
 
     extractor.extract.assert_called_once_with(sentinel.analyzer)
 
@@ -38,10 +38,7 @@ def test_when_given_no_predicates(extractor):
 
 
 def test_when_given_predicates(extractor):
-    predicate_results = [
-        Verification(Status.UNSTABLE),
-        Verification(Status.SUCCESS)
-    ]
+    predicate_results = [Verification(Status.UNSTABLE), Verification(Status.SUCCESS)]
     predicates = [
         NonCallableMock(Predicate, verify=Mock(return_value=result))
         for result in predicate_results

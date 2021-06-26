@@ -10,22 +10,25 @@ from preacher.core.value import Value
 
 def test_content_type():
     body = JsonRequestBody(1)
-    assert body.content_type == 'application/json'
+    assert body.content_type == "application/json"
 
 
-@mark.parametrize(('data', 'expected'), [
-    (None, 'null'),
-    ([1, 1.2], '[1,1.2]'),
-    ({'date': date(2020, 1, 23)}, '{"date":"2020-01-23"}'),
+@mark.parametrize(
+    ("data", "expected"),
     (
-        datetime(2020, 1, 23, 12, 34, 56, 0, tzinfo=timezone.utc),
-        '"2020-01-23T12:34:56+00:00"',
+        (None, "null"),
+        ([1, 1.2], "[1,1.2]"),
+        ({"date": date(2020, 1, 23)}, '{"date":"2020-01-23"}'),
+        (
+            datetime(2020, 1, 23, 12, 34, 56, 0, tzinfo=timezone.utc),
+            '"2020-01-23T12:34:56+00:00"',
+        ),
+        (
+            DatetimeWithFormat(datetime(2020, 12, 31, 12, 34, 56, 123456, tzinfo=timezone.utc)),
+            '"2020-12-31T12:34:56.123456+00:00"',
+        ),
     ),
-    (
-        DatetimeWithFormat(datetime(2020, 12, 31, 12, 34, 56, 123456, tzinfo=timezone.utc)),
-        '"2020-12-31T12:34:56.123456+00:00"',
-    ),
-])
+)
 def test_resolve_simple(data, expected):
     body = JsonRequestBody(data)
     resolved = body.resolve()
@@ -41,7 +44,7 @@ def test_resolve_given_values():
     value.resolve.return_value = [value_of_value]
     assert isinstance(value, Value)
 
-    body = JsonRequestBody({'key': value})
+    body = JsonRequestBody({"key": value})
     resolved = body.resolve(sentinel.context)
     assert resolved == '{"key":["1234-01-02"]}'
 

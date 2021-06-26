@@ -4,7 +4,7 @@ from preacher.compilation.request import RequestCompiled
 from preacher.compilation.scenario.case import CaseCompiled
 from preacher.compilation.verification.response import ResponseDescriptionCompiled
 
-PKG = 'preacher.compilation.scenario.case'
+PKG = "preacher.compilation.scenario.case"
 
 
 def test_replace():
@@ -36,7 +36,7 @@ def test_replace():
 
 
 def test_fix_hollow(mocker):
-    ctor = mocker.patch(f'{PKG}.Case', return_value=sentinel.fixed)
+    ctor = mocker.patch(f"{PKG}.Case", return_value=sentinel.fixed)
 
     compiled = CaseCompiled()
     fixed = compiled.fix()
@@ -52,7 +52,7 @@ def test_fix_hollow(mocker):
 
 
 def test_fix_filled(mocker):
-    ctor = mocker.patch(f'{PKG}.Case', return_value=sentinel.fixed)
+    ctor = mocker.patch(f"{PKG}.Case", return_value=sentinel.fixed)
 
     request = NonCallableMock(RequestCompiled)
     request.fix.return_value = sentinel.request

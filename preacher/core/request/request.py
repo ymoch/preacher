@@ -8,18 +8,17 @@ from .url_param import UrlParams
 
 
 class Method(Enum):
-    GET = 'GET'
-    POST = 'POST'
-    PUT = 'PUT'
-    DELETE = 'DELETE'
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
 
 
 class Request:
-
     def __init__(
         self,
         method: Method = Method.GET,
-        path: str = '',
+        path: str = "",
         headers: Optional[Mapping[str, str]] = None,
         params: Optional[UrlParams] = None,
         body: Optional[RequestBody] = None,

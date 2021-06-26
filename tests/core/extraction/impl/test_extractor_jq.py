@@ -13,16 +13,19 @@ def analyzer():
     return analyzer
 
 
-@mark.parametrize(('values', 'cast', 'multiple', 'expected'), (
-    ([], None, False, None),
-    ([], int, False, None),
-    ([], None, True, []),
-    ([], int, True, []),
-    (['1', '2'], None, False, '1'),
-    (['1', '2'], int, False, 1),
-    (['1', None, 2], None, True, ['1', None, 2]),
-    (['1', None, 2], int, True, [1, None, 2]),
-))
+@mark.parametrize(
+    ("values", "cast", "multiple", "expected"),
+    (
+        ([], None, False, None),
+        ([], int, False, None),
+        ([], None, True, []),
+        ([], int, True, []),
+        (["1", "2"], None, False, "1"),
+        (["1", "2"], int, False, 1),
+        (["1", None, 2], None, True, ["1", None, 2]),
+        (["1", None, 2], int, True, [1, None, 2]),
+    ),
+)
 def test_extract_single(analyzer, values, cast, multiple, expected):
     engine = NonCallableMock(JqEngine)
     engine.iter.return_value = iter(values)

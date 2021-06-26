@@ -41,7 +41,7 @@ def resolve_url_param_value(
     if value is None:
         return None
     if isinstance(value, bool):
-        return 'true' if value else 'false'
+        return "true" if value else "false"
     if isinstance(value, DatetimeWithFormat):
         return value.formatted
     if isinstance(value, date):
@@ -64,7 +64,4 @@ def resolve_url_params(
 ) -> ResolvedUrlParams:
     if isinstance(params, str):
         return params
-    return {
-        key: resolve_url_param(param, context)
-        for (key, param) in params.items()
-    }
+    return {key: resolve_url_param(param, context) for (key, param) in params.items()}

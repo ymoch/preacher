@@ -17,7 +17,7 @@ class Context:
 
 def test_analyze_data_obj_for_text():
     current = datetime(2019, 1, 2, 3, 4, 5, 678, tzinfo=timezone.utc)
-    analyzer = analyze_data_obj(Context(value=[current, 1, 'A']))
+    analyzer = analyze_data_obj(Context(value=[current, 1, "A"]))
 
     def _extract(value: str) -> object:
         assert value == '{"value":["2019-01-02T03:04:05.000678+00:00",1,"A"]}'
@@ -31,7 +31,7 @@ def test_analyze_data_obj_for_mapping():
     analyzer = analyze_data_obj(content)
 
     def _extract(value: Mapping) -> object:
-        assert value == {'value': 1}
+        assert value == {"value": 1}
         return sentinel.extracted
 
     assert analyzer.for_mapping(_extract) is sentinel.extracted

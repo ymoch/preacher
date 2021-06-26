@@ -1,8 +1,9 @@
+from yamlen import Loader
+
 from preacher.compilation.extraction.extraction import ExtractionCompiler, add_default_extractions
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 from preacher.compilation.verification.matcher import add_default_matchers
-from preacher.compilation.yaml.impl import add_default_tags
-from preacher.compilation.yaml.loader import Loader
+from preacher.compilation.yaml.tag import add_default_tags
 from . import hookimpl
 
 

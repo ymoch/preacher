@@ -4,7 +4,7 @@ Functional utilities.
 
 from typing import Any, Callable, TypeVar
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def identity(value: T, *_args, **_kwargs) -> T:

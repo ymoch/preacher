@@ -1,24 +1,12 @@
-from typing import Optional
 from unittest.mock import Mock, NonCallableMock, sentinel
 
-from hamcrest.core.matcher import Matcher
-from pytest import fixture, raises
+from pytest import fixture
 
-from preacher.core.value import Value, ValueContext
+from preacher.core.value import Value
 from preacher.core.verification.matcher import MatcherFactory
 from preacher.core.verification.matcher import RecursiveMatcherFactory
 from preacher.core.verification.matcher import StaticMatcherFactory
 from preacher.core.verification.matcher import ValueMatcherFactory
-
-
-def test_matcher_factory_interface():
-    class _Incomplete(MatcherFactory):
-        def create(self, context: Optional[ValueContext] = None) -> Matcher:
-            return super().create()
-
-    matcher = _Incomplete()
-    with raises(NotImplementedError):
-        matcher.create()
 
 
 @fixture

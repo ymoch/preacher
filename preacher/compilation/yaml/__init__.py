@@ -2,8 +2,7 @@
 YAML handling.
 """
 
-from .error import YamlError
 from .factory import create_loader
-from .loader import Loader, Tag
+from .integration import load_from_paths
 
-__all__ = ["Loader", "Tag", "YamlError", "create_loader"]
+__all__ = ["create_loader", "load_from_paths"]

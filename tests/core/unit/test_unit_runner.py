@@ -8,44 +8,47 @@ from preacher.core.unit.runner import predicate, UnitRunner
 from preacher.core.value import ValueContext
 from preacher.core.verification import ResponseVerification, ResponseDescription
 
-PKG = 'preacher.core.unit.runner'
+PKG = "preacher.core.unit.runner"
 
 
 def _retry(func, *_args, **_kwargs):
     return func()
 
 
-@mark.parametrize(('execution', 'verification', 'expected'), [
-    (ExecutionReport(Status.UNSTABLE), None, False),
-    (ExecutionReport(Status.SUCCESS), None, True),
+@mark.parametrize(
+    ("execution", "verification", "expected"),
     (
-        ExecutionReport(Status.UNSTABLE),
-        NonCallableMock(ResponseVerification, status=Status.SUCCESS),
-        False,
+        (ExecutionReport(Status.UNSTABLE), None, False),
+        (ExecutionReport(Status.SUCCESS), None, True),
+        (
+            ExecutionReport(Status.UNSTABLE),
+            NonCallableMock(ResponseVerification, status=Status.SUCCESS),
+            False,
+        ),
+        (
+            ExecutionReport(Status.SUCCESS),
+            NonCallableMock(ResponseVerification, status=Status.FAILURE),
+            False,
+        ),
+        (
+            ExecutionReport(Status.SUCCESS),
+            NonCallableMock(ResponseVerification, status=Status.SUCCESS),
+            True,
+        ),
     ),
-    (
-        ExecutionReport(Status.SUCCESS),
-        NonCallableMock(ResponseVerification, status=Status.FAILURE),
-        False,
-    ),
-    (
-        ExecutionReport(Status.SUCCESS),
-        NonCallableMock(ResponseVerification, status=Status.SUCCESS),
-        True,
-    ),
-])
+)
 def test_predicate(execution, verification, expected):
     assert predicate((execution, None, verification)) == expected
 
 
-@mark.parametrize('retry', [-2, -1])
+@mark.parametrize("retry", [-2, -1])
 def test_given_invalid_retry_count(retry):
     with raises(ValueError):
         UnitRunner(sentinel.requester, retry=retry)
 
 
 def test_given_no_response(mocker):
-    retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
+    retry = mocker.patch(f"{PKG}.retry_while_false", side_effect=_retry)
 
     requester = NonCallableMock(Requester)
     requester.base_url = sentinel.requester_base_url
@@ -67,7 +70,7 @@ def test_given_no_response(mocker):
 
 
 def test_given_a_response(mocker):
-    retry = mocker.patch(f'{PKG}.retry_while_false', side_effect=_retry)
+    retry = mocker.patch(f"{PKG}.retry_while_false", side_effect=_retry)
 
     execution = ExecutionReport(starts=sentinel.starts)
     requester = NonCallableMock(Requester)

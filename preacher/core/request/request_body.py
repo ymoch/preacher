@@ -9,38 +9,35 @@ from .url_param import UrlParams, resolve_url_params
 
 
 class RequestBody(ABC):
-
     @property
     @abstractmethod
     def content_type(self) -> str:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def resolve(self, context: Optional[ValueContext] = None) -> Any:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 class UrlencodedRequestBody(RequestBody):
-
     def __init__(self, params: UrlParams):
         self._params = params
 
     @property
     def content_type(self) -> str:
-        return 'application/x-www-form-urlencoded'
+        return "application/x-www-form-urlencoded"
 
     def resolve(self, context: Optional[ValueContext] = None) -> Any:
         return resolve_url_params(self._params, context)
 
 
 class JsonRequestBody(RequestBody):
-
     def __init__(self, data: object):
         self._data = data
 
     @property
     def content_type(self) -> str:
-        return 'application/json'
+        return "application/json"
 
     def resolve(self, context: Optional[ValueContext] = None) -> Any:
         def _resolve_value(obj: object) -> object:
@@ -52,4 +49,4 @@ class JsonRequestBody(RequestBody):
             return to_serializable(obj)
 
         resolved = recursive_map(_resolve_value, self._data)
-        return json.dumps(resolved, separators=(',', ':'))
+        return json.dumps(resolved, separators=(",", ":"))
