@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 from typing import Iterable, Optional
 
@@ -18,12 +16,6 @@ class LoggingReportingListener(Listener):
 
     def on_end(self, status: Status) -> None:
         self._reporter.show_status(status)
-
-    @staticmethod
-    def from_logger(logger: logging.Logger) -> LoggingReportingListener:
-        # HACK remove this function.
-        reporter = LoggingReporter(logger)
-        return LoggingReportingListener(reporter)
 
 
 def create_logging_reporting_listener(
