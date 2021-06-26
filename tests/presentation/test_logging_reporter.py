@@ -4,6 +4,7 @@ Styles should be checked independently.
 """
 
 import logging
+import sys
 from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 from uuid import uuid4
 
@@ -82,4 +83,10 @@ def test_create_logging_reporter_given_no_parameters(mocker):
     logger = logging.getLogger(__name__)
     ctor.assert_called_once_with(logger)
     assert logger.level == logging.INFO
-    assert logger.handlers == []
+
+    handlers = logger.handlers
+    assert len(handlers) == 1
+    handler = handlers[0]
+    assert isinstance(handler, logging.StreamHandler)
+    assert handler.stream is sys.stdout
+    assert handler.level == logging.NOTSET

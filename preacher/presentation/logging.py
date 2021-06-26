@@ -1,6 +1,7 @@
 import contextlib
 import io
 import logging
+import sys
 import uuid
 from typing import Iterable, Iterator, Optional
 
@@ -142,7 +143,9 @@ def create_logging_reporter(
     if not logger:
         logger = logging.getLogger(logger_name or str(uuid.uuid4()))
         logger.setLevel(_status_to_logging_level(level))
-        for handler in handlers or ():
+
+        handlers = handlers or (logging.StreamHandler(sys.stdout),)
+        for handler in handlers:
             logger.addHandler(handler)
     return LoggingReporter(logger)
 
