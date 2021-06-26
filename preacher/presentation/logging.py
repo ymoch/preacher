@@ -130,6 +130,16 @@ def create_logging_reporter(
     level: Status = Status.SUCCESS,
     handlers: Optional[Iterable[logging.Handler]] = None,
 ) -> LoggingReporter:
+    """
+    Create a logging reporter.
+    When given `logger`, the other parameters are ignored.
+
+    Args:
+        logger: A logger where reports logged. When given this, the other parameters are ignored.
+        logger_name: The logger name. When not given, it will be automatically generated.
+        level: The minimum level to report.
+        handlers: The logging handlers.
+    """
     if not logger:
         logger = logging.getLogger(logger_name or str(uuid.uuid4()))
         logger.setLevel(_status_to_logging_level(level))
