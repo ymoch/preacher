@@ -4,7 +4,7 @@ from yaml import Loader
 from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 
-hookspec = HookspecMarker('preacher')
+hookspec = HookspecMarker("preacher")
 
 
 @hookspec

@@ -10,7 +10,6 @@ from preacher.presentation.html import HtmlReporter
 
 
 class HtmlReportingListener(Listener):
-
     def __init__(self, reporter: HtmlReporter):
         self._reporter = reporter
         self._results: List[ScenarioResult] = []

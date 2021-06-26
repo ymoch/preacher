@@ -8,10 +8,10 @@ from preacher.core.extraction.error import ExtractionError
 from preacher.core.extraction.extraction import Extractor
 
 __all__ = [
-    'Analyzer',
-    'ResponseBodyAnalyzer',
-    'MappingAnalyzer',
-    'analyze_data_obj',
-    'ExtractionError',
-    'Extractor',
+    "Analyzer",
+    "ResponseBodyAnalyzer",
+    "MappingAnalyzer",
+    "analyze_data_obj",
+    "ExtractionError",
+    "Extractor",
 ]

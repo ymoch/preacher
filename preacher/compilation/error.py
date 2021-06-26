@@ -12,7 +12,7 @@ class IndexedNode:
     index: int
 
     def __str__(self) -> str:
-        return f'[{self.index}]'
+        return f"[{self.index}]"
 
 
 @dataclass(frozen=True)
@@ -20,7 +20,7 @@ class NamedNode:
     name: str
 
     def __str__(self) -> str:
-        return f'.{self.name}'
+        return f".{self.name}"
 
 
 Node = Union[NamedNode, IndexedNode]
@@ -28,7 +28,7 @@ Path = List[Node]
 
 
 def render_path(path: Path) -> str:
-    return ''.join(str(node) for node in path)
+    return "".join(str(node) for node in path)
 
 
 class CompilationError(Exception):
@@ -67,8 +67,8 @@ class CompilationError(Exception):
         lines = [self._message]
         path = self.path
         if path:
-            lines.append(f'  in {render_path(path)}')
-        return '\n'.join(lines)
+            lines.append(f"  in {render_path(path)}")
+        return "\n".join(lines)
 
 
 @contextmanager

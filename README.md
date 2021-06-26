@@ -5,6 +5,7 @@
 [![CircleCI](https://circleci.com/gh/ymoch/preacher.svg?style=svg)][Circle CI]
 [![Codecov](https://codecov.io/gh/ymoch/preacher/branch/master/graph/badge.svg)][Codecov]
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/ymoch/preacher.svg?logo=lgtm&logoWidth=18)][LGTM]
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)][Black]
 
 Preacher verifies API servers,
 which requests to the servers and verify the responses along to given scenarios.
@@ -91,3 +92,4 @@ Copyright (c) 2019 Yu MOCHIZUKI
 [Circle CI]: https://circleci.com/gh/ymoch/preacher
 [Codecov]: https://codecov.io/gh/ymoch/preacher
 [LGTM]: https://lgtm.com/projects/g/ymoch/preacher/context:python
+[Black]: https://github.com/psf/black

@@ -23,33 +23,33 @@ from .option import LevelType
 from .option import pairs_callback
 from .option import positive_float_callback
 
-_ENV_PREFIX = 'PREACHER_CLI_'
-_ENV_BASE_URL = f'{_ENV_PREFIX}BASE_URL'
-_ENV_ARGUMENT = f'{_ENV_PREFIX}ARGUMENT'
-_ENV_LEVEL = f'{_ENV_PREFIX}LEVEL'
-_ENV_RETRY = f'{_ENV_PREFIX}RETRY'
-_ENV_DELAY = f'{_ENV_PREFIX}DELAY'
-_ENV_TIMEOUT = f'{_ENV_PREFIX}TIMEOUT'
-_ENV_CONCURRENCY = f'{_ENV_PREFIX}CONCURRENCY'
-_ENV_CONCURRENT_EXECUTOR = f'{_ENV_PREFIX}CONCURRENT_EXECUTOR'
-_ENV_REPORT = f'{_ENV_PREFIX}REPORT'
-_ENV_PLUGIN = f'{_ENV_PREFIX}PLUGIN'
+_ENV_PREFIX = "PREACHER_CLI_"
+_ENV_BASE_URL = f"{_ENV_PREFIX}BASE_URL"
+_ENV_ARGUMENT = f"{_ENV_PREFIX}ARGUMENT"
+_ENV_LEVEL = f"{_ENV_PREFIX}LEVEL"
+_ENV_RETRY = f"{_ENV_PREFIX}RETRY"
+_ENV_DELAY = f"{_ENV_PREFIX}DELAY"
+_ENV_TIMEOUT = f"{_ENV_PREFIX}TIMEOUT"
+_ENV_CONCURRENCY = f"{_ENV_PREFIX}CONCURRENCY"
+_ENV_CONCURRENT_EXECUTOR = f"{_ENV_PREFIX}CONCURRENT_EXECUTOR"
+_ENV_REPORT = f"{_ENV_PREFIX}REPORT"
+_ENV_PLUGIN = f"{_ENV_PREFIX}PLUGIN"
 
 
 @command()
-@argument('paths', metavar='path', nargs=-1, type=Path(exists=True))
+@argument("paths", metavar="path", nargs=-1, type=Path(exists=True))
 @option(
-    'base_url',
-    '-u',
-    '--base-url',
-    help='specify the base URL',
+    "base_url",
+    "-u",
+    "--base-url",
+    help="specify the base URL",
     envvar=_ENV_BASE_URL,
-    default='',
+    default="",
 )
 @option(
-    'arguments',
-    '-a',
-    '--argument',
+    "arguments",
+    "-a",
+    "--argument",
     help='scenario arguments in format "NAME=VALUE"',
     type=ArgumentType(),
     envvar=_ENV_ARGUMENT,
@@ -57,89 +57,89 @@ _ENV_PLUGIN = f'{_ENV_PREFIX}PLUGIN'
     callback=pairs_callback,
 )
 @option(
-    'level',
-    '-l',
-    '--level',
-    help='show only above or equal to this level',
+    "level",
+    "-l",
+    "--level",
+    help="show only above or equal to this level",
     type=LevelType(),
     envvar=_ENV_LEVEL,
-    default='success',
+    default="success",
 )
 @option(
-    'report_dir',
-    '-R',
-    '--report',
-    help='set the report directory',
+    "report_dir",
+    "-R",
+    "--report",
+    help="set the report directory",
     type=Path(file_okay=False, writable=True),
     envvar=_ENV_REPORT,
 )
 @option(
-    'retry',
-    '-r',
-    '--retry',
-    help='set the max retry count',
-    metavar='num',
+    "retry",
+    "-r",
+    "--retry",
+    help="set the max retry count",
+    metavar="num",
     type=IntRange(min=0),
     envvar=_ENV_RETRY,
     default=0,
 )
 @option(
-    'delay',
-    '-d',
-    '--delay',
-    help='set the delay between attempts in seconds',
-    metavar='sec',
+    "delay",
+    "-d",
+    "--delay",
+    help="set the delay between attempts in seconds",
+    metavar="sec",
     type=FloatRange(min=0.0),
     envvar=_ENV_DELAY,
     default=0.1,
 )
 @option(
-    'timeout',
-    '-t',
-    '--timeout',
-    help='set the delay between attempts in seconds',
-    metavar='sec',
+    "timeout",
+    "-t",
+    "--timeout",
+    help="set the delay between attempts in seconds",
+    metavar="sec",
     type=FloatRange(min=0.0),
     envvar=_ENV_TIMEOUT,
     callback=positive_float_callback,
 )
 @option(
-    'concurrency',
-    '-c',
-    '--concurrency',
-    help='set the concurrency',
-    metavar='num',
+    "concurrency",
+    "-c",
+    "--concurrency",
+    help="set the concurrency",
+    metavar="num",
     type=IntRange(min=1),
     envvar=_ENV_CONCURRENCY,
     default=1,
 )
 @option(
-    'executor_factory',
-    '-E',
-    '--executor',
-    help='set the concurrent executor',
+    "executor_factory",
+    "-E",
+    "--executor",
+    help="set the concurrent executor",
     type=ExecutorFactoryType(),
     envvar=_ENV_CONCURRENT_EXECUTOR,
-    default='process',
+    default="process",
 )
 @option(
-    'plugins',
-    '-p',
-    '--plugin',
-    help='add a plugin',
-    metavar='path',
+    "plugins",
+    "-p",
+    "--plugin",
+    help="add a plugin",
+    metavar="path",
     type=Path(exists=True),
     multiple=True,
     envvar=_ENV_PLUGIN,
 )
 @option(
-    'verbosity',
-    '-v',
-    '--verbose',
-    help='make logging more verbose',
+    "verbosity",
+    "-v",
+    "--verbose",
+    help="make logging more verbose",
     count=True,
 )
-@help_option('-h', '--help')
+@help_option("-h", "--help")
 @version_option(_version)
 def main(
     paths: Sequence[str],

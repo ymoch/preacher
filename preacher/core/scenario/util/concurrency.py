@@ -11,10 +11,9 @@ from preacher.core.status import StatusedList
 
 
 class CasesTask(ABC):
-
     @abstractmethod
     def result(self) -> StatusedList[CaseResult]:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 def _run_cases_in_order(
@@ -23,16 +22,15 @@ def _run_cases_in_order(
     *args,
     **kwargs,
 ) -> StatusedList[CaseResult]:
-    if not kwargs.get('session'):
+    if not kwargs.get("session"):
         with Session() as session:
-            kwargs['session'] = session
+            kwargs["session"] = session
             return _run_cases_in_order(case_runner, cases, *args, **kwargs)
 
     return StatusedList.collect(case_runner.run(case, *args, **kwargs) for case in cases)
 
 
 class OrderedCasesTask(CasesTask):
-
     def __init__(
         self,
         executor: Executor,
@@ -54,7 +52,6 @@ class OrderedCasesTask(CasesTask):
 
 
 class UnorderedCasesTask(CasesTask):
-
     def __init__(
         self,
         executor: Executor,
@@ -63,10 +60,7 @@ class UnorderedCasesTask(CasesTask):
         *args,
         **kwargs,
     ):
-        self._futures = [
-            executor.submit(case_runner.run, case, *args, **kwargs)
-            for case in cases
-        ]
+        self._futures = [executor.submit(case_runner.run, case, *args, **kwargs) for case in cases]
 
     def result(self) -> StatusedList[CaseResult]:
         return StatusedList.collect(f.result() for f in self._futures)

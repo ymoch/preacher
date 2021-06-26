@@ -14,4 +14,4 @@ class Predicate(ABC):
 
     @abstractmethod
     def verify(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
-        raise NotImplementedError()
+        ...  # pragma: no cover

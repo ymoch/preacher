@@ -11,6 +11,7 @@ class CaseResult(Statused):
     """
     Results for the test cases.
     """
+
     label: Optional[str] = None
     conditions: Verification = field(default_factory=Verification)
     execution: ExecutionReport = field(default_factory=ExecutionReport)
@@ -23,7 +24,9 @@ class CaseResult(Statused):
         if self.conditions.status == Status.FAILURE:
             return Status.FAILURE
 
-        return merge_statuses([
-            self.execution.status,
-            self.response.status if self.response else Status.SKIPPED,
-        ])
+        return merge_statuses(
+            [
+                self.execution.status,
+                self.response.status if self.response else Status.SKIPPED,
+            ]
+        )

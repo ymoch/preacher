@@ -8,7 +8,7 @@ from preacher.compilation.scenario.case import CaseCompiled, CaseCompiler
 from preacher.compilation.verification.description import DescriptionCompiler
 from preacher.compilation.verification.response import ResponseDescriptionCompiler
 
-PKG = 'preacher.compilation.scenario.case'
+PKG = "preacher.compilation.scenario.case"
 
 
 @fixture
@@ -39,11 +39,14 @@ def desc():
     return compiler
 
 
-@mark.parametrize('value, expected_path', (
-    ('', []),
-    ({'label': []}, [NamedNode('label')]),
-    ({'enabled': []}, [NamedNode('enabled')]),
-))
+@mark.parametrize(
+    ("value", "expected_path"),
+    (
+        ("", []),
+        ({"label": []}, [NamedNode("label")]),
+        ({"enabled": []}, [NamedNode("enabled")]),
+    ),
+)
 def test_given_invalid_values(compiler: CaseCompiler, value, expected_path):
     with raises(CompilationError) as error_info:
         compiler.compile(value)
@@ -51,30 +54,30 @@ def test_given_invalid_values(compiler: CaseCompiler, value, expected_path):
 
 
 def test_conditions_compilation_fails(compiler: CaseCompiler, desc):
-    desc.compile.side_effect = CompilationError('msg', node=NamedNode('foo'))
+    desc.compile.side_effect = CompilationError("msg", node=NamedNode("foo"))
     with raises(CompilationError) as error_info:
-        compiler.compile({'when': 'xxx'})
-    assert error_info.value.path == [NamedNode('when'), IndexedNode(0), NamedNode('foo')]
+        compiler.compile({"when": "xxx"})
+    assert error_info.value.path == [NamedNode("when"), IndexedNode(0), NamedNode("foo")]
 
-    desc.compile.assert_called_once_with('xxx')
+    desc.compile.assert_called_once_with("xxx")
 
 
 def test_request_compilation_fails(compiler: CaseCompiler, req):
-    req.compile.side_effect = CompilationError('msg', node=NamedNode('foo'))
+    req.compile.side_effect = CompilationError("msg", node=NamedNode("foo"))
     with raises(CompilationError) as error_info:
-        compiler.compile({'request': '/path'})
-    assert error_info.value.path == [NamedNode('request'), NamedNode('foo')]
+        compiler.compile({"request": "/path"})
+    assert error_info.value.path == [NamedNode("request"), NamedNode("foo")]
 
-    req.compile.assert_called_once_with('/path')
+    req.compile.assert_called_once_with("/path")
 
 
 def test_response_compilation_fails(compiler: CaseCompiler, res):
-    res.compile.side_effect = CompilationError('msg', node=NamedNode('bar'))
+    res.compile.side_effect = CompilationError("msg", node=NamedNode("bar"))
     with raises(CompilationError) as error_info:
-        compiler.compile({'response': 'res'})
-    assert error_info.value.path == [NamedNode('response'), NamedNode('bar')]
+        compiler.compile({"response": "res"})
+    assert error_info.value.path == [NamedNode("response"), NamedNode("bar")]
 
-    res.compile.assert_called_once_with('res')
+    res.compile.assert_called_once_with("res")
 
 
 def test_given_an_empty_object(compiler: CaseCompiler, req, res):
@@ -90,22 +93,24 @@ def test_given_an_empty_object(compiler: CaseCompiler, req, res):
 
 
 def test_creates_a_case(compiler: CaseCompiler, req, res, desc):
-    compiled = compiler.compile({
-        'label': 'label',
-        'enabled': False,
-        'when': {'k': 'v'},
-        'request': {'path': '/path'},
-        'response': {'key': 'value'},
-    })
-    assert compiled.label == 'label'
+    compiled = compiler.compile(
+        {
+            "label": "label",
+            "enabled": False,
+            "when": {"k": "v"},
+            "request": {"path": "/path"},
+            "response": {"key": "value"},
+        }
+    )
+    assert compiled.label == "label"
     assert not compiled.enabled
     assert compiled.conditions == [sentinel.description]
     assert compiled.request is sentinel.request
     assert compiled.response is sentinel.response
 
-    req.compile.assert_called_once_with({'path': '/path'})
-    res.compile.assert_called_once_with({'key': 'value'})
-    desc.compile.assert_called_once_with({'k': 'v'})
+    req.compile.assert_called_once_with({"path": "/path"})
+    res.compile.assert_called_once_with({"key": "value"})
+    desc.compile.assert_called_once_with({"k": "v"})
 
 
 @fixture
@@ -116,7 +121,7 @@ def initial_default():
 
 
 def test_given_hollow_default(mocker, req, res, desc, initial_default):
-    ctor = mocker.patch(f'{PKG}.CaseCompiler')
+    ctor = mocker.patch(f"{PKG}.CaseCompiler")
     ctor.return_value = sentinel.default_compiler
 
     compiler = CaseCompiler(req, res, desc, initial_default)
@@ -136,7 +141,7 @@ def test_given_hollow_default(mocker, req, res, desc, initial_default):
 
 
 def test_given_filled_default(mocker, req, res, desc, initial_default):
-    ctor = mocker.patch(f'{PKG}.CaseCompiler')
+    ctor = mocker.patch(f"{PKG}.CaseCompiler")
     ctor.return_value = sentinel.default_compiler
 
     compiler = CaseCompiler(req, res, desc, initial_default)
@@ -162,7 +167,7 @@ def test_given_filled_default(mocker, req, res, desc, initial_default):
 def test_compile_fixed(compiler: CaseCompiler, mocker):
     compiled = NonCallableMock(spec=CaseCompiled)
     compiled.fix.return_value = sentinel.fixed
-    comp = mocker.patch.object(compiler, 'compile', return_value=compiled)
+    comp = mocker.patch.object(compiler, "compile", return_value=compiled)
 
     fixed = compiler.compile_fixed(sentinel.obj)
     assert fixed is sentinel.fixed
@@ -172,10 +177,10 @@ def test_compile_fixed(compiler: CaseCompiler, mocker):
 
 
 def test_compile_default(compiler: CaseCompiler, mocker):
-    comp = mocker.patch.object(compiler, 'compile')
+    comp = mocker.patch.object(compiler, "compile")
     comp.return_value = sentinel.compiled
 
-    of_default = mocker.patch.object(compiler, 'of_default')
+    of_default = mocker.patch.object(compiler, "of_default")
     of_default.return_value = sentinel.compiler_of_default
 
     compiler_of_default = compiler.compile_default(sentinel.obj)

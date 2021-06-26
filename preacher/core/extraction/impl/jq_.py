@@ -7,13 +7,12 @@ from preacher.core.util.functional import identity, apply_if_not_none
 
 
 class JqEngine(ABC):
-
     @abstractmethod
-    def iter(self, query: str, value: str) -> Iterator[object]: ...
+    def iter(self, query: str, value: str) -> Iterator[object]:
+        ...  # pragma: no cover
 
 
 class JqExtractor(Extractor):
-
     def __init__(
         self,
         engine: JqEngine,

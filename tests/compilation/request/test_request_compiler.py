@@ -8,7 +8,7 @@ from preacher.compilation.request.request import RequestCompiler, RequestCompile
 from preacher.compilation.request.request_body import RequestBodyCompiler
 from preacher.core.request import Method
 
-PKG = 'preacher.compilation.request.request'
+PKG = "preacher.compilation.request.request"
 
 
 @fixture
@@ -34,15 +34,18 @@ def compiler(body, default: RequestCompiled) -> RequestCompiler:
     return RequestCompiler(body=body, default=default)
 
 
-@mark.parametrize(('obj', 'expected_path'), (
-    ([], []),
-    ({'method': 1}, [NamedNode('method')]),
-    ({'method': 'invalid'}, [NamedNode('method')]),
-    ({'path': {'key': 'value'}}, [NamedNode('path')]),
-    ({'headers': ''}, [NamedNode('headers')]),
-    ({'headers': {'int': 1}}, [NamedNode('headers')]),
-    ({'headers': {1: 'not-a-string-key'}}, [NamedNode('headers')]),
-))
+@mark.parametrize(
+    ("obj", "expected_path"),
+    (
+        ([], []),
+        ({"method": 1}, [NamedNode("method")]),
+        ({"method": "invalid"}, [NamedNode("method")]),
+        ({"path": {"key": "value"}}, [NamedNode("path")]),
+        ({"headers": ""}, [NamedNode("headers")]),
+        ({"headers": {"int": 1}}, [NamedNode("headers")]),
+        ({"headers": {1: "not-a-string-key"}}, [NamedNode("headers")]),
+    ),
+)
 def test_given_an_invalid_obj(compiler: RequestCompiler, obj, expected_path):
     with raises(CompilationError) as error_info:
         compiler.compile(obj)
@@ -58,58 +61,64 @@ def test_given_an_empty_mapping(compiler: RequestCompiler):
     assert compiled.body is sentinel.default_body
 
 
-@mark.parametrize(('method_obj', 'expected'), [
-    ('get', Method.GET),
-    ('POST', Method.POST),
-    ('Put', Method.PUT),
-    ('Delete', Method.DELETE),
-])
+@mark.parametrize(
+    ("method_obj", "expected"),
+    (
+        ("get", Method.GET),
+        ("POST", Method.POST),
+        ("Put", Method.PUT),
+        ("Delete", Method.DELETE),
+    ),
+)
 def test_given_a_valid_method(compiler: RequestCompiler, method_obj, expected):
-    obj = {'method': Argument('method')}
-    arguments = {'method': method_obj}
+    obj = {"method": Argument("method")}
+    arguments = {"method": method_obj}
     compiled = compiler.compile(obj, arguments)
     assert compiled.method is expected
 
 
-@mark.parametrize(('headers_obj', 'expected'), [
-    ({}, {}),
-    ({'null': None, 'empty': ''}, {'empty': ''}),
-    ({'n1': 'v1', 'n2': 'v2'}, {'n1': 'v1', 'n2': 'v2'}),
-])
+@mark.parametrize(
+    ("headers_obj", "expected"),
+    (
+        ({}, {}),
+        ({"null": None, "empty": ""}, {"empty": ""}),
+        ({"n1": "v1", "n2": "v2"}, {"n1": "v1", "n2": "v2"}),
+    ),
+)
 def test_given_valid_headers(compiler: RequestCompiler, headers_obj, expected):
-    obj = {'headers': Argument('headers')}
-    arguments = {'headers': headers_obj}
+    obj = {"headers": Argument("headers")}
+    arguments = {"headers": headers_obj}
     compiled = compiler.compile(obj, arguments)
     assert compiled.headers == expected
 
 
 def test_given_an_invalid_params(compiler: RequestCompiler, mocker):
-    compile_params = mocker.patch(f'{PKG}.compile_url_params')
-    compile_params.side_effect = CompilationError('msg', node=NamedNode('x'))
+    compile_params = mocker.patch(f"{PKG}.compile_url_params")
+    compile_params.side_effect = CompilationError("msg", node=NamedNode("x"))
 
     with raises(CompilationError) as error_info:
-        compiler.compile({'params': sentinel.params})
-    assert error_info.value.path == [NamedNode('params'), NamedNode('x')]
+        compiler.compile({"params": sentinel.params})
+    assert error_info.value.path == [NamedNode("params"), NamedNode("x")]
 
     compile_params.assert_called_once_with(sentinel.params, None)
 
 
 def test_given_valid_params(compiler: RequestCompiler, mocker):
-    compile_params = mocker.patch(f'{PKG}.compile_url_params')
+    compile_params = mocker.patch(f"{PKG}.compile_url_params")
     compile_params.return_value = sentinel.compiled_params
 
-    compiled = compiler.compile({'params': sentinel.params}, sentinel.args)
+    compiled = compiler.compile({"params": sentinel.params}, sentinel.args)
     assert compiled.params == sentinel.compiled_params
 
     compile_params.assert_called_once_with(sentinel.params, sentinel.args)
 
 
 def test_given_invalid_body(compiler: RequestCompiler, body):
-    body.compile.side_effect = CompilationError('x', node=IndexedNode(1))
+    body.compile.side_effect = CompilationError("x", node=IndexedNode(1))
 
     with raises(CompilationError) as error_info:
-        compiler.compile({'body': sentinel.body_obj})
-    assert error_info.value.path == [NamedNode('body'), IndexedNode(1)]
+        compiler.compile({"body": sentinel.body_obj})
+    assert error_info.value.path == [NamedNode("body"), IndexedNode(1)]
 
     body.compile.assert_called_once_with(sentinel.body_obj, None)
 
@@ -117,23 +126,23 @@ def test_given_invalid_body(compiler: RequestCompiler, body):
 def test_given_valid_body(compiler: RequestCompiler, body):
     body.compile.return_value = sentinel.body
 
-    compiled = compiler.compile({'body': sentinel.body_obj}, sentinel.args)
+    compiled = compiler.compile({"body": sentinel.body_obj}, sentinel.args)
     assert compiled.body is sentinel.body
 
     body.compile.assert_called_once_with(sentinel.body_obj, sentinel.args)
 
 
 def test_given_a_string(compiler: RequestCompiler):
-    compiled = compiler.compile(Argument('path'), {'path': '/path'})
+    compiled = compiler.compile(Argument("path"), {"path": "/path"})
     assert compiled.method is sentinel.default_method
-    assert compiled.path == '/path'
+    assert compiled.path == "/path"
     assert compiled.headers is sentinel.default_headers
     assert compiled.params is sentinel.default_params
     assert compiled.body is sentinel.default_body
 
 
 def test_of_default_no_body(compiler: RequestCompiler, body, mocker):
-    ctor = mocker.patch(f'{PKG}.RequestCompiler')
+    ctor = mocker.patch(f"{PKG}.RequestCompiler")
     ctor.return_value = sentinel.compiler_of_default
 
     new_default = RequestCompiled(
@@ -159,7 +168,7 @@ def test_of_default_no_body(compiler: RequestCompiler, body, mocker):
 
 
 def test_of_default_body(compiler: RequestCompiler, body, mocker):
-    ctor = mocker.patch(f'{PKG}.RequestCompiler')
+    ctor = mocker.patch(f"{PKG}.RequestCompiler")
     ctor.return_value = sentinel.compiler_of_default
 
     new_default = RequestCompiled(body=sentinel.new_default_body)

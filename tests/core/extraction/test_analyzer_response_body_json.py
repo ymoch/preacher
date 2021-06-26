@@ -22,7 +22,7 @@ def test_for_text(extract):
 
 
 def test_for_mapping_on_invalid_body(extract):
-    body = NonCallableMock(ResponseBody, text='[]')
+    body = NonCallableMock(ResponseBody, text="[]")
     analyzer = ResponseBodyAnalyzer(body)
     with raises(ExtractionError):
         analyzer.for_mapping(extract)
@@ -36,11 +36,11 @@ def test_for_mapping_on_valid_body(extract):
     value = analyzer.for_mapping(extract)
     assert value is sentinel.extracted
 
-    extract.assert_called_once_with({'int': 1, 'str': 's'})
+    extract.assert_called_once_with({"int": 1, "str": "s"})
 
 
 def test_for_etree(extract):
-    body = NonCallableMock(ResponseBody, content=b'{}')
+    body = NonCallableMock(ResponseBody, content=b"{}")
     analyzer = ResponseBodyAnalyzer(body)
     with raises(ExtractionError):
         analyzer.for_etree(extract)

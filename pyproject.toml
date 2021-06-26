@@ -40,6 +40,7 @@ pytest-cov = "^2.12.1"
 types-python-dateutil = "^0.1.2"
 types-pyyaml = "^0.1.6"
 types-requests = "^0.1.9"
+black = "^21.6b0"
 flask = "^2.0.1"
 sphinx = "^4.0.2"
 sphinx-intl = "^2.0.1"
@@ -58,6 +59,9 @@ addopts = [
   "--cov=preacher",
   "--cov-report=term-missing",
 ]
+
+[tool.black]
+line-length = 99
 
 [build-system]
 requires = ["poetry>=1.0"]

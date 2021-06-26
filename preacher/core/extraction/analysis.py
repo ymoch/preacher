@@ -14,7 +14,7 @@ from preacher.core.util.functional import recursive_map
 from preacher.core.util.serialization import to_serializable
 from .error import ExtractionError
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Analyzer(ABC):
@@ -24,15 +24,15 @@ class Analyzer(ABC):
 
     @abstractmethod
     def for_text(self, extract: Callable[[str], T]) -> T:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def for_etree(self, extract: Callable[[Element], T]) -> T:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 class _LazyElementTreeLoader:
@@ -62,7 +62,7 @@ class _LazyElementTreeLoader:
 
         etree = self._etree
         if etree is None:
-            raise ExtractionError('Not an XML content')
+            raise ExtractionError("Not an XML content")
         return etree
 
 
@@ -94,12 +94,11 @@ class _LazyJsonLoader:
             self._is_loaded = True
 
         if not self._is_valid_json:
-            raise ExtractionError('Not a JSON content')
+            raise ExtractionError("Not a JSON content")
         return self._value
 
 
 class ResponseBodyAnalyzer(Analyzer):
-
     def __init__(self, body: ResponseBody):
         self._body = body
         self._etree_loader = _LazyElementTreeLoader(body.content)
@@ -111,7 +110,7 @@ class ResponseBodyAnalyzer(Analyzer):
     def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         json_value = self._json_loader.get()
         if not isinstance(json_value, Mapping):
-            raise ExtractionError(f'Expected a dictionary, but given {type(json_value)}')
+            raise ExtractionError(f"Expected a dictionary, but given {type(json_value)}")
         return extract(json_value)
 
     def for_etree(self, extract: Callable[[Element], T]) -> T:
@@ -119,19 +118,18 @@ class ResponseBodyAnalyzer(Analyzer):
 
 
 class MappingAnalyzer(Analyzer):
-
     def __init__(self, value: Mapping):
         self._value = value
 
     def for_text(self, extract: Callable[[str], T]) -> T:
         serializable = recursive_map(to_serializable, self._value)
-        return extract(json.dumps(serializable, separators=(',', ':')))
+        return extract(json.dumps(serializable, separators=(",", ":")))
 
     def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
         return extract(self._value)
 
     def for_etree(self, extract: Callable[[Element], T]) -> T:
-        raise ExtractionError('Not an XML content')
+        raise ExtractionError("Not an XML content")
 
 
 def analyze_data_obj(obj) -> Analyzer:

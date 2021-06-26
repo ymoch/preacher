@@ -8,14 +8,12 @@ from .util.concurrency import CasesTask
 
 
 class ScenarioTask(ABC):
-
     @abstractmethod
     def result(self) -> ScenarioResult:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 class StaticScenarioTask(ScenarioTask):
-
     def __init__(self, result: ScenarioResult):
         self._result = result
 
@@ -24,7 +22,6 @@ class StaticScenarioTask(ScenarioTask):
 
 
 class RunningScenarioTask(ScenarioTask):
-
     def __init__(
         self,
         label: Optional[str],

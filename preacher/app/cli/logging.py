@@ -11,19 +11,19 @@ def _default(message: str) -> str:
 
 
 def _info(message: str) -> str:
-    return f'{Fore.GREEN}{message}{Style.RESET_ALL}'
+    return f"{Fore.GREEN}{message}{Style.RESET_ALL}"
 
 
 def _warning(message: str) -> str:
-    return f'{Fore.YELLOW}{message}{Style.RESET_ALL}'
+    return f"{Fore.YELLOW}{message}{Style.RESET_ALL}"
 
 
 def _error(message: str) -> str:
-    return f'{Fore.RED}{message}{Style.RESET_ALL}'
+    return f"{Fore.RED}{message}{Style.RESET_ALL}"
 
 
 def _critical(message: str) -> str:
-    return f'{Fore.RED}{Style.BRIGHT}{message}{Style.RESET_ALL}'
+    return f"{Fore.RED}{Style.BRIGHT}{message}{Style.RESET_ALL}"
 
 
 _STYLE_FUNC_MAP = {
@@ -35,7 +35,6 @@ _STYLE_FUNC_MAP = {
 
 
 class ColoredFormatter(Formatter):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -48,7 +47,7 @@ def create_system_logger(verbosity: int) -> Logger:
     level = _verbosity_to_logging_level(verbosity)
     handler = StreamHandler()
     handler.setLevel(level)
-    handler.setFormatter(ColoredFormatter(fmt='[%(levelname)s] %(message)s'))
+    handler.setFormatter(ColoredFormatter(fmt="[%(levelname)s] %(message)s"))
     logger = getLogger(__name__)
     logger.setLevel(level)
     logger.addHandler(handler)

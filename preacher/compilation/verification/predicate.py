@@ -6,7 +6,6 @@ from .matcher import MatcherFactoryCompiler
 
 
 class PredicateCompiler:
-
     def __init__(self, matcher_factory: MatcherFactoryCompiler):
         self._matcher_factory = matcher_factory
 

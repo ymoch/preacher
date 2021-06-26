@@ -3,7 +3,7 @@ from unittest.mock import NonCallableMock, patch, sentinel
 from preacher.presentation.listener import LoggingReportingListener
 from preacher.presentation.logging import LoggingReporter
 
-PKG = 'preacher.presentation.listener.logging'
+PKG = "preacher.presentation.listener.logging"
 
 
 def test_on_scenario():
@@ -16,8 +16,8 @@ def test_on_scenario():
     reporter.show_status.assert_called_once_with(sentinel.status)
 
 
-@patch(f'{PKG}.LoggingReportingListener', return_value=sentinel.listener)
-@patch(f'{PKG}.LoggingReporter', return_value=sentinel.logger)
+@patch(f"{PKG}.LoggingReportingListener", return_value=sentinel.listener)
+@patch(f"{PKG}.LoggingReporter", return_value=sentinel.logger)
 def test_from_logger(logger_ctor, listener_ctor):
     listener = LoggingReportingListener.from_logger(sentinel.py_logger)
     assert listener is sentinel.listener

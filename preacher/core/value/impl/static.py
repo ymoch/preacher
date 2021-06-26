@@ -2,11 +2,10 @@ from typing import Optional, Type, TypeVar
 
 from preacher.core.value import Value, ValueContext
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class StaticValue(Value[T]):
-
     def __init__(self, value: T):
         self._value = value
 

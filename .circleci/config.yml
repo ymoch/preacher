@@ -97,6 +97,7 @@ commands:
           command: |
             poetry install
             poetry run pytest
+            poetry run black --check preacher tests examples docs
       - run:
           name: Report
           command: |

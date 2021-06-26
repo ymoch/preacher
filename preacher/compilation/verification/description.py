@@ -7,12 +7,11 @@ from preacher.compilation.util.type import ensure_list, ensure_mapping
 from preacher.core.verification import Description
 from .predicate import PredicateCompiler
 
-_KEY_DESCRIBE = 'describe'
-_KEY_SHOULD = 'should'
+_KEY_DESCRIBE = "describe"
+_KEY_SHOULD = "should"
 
 
 class DescriptionCompiler:
-
     def __init__(
         self,
         extraction: ExtractionCompiler,
@@ -32,9 +31,11 @@ class DescriptionCompiler:
 
         predicate_objs = ensure_list(obj.get(_KEY_SHOULD, []))
         with on_key(_KEY_SHOULD):
-            predicates = list(map_compile(
-                self._predicate.compile,
-                predicate_objs,
-            ))
+            predicates = list(
+                map_compile(
+                    self._predicate.compile,
+                    predicate_objs,
+                )
+            )
 
         return Description(extractor=extractor, predicates=predicates)

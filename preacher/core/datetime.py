@@ -10,11 +10,10 @@ from typing import Optional
 
 from dateutil.parser import isoparse
 
-_TIMEDELTA_PATTERN = re.compile(r'([+\-]?\d+)\s*(day|hour|minute|second)s?')
+_TIMEDELTA_PATTERN = re.compile(r"([+\-]?\d+)\s*(day|hour|minute|second)s?")
 
 
 class DatetimeFormat(ABC):
-
     def format_datetime(self, value: datetime) -> str:
         raise NotImplementedError()
 
@@ -23,7 +22,6 @@ class DatetimeFormat(ABC):
 
 
 class Iso8601Format(DatetimeFormat):
-
     def format_datetime(self, value: datetime) -> str:
         return value.isoformat()
 
@@ -31,11 +29,10 @@ class Iso8601Format(DatetimeFormat):
         try:
             return isoparse(value)
         except ValueError as error:
-            raise ValueError(f'An invalid ISO 8601 format: {value}', error)
+            raise ValueError(f"An invalid ISO 8601 format: {value}", error)
 
 
 class StrftimeFormat(DatetimeFormat):
-
     def __init__(self, format_string: str):
         self._format_string = format_string
 
@@ -50,7 +47,6 @@ ISO8601 = Iso8601Format()
 
 
 class DatetimeWithFormat:
-
     def __init__(
         self,
         value: datetime,
@@ -108,12 +104,12 @@ def parse_timedelta(value: str) -> timedelta:
         ValueError: when given an invalid time string.
     """
     normalized = value.strip().lower()
-    if not normalized or normalized == 'now':
+    if not normalized or normalized == "now":
         return timedelta()
 
     match = _TIMEDELTA_PATTERN.match(normalized)
     if not match:
-        raise ValueError(f'Invalid timedelta format: {value}')
+        raise ValueError(f"Invalid timedelta format: {value}")
     offset = int(match.group(1))
-    unit = match.group(2) + 's'
+    unit = match.group(2) + "s"
     return timedelta(**{unit: offset})

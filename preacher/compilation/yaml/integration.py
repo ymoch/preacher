@@ -18,15 +18,14 @@ def load_from_paths(
     loader = create_loader(plugin_manager=plugin_manager, logger=logger)
 
     if not paths:
-        logger.info('No scenario file is given. Load scenarios from stdin.')
+        logger.info("No scenario file is given. Load scenarios from stdin.")
         return loader.load_all(sys.stdin)
 
     return itertools.chain.from_iterable(
-        loader.load_all_from_path(_hook_loading(path, logger))
-        for path in paths
+        loader.load_all_from_path(_hook_loading(path, logger)) for path in paths
     )
 
 
 def _hook_loading(path: str, logger: Logger) -> str:
-    logger.debug('Load: %s', path)
+    logger.debug("Load: %s", path)
     return path

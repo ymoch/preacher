@@ -13,13 +13,11 @@ class ExecutorFactory(ABC):
 
 
 class _ProcessPoolFactory(ExecutorFactory):
-
     def create(self, concurrency: int) -> Executor:
         return ProcessPoolExecutor(concurrency)
 
 
 class _ThreadPoolFactory(ExecutorFactory):
-
     def create(self, concurrency: int) -> Executor:
         return ThreadPoolExecutor(concurrency)
 

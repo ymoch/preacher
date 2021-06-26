@@ -2,9 +2,9 @@ from unittest.mock import patch, sentinel
 
 from preacher.compilation.verification.response import ResponseDescriptionCompiled
 
-PKG = 'preacher.compilation.verification.response'
+PKG = "preacher.compilation.verification.response"
 
-ctor_patch = patch(f'{PKG}.ResponseDescription', return_value=sentinel.fixed)
+ctor_patch = patch(f"{PKG}.ResponseDescription", return_value=sentinel.fixed)
 
 
 def test_replace():

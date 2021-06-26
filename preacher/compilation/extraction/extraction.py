@@ -13,19 +13,18 @@ from preacher.core.extraction.impl.jq_engine import PyJqEngine
 from preacher.core.extraction.impl.xpath import XPathExtractor
 
 _CAST_FUNC_MAP = {
-    'int': int,
-    'float': float,
-    'string': str,
+    "int": int,
+    "float": float,
+    "string": str,
 }
-_KEY_JQ = 'jq'
-_KEY_XPATH = 'xpath'
-_KEY_KEY = 'key'
-_KEY_MULTIPLE = 'multiple'
-_KEY_CAST_TO = 'cast_to'
+_KEY_JQ = "jq"
+_KEY_XPATH = "xpath"
+_KEY_KEY = "key"
+_KEY_MULTIPLE = "multiple"
+_KEY_CAST_TO = "cast_to"
 
 
 class ExtractionCompiler:
-
     def __init__(self):
         self._factory_map = {}
 
@@ -39,13 +38,13 @@ class ExtractionCompiler:
             return self.compile({_KEY_JQ: obj})
 
         if not isinstance(obj, Mapping):
-            message = f'Must be a map or a string, given {type(obj)}'
+            message = f"Must be a map or a string, given {type(obj)}"
             raise CompilationError(message)
 
         key_candidates = self._factory_map.keys() & obj.keys()
         key_count = len(key_candidates)
         if key_count != 1:
-            raise CompilationError(f'Must have only 1 extraction key, but has {key_count}')
+            raise CompilationError(f"Must have only 1 extraction key, but has {key_count}")
         factory_key = next(iter(key_candidates))
         factory = self._factory_map[factory_key]
         query = obj[factory_key]
@@ -69,7 +68,7 @@ class ExtractionCompiler:
         key = ensure_str(obj)
         cast = _CAST_FUNC_MAP.get(key)
         if not cast:
-            raise CompilationError(f'Invalid value: {key}')
+            raise CompilationError(f"Invalid value: {key}")
 
         return cast
 

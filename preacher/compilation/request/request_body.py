@@ -16,23 +16,22 @@ from preacher.core.request import (
 from .url_param import compile_url_params
 
 _NOT_SPECIFIED = object()
-_KEY_TYPE = 'type'
-_KEY_DATA = 'data'
+_KEY_TYPE = "type"
+_KEY_DATA = "data"
 
 
 class RequestBodyCompiled(ABC):
-
     @abstractmethod
     def replace(self, other: RequestBodyCompiled) -> RequestBodyCompiled:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def compile_and_replace(self, obj: Mapping) -> RequestBodyCompiled:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
     @abstractmethod
     def fix(self) -> RequestBody:
-        raise NotImplementedError()
+        ...  # pragma: no cover
 
 
 @dataclass(frozen=True)
@@ -90,17 +89,14 @@ class JsonRequestBodyCompiled(RequestBodyCompiled):
 
 
 _TYPE_FACTORY_MAP: Mapping[str, Callable[[], RequestBodyCompiled]] = {
-    'urlencoded': UrlencodedRequestBodyCompiled,
-    'json': JsonRequestBodyCompiled,
+    "urlencoded": UrlencodedRequestBodyCompiled,
+    "json": JsonRequestBodyCompiled,
 }
 
 
 class RequestBodyCompiler:
-
     def __init__(self, default: Optional[RequestBodyCompiled] = None):
-        self._default: RequestBodyCompiled = (
-            default or UrlencodedRequestBodyCompiled()
-        )
+        self._default: RequestBodyCompiled = default or UrlencodedRequestBodyCompiled()
 
     def compile(
         self,
@@ -130,8 +126,7 @@ class RequestBodyCompiler:
                 factory = _TYPE_FACTORY_MAP.get(key)
                 if not factory:
                     raise CompilationError(
-                        f'Must be in {list(_TYPE_FACTORY_MAP)}'
-                        f', but given: {key}'
+                        f"Must be in {list(_TYPE_FACTORY_MAP)}" f", but given: {key}"
                     )
             compiled = self._default.replace(factory())
 

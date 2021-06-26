@@ -5,7 +5,7 @@ from pytest import fixture
 from preacher.presentation.html import HtmlReporter
 from preacher.presentation.listener import HtmlReportingListener
 
-PKG = 'preacher.presentation.listener.html'
+PKG = "preacher.presentation.listener.html"
 
 
 @fixture
@@ -31,19 +31,23 @@ def test_given_items(reporter):
     listener.on_scenario(sentinel.scenario2)
     listener.on_end(sentinel.status)
 
-    reporter.export_response.assert_has_calls([
-        call(sentinel.execution1, sentinel.response1),
-        call(sentinel.execution2, sentinel.response2),
-        call(sentinel.execution3, sentinel.response3),
-    ])
-    reporter.export_results.assert_called_once_with([
-        sentinel.scenario1,
-        sentinel.scenario2,
-    ])
+    reporter.export_response.assert_has_calls(
+        [
+            call(sentinel.execution1, sentinel.response1),
+            call(sentinel.execution2, sentinel.response2),
+            call(sentinel.execution3, sentinel.response3),
+        ]
+    )
+    reporter.export_results.assert_called_once_with(
+        [
+            sentinel.scenario1,
+            sentinel.scenario2,
+        ]
+    )
 
 
-@patch(f'{PKG}.HtmlReportingListener', return_value=sentinel.listener)
-@patch(f'{PKG}.HtmlReporter', return_value=sentinel.reporter)
+@patch(f"{PKG}.HtmlReportingListener", return_value=sentinel.listener)
+@patch(f"{PKG}.HtmlReporter", return_value=sentinel.reporter)
 def test_from_path(reporter_ctor, listener_ctor):
     listener = HtmlReportingListener.from_path(sentinel.path)
     assert listener is sentinel.listener

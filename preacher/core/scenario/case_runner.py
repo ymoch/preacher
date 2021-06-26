@@ -17,11 +17,10 @@ from .case_result import CaseResult
 @dataclass(frozen=True)
 class CaseContext:
     starts: datetime = field(default_factory=now)
-    base_url: str = ''
+    base_url: str = ""
 
 
 class CaseRunner:
-
     def __init__(self, unit_runner: UnitRunner, listener: Optional[CaseListener] = None):
         self._unit_runner = unit_runner
         self._listener = listener or CaseListener()
@@ -38,8 +37,7 @@ class CaseRunner:
         context_analyzer = analyze_data_obj(context)
         value_context = ValueContext(origin_datetime=context.starts)
         conditions = Verification.collect(
-            condition.verify(context_analyzer, value_context)
-            for condition in case.conditions
+            condition.verify(context_analyzer, value_context) for condition in case.conditions
         )
         if not conditions.status.is_succeeded:
             return CaseResult(case.label, conditions)

@@ -3,7 +3,7 @@ from unittest.mock import NonCallableMock, sentinel
 from preacher.compilation.request.request_body import JsonRequestBodyCompiled
 from preacher.compilation.request.request_body import RequestBodyCompiled
 
-PACKAGE = 'preacher.compilation.request.request_body'
+PACKAGE = "preacher.compilation.request.request_body"
 
 
 def test_replace():
@@ -34,13 +34,13 @@ def test_compile_and_replace():
     replaced = compiled.compile_and_replace({})
     assert replaced is compiled
 
-    replaced = compiled.compile_and_replace({'data': sentinel.new_data})
+    replaced = compiled.compile_and_replace({"data": sentinel.new_data})
     assert isinstance(replaced, JsonRequestBodyCompiled)
     assert replaced.data is sentinel.new_data
 
 
 def test_fix_hollowed(mocker):
-    ctor = mocker.patch(f'{PACKAGE}.JsonRequestBody')
+    ctor = mocker.patch(f"{PACKAGE}.JsonRequestBody")
     ctor.return_value = sentinel.result
 
     compiled = JsonRequestBodyCompiled()
@@ -51,7 +51,7 @@ def test_fix_hollowed(mocker):
 
 
 def test_fix_filled(mocker):
-    ctor = mocker.patch(f'{PACKAGE}.JsonRequestBody')
+    ctor = mocker.patch(f"{PACKAGE}.JsonRequestBody")
     ctor.return_value = sentinel.result
 
     compiled = JsonRequestBodyCompiled(data=sentinel.data)

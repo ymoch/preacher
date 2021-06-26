@@ -7,7 +7,7 @@ import time
 from typing import Callable, TypeVar
 
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def retry_while_false(
@@ -17,7 +17,7 @@ def retry_while_false(
     predicate: Callable[[T], bool] = bool,
 ) -> T:
     if attempts < 1:
-        raise ValueError(f'`attempts` must be positive, given {attempts}')
+        raise ValueError(f"`attempts` must be positive, given {attempts}")
 
     for _ in range(attempts - 1):
         result = func()

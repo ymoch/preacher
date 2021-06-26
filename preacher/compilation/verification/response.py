@@ -12,9 +12,9 @@ from preacher.core.verification import ResponseDescription, Description, Predica
 from .description import DescriptionCompiler
 from .predicate import PredicateCompiler
 
-_KEY_STATUS_CODE = 'status_code'
-_KEY_HEADERS = 'headers'
-_KEY_BODY = 'body'
+_KEY_STATUS_CODE = "status_code"
+_KEY_HEADERS = "headers"
+_KEY_BODY = "body"
 
 
 @dataclass(frozen=True)
@@ -42,7 +42,6 @@ class ResponseDescriptionCompiled:
 
 
 class ResponseDescriptionCompiler:
-
     def __init__(
         self,
         predicate: PredicateCompiler,

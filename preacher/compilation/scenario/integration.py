@@ -17,6 +17,5 @@ def compile_scenarios(
 ) -> Iterator[Scenario]:
     compiler = create_scenario_compiler(plugin_manager=plugin_manager, logger=logger)
     return itertools.chain.from_iterable(
-        compiler.compile_flattening(obj, arguments=arguments)
-        for obj in objs
+        compiler.compile_flattening(obj, arguments=arguments) for obj in objs
     )
