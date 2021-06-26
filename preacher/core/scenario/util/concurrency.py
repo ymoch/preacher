@@ -13,7 +13,7 @@ from preacher.core.status import StatusedList
 class CasesTask(ABC):
     @abstractmethod
     def result(self) -> StatusedList[CaseResult]:
-        ...   # pragma: no cover
+        ...  # pragma: no cover
 
 
 def _run_cases_in_order(
