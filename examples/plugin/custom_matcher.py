@@ -21,7 +21,7 @@ class IsEven(BaseMatcher[int]):
         return item % 2 == 0
 
     def describe_to(self, description: Description) -> None:
-        description.append_text('even')
+        description.append_text("even")
 
 
 class IsMultipleOf(BaseMatcher[int]):
@@ -38,7 +38,7 @@ class IsMultipleOf(BaseMatcher[int]):
         return item % self.base == 0
 
     def describe_to(self, description: Description) -> None:
-        description.append_text('multiple of ').append_description_of(self.base)
+        description.append_text("multiple of ").append_description_of(self.base)
 
 
 @hookimpl
@@ -50,7 +50,7 @@ def preacher_add_matchers(compiler: MatcherFactoryCompiler) -> None:
     """
 
     # Add a static matcher.
-    compiler.add_static(('be_even', 'is_even', 'even'), IsEven())
+    compiler.add_static(("be_even", "is_even", "even"), IsEven())
 
     # Add a matcher taking a value.
-    compiler.add_taking_value(('be_multiple_of', 'is_multiple_of', 'multiple_of'), IsMultipleOf)
+    compiler.add_taking_value(("be_multiple_of", "is_multiple_of", "multiple_of"), IsMultipleOf)
