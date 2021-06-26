@@ -20,17 +20,16 @@ from preacher.compilation.verification import DescriptionCompiler
 from preacher.core.scenario import Scenario, Case
 from .case import CaseCompiler
 
-_KEY_LABEL = 'label'
-_KEY_WHEN = 'when'
-_KEY_DEFAULT = 'default'
-_KEY_ORDERED = 'ordered'
-_KEY_CASES = 'cases'
-_KEY_PARAMETERS = 'parameters'
-_KEY_SUBSCENARIOS = 'subscenarios'
+_KEY_LABEL = "label"
+_KEY_WHEN = "when"
+_KEY_DEFAULT = "default"
+_KEY_ORDERED = "ordered"
+_KEY_CASES = "cases"
+_KEY_PARAMETERS = "parameters"
+_KEY_SUBSCENARIOS = "subscenarios"
 
 
 class ScenarioCompiler:
-
     def __init__(self, description: DescriptionCompiler, case: CaseCompiler):
         self._description = description
         self._case = case
@@ -59,12 +58,9 @@ class ScenarioCompiler:
         if parameters_obj is not None:
             with on_key(_KEY_PARAMETERS):
                 parameters_obj = ensure_list(parameters_obj)
-                parameters = list(
-                    map_compile(compile_parameter, parameters_obj)
-                )
+                parameters = list(map_compile(compile_parameter, parameters_obj))
             subscenarios = [
-                self._compile_parameterized(obj, arguments, parameter)
-                for parameter in parameters
+                self._compile_parameterized(obj, arguments, parameter) for parameter in parameters
             ]
             return Scenario(label=label, subscenarios=subscenarios)
 
@@ -126,9 +122,7 @@ class ScenarioCompiler:
 
     @staticmethod
     def _compile_cases(case_compiler: CaseCompiler, obj: object) -> List[Case]:
-        return list(
-            map_compile(case_compiler.compile_fixed, ensure_list(obj))
-        )
+        return list(map_compile(case_compiler.compile_fixed, ensure_list(obj)))
 
     def _compile_subscenarios(
         self,
@@ -137,10 +131,12 @@ class ScenarioCompiler:
         arguments: Arguments,
     ) -> List[Scenario]:
         compiler = ScenarioCompiler(description=self._description, case=case)
-        return list(map_compile(
-            lambda sub_obj: compiler.compile(sub_obj, arguments=arguments),
-            ensure_list(obj),
-        ))
+        return list(
+            map_compile(
+                lambda sub_obj: compiler.compile(sub_obj, arguments=arguments),
+                ensure_list(obj),
+            )
+        )
 
     def _compile_parameterized(
         self,
@@ -148,11 +144,8 @@ class ScenarioCompiler:
         arguments: Arguments,
         parameter: Parameter,
     ) -> Scenario:
-        template = {
-            k: v for (k, v) in obj.items()
-            if k not in (_KEY_LABEL, _KEY_PARAMETERS)
-        }
-        template['label'] = parameter.label
+        template = {k: v for (k, v) in obj.items() if k not in (_KEY_LABEL, _KEY_PARAMETERS)}
+        template["label"] = parameter.label
 
         arguments = dict(arguments)
         arguments.update(parameter.arguments)

@@ -7,7 +7,6 @@ Arguments = Mapping
 
 
 class Argument:
-
     def __init__(self, key: str):
         self._key = key
 

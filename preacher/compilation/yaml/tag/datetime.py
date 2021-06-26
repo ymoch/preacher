@@ -10,12 +10,11 @@ from preacher.core.datetime import DatetimeFormat, DatetimeWithFormat
 from preacher.core.value import Value
 from preacher.core.value.impl.datetime import parse_datetime_value_with_format
 
-_KEY_DELTA = 'delta'
-_KEY_FORMAT = 'format'
+_KEY_DELTA = "delta"
+_KEY_FORMAT = "format"
 
 
 class RelativeDatetimeTag(Tag):
-
     def construct(self, node: Node, context: TagContext) -> Value[DatetimeWithFormat]:
         return _construct_relative_datetime(context.constructor, node)
 
@@ -29,7 +28,7 @@ def _construct_relative_datetime(
     elif isinstance(node, MappingNode):
         return _construct_relative_datetime_of_mapping(constructor, node)
     else:
-        raise ValueError('Invalid relative datetime value format')
+        raise ValueError("Invalid relative datetime value format")
 
 
 def _construct_relative_datetime_of_scalar(
@@ -66,4 +65,4 @@ def _construct_relative_datetime_of_mapping(
         datetime_value = constructor.construct_scalar(datetime_value_node)  # type: ignore
         with on_node(datetime_value_node):
             return parse_datetime_value_with_format(datetime_value, format)
-    return parse_datetime_value_with_format('now', format)
+    return parse_datetime_value_with_format("now", format)

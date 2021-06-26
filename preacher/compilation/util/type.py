@@ -4,7 +4,7 @@ from typing import Mapping, Optional, TypeVar
 
 from preacher.compilation.error import CompilationError
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def ensure_bool(obj: object) -> bool:
@@ -19,7 +19,7 @@ def ensure_bool(obj: object) -> bool:
         CompilationError: when compilation fails.
     """
     if not isinstance(obj, bool):
-        raise CompilationError(f'Must be a boolean, given {type(obj)}')
+        raise CompilationError(f"Must be a boolean, given {type(obj)}")
     return obj
 
 
@@ -35,7 +35,7 @@ def ensure_str(obj: object) -> str:
         CompilationError: when compilation fails.
     """
     if not isinstance(obj, str):
-        raise CompilationError(f'must be a string, given {type(obj)}')
+        raise CompilationError(f"must be a string, given {type(obj)}")
     return obj
 
 
@@ -82,7 +82,7 @@ def ensure_mapping(obj: object) -> Mapping:
         CompilationError: when compilation fails.
     """
     if not isinstance(obj, Mapping):
-        raise CompilationError(f'Must be a map, given {type(obj)}')
+        raise CompilationError(f"Must be a map, given {type(obj)}")
     return obj
 
 

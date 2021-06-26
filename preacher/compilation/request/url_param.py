@@ -25,9 +25,7 @@ def compile_url_param_value(value: object) -> UrlParamValue:
         return value
     if isinstance(value, DatetimeValueWithFormat):  # HACK: relax typing.
         return value
-    raise CompilationError(
-        f'Not allowed type for a request parameter value: {value.__class__}'
-    )
+    raise CompilationError(f"Not allowed type for a request parameter value: {value.__class__}")
 
 
 def compile_url_param(value: object) -> UrlParam:
@@ -39,8 +37,7 @@ def compile_url_param(value: object) -> UrlParam:
         return compile_url_param_value(value)
     except CompilationError as error:
         raise CompilationError(
-            f'Not allowed type for a request parameter: {value.__class__}',
-            cause=error
+            f"Not allowed type for a request parameter: {value.__class__}", cause=error
         )
 
 
@@ -65,7 +62,7 @@ def compile_url_params(
         return obj
 
     if not isinstance(obj, Mapping):
-        raise CompilationError('Must be a mapping or a string')
+        raise CompilationError("Must be a mapping or a string")
 
     compiled = {}
     for key, value in obj.items():

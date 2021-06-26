@@ -13,11 +13,11 @@ from preacher.core.request import Request, Method, UrlParams
 from .request_body import RequestBodyCompiled, RequestBodyCompiler
 from .url_param import compile_url_params
 
-_KEY_METHOD = 'method'
-_KEY_PATH = 'path'
-_KEY_HEADERS = 'headers'
-_KEY_PARAMS = 'params'
-_KEY_BODY = 'body'
+_KEY_METHOD = "method"
+_KEY_PATH = "path"
+_KEY_HEADERS = "headers"
+_KEY_PARAMS = "params"
+_KEY_BODY = "body"
 
 _METHOD_MAP = {method.name: method for method in Method}
 
@@ -42,15 +42,14 @@ class RequestCompiled:
     def fix(self) -> Request:
         return Request(
             method=or_else(self.method, Method.GET),
-            path=or_else(self.path, ''),
+            path=or_else(self.path, ""),
             headers=self.headers,
             params=self.params,
-            body=self.body.fix() if self.body else None
+            body=self.body.fix() if self.body else None,
         )
 
 
 class RequestCompiler:
-
     def __init__(
         self,
         body: RequestBodyCompiler,
@@ -124,17 +123,14 @@ class RequestCompiler:
         if default.body:
             body = body.of_default(default.body)
 
-        return RequestCompiler(
-            body=body,
-            default=self._default.replace(default)
-        )
+        return RequestCompiler(body=body, default=self._default.replace(default))
 
 
 def _compile_method(obj: object) -> Method:
     key = ensure_str(obj).upper()
     method = _METHOD_MAP.get(key)
     if not method:
-        message = f'Must be in {list(_METHOD_MAP)}, but given: {obj}'
+        message = f"Must be in {list(_METHOD_MAP)}, but given: {obj}"
         raise CompilationError(message)
     return method
 

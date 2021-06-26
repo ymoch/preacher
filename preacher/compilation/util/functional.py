@@ -6,8 +6,8 @@ from typing import Any, Callable, Iterable, Iterator, TypeVar
 
 from preacher.compilation.error import CompilationError, on_key, on_index
 
-T = TypeVar('T')
-U = TypeVar('U')
+T = TypeVar("T")
+U = TypeVar("U")
 
 
 def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
@@ -18,9 +18,10 @@ def map_compile(func: Callable[[T], U], items: Iterable[T]) -> Iterator[U]:
 
 def run_recursively(func: Callable[[object], Any], obj) -> object:
     if isinstance(obj, Mapping):
+
         def _func(key: object, value: object) -> object:
             if not isinstance(key, str):
-                message = f'Key must be a string, given {type(key)}: {key}'
+                message = f"Key must be a string, given {type(key)}: {key}"
                 raise CompilationError(message)
             with on_key(key):
                 return run_recursively(func, value)

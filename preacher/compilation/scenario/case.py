@@ -23,11 +23,11 @@ from preacher.compilation.verification import (
 from preacher.core.scenario import Case
 from preacher.core.verification import Description
 
-_KEY_LABEL = 'label'
-_KEY_ENABLED = 'enabled'
-_KEY_CONDITIONS = 'when'
-_KEY_REQUEST = 'request'
-_KEY_RESPONSE = 'response'
+_KEY_LABEL = "label"
+_KEY_ENABLED = "enabled"
+_KEY_CONDITIONS = "when"
+_KEY_REQUEST = "request"
+_KEY_RESPONSE = "response"
 
 
 @dataclass(frozen=True)
@@ -58,13 +58,12 @@ class CaseCompiled:
 
 
 class CaseCompiler:
-
     def __init__(
         self,
         request: RequestCompiler,
         response: ResponseDescriptionCompiler,
         description: DescriptionCompiler,
-        default: Optional[CaseCompiled] = None
+        default: Optional[CaseCompiled] = None,
     ):
         self._request = request
         self._response = response
@@ -119,10 +118,12 @@ class CaseCompiler:
         conditions_obj = obj.get(_KEY_CONDITIONS)
         if conditions_obj is not None:
             with on_key(_KEY_CONDITIONS):
-                conditions = list(map_compile(
-                    self._description.compile,
-                    ensure_list(conditions_obj),
-                ))
+                conditions = list(
+                    map_compile(
+                        self._description.compile,
+                        ensure_list(conditions_obj),
+                    )
+                )
             compiled = replace(compiled, conditions=conditions)
 
         request_obj = obj.get(_KEY_REQUEST)

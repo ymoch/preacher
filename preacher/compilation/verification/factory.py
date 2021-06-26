@@ -61,8 +61,7 @@ def create_response_description_compiler(
     logger: Optional[Logger] = None,
 ) -> ResponseDescriptionCompiler:
     predicate = predicate or create_predicate_compiler(
-        plugin_manager=plugin_manager,
-        logger=logger
+        plugin_manager=plugin_manager, logger=logger
     )
     description = description or create_description_compiler(
         predicate=predicate,

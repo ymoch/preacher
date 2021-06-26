@@ -5,8 +5,8 @@ from .argument import Arguments
 from .error import on_key
 from .util.type import ensure_optional_str, ensure_mapping
 
-_KEY_LABEL = 'label'
-_KEY_ARGUMENTS = 'args'
+_KEY_LABEL = "label"
+_KEY_ARGUMENTS = "args"
 
 
 @dataclass(frozen=True)
