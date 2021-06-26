@@ -1,21 +1,12 @@
 from unittest.mock import NonCallableMock, sentinel
 
-from pytest import mark, raises
+from pytest import mark
 
 from preacher.core.scenario.scenario_result import ScenarioResult
 from preacher.core.scenario.scenario_task import ScenarioTask
 from preacher.core.scenario.scenario_task import StaticScenarioTask, RunningScenarioTask
 from preacher.core.scenario.util.concurrency import CasesTask
 from preacher.core.status import Status, StatusedList
-
-
-def test_scenario_task_interface():
-    class _IncompleteScenarioTask(ScenarioTask):
-        def result(self) -> ScenarioResult:
-            return super().result()
-
-    with raises(NotImplementedError):
-        _IncompleteScenarioTask().result()
 
 
 def test_static_scenario_task():

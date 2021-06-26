@@ -10,7 +10,6 @@ class ExecutorFactory(ABC):
     @abstractmethod
     def create(self, concurrency: int) -> Executor:
         """Create an executor."""
-        ...  # pragma: no cover
 
 
 class _ProcessPoolFactory(ExecutorFactory):

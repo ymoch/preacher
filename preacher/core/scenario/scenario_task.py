@@ -11,7 +11,6 @@ class ScenarioTask(ABC):
     @abstractmethod
     def result(self) -> ScenarioResult:
         ...  # pragma: no cover
-        raise NotImplementedError()
 
 
 class StaticScenarioTask(ScenarioTask):
