@@ -27,7 +27,6 @@ def create_logging_reporting_listener(
 ) -> LoggingReportingListener:
     """
     Create a logging reporting listener.
-    When given `logger`, the other parameters are ignored.
 
     Args:
         reporter: A reporter. When given this, the other parameters are ignored.

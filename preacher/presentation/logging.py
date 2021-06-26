@@ -132,7 +132,6 @@ def create_logging_reporter(
 ) -> LoggingReporter:
     """
     Create a logging reporter.
-    When given `logger`, the other parameters are ignored.
 
     Args:
         logger: A logger where reports logged. When given this, the other parameters are ignored.
