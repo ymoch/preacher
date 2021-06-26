@@ -8,16 +8,16 @@ import os
 from concurrent.futures import Executor
 from tempfile import TemporaryDirectory
 from typing import Iterable
-from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
+from unittest.mock import NonCallableMock, NonCallableMagicMock, ANY, call, sentinel
 
-from pytest import fixture, mark
+from pytest import fixture
 
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
 from preacher.app.cli.app import create_scheduler
 from preacher.app.cli.executor import ExecutorFactory
 from preacher.core.scenario import Scenario
-from preacher.core.scheduling import ScenarioScheduler
+from preacher.core.scheduling import ScenarioScheduler, MergingListener
 from preacher.core.status import Status
 
 PKG = "preacher.app.cli.app"
@@ -47,6 +47,13 @@ def executor_factory(executor):
     factory = NonCallableMock(ExecutorFactory)
     factory.create.return_value = executor
     return factory
+
+
+@fixture
+def merging_listener(mocker):
+    merging = NonCallableMock(MergingListener)
+    mocker.patch(f"{PKG}.MergingListener", return_value=merging)
+    return merging
 
 
 def test_app_normal(mocker, base_dir, executor, executor_factory):
@@ -146,25 +153,25 @@ def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factor
     executor.__exit__.assert_called_once()
 
 
-@mark.parametrize(
-    ("level", "expected_logging_level"),
-    (
-        (Status.SKIPPED, logging.DEBUG),
-        (Status.SUCCESS, logging.INFO),
-        (Status.UNSTABLE, logging.WARNING),
-        (Status.FAILURE, logging.ERROR),
-    ),
-)
-def test_create_listener_logging_level(level, expected_logging_level):
-    create_listener(level=level, report_dir=None)
+def test_create_listener_no_report_dir(mocker, merging_listener):
+    logging_factory = mocker.patch(f"{PKG}.create_logging_reporting_listener")
+    logging_factory.return_value = sentinel.logging
 
-    logger = logging.getLogger("preacher.cli.report.logging")
-    assert logger.getEffectiveLevel() == expected_logging_level
+    create_listener()
+
+    merging_listener.append.assert_called_once_with(sentinel.logging)
+    logging_factory.assert_called_once_with(logger_name=ANY, level=Status.SUCCESS, handlers=ANY)
 
 
-def test_create_listener_report_dir(base_dir):
+def test_create_listener_report_dir(mocker, merging_listener, base_dir: str):
+    logging_factory = mocker.patch(f"{PKG}.create_logging_reporting_listener")
+    logging_factory.return_value = sentinel.logging
+
     report_dir = os.path.join(base_dir, "report")
-    create_listener(level=Status.FAILURE, report_dir=report_dir)
+    create_listener(level=sentinel.level, report_dir=report_dir)
+
+    merging_listener.append.assert_has_calls((call(sentinel.logging), call(ANY)))
+    logging_factory.assert_called_once_with(logger_name=ANY, level=sentinel.level, handlers=ANY)
     assert os.path.isdir(report_dir)
 
 

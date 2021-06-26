@@ -117,7 +117,7 @@ def app(
     return 0
 
 
-def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
+def create_listener(level: Status = Status.SUCCESS, report_dir: Optional[str] = None) -> Listener:
     merging = MergingListener()
 
     handler = StreamHandler(sys.stdout)
