@@ -15,7 +15,7 @@ def test_matcher_predicate(mocker):
     predicate_ctor.return_value = sentinel.predicate
 
     compiler = PredicateCompiler(matcher_factory)
-    predicate = compiler.compile(Argument('obj'), {'obj': sentinel.obj})
+    predicate = compiler.compile(Argument("obj"), {"obj": sentinel.obj})
     assert predicate == sentinel.predicate
 
     matcher_factory.compile.assert_called_once_with(sentinel.obj)
