@@ -18,8 +18,8 @@ from . import FILLED_SCENARIO_RESULTS
 
 @dataclass
 class ResponseBodyImpl(ResponseBody):
-    text: str = ''
-    content: bytes = b''
+    text: str = ""
+    content: bytes = b""
 
 
 @dataclass
@@ -31,7 +31,7 @@ class ResponseImpl(Response):
 
     @property
     def id(self) -> str:
-        return 'res-id'
+        return "res-id"
 
 
 @fixture
@@ -44,26 +44,29 @@ def test_export_execution(path):
     execution = ExecutionReport()
 
     response_body = NonCallableMock(ResponseBody)
-    response_body.text = 'ABC'
-    response_body.content = b'ABC'
+    response_body.text = "ABC"
+    response_body.content = b"ABC"
 
     response = NonCallableMock(Response)
-    response.id = 'res-id'
+    response.id = "res-id"
     response.elapsed = 0.1
     response.status_code = 200
-    response.headers = {'key': 'value'}
+    response.headers = {"key": "value"}
     response.body = response_body
 
     reporter = HtmlReporter(path)
     reporter.export_response(execution, response)
-    assert os.path.isfile(os.path.join(path, 'responses', 'res-id.html'))
+    assert os.path.isfile(os.path.join(path, "responses", "res-id.html"))
 
 
-@mark.parametrize('results', [
-    [],
-    FILLED_SCENARIO_RESULTS,
-])
+@mark.parametrize(
+    "results",
+    (
+        [],
+        FILLED_SCENARIO_RESULTS,
+    ),
+)
 def test_export_results(path, results):
     reporter = HtmlReporter(path)
     reporter.export_results([])
-    assert os.path.isfile(os.path.join(path, 'index.html'))
+    assert os.path.isfile(os.path.join(path, "index.html"))

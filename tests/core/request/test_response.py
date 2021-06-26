@@ -6,9 +6,7 @@ from preacher.core.request import Response, ResponseBody
 
 
 def test_incomplete_response_body():
-
     class _IncompleteResponseBody(ResponseBody):
-
         @property
         def text(self) -> str:
             return super().text
@@ -25,9 +23,7 @@ def test_incomplete_response_body():
 
 
 def test_incomplete_response():
-
     class _IncompleteResponse(Response):
-
         @property
         def id(self) -> str:
             return super().id

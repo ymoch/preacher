@@ -7,7 +7,7 @@ from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.verification.description import DescriptionCompiler
 from preacher.compilation.verification.predicate import PredicateCompiler
 
-PKG = 'preacher.compilation.verification.description'
+PKG = "preacher.compilation.verification.description"
 
 
 @fixture
@@ -35,44 +35,42 @@ def test_given_not_a_mapping(compiler):
 
 
 def test_given_a_string_predicate(mocker, compiler, extraction, predicate):
-    ctor = mocker.patch(f'{PKG}.Description', return_value=sentinel.description)
+    ctor = mocker.patch(f"{PKG}.Description", return_value=sentinel.description)
 
-    description = compiler.compile({
-        'describe': 'foo',
-        'should': 'string',
-    })
+    description = compiler.compile(
+        {
+            "describe": "foo",
+            "should": "string",
+        }
+    )
     assert description is sentinel.description
 
-    extraction.compile.assert_called_with('foo')
-    predicate.compile.assert_called_once_with('string')
+    extraction.compile.assert_called_with("foo")
+    predicate.compile.assert_called_once_with("string")
     ctor.assert_called_once_with(extractor=sentinel.extractor, predicates=[sentinel.predicate])
 
 
 def test_given_a_mapping_predicate(mocker, compiler, extraction, predicate):
-    ctor = mocker.patch(f'{PKG}.Description', return_value=sentinel.description)
+    ctor = mocker.patch(f"{PKG}.Description", return_value=sentinel.description)
 
-    description = compiler.compile({
-        'describe': 'foo',
-        'should': {'key': 'value'}
-    })
+    description = compiler.compile({"describe": "foo", "should": {"key": "value"}})
     assert description is sentinel.description
 
-    extraction.compile.assert_called_once_with('foo')
-    predicate.compile.assert_called_once_with({'key': 'value'})
+    extraction.compile.assert_called_once_with("foo")
+    predicate.compile.assert_called_once_with({"key": "value"})
     ctor.assert_called_once_with(extractor=sentinel.extractor, predicates=[sentinel.predicate])
 
 
 def test_given_a_list_of_mapping_predicates(mocker, compiler, extraction, predicate):
-    ctor = mocker.patch(f'{PKG}.Description', return_value=sentinel.description)
+    ctor = mocker.patch(f"{PKG}.Description", return_value=sentinel.description)
 
-    description = compiler.compile({
-        'describe': {'key': 'value'},
-        'should': [{'key1': 'value1'}, {'key2': 'value2'}]
-    })
+    description = compiler.compile(
+        {"describe": {"key": "value"}, "should": [{"key1": "value1"}, {"key2": "value2"}]}
+    )
     assert description is sentinel.description
 
-    extraction.compile.assert_called_once_with({'key': 'value'})
-    predicate.compile.assert_has_calls([call({'key1': 'value1'}), call({'key2': 'value2'})])
+    extraction.compile.assert_called_once_with({"key": "value"})
+    predicate.compile.assert_has_calls([call({"key1": "value1"}), call({"key2": "value2"})])
     ctor.assert_called_once_with(
         extractor=sentinel.extractor,
         predicates=[sentinel.predicate, sentinel.predicate],

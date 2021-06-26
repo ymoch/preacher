@@ -15,7 +15,6 @@ def test_given_no_scenario():
 
 def test_given_construction_failure():
     class _Scenarios(Iterable[Scenario]):
-
         def __init__(self):
             self._count = 0
 
@@ -25,7 +24,7 @@ def test_given_construction_failure():
         def __next__(self) -> Scenario:
             self._count += 1
             if self._count == 2:
-                raise Exception('message')
+                raise Exception("message")
             if self._count > 3:
                 raise StopIteration()
             return sentinel.scenario
@@ -50,9 +49,9 @@ def test_given_construction_failure():
     assert first_successful.status is Status.SUCCESS
 
     construction_failure = results[1]
-    assert construction_failure.label == 'Not a constructed scenario'
+    assert construction_failure.label == "Not a constructed scenario"
     assert construction_failure.status is Status.FAILURE
-    assert construction_failure.message == 'Exception: message'
+    assert construction_failure.message == "Exception: message"
 
     second_successful = results[2]
     assert second_successful.status is Status.SUCCESS

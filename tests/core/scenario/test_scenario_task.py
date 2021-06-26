@@ -46,10 +46,13 @@ def test_running_scenario_task_empty():
     cases.result.assert_called_once_with()
 
 
-@mark.parametrize('cases_status, subscenario_status, expected_status', [
-    (Status.SUCCESS, Status.UNSTABLE, Status.UNSTABLE),
-    (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
-])
+@mark.parametrize(
+    ("cases_status", "subscenario_status", "expected_status"),
+    (
+        (Status.SUCCESS, Status.UNSTABLE, Status.UNSTABLE),
+        (Status.UNSTABLE, Status.FAILURE, Status.FAILURE),
+    ),
+)
 def test_running_scenario_task_filled(cases_status, subscenario_status, expected_status):
     cases_result = NonCallableMock(StatusedList, status=cases_status)
     cases = NonCallableMock(CasesTask)

@@ -4,13 +4,16 @@ from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.parameter import compile_parameter
 
 
-@mark.parametrize('obj, expected_path', [
-    ('', []),
-    ({'label': []}, [NamedNode('label')]),
-    ({'label': {}}, [NamedNode('label')]),
-    ({'args': ''}, [NamedNode('args')]),
-    ({'args': []}, [NamedNode('args')]),
-])
+@mark.parametrize(
+    ("obj", "expected_path"),
+    (
+        ("", []),
+        ({"label": []}, [NamedNode("label")]),
+        ({"label": {}}, [NamedNode("label")]),
+        ({"args": ""}, [NamedNode("args")]),
+        ({"args": []}, [NamedNode("args")]),
+    ),
+)
 def test_given_invalid_obj(obj, expected_path):
     with raises(CompilationError) as error_info:
         compile_parameter(obj)
@@ -24,6 +27,6 @@ def test_given_empty_mapping():
 
 
 def test_given_filled_mapping():
-    parameter = compile_parameter({'label': 'foo', 'args': {'k': 'v'}})
-    assert parameter.label == 'foo'
-    assert parameter.arguments == {'k': 'v'}
+    parameter = compile_parameter({"label": "foo", "args": {"k": "v"}})
+    assert parameter.label == "foo"
+    assert parameter.arguments == {"k": "v"}

@@ -6,7 +6,7 @@ from pytest import raises
 
 from preacher.core.extraction.analysis import Analyzer
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def test_analyzer_interface():

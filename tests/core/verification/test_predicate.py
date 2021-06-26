@@ -7,7 +7,7 @@ from preacher.core.value import ValueContext
 from preacher.core.verification.predicate import Predicate
 from preacher.core.verification.verification import Verification
 
-PKG = 'preacher.core.verification.predicate'
+PKG = "preacher.core.verification.predicate"
 
 
 def test_predicate_interface():

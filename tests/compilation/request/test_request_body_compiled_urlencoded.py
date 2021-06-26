@@ -6,7 +6,7 @@ from preacher.compilation.error import CompilationError, NamedNode
 from preacher.compilation.request.request_body import RequestBodyCompiled
 from preacher.compilation.request.request_body import UrlencodedRequestBodyCompiled
 
-PKG = 'preacher.compilation.request.request_body'
+PKG = "preacher.compilation.request.request_body"
 
 
 def test_replace_given_another_type():
@@ -37,23 +37,23 @@ def test_compile_and_replace_empty():
 
 
 def test_compile_and_replace_given_invalid_data(mocker):
-    compile_params = mocker.patch(f'{PKG}.compile_url_params')
-    compile_params.side_effect = CompilationError('m', node=NamedNode('x'))
+    compile_params = mocker.patch(f"{PKG}.compile_url_params")
+    compile_params.side_effect = CompilationError("m", node=NamedNode("x"))
 
     default = UrlencodedRequestBodyCompiled(data=sentinel.original_data)
     with raises(CompilationError) as error_info:
-        default.compile_and_replace({'data': sentinel.data})
-    assert error_info.value.path == [NamedNode('data'), NamedNode('x')]
+        default.compile_and_replace({"data": sentinel.data})
+    assert error_info.value.path == [NamedNode("data"), NamedNode("x")]
 
     compile_params.assert_called_once_with(sentinel.data)
 
 
 def test_compile_and_replace_given_valid_data(mocker):
-    compile_params = mocker.patch(f'{PKG}.compile_url_params')
+    compile_params = mocker.patch(f"{PKG}.compile_url_params")
     compile_params.return_value = sentinel.params
 
     default = UrlencodedRequestBodyCompiled(data=sentinel.original_data)
-    compiled = default.compile_and_replace({'data': sentinel.data})
+    compiled = default.compile_and_replace({"data": sentinel.data})
     assert isinstance(compiled, UrlencodedRequestBodyCompiled)
     assert compiled.data is sentinel.params
 
@@ -61,7 +61,7 @@ def test_compile_and_replace_given_valid_data(mocker):
 
 
 def test_fix_empty(mocker):
-    ctor = mocker.patch(f'{PKG}.UrlencodedRequestBody', return_value=sentinel.fixed)
+    ctor = mocker.patch(f"{PKG}.UrlencodedRequestBody", return_value=sentinel.fixed)
 
     compiled = UrlencodedRequestBodyCompiled()
     fixed = compiled.fix()
@@ -71,7 +71,7 @@ def test_fix_empty(mocker):
 
 
 def test_fix_filled(mocker):
-    ctor = mocker.patch(f'{PKG}.UrlencodedRequestBody', return_value=sentinel.fixed)
+    ctor = mocker.patch(f"{PKG}.UrlencodedRequestBody", return_value=sentinel.fixed)
 
     compiled = UrlencodedRequestBodyCompiled(data=sentinel.data)
     fixed = compiled.fix()

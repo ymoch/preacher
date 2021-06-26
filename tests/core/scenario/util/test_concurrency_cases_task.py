@@ -7,7 +7,6 @@ from preacher.core.status import StatusedList
 
 def test_incomplete_implementation():
     class _IncompleteCasesTask(CasesTask):
-
         def result(self) -> StatusedList[CaseResult]:
             return super().result()
 

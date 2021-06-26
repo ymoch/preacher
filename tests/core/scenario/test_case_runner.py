@@ -39,28 +39,30 @@ def test_when_disabled():
     unit_runner.run.assert_not_called()
 
 
-@mark.parametrize(('condition_verifications', 'expected_status'), [
+@mark.parametrize(
+    ("condition_verifications", "expected_status"),
     (
-        [
-            Verification(status=Status.SKIPPED),
-            Verification(status=Status.UNSTABLE),
-            Verification(status=Status.SUCCESS),
-        ],
-        Status.SKIPPED,
+        (
+            [
+                Verification(status=Status.SKIPPED),
+                Verification(status=Status.UNSTABLE),
+                Verification(status=Status.SUCCESS),
+            ],
+            Status.SKIPPED,
+        ),
+        (
+            [
+                Verification(status=Status.SUCCESS),
+                Verification(status=Status.FAILURE),
+                Verification(status=Status.UNSTABLE),
+            ],
+            Status.FAILURE,
+        ),
     ),
-    (
-        [
-            Verification(status=Status.SUCCESS),
-            Verification(status=Status.FAILURE),
-            Verification(status=Status.UNSTABLE),
-        ],
-        Status.FAILURE,
-    ),
-])
+)
 def test_given_bad_condition(condition_verifications, expected_status):
     conditions = [
-        NonCallableMock(Description, verify=Mock(return_value=v))
-        for v in condition_verifications
+        NonCallableMock(Description, verify=Mock(return_value=v)) for v in condition_verifications
     ]
     case = Case(
         label=sentinel.label,
@@ -110,7 +112,7 @@ def test_when_given_an_response():
         response_id=sentinel.response_id,
         status_code=Verification.succeed(),
         headers=Verification.succeed(),
-        body=Verification(status=Status.UNSTABLE)
+        body=Verification(status=Status.UNSTABLE),
     )
 
     case = Case(label=sentinel.label, request=sentinel.request, response=sentinel.response)

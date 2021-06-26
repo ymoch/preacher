@@ -10,7 +10,7 @@ from preacher.core.verification.predicate import Predicate
 from preacher.core.verification.response import ResponseDescription
 from preacher.core.verification.verification import Verification
 
-PKG = 'preacher.core.verification.response'
+PKG = "preacher.core.verification.response"
 
 
 @fixture
@@ -27,7 +27,7 @@ def response():
 
 
 def test_when_given_no_description(mocker, response):
-    mocker.patch(f'{PKG}.ResponseBodyAnalyzer', return_value=sentinel.body)
+    mocker.patch(f"{PKG}.ResponseBodyAnalyzer", return_value=sentinel.body)
 
     description = ResponseDescription()
     verification = description.verify(response)
@@ -38,32 +38,24 @@ def test_when_given_no_description(mocker, response):
 
 
 def test_when_given_descriptions(mocker, response):
-    analyze_headers = mocker.patch(f'{PKG}.MappingAnalyzer', return_value=sentinel.a_headers)
-    analyze_body = mocker.patch(f'{PKG}.ResponseBodyAnalyzer', return_value=sentinel.a_body)
+    analyze_headers = mocker.patch(f"{PKG}.MappingAnalyzer", return_value=sentinel.a_headers)
+    analyze_body = mocker.patch(f"{PKG}.ResponseBodyAnalyzer", return_value=sentinel.a_body)
 
     status_code = [
-        NonCallableMock(Predicate, verify=Mock(
-            return_value=Verification(status=Status.UNSTABLE)
-        )),
-        NonCallableMock(Predicate, verify=Mock(
-            return_value=Verification.succeed()
-        )),
+        NonCallableMock(Predicate, verify=Mock(return_value=Verification(status=Status.UNSTABLE))),
+        NonCallableMock(Predicate, verify=Mock(return_value=Verification.succeed())),
     ]
     headers = [
-        NonCallableMock(Description, verify=Mock(
-            return_value=Verification(status=Status.UNSTABLE)
-        )),
-        NonCallableMock(Description, verify=Mock(
-            return_value=Verification.succeed()
-        )),
+        NonCallableMock(
+            Description, verify=Mock(return_value=Verification(status=Status.UNSTABLE))
+        ),
+        NonCallableMock(Description, verify=Mock(return_value=Verification.succeed())),
     ]
     body = [
-        NonCallableMock(Description, verify=Mock(
-            return_value=Verification(status=Status.UNSTABLE)
-        )),
-        NonCallableMock(Description, verify=Mock(
-            return_value=Verification.succeed()
-        )),
+        NonCallableMock(
+            Description, verify=Mock(return_value=Verification(status=Status.UNSTABLE))
+        ),
+        NonCallableMock(Description, verify=Mock(return_value=Verification.succeed())),
     ]
     description = ResponseDescription(status_code=status_code, headers=headers, body=body)
     verification = description.verify(response, sentinel.context)
@@ -84,7 +76,7 @@ def test_when_given_descriptions(mocker, response):
 
 
 @mark.parametrize(
-    'status_code_status, headers_status, body_status, expected',
+    ("status_code_status", "headers_status", "body_status", "expected"),
     (
         (Status.SUCCESS, Status.SUCCESS, Status.SKIPPED, Status.SUCCESS),
         (Status.UNSTABLE, Status.SKIPPED, Status.SUCCESS, Status.UNSTABLE),
@@ -100,23 +92,21 @@ def test_merge_statuses(
     body_status: Status,
     expected: Status,
 ):
-    mocker.patch(f'{PKG}.MappingAnalyzer', return_value=sentinel.a_headers)
-    mocker.patch(f'{PKG}.ResponseBodyAnalyzer', return_value=sentinel.a_body)
+    mocker.patch(f"{PKG}.MappingAnalyzer", return_value=sentinel.a_headers)
+    mocker.patch(f"{PKG}.ResponseBodyAnalyzer", return_value=sentinel.a_body)
 
     status_code: List[Predicate] = [
-        NonCallableMock(Predicate, verify=Mock(
-            return_value=Verification(status=status_code_status)
-        )),
+        NonCallableMock(
+            Predicate, verify=Mock(return_value=Verification(status=status_code_status))
+        ),
     ]
     headers: List[Description] = [
-        NonCallableMock(Description, verify=Mock(
-            return_value=Verification(status=headers_status)
-        )),
+        NonCallableMock(
+            Description, verify=Mock(return_value=Verification(status=headers_status))
+        ),
     ]
     body_description: List[Description] = [
-        NonCallableMock(Description, verify=Mock(
-            return_value=Verification(status=body_status)
-        )),
+        NonCallableMock(Description, verify=Mock(return_value=Verification(status=body_status))),
     ]
     description = ResponseDescription(
         status_code=status_code,

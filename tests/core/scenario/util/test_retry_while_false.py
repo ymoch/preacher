@@ -10,14 +10,14 @@ def func():
     return MagicMock(side_effect=[0, 0, 1])
 
 
-@mark.parametrize('attempts', (-1, 0))
+@mark.parametrize("attempts", (-1, 0))
 def test_when_given_invalid_args(func, attempts):
     with raises(ValueError):
         retry_while_false(func, attempts=attempts)
 
 
 @mark.parametrize(
-    'attempts, expected_result, expected_call_count, expected_sleep_count',
+    "attempts, expected_result, expected_call_count, expected_sleep_count",
     (
         (1, 0, 1, 0),
         (2, 0, 2, 1),
@@ -32,7 +32,7 @@ def test_retrying(
     expected_call_count,
     expected_sleep_count,
 ):
-    with patch('time.sleep') as sleep:
+    with patch("time.sleep") as sleep:
         actual = retry_while_false(func, attempts=attempts)
     assert actual == expected_result
 
@@ -41,6 +41,6 @@ def test_retrying(
 
 
 def test_retrying_with_delay(func):
-    with patch('time.sleep') as sleep:
+    with patch("time.sleep") as sleep:
         retry_while_false(func, attempts=2, delay=sentinel.delay)
     sleep.assert_called_once_with(sentinel.delay)
