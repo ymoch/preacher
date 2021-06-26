@@ -2,7 +2,7 @@
 
 import sys
 from concurrent.futures import Executor
-from logging import StreamHandler, getLogger, DEBUG, INFO, WARNING, ERROR
+from logging import StreamHandler
 from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
@@ -16,6 +16,7 @@ from preacher.core.unit import UnitRunner
 from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import LoggingReportingListener, HtmlReportingListener
+from preacher.presentation.logging import create_logging_reporter
 from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
 from .logging import ColoredFormatter, create_system_logger
 
@@ -120,29 +121,22 @@ def app(
 def create_listener(level: Status, report_dir: Optional[str]) -> Listener:
     merging = MergingListener()
 
-    logging_level = _status_to_logging_level(level)
     handler = StreamHandler(sys.stdout)
-    handler.setLevel(logging_level)
     handler.setFormatter(ColoredFormatter())
-    logger = getLogger(_REPORT_LOGGER_NAME)
-    logger.setLevel(logging_level)
-    logger.addHandler(handler)
-    merging.append(LoggingReportingListener.from_logger(logger))
+    merging.append(
+        LoggingReportingListener(
+            create_logging_reporter(
+                logger_name=_REPORT_LOGGER_NAME,
+                level=level,
+                handlers=[handler],
+            )
+        )
+    )
 
     if report_dir:
         merging.append(HtmlReportingListener.from_path(report_dir))
 
     return merging
-
-
-def _status_to_logging_level(level: Status) -> int:
-    if level is Status.SKIPPED:
-        return DEBUG
-    if level is Status.SUCCESS:
-        return INFO
-    if level is Status.UNSTABLE:
-        return WARNING
-    return ERROR
 
 
 def create_scheduler(

@@ -1,7 +1,8 @@
 import contextlib
 import io
 import logging
-from typing import Iterator
+import uuid
+from typing import Iterable, Iterator, Optional
 
 from preacher.core.request import ExecutionReport
 from preacher.core.scenario import ScenarioResult, CaseResult
@@ -121,3 +122,27 @@ class LoggingReporter:
         self._indent += ".."
         yield
         self._indent = original
+
+
+def create_logging_reporter(
+    logger: Optional[logging.Logger] = None,
+    logger_name: str = "",
+    level: Status = Status.SUCCESS,
+    handlers: Optional[Iterable[logging.Handler]] = None,
+) -> LoggingReporter:
+    if not logger:
+        logger = logging.getLogger(logger_name or str(uuid.uuid4()))
+        logger.setLevel(_status_to_logging_level(level))
+        for handler in handlers or ():
+            logger.addHandler(handler)
+    return LoggingReporter(logger)
+
+
+def _status_to_logging_level(level: Status) -> int:
+    if level is Status.SKIPPED:
+        return logging.DEBUG
+    if level is Status.SUCCESS:
+        return logging.INFO
+    if level is Status.UNSTABLE:
+        return logging.WARNING
+    return logging.ERROR
