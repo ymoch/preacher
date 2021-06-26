@@ -123,12 +123,7 @@ def create_listener(level: Status = Status.SUCCESS, report_dir: Optional[str] = 
 
     handler = StreamHandler(sys.stdout)
     handler.setFormatter(ColoredFormatter())
-    logging = create_logging_reporting_listener(
-        logger_name=_REPORT_LOGGER_NAME,
-        level=level,
-        handlers=[handler],
-    )
-    merging.append(logging)
+    merging.append(create_logging_reporting_listener(level=level, handlers=[handler]))
 
     if report_dir:
         merging.append(create_html_reporting_listener(report_dir))

@@ -161,7 +161,7 @@ def test_create_listener_default(mocker, merging_listener):
     create_listener()
 
     merging_listener.append.assert_called_once_with(sentinel.logging)
-    logging_factory.assert_called_once_with(logger_name=ANY, level=Status.SUCCESS, handlers=ANY)
+    logging_factory.assert_called_once_with(level=Status.SUCCESS, handlers=ANY)
     html_factory.assert_not_called()
 
 
@@ -174,7 +174,7 @@ def test_create_listener_with_all_parameters(mocker, merging_listener):
     create_listener(level=sentinel.level, report_dir=sentinel.report_dir)
 
     merging_listener.append.assert_has_calls((call(sentinel.logging), call(sentinel.html)))
-    logging_factory.assert_called_once_with(logger_name=ANY, level=sentinel.level, handlers=ANY)
+    logging_factory.assert_called_once_with(level=sentinel.level, handlers=ANY)
     html_factory.assert_called_once_with(sentinel.report_dir)
 
 
