@@ -130,6 +130,7 @@ def create_logging_reporter(
     logger_name: str = "",
     level: Status = Status.SUCCESS,
     handlers: Optional[Iterable[logging.Handler]] = None,
+    formatter: Optional[logging.Formatter] = None,
 ) -> LoggingReporter:
     """
     Create a logging reporter.
@@ -138,15 +139,23 @@ def create_logging_reporter(
         logger: A logger where reports logged. When given this, the other parameters are ignored.
         logger_name: The logger name. When not given, it will be automatically generated.
         level: The minimum level to report.
-        handlers: The logging handlers.
+        handlers: The logging handlers. When given, `formatter` is ignored.
+        formatter: The logging formatter.
     """
     if not logger:
+        logging_level = _status_to_logging_level(level)
         logger = logging.getLogger(logger_name or str(uuid.uuid4()))
-        logger.setLevel(_status_to_logging_level(level))
+        logger.setLevel(logging_level)
 
-        handlers = handlers or (logging.StreamHandler(sys.stdout),)
+        if not handlers:
+            default_handler = logging.StreamHandler(sys.stdout)
+            default_handler.setLevel(logging_level)
+            if formatter:
+                default_handler.setFormatter(formatter)
+            handlers = (default_handler,)
         for handler in handlers:
             logger.addHandler(handler)
+
     return LoggingReporter(logger)
 
 

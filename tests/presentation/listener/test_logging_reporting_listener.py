@@ -36,6 +36,7 @@ def test_create_logging_reporting_listener_given_reporter_elements(mocker):
         logger_name=sentinel.logger_name,
         level=sentinel.level,
         handlers=sentinel.handlers,
+        formatter=sentinel.formatter,
     )
     assert listener is sentinel.listener
 
@@ -45,4 +46,5 @@ def test_create_logging_reporting_listener_given_reporter_elements(mocker):
         logger_name=sentinel.logger_name,
         level=sentinel.level,
         handlers=sentinel.handlers,
+        formatter=sentinel.formatter,
     )

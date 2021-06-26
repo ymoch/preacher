@@ -24,6 +24,7 @@ def create_logging_reporting_listener(
     logger_name: str = "",
     level: Status = Status.SUCCESS,
     handlers: Optional[Iterable[logging.Handler]] = None,
+    formatter: Optional[logging.Formatter] = None,
 ) -> LoggingReportingListener:
     """
     Create a logging reporting listener.
@@ -31,15 +32,17 @@ def create_logging_reporting_listener(
     Args:
         reporter: A reporter. When given this, the other parameters are ignored.
         logger: A logger where reports logged.
-            When given this, `logger_name`, `level` and `handlers` are ignored.
+            When given this, `logger_name`, `level`, `handlers` and `formatter` are ignored.
         logger_name: The logger name. When not given, it will be automatically generated.
         level: The minimum level to report.
-        handlers: The logging handlers.
+        handlers: The logging handlers. When given, `formatter` is ignored.
+        formatter: The logging formatter.
     """
     reporter = reporter or create_logging_reporter(
         logger=logger,
         logger_name=logger_name,
         level=level,
         handlers=handlers,
+        formatter=formatter,
     )
     return LoggingReportingListener(reporter)

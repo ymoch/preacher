@@ -71,17 +71,36 @@ def test_create_logging_reporter_given_logger_elements(mocker, level: Status, ex
     assert logger.handlers == [sentinel.handler]
 
 
+def test_create_logging_reporter_given_no_handlers(mocker):
+    mocker.patch(f"{PKG}.LoggingReporter", return_value=sentinel.reporter)
+
+    logger_name = str(uuid4())
+    reporter = create_logging_reporter(
+        logger_name=logger_name,
+        level=Status.UNSTABLE,
+        formatter=sentinel.formatter,
+    )
+    assert reporter is reporter
+
+    handlers = logging.getLogger(logger_name).handlers
+    assert len(handlers) == 1
+    handler = handlers[0]
+    assert isinstance(handler, logging.StreamHandler)
+    assert handler.stream is sys.stdout
+    assert handler.level == logging.WARNING
+    assert handler.formatter is sentinel.formatter
+
+
 def test_create_logging_reporter_given_no_parameters(mocker):
     uuid = NonCallableMagicMock(uuid4)
     uuid.__str__.return_value = __name__
     mocker.patch("uuid.uuid4", return_value=uuid)
-    ctor = mocker.patch(f"{PKG}.LoggingReporter", return_value=sentinel.reporter)
+    mocker.patch(f"{PKG}.LoggingReporter", return_value=sentinel.reporter)
 
     reporter = create_logging_reporter()
     assert reporter is reporter
 
     logger = logging.getLogger(__name__)
-    ctor.assert_called_once_with(logger)
     assert logger.level == logging.INFO
 
     handlers = logger.handlers
@@ -89,4 +108,4 @@ def test_create_logging_reporter_given_no_parameters(mocker):
     handler = handlers[0]
     assert isinstance(handler, logging.StreamHandler)
     assert handler.stream is sys.stdout
-    assert handler.level == logging.NOTSET
+    assert handler.level == logging.INFO

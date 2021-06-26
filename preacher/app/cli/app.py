@@ -1,8 +1,6 @@
 """CLI Application implementation."""
 
-import sys
 from concurrent.futures import Executor
-from logging import StreamHandler
 from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
@@ -120,14 +118,9 @@ def app(
 
 def create_listener(level: Status = Status.SUCCESS, report_dir: Optional[str] = None) -> Listener:
     merging = MergingListener()
-
-    handler = StreamHandler(sys.stdout)
-    handler.setFormatter(ColoredFormatter())
-    merging.append(create_logging_reporting_listener(level=level, handlers=[handler]))
-
+    merging.append(create_logging_reporting_listener(level=level, formatter=ColoredFormatter()))
     if report_dir:
         merging.append(create_html_reporting_listener(report_dir))
-
     return merging
 
 
