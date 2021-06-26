@@ -153,26 +153,29 @@ def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factor
     executor.__exit__.assert_called_once()
 
 
-def test_create_listener_no_report_dir(mocker, merging_listener):
+def test_create_listener_default(mocker, merging_listener):
     logging_factory = mocker.patch(f"{PKG}.create_logging_reporting_listener")
     logging_factory.return_value = sentinel.logging
+    html_factory = mocker.patch(f"{PKG}.create_html_reporting_listener")
 
     create_listener()
 
     merging_listener.append.assert_called_once_with(sentinel.logging)
     logging_factory.assert_called_once_with(logger_name=ANY, level=Status.SUCCESS, handlers=ANY)
+    html_factory.assert_not_called()
 
 
-def test_create_listener_report_dir(mocker, merging_listener, base_dir: str):
+def test_create_listener_with_all_parameters(mocker, merging_listener):
     logging_factory = mocker.patch(f"{PKG}.create_logging_reporting_listener")
     logging_factory.return_value = sentinel.logging
+    html_factory = mocker.patch(f"{PKG}.create_html_reporting_listener")
+    html_factory.return_value = sentinel.html
 
-    report_dir = os.path.join(base_dir, "report")
-    create_listener(level=sentinel.level, report_dir=report_dir)
+    create_listener(level=sentinel.level, report_dir=sentinel.report_dir)
 
-    merging_listener.append.assert_has_calls((call(sentinel.logging), call(ANY)))
+    merging_listener.append.assert_has_calls((call(sentinel.logging), call(sentinel.html)))
     logging_factory.assert_called_once_with(logger_name=ANY, level=sentinel.level, handlers=ANY)
-    assert os.path.isdir(report_dir)
+    html_factory.assert_called_once_with(sentinel.report_dir)
 
 
 def test_create_scheduler(mocker):

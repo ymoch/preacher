@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import List, Optional
 
 from preacher.core.request import Response, ExecutionReport
@@ -25,7 +23,7 @@ class HtmlReportingListener(Listener):
     def on_end(self, status: Status) -> None:
         self._reporter.export_results(self._results)
 
-    @staticmethod
-    def from_path(path: str) -> HtmlReportingListener:
-        reporter = HtmlReporter(path)
-        return HtmlReportingListener(reporter)
+
+def create_html_reporting_listener(path: str):
+    reporter = HtmlReporter(path)
+    return HtmlReportingListener(reporter)

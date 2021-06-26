@@ -28,7 +28,7 @@ def test_create_logging_reporting_listener_given_a_reporter(mocker):
 
 def test_create_logging_reporting_listener_given_reporter_elements(mocker):
     ctor = mocker.patch(f"{PKG}.LoggingReportingListener", return_value=sentinel.listener)
-    reporter_factory = mocker.patch(f'{PKG}.create_logging_reporter')
+    reporter_factory = mocker.patch(f"{PKG}.create_logging_reporter")
     reporter_factory.return_value = sentinel.reporter
 
     listener = create_logging_reporting_listener(
