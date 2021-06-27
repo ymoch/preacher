@@ -1,21 +1,19 @@
 """CLI Application implementation."""
 
-import logging
 from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import compile_scenarios
 from preacher.compilation.yaml import load_from_paths
-from preacher.core.scheduling import Listener, MergingListener, create_scheduler
+from preacher.core.scheduling import create_scheduler
 from preacher.core.status import Status
 from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
-from preacher.presentation.listener import create_html_reporting_listener
-from preacher.presentation.listener import create_logging_reporting_listener
+from preacher.presentation.listener import create_listener
 from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
 from .logging import ColoredFormatter, create_system_logger
 
-__all__ = ["app", "create_listener"]
+__all__ = ["app"]
 
 _REPORT_LOGGER_NAME = "preacher.cli.report.logging"
 
@@ -111,15 +109,3 @@ def app(
         return 1
 
     return 0
-
-
-def create_listener(
-    level: Status = Status.SUCCESS,
-    formatter: Optional[logging.Formatter] = None,
-    report_dir: Optional[str] = None,
-) -> Listener:
-    merging = MergingListener()
-    merging.append(create_logging_reporting_listener(level=level, formatter=formatter))
-    if report_dir:
-        merging.append(create_html_reporting_listener(report_dir))
-    return merging

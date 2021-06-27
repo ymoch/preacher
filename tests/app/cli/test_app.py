@@ -8,15 +8,14 @@ import os
 from concurrent.futures import Executor
 from tempfile import TemporaryDirectory
 from typing import Iterable
-from unittest.mock import NonCallableMock, NonCallableMagicMock, ANY, call, sentinel
+from unittest.mock import NonCallableMock, NonCallableMagicMock, ANY, sentinel
 
 from pytest import fixture
 
 from preacher.app.cli.app import app
-from preacher.app.cli.app import create_listener
 from preacher.app.cli.executor import ExecutorFactory
 from preacher.core.scenario import Scenario
-from preacher.core.scheduling import ScenarioScheduler, MergingListener
+from preacher.core.scheduling import ScenarioScheduler
 from preacher.core.status import Status
 
 PKG = "preacher.app.cli.app"
@@ -46,13 +45,6 @@ def executor_factory(executor):
     factory = NonCallableMock(ExecutorFactory)
     factory.create.return_value = executor
     return factory
-
-
-@fixture
-def merging_listener(mocker):
-    merging = NonCallableMock(MergingListener)
-    mocker.patch(f"{PKG}.MergingListener", return_value=merging)
-    return merging
 
 
 def test_app_normal(mocker, base_dir, executor, executor_factory):
@@ -154,32 +146,3 @@ def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factor
     assert exit_code == 3
 
     executor.__exit__.assert_called_once()
-
-
-def test_create_listener_default(mocker, merging_listener):
-    logging_factory = mocker.patch(f"{PKG}.create_logging_reporting_listener")
-    logging_factory.return_value = sentinel.logging
-    html_factory = mocker.patch(f"{PKG}.create_html_reporting_listener")
-
-    create_listener()
-
-    merging_listener.append.assert_called_once_with(sentinel.logging)
-    logging_factory.assert_called_once_with(level=Status.SUCCESS, formatter=ANY)
-    html_factory.assert_not_called()
-
-
-def test_create_listener_with_all_parameters(mocker, merging_listener):
-    logging_factory = mocker.patch(f"{PKG}.create_logging_reporting_listener")
-    logging_factory.return_value = sentinel.logging
-    html_factory = mocker.patch(f"{PKG}.create_html_reporting_listener")
-    html_factory.return_value = sentinel.html
-
-    create_listener(
-        level=sentinel.level,
-        formatter=sentinel.formatter,
-        report_dir=sentinel.report_dir,
-    )
-
-    merging_listener.append.assert_has_calls((call(sentinel.logging), call(sentinel.html)))
-    logging_factory.assert_called_once_with(level=sentinel.level, formatter=sentinel.formatter)
-    html_factory.assert_called_once_with(sentinel.report_dir)
