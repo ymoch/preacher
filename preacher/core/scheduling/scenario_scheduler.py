@@ -1,15 +1,11 @@
-from concurrent.futures import Executor
 from typing import Iterable, Iterator, Optional
 
-from preacher.core.scenario import CaseRunner
 from preacher.core.scenario import Scenario
 from preacher.core.scenario import ScenarioRunner
 from preacher.core.scenario import ScenarioResult
 from preacher.core.scenario import ScenarioTask
 from preacher.core.scenario.scenario_task import StaticScenarioTask
 from preacher.core.status import Status
-from preacher.core.request import Requester
-from preacher.core.unit import UnitRunner
 from .listener import Listener
 
 
@@ -56,18 +52,3 @@ class ScenarioScheduler:
                 continue
 
             yield self._runner.submit(scenario)
-
-
-def create_scheduler(
-    executor: Executor,
-    listener: Listener,
-    base_url: str,
-    timeout: Optional[float],
-    retry: int,
-    delay: float,
-) -> ScenarioScheduler:
-    requester = Requester(base_url=base_url, timeout=timeout)
-    unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
-    case_runner = CaseRunner(unit_runner=unit_runner, listener=listener)
-    runner = ScenarioRunner(executor=executor, case_runner=case_runner)
-    return ScenarioScheduler(runner=runner, listener=listener)
