@@ -1,5 +1,6 @@
 """CLI Application implementation."""
 
+import logging
 from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
@@ -86,7 +87,7 @@ def app(
         logger=logger,
     )
 
-    listener = create_listener(level, report_dir)
+    listener = create_listener(level=level, formatter=ColoredFormatter(), report_dir=report_dir)
     executor_factory = executor_factory or PROCESS_POOL_FACTORY
     try:
         logger.info("Start running scenarios.")
@@ -112,9 +113,13 @@ def app(
     return 0
 
 
-def create_listener(level: Status = Status.SUCCESS, report_dir: Optional[str] = None) -> Listener:
+def create_listener(
+    level: Status = Status.SUCCESS,
+    formatter: Optional[logging.Formatter] = None,
+    report_dir: Optional[str] = None,
+) -> Listener:
     merging = MergingListener()
-    merging.append(create_logging_reporting_listener(level=level, formatter=ColoredFormatter()))
+    merging.append(create_logging_reporting_listener(level=level, formatter=formatter))
     if report_dir:
         merging.append(create_html_reporting_listener(report_dir))
     return merging

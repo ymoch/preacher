@@ -111,6 +111,11 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
         plugin_manager=sentinel.plugin_manager,
         logger=logger,
     )
+    listener_ctor.assert_called_once_with(
+        level=sentinel.level,
+        formatter=ANY,
+        report_dir=sentinel.report_dir,
+    )
     scheduler_ctor.assert_called_once_with(
         executor=executor,
         listener=sentinel.listener,
@@ -119,7 +124,6 @@ def test_app_normal(mocker, base_dir, executor, executor_factory):
         retry=sentinel.retry,
         delay=sentinel.delay,
     )
-    listener_ctor.assert_called_once_with(sentinel.level, sentinel.report_dir)
     executor_factory.create.assert_called_once_with(sentinel.concurrency)
     scheduler.run.assert_called_once()
     executor.__exit__.assert_called_once()
@@ -170,8 +174,12 @@ def test_create_listener_with_all_parameters(mocker, merging_listener):
     html_factory = mocker.patch(f"{PKG}.create_html_reporting_listener")
     html_factory.return_value = sentinel.html
 
-    create_listener(level=sentinel.level, report_dir=sentinel.report_dir)
+    create_listener(
+        level=sentinel.level,
+        formatter=sentinel.formatter,
+        report_dir=sentinel.report_dir,
+    )
 
     merging_listener.append.assert_has_calls((call(sentinel.logging), call(sentinel.html)))
-    logging_factory.assert_called_once_with(level=sentinel.level, formatter=ANY)
+    logging_factory.assert_called_once_with(level=sentinel.level, formatter=sentinel.formatter)
     html_factory.assert_called_once_with(sentinel.report_dir)
