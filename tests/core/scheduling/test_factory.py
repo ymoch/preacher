@@ -2,7 +2,7 @@ from unittest.mock import sentinel
 
 from preacher.core.scheduling import create_scheduler
 
-PKG = 'preacher.core.scheduling.factory'
+PKG = "preacher.core.scheduling.factory"
 
 
 def test_create_scheduler(mocker):

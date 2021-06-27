@@ -6,7 +6,7 @@ from preacher.core.scheduling import MergingListener
 from preacher.core.status import Status
 from preacher.presentation.listener import create_listener
 
-PKG = 'preacher.presentation.listener.factory'
+PKG = "preacher.presentation.listener.factory"
 
 
 @fixture
