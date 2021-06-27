@@ -10,11 +10,11 @@ from .scenario_scheduler import ScenarioScheduler
 
 def create_scheduler(
     executor: Executor,
-    listener: Listener,
-    base_url: str,
-    timeout: Optional[float],
-    retry: int,
-    delay: float,
+    base_url: str = "",
+    timeout: Optional[float] = None,
+    retry: int = 0,
+    delay: float = 0.1,
+    listener: Optional[Listener] = None,
 ) -> ScenarioScheduler:
     requester = Requester(base_url=base_url, timeout=timeout)
     unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
