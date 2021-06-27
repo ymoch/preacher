@@ -14,7 +14,6 @@ from pytest import fixture
 
 from preacher.app.cli.app import app
 from preacher.app.cli.app import create_listener
-from preacher.app.cli.app import create_scheduler
 from preacher.app.cli.executor import ExecutorFactory
 from preacher.core.scenario import Scenario
 from preacher.core.scheduling import ScenarioScheduler, MergingListener
@@ -134,7 +133,7 @@ def test_app_plugin_loading_fails(mocker):
 def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
     scheduler = NonCallableMock(ScenarioScheduler)
     scheduler.run.return_value = Status.UNSTABLE
-    mocker.patch(f"{PKG}.ScenarioScheduler", return_value=scheduler)
+    mocker.patch(f"{PKG}.create_scheduler", return_value=scheduler)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 1
@@ -145,7 +144,7 @@ def test_app_scenario_running_not_succeeds(mocker, executor_factory, executor):
 def test_app_scenario_running_raises_an_unexpected_error(mocker, executor_factory, executor):
     scheduler = NonCallableMock(ScenarioScheduler)
     scheduler.run.side_effect = RuntimeError
-    mocker.patch(f"{PKG}.ScenarioScheduler", return_value=scheduler)
+    mocker.patch(f"{PKG}.create_scheduler", return_value=scheduler)
 
     exit_code = app(executor_factory=executor_factory)
     assert exit_code == 3
@@ -176,37 +175,3 @@ def test_create_listener_with_all_parameters(mocker, merging_listener):
     merging_listener.append.assert_has_calls((call(sentinel.logging), call(sentinel.html)))
     logging_factory.assert_called_once_with(level=sentinel.level, formatter=ANY)
     html_factory.assert_called_once_with(sentinel.report_dir)
-
-
-def test_create_scheduler(mocker):
-    requester_ctor = mocker.patch(f"{PKG}.Requester", return_value=sentinel.requester)
-    unit_runner_ctor = mocker.patch(f"{PKG}.UnitRunner", return_value=sentinel.unit_runner)
-    case_runner_ctor = mocker.patch(f"{PKG}.CaseRunner", return_value=sentinel.case_runner)
-    runner_ctor = mocker.patch(f"{PKG}.ScenarioRunner", return_value=sentinel.runner)
-    scheduler_ctor = mocker.patch(f"{PKG}.ScenarioScheduler", return_value=sentinel.scheduler)
-
-    scheduler = create_scheduler(
-        executor=sentinel.executor,
-        listener=sentinel.listener,
-        base_url=sentinel.base_url,
-        timeout=sentinel.timeout,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-    )
-    assert scheduler is sentinel.scheduler
-
-    requester_ctor.assert_called_once_with(base_url=sentinel.base_url, timeout=sentinel.timeout)
-    unit_runner_ctor.assert_called_once_with(
-        requester=sentinel.requester,
-        retry=sentinel.retry,
-        delay=sentinel.delay,
-    )
-    case_runner_ctor.assert_called_once_with(
-        unit_runner=sentinel.unit_runner,
-        listener=sentinel.listener,
-    )
-    runner_ctor.assert_called_once_with(
-        executor=sentinel.executor,
-        case_runner=sentinel.case_runner,
-    )
-    scheduler_ctor.assert_called_once_with(runner=sentinel.runner, listener=sentinel.listener)

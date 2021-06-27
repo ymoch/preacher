@@ -1,16 +1,12 @@
 """CLI Application implementation."""
 
-from concurrent.futures import Executor
 from typing import Iterable, Optional, Sequence
 
 from preacher.compilation.argument import Arguments
 from preacher.compilation.scenario import compile_scenarios
 from preacher.compilation.yaml import load_from_paths
-from preacher.core.request import Requester
-from preacher.core.scenario import ScenarioRunner, CaseRunner
-from preacher.core.scheduling import ScenarioScheduler, Listener, MergingListener
+from preacher.core.scheduling import Listener, MergingListener, create_scheduler
 from preacher.core.status import Status
-from preacher.core.unit import UnitRunner
 from preacher.plugin.loader import load_plugins
 from preacher.plugin.manager import get_plugin_manager
 from preacher.presentation.listener import create_html_reporting_listener
@@ -18,7 +14,7 @@ from preacher.presentation.listener import create_logging_reporting_listener
 from .executor import ExecutorFactory, PROCESS_POOL_FACTORY
 from .logging import ColoredFormatter, create_system_logger
 
-__all__ = ["app", "create_listener", "create_scheduler"]
+__all__ = ["app", "create_listener"]
 
 _REPORT_LOGGER_NAME = "preacher.cli.report.logging"
 
@@ -122,18 +118,3 @@ def create_listener(level: Status = Status.SUCCESS, report_dir: Optional[str] = 
     if report_dir:
         merging.append(create_html_reporting_listener(report_dir))
     return merging
-
-
-def create_scheduler(
-    executor: Executor,
-    listener: Listener,
-    base_url: str,
-    timeout: Optional[float],
-    retry: int,
-    delay: float,
-) -> ScenarioScheduler:
-    requester = Requester(base_url=base_url, timeout=timeout)
-    unit_runner = UnitRunner(requester=requester, retry=retry, delay=delay)
-    case_runner = CaseRunner(unit_runner=unit_runner, listener=listener)
-    runner = ScenarioRunner(executor=executor, case_runner=case_runner)
-    return ScenarioScheduler(runner=runner, listener=listener)
