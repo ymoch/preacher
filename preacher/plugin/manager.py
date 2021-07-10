@@ -15,8 +15,4 @@ def get_plugin_manager() -> PluginManager:
     manager.add_hookspecs(hookspec)
     manager.load_setuptools_entrypoints("preacher")
 
-    from . import impl
-
-    manager.register(impl)
-
     return manager
