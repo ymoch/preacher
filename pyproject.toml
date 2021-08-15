@@ -43,12 +43,12 @@ pytest-cov = "^2.12.1"
 types-python-dateutil = "^0.1.2"
 types-pyyaml = "^0.1.6"
 types-requests = "^0.1.9"
-black = "^21.6b0"
+black = "^21.7b0"
 flask = "^2.0.1"
-sphinx = "^4.0.2"
+sphinx = "^4.1.2"
 sphinx-intl = "^2.0.1"
-toml = "^0.10.2"
-codecov = "^2.1.11"
+tomli = "^1.2.1"
+codecov = "^2.1.12"
 
 [tool.pytest.ini_options]
 testpaths = ["preacher", "tests"]
