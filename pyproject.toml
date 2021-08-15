@@ -47,7 +47,7 @@ black = "^21.7b0"
 flask = "^2.0.1"
 sphinx = "^4.1.2"
 sphinx-intl = "^2.0.1"
-toml = "^0.10.2"
+tomli = "^1.2.1"
 codecov = "^2.1.12"
 
 [tool.pytest.ini_options]
