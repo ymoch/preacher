@@ -30,7 +30,7 @@ copyright = "2019, Yu Mochizuki"
 author = "Yu Mochizuki"
 
 # The full version, including alpha/beta/rc tags
-with open(os.path.join(_PROJECT_ROOT_PATH, "pyproject.toml"), 'rb') as f:
+with open(os.path.join(_PROJECT_ROOT_PATH, "pyproject.toml"), "rb") as f:
     project_properties = tomli.load(f)
 
 release = str(project_properties["tool"]["poetry"]["version"])
