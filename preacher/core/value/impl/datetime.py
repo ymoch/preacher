@@ -14,6 +14,19 @@ from .static import StaticValue
 
 class OnlyTimeDatetime(Value[datetime]):
     def __init__(self, tm: time):
+        self._value = RelativeDatetime(tm=tm)
+
+    @property
+    def type(self) -> Type[datetime]:
+        return self._value.type
+
+    def resolve(self, context: Optional[ValueContext] = None) -> datetime:
+        return self._value.resolve(context)
+
+
+class RelativeDatetime(Value[datetime]):
+    def __init__(self, delta: Optional[timedelta] = None, tm: Optional[time] = None):
+        self._delta = delta or timedelta()
         self._tm = tm
 
     @property
@@ -22,20 +35,10 @@ class OnlyTimeDatetime(Value[datetime]):
 
     def resolve(self, context: Optional[ValueContext] = None) -> datetime:
         origin = _select_origin(context)
-        return datetime.combine(origin.date(), self._tm)
-
-
-class RelativeDatetime(Value[datetime]):
-    def __init__(self, delta: Optional[timedelta] = None):
-        self._delta = delta or timedelta()
-
-    @property
-    def type(self) -> Type[datetime]:
-        return datetime
-
-    def resolve(self, context: Optional[ValueContext] = None) -> datetime:
-        origin = _select_origin(context)
-        return origin + self._delta
+        resolved = origin + self._delta
+        if self._tm:
+            resolved = datetime.combine(resolved.date(), self._tm)
+        return resolved
 
 
 class DatetimeValueWithFormat(Value[DatetimeWithFormat]):
