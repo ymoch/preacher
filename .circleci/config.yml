@@ -93,24 +93,27 @@ jobs:
       - run:
           name: Select the image tag
           command: |
-            IMAGE_TAG=latet
-            if [[ -z "${CIRCLE_TAG}" ]]; then
+            IMAGE_TAG=latest
+            if [[ -n "${CIRCLE_TAG}" ]]; then
               IMAGE_TAG="{CIRCLE_TAG}"
             fi
-            echo ${IMAGE_TAG}
             export IMAGE_TAG
       - run:
           name: Push to Docker Hub
           command: |
-            docker tag preacher ymoch/preacher:latest
+            IMAGE="ymoch/preacher:${IMAGE_TAG}"
+
+            docker tag preacher "${IMAGE}"
             echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
-            docker push ymoch/preacher:latest
+            docker push "${IMAGE}"
       - run:
           name: Push to Public ECR
           command: |
-            docker tag preacher public.ecr.aws/ymoch/preacher:latest
+            IMAGE="public.ecr.aws/ymoch/preacher:${IMAGE_TAG}"
+
+            docker tag preacher "${IMAGE}"
             aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/ymoch
-            docker push public.ecr.aws/ymoch/preacher:latest
+            docker push "${IMAGE}"
 
   deploy:
     docker:
