@@ -12,18 +12,6 @@ from preacher.core.value import Value, ValueContext
 from .static import StaticValue
 
 
-class OnlyTimeDatetime(Value[datetime]):
-    def __init__(self, tm: time):
-        self._value = RelativeDatetime(tm=tm)
-
-    @property
-    def type(self) -> Type[datetime]:
-        return self._value.type
-
-    def resolve(self, context: Optional[ValueContext] = None) -> datetime:
-        return self._value.resolve(context)
-
-
 class RelativeDatetime(Value[datetime]):
     def __init__(self, delta: Optional[timedelta] = None, tm: Optional[time] = None):
         self._delta = delta or timedelta()
