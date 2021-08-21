@@ -81,12 +81,15 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
-      - command: docker build -t preacher .
-      - command: docker tag preacher ymoch/preacher:latest
-      - command: |
-          echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
-          docker push ymoch/preacher:latest
-      - command: docker tag preacher public.ecr.aws/ymoch/preacher:latest
+      - run:
+          name: Build Docker image
+          command: docker build -t preacher .
+      - run:
+          name: Push to Docker Hub
+          command: |
+            docker tag preacher ymoch/preacher:latest
+            echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
+            docker push ymoch/preacher:latest
 
   deploy:
     docker:
