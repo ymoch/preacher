@@ -84,6 +84,10 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Login to Public ECR
+          command: |
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/ymoch
+      - run:
           name: Build Docker image
           command: docker build -t preacher .
       - run:
