@@ -79,13 +79,14 @@ jobs:
 
   image-push-latest:
     docker:
-      - image: circleci/buildpack-deps:stretch
+      - image: circleci/python:3.9
     steps:
       - checkout
       - setup_remote_docker
       - run:
           name: Login to Public ECR
           command: |
+            pip install awscli==1.20.26
             aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/ymoch
       - run:
           name: Build Docker image
