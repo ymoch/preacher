@@ -91,6 +91,15 @@ jobs:
           name: Build Docker image
           command: docker build -t preacher .
       - run:
+          name: Select the image tag
+          command: |
+            IMAGE_TAG=latet
+            if [[ -z "${CIRCLE_TAG}" ]]; then
+              IMAGE_TAG="{CIRCLE_TAG}"
+            fi
+            echo ${IMAGE_TAG}
+            export IMAGE_TAG
+      - run:
           name: Push to Docker Hub
           command: |
             docker tag preacher ymoch/preacher:latest
