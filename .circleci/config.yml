@@ -23,8 +23,8 @@ workflows:
           filters:
             branches:
               # TODO enable below
-              # only: master
-              only: /(master|main)/
+              # only: /(master|main)/
+              only: /.*/
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
           requires:
