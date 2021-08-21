@@ -77,7 +77,7 @@ def parse_datetime_value_with_format(
 
     try:
         tm = parse_time(value)
-        return DatetimeValueWithFormat(OnlyTimeDatetime(tm), fmt)
+        return DatetimeValueWithFormat(RelativeDatetime(tm=tm), fmt)
     except ValueError:
         pass  # Try to compile value as another format.
 

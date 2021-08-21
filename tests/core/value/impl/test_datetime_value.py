@@ -115,14 +115,14 @@ def test_parse_datetime_value_with_format_given_an_aware_datetime(mocker):
 
 
 def test_parse_datetime_value_with_format_given_time(mocker):
-    dt_ctor = mocker.patch(f"{PKG}.OnlyTimeDatetime", return_value=sentinel.dt)
+    dt_ctor = mocker.patch(f"{PKG}.RelativeDatetime", return_value=sentinel.dt)
     value_ctor = mocker.patch(f"{PKG}.DatetimeValueWithFormat", return_value=sentinel.value)
 
     obj = "01:02+09:00"
     value = parse_datetime_value_with_format(obj, sentinel.fmt)
     assert value is sentinel.value
 
-    dt_ctor.assert_called_once_with(time(1, 2, tzinfo=timezone(timedelta(hours=9))))
+    dt_ctor.assert_called_once_with(tm=time(1, 2, tzinfo=timezone(timedelta(hours=9))))
     value_ctor.assert_called_once_with(sentinel.dt, sentinel.fmt)
 
 
