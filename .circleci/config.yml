@@ -8,14 +8,28 @@ workflows:
           filters:
             tags:
               only: /.*/
+
       - test-38:
           filters:
             tags:
               only: /.*/
+
       - test-37:
           filters:
             tags:
               only: /.*/
+
+      - image-push:
+          filters:
+            branches:
+              only: /(master|main)/
+            tags:
+              only: /^[0-9]+(\.[0-9]+)*$/
+          requires:
+            - test-39
+            - test-38
+            - test-37
+
       - deploy:
           filters:
             branches:
@@ -61,6 +75,39 @@ jobs:
       - example-test
       - document-build
 
+  image-push:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install aws-cli
+          command: |
+            pip install awscli==1.20.26
+      - run:
+          name: Build Docker image
+          command: docker build -t preacher .
+      - run:
+          name: Push Docker image
+          command: |
+            IMAGE_TAG=latest
+            if [[ -n "${CIRCLE_TAG}" ]]; then
+              IMAGE_TAG="${CIRCLE_TAG}"
+            fi
+            echo "${IMAGE_TAG}"
+            export IMAGE_TAG
+
+            DOCKER_HUB_IMAGE="ymoch/preacher:${IMAGE_TAG}"
+            docker tag preacher "${DOCKER_HUB_IMAGE}"
+            echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
+            docker push "${DOCKER_HUB_IMAGE}"
+
+            ECR_PUBLIC_IMAGE="public.ecr.aws/ymoch/preacher:${IMAGE_TAG}"
+            docker tag preacher "${ECR_PUBLIC_IMAGE}"
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/ymoch
+            docker push "${ECR_PUBLIC_IMAGE}"
+
   deploy:
     docker:
       - image: circleci/python:3.7
@@ -80,6 +127,7 @@ commands:
       - run:
           name: Install Poetry
           command: curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+
   bootstrapping-test:
     description: Bootstrapping test
     steps:
@@ -89,6 +137,7 @@ commands:
             poetry install --no-dev
             poetry run preacher-cli --version
             poetry run preacher-cli --help
+
   unit-test:
     description: Unit test
     steps:
@@ -102,6 +151,7 @@ commands:
           name: Report
           command: |
             poetry run codecov
+
   example-test:
     description: Example test
     steps:
@@ -135,6 +185,7 @@ commands:
 
             ls report/
             cat examples/server.log
+
   document-build:
     description: Build documents
     steps:
