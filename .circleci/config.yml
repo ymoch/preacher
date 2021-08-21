@@ -95,8 +95,9 @@ jobs:
           command: |
             IMAGE_TAG=latest
             if [[ -n "${CIRCLE_TAG}" ]]; then
-              IMAGE_TAG="{CIRCLE_TAG}"
+              IMAGE_TAG="${CIRCLE_TAG}"
             fi
+            echo "${IMAGE_TAG}"
             export IMAGE_TAG
       - run:
           name: Push to Docker Hub
