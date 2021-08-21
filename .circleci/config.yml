@@ -22,9 +22,7 @@ workflows:
       - image-push:
           filters:
             branches:
-              # TODO enable below
-              # only: /(master|main)/
-              only: /.*/
+              only: /(master|main)/
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
           requires:
