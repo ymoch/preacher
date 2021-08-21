@@ -1,3 +1,4 @@
+from collections import deque
 from datetime import time, datetime, timedelta
 from typing import Optional, Type
 
@@ -62,18 +63,42 @@ def parse_datetime_value_with_format(
     # Try to parse `obj` as a datetime-compatible string below.
     if not isinstance(value, str):
         raise ValueError(f"Must be a datetime-compatible value, but given {type(value)}: {value}")
+    relative_datetime = parse_relative_datetime_value(value)
+    return DatetimeValueWithFormat(relative_datetime, fmt)
 
-    try:
-        tm = parse_time(value)
-        return DatetimeValueWithFormat(RelativeDatetime(tm=tm), fmt)
-    except ValueError:
-        pass  # Try to compile value as another format.
 
-    try:
-        delta = parse_timedelta(value)
-        return DatetimeValueWithFormat(RelativeDatetime(delta), fmt)
-    except ValueError:
-        raise ValueError(f"Invalid format: {value}")
+def parse_relative_datetime_value(value: str) -> RelativeDatetime:
+    delta: timedelta = timedelta()
+    tm: Optional[time] = None
+
+    words = deque(value.split())
+    while words:
+        word = words.popleft()
+
+        # time
+        try:
+            tm = parse_time(word)
+            continue
+        except ValueError:
+            pass  # Try to compile value as another format.
+
+        # 1 word timedelta
+        try:
+            delta += parse_timedelta(word)
+            continue
+        except ValueError:
+            pass  # Try to compile value as another format.
+
+        # 2 words timedelta
+        if not words:
+            raise ValueError(f"Invalid format: {value}")
+        word += words.popleft()
+        try:
+            delta += parse_timedelta(word)
+        except ValueError:
+            raise ValueError(f"Invalid format: {value}")
+
+    return RelativeDatetime(delta, tm)
 
 
 def _select_origin(context: Optional[ValueContext]) -> datetime:

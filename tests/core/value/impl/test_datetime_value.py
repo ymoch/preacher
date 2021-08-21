@@ -110,31 +110,34 @@ def test_parse_datetime_value_with_format_given_an_aware_datetime(mocker):
     value_ctor.assert_called_once_with(sentinel.dt)
 
 
-def test_parse_datetime_value_with_format_given_time(mocker):
+def test_parse_datetime_value_with_format_empty(mocker):
     dt_ctor = mocker.patch(f"{PKG}.RelativeDatetime", return_value=sentinel.dt)
     value_ctor = mocker.patch(f"{PKG}.DatetimeValueWithFormat", return_value=sentinel.value)
 
-    obj = "01:02+09:00"
+    obj = " 　"  # contains a full-width space character.
     value = parse_datetime_value_with_format(obj, sentinel.fmt)
     assert value is sentinel.value
 
-    dt_ctor.assert_called_once_with(tm=time(1, 2, tzinfo=timezone(timedelta(hours=9))))
+    dt_ctor.assert_called_once_with(timedelta(), None)
     value_ctor.assert_called_once_with(sentinel.dt, sentinel.fmt)
 
 
-def test_parse_datetime_value_with_format_given_timedelta(mocker):
+def test_parse_datetime_value_with_format_combined(mocker):
     dt_ctor = mocker.patch(f"{PKG}.RelativeDatetime", return_value=sentinel.dt)
     value_ctor = mocker.patch(f"{PKG}.DatetimeValueWithFormat", return_value=sentinel.value)
 
-    obj = "+1 day"
+    obj = "+1 hour 12:45-15:00 -1minutes 01:02+09:00"
     value = parse_datetime_value_with_format(obj, sentinel.fmt)
     assert value is sentinel.value
 
-    dt_ctor.assert_called_once_with(timedelta(days=1))
+    dt_ctor.assert_called_once_with(
+        timedelta(minutes=59),
+        time(1, 2, tzinfo=timezone(timedelta(hours=9))),
+    )
     value_ctor.assert_called_once_with(sentinel.dt, sentinel.fmt)
 
 
-@mark.parametrize("value", (None, 1, [], "xyz"))
+@mark.parametrize("value", (None, 1, [], "xyz", "+1", "-1 xyz"))
 def test_parse_datetime_value_with_format_given_invalid_one(value):
     with raises(ValueError):
         parse_datetime_value_with_format(value)
