@@ -19,14 +19,14 @@ workflows:
             tags:
               only: /.*/
 
-      - image-push-latest:
+      - image-push:
           filters:
             branches:
               # TODO enable below
               # only: master
-              only: /.*/
+              only: /(master|main)/
             tags:
-              ignore: /.*/
+              only: /^[0-9]+(\.[0-9]+)*$/
           requires:
             - test-39
             - test-38
@@ -77,7 +77,7 @@ jobs:
       - example-test
       - document-build
 
-  image-push-latest:
+  image-push:
     docker:
       - image: circleci/python:3.9
     steps:
@@ -91,7 +91,7 @@ jobs:
           name: Build Docker image
           command: docker build -t preacher .
       - run:
-          name: Select the image tag
+          name: Push Docker image
           command: |
             IMAGE_TAG=latest
             if [[ -n "${CIRCLE_TAG}" ]]; then
@@ -99,22 +99,16 @@ jobs:
             fi
             echo "${IMAGE_TAG}"
             export IMAGE_TAG
-      - run:
-          name: Push to Docker Hub
-          command: |
-            IMAGE="ymoch/preacher:${IMAGE_TAG}"
 
-            docker tag preacher "${IMAGE}"
+            DOCKER_HUB_IMAGE="ymoch/preacher:${IMAGE_TAG}"
+            docker tag preacher "${DOCKER_HUB_IMAGE}"
             echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
-            docker push "${IMAGE}"
-      - run:
-          name: Push to Public ECR
-          command: |
-            IMAGE="public.ecr.aws/ymoch/preacher:${IMAGE_TAG}"
+            docker push "${DOCKER_HUB_IMAGE}"
 
-            docker tag preacher "${IMAGE}"
+            ECR_PUBLIC_IMAGE="public.ecr.aws/ymoch/preacher:${IMAGE_TAG}"
+            docker tag preacher "${ECR_PUBLIC_IMAGE}"
             aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/ymoch
-            docker push "${IMAGE}"
+            docker push "${ECR_PUBLIC_IMAGE}"
 
   deploy:
     docker:
