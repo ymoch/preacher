@@ -82,8 +82,7 @@ When simply given as a string, the value is regarded as ``delta``.
 
 Duration
 ^^^^^^^^
-A ``Duration`` is given as a string value in the particular format,
-which is a combination of one or more string values in particular formats.
+A ``Duration`` is given as a combination of one or more string values in particular formats.
 
 - When given time such like ``12:34+01:00``, then uses the combination of the relative date and the given time.
     - When given plural time like ``12:34+01:00 23:45+02:00``,
