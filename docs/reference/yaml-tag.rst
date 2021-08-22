@@ -82,18 +82,33 @@ When simply given as a string, the value is regarded as ``delta``.
 
 Duration
 ^^^^^^^^
-A ``Duration`` is given as a string value in the particular format.
+A ``Duration`` is given as a combination of one or more string values in particular formats.
 
-- When given ``now``, then uses the datetime just when the request starts.
-- When given time such like ``12:34+0100``,
-  then uses the datetime which is the combination of
-  date that the requests starts and the given time.
+- When given time such like ``12:34+01:00``, then uses the combination of the relative date and the given time.
+    - When given plural time like ``12:34+01:00 23:45+02:00``,
+      even though it has no reasonable meaning,
+      then uses the last part (``23:45+02:00``).
 - When given an offset, then uses the datetime that the request starts.
     - Days, hours, minutes and seconds offsets are available.
-    - When given a positive offset like ``1 day`` or ``+2 hours``,
-      then uses the future datetime.
-    - When given a negative offset like ``-1 minute`` or ``-2 seconds``,
-      then uses the past datetime.
+    - When given a positive offset like ``1 day`` or ``+2 hours``, then uses the future datetime.
+    - When given a negative offset like ``-1 minute`` or ``-2 seconds``, then uses the past datetime.
+    - When given plural offsets like, then uses the total offset.
+        - ``1 hour 2 minutes`` means "62 minutes later".
+        - Note that ``-1 hour 2 minutes`` means "58 minutes ago".
+          It is interpreted as ``-1 hour`` *plus* ``+2 minutes``.
+- ``now`` means zero offset, the same as ``0 second``.
+
+Here are some examples:
+
+- ``now``: just the evaluation starts.
+- ``1 day``: after a day later.
+- ``+1 hour +1 minute``: an hour and a minute later.
+- ``-1 hour -2 minutes``: an hour and two minutes ago.
+- ``12:34+01:00``: the combination of the date that the evaluation starts
+  and time 12:34 with an hour time difference between London.
+- ``+1 day +2 hour 12:34+01:00``:
+  the combination of the date that is an hour and two minute later
+  and time 12:34 with an hour time difference between London.
 
 .. note::
 

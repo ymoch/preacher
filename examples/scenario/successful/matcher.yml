@@ -46,7 +46,9 @@ cases:
         - describe: .now
           should:
             - be_before: 1 minute
+            - be_before: 1 minute -1 second
             - be_after: -2 minutes
+            - be_after: -2 minutes 1 second
             - be_after: 1 second  # Must be processed after 1 seconds.
             - be_after: !relative_datetime 1 second
 
