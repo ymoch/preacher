@@ -26,14 +26,14 @@ def executor():
 
 
 def test_given_no_cases(executor):
-    case_runner = NonCallableMock(CaseRunner)
-    task = OrderedCasesTask(executor, case_runner, [])
+    runner = NonCallableMock(CaseRunner)
+    task = OrderedCasesTask(executor, runner, [])
     result = task.result()
     assert result.status is Status.SKIPPED
     assert not result.items
 
     executor.submit.assert_called_once()
-    case_runner.run.assert_not_called()
+    runner.run.assert_not_called()
 
 
 def test_given_cases(mocker, executor):
@@ -45,37 +45,22 @@ def test_given_cases(mocker, executor):
         NonCallableMock(CaseResult, status=Status.SUCCESS),
         NonCallableMock(CaseResult, status=Status.UNSTABLE),
     ]
-    case_runner = NonCallableMock(CaseRunner)
-    case_runner.run.side_effect = case_results
+    runner = NonCallableMock(CaseRunner)
+    runner.run.side_effect = case_results
     cases = [sentinel.case1, sentinel.case2]
 
-    task = OrderedCasesTask(executor, case_runner, cases, 1, foo="bar")
+    task = OrderedCasesTask(executor, runner, cases)
     result = task.result()
     assert result.status is Status.UNSTABLE
     assert result.items == case_results
 
     executor.submit.assert_called_once()
-    case_runner.run.assert_has_calls(
+    runner.run.assert_has_calls(
         [
-            call(sentinel.case1, 1, foo="bar", session=session),
-            call(sentinel.case2, 1, foo="bar", session=session),
+            call(sentinel.case1, session=session),
+            call(sentinel.case2, session=session),
         ]
     )
 
     session_ctor.assert_called_once()
     session.__exit__.assert_called()
-
-
-def test_given_cases_with_session(mocker, executor):
-    session_ctor = mocker.patch(f"{PACKAGE}.Session")
-
-    case_results = [MagicMock(CaseResult, status=Status.SUCCESS)]
-    case_runner = NonCallableMock(CaseRunner)
-    case_runner.run.side_effect = case_results
-    cases = [sentinel.case]
-
-    task = OrderedCasesTask(executor, case_runner, cases, 2, session=sentinel.session)
-    task.result()
-
-    case_runner.run.assert_called_with(sentinel.case, 2, session=sentinel.session)
-    session_ctor.assert_not_called()
