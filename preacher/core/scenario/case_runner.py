@@ -1,5 +1,3 @@
-from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Dict, Optional
 
 import requests
@@ -12,12 +10,6 @@ from preacher.core.verification import Verification
 from .case import Case
 from .case_listener import CaseListener
 from .case_result import CaseResult
-
-
-@dataclass(frozen=True)
-class CaseContext:
-    starts: datetime = field(default_factory=now)
-    base_url: str = ""
 
 
 class CaseRunner:
