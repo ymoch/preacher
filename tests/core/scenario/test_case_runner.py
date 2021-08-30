@@ -8,9 +8,12 @@ from preacher.core.scenario.case import Case
 from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
+from preacher.core.value import ValueContext
 from preacher.core.verification import Description
 from preacher.core.verification import ResponseVerification
 from preacher.core.verification import Verification
+
+PKG = "preacher.core.scenario.case_runner"
 
 
 def _retry(func, *_args, **_kwargs):
@@ -60,7 +63,12 @@ def test_when_disabled():
         ),
     ),
 )
-def test_given_bad_condition(condition_verifications, expected_status):
+def test_given_bad_condition(mocker, condition_verifications, expected_status):
+    mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
+
+    analyze_context = mocker.patch(f"{PKG}.MappingAnalyzer")
+    analyze_context.return_value = sentinel.context_analyzer
+
     conditions = [
         NonCallableMock(Description, verify=Mock(return_value=v)) for v in condition_verifications
     ]
@@ -71,13 +79,23 @@ def test_given_bad_condition(condition_verifications, expected_status):
         response=sentinel.response,
     )
 
-    unit_runner = NonCallableMock(UnitRunner)
+    unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
     listener = NonCallableMock(CaseListener)
     runner = CaseRunner(unit_runner=unit_runner, listener=listener)
     result = runner.run(case)
 
     assert result.label is sentinel.label
     assert result.status is expected_status
+
+    for condition in conditions:
+        condition.verify.assert_called_once_with(
+            sentinel.context_analyzer,
+            ValueContext(origin_datetime=sentinel.starts),
+        )
+
+    analyze_context.assert_called_once_with(
+        {"starts": sentinel.starts, "base_url": sentinel.base_url}
+    )
 
     unit_runner.run.assert_not_called()
     listener.on_execution.assert_not_called()

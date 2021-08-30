@@ -4,7 +4,7 @@ from pytest import mark
 
 from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.scenario.scenario import Scenario
-from preacher.core.scenario.scenario_runner import ScenarioRunner, ScenarioContext
+from preacher.core.scenario.scenario_runner import ScenarioRunner
 from preacher.core.status import Status
 from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
@@ -20,10 +20,9 @@ PKG = "preacher.core.scenario.scenario_runner"
     ),
 )
 def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
-    context = ScenarioContext(starts=sentinel.starts)
-    context_ctor = mocker.patch(f"{PKG}.ScenarioContext", return_value=context)
+    mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
 
-    analyze_context = mocker.patch(f"{PKG}.analyze_data_obj")
+    analyze_context = mocker.patch(f"{PKG}.MappingAnalyzer")
     analyze_context.return_value = sentinel.context_analyzer
 
     ordered_cases_task_ctor = mocker.patch(f"{PKG}.OrderedCasesTask")
@@ -59,8 +58,9 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
             ValueContext(origin_datetime=sentinel.starts),
         )
 
-    context_ctor.assert_called_once_with(base_url=sentinel.base_url)
-    analyze_context.assert_called_once_with(context)
+    analyze_context.assert_called_once_with(
+        {"starts": sentinel.starts, "base_url": sentinel.base_url}
+    )
     ordered_cases_task_ctor.assert_not_called()
     unordered_cases_task_ctor.assert_not_called()
 
