@@ -1,5 +1,5 @@
 from concurrent.futures import Executor
-from typing import Callable, Mapping
+from typing import Callable, Dict
 
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
@@ -20,12 +20,12 @@ class ScenarioRunner:
 
     def submit(self, scenario: Scenario) -> ScenarioTask:
         starts = now()
-        context: Mapping[str, object] = {
+        current_context: Dict[str, object] = {
             "starts": starts,
             "base_url": self._case_runner.base_url,
         }
 
-        context_analyzer = MappingAnalyzer(context)
+        context_analyzer = MappingAnalyzer(current_context)
         value_context = ValueContext(origin_datetime=starts)
         conditions = Verification.collect(
             condition.verify(context_analyzer, value_context) for condition in scenario.conditions

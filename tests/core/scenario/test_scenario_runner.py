@@ -20,7 +20,7 @@ PKG = "preacher.core.scenario.scenario_runner"
     ),
 )
 def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
-    mocker.patch(f"{PKG}.now", return_value=sentinel.now)
+    mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
 
     analyze_context = mocker.patch(f"{PKG}.MappingAnalyzer")
     analyze_context.return_value = sentinel.context_analyzer
@@ -55,11 +55,11 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     for condition in conditions:
         condition.verify.assert_called_once_with(
             sentinel.context_analyzer,
-            ValueContext(origin_datetime=sentinel.now),
+            ValueContext(origin_datetime=sentinel.starts),
         )
 
     analyze_context.assert_called_once_with(
-        {"starts": sentinel.now, "base_url": sentinel.base_url}
+        {"starts": sentinel.starts, "base_url": sentinel.base_url}
     )
     ordered_cases_task_ctor.assert_not_called()
     unordered_cases_task_ctor.assert_not_called()
