@@ -10,6 +10,7 @@ from preacher.core.verification import Verification
 from .case import Case
 from .case_listener import CaseListener
 from .case_result import CaseResult
+from .context import CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 
 
 class CaseRunner:
@@ -32,8 +33,8 @@ class CaseRunner:
 
         starts = now()
         current_context: Dict[str, object] = context or {}
-        current_context["base_url"] = self.base_url
-        current_context["starts"] = starts
+        current_context[CONTEXT_KEY_STARTS] = starts
+        current_context[CONTEXT_KEY_BASE_URL] = self.base_url
 
         context_analyzer = MappingAnalyzer(current_context)
         value_context = ValueContext(origin_datetime=starts)

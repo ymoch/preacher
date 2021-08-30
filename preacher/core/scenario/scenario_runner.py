@@ -7,6 +7,7 @@ from preacher.core.status import Status
 from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
 from .case_runner import CaseRunner
+from .context import CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from .scenario import Scenario
 from .scenario_result import ScenarioResult
 from .scenario_task import ScenarioTask, StaticScenarioTask, RunningScenarioTask
@@ -21,8 +22,8 @@ class ScenarioRunner:
     def submit(self, scenario: Scenario) -> ScenarioTask:
         starts = now()
         current_context: Dict[str, object] = {
-            "starts": starts,
-            "base_url": self._case_runner.base_url,
+            CONTEXT_KEY_STARTS: starts,
+            CONTEXT_KEY_BASE_URL: self._case_runner.base_url,
         }
 
         context_analyzer = MappingAnalyzer(current_context)
