@@ -53,7 +53,7 @@ jobs:
       - example-test
       - document-build
 
-  test-38:  # Primary
+  test-38:
     docker:
       - image: circleci/python:3.8
     steps:
