@@ -10,7 +10,7 @@ from preacher.core.verification import Verification
 from .case import Case
 from .case_listener import CaseListener
 from .case_result import CaseResult
-from .context import CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
+from .context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 
 
 class CaseRunner:
@@ -26,7 +26,7 @@ class CaseRunner:
         self,
         case: Case,
         session: Optional[requests.Session] = None,
-        context: Optional[Dict[str, object]] = None,
+        context: Optional[Context] = None,
     ) -> CaseResult:
         if not case.enabled:
             return CaseResult(label=case.label)

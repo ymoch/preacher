@@ -1,5 +1,4 @@
 from concurrent.futures import Executor
-from typing import Dict
 
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
@@ -7,7 +6,7 @@ from preacher.core.status import Status
 from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
 from .case_runner import CaseRunner
-from .context import CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
+from .context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from .scenario import Scenario
 from .scenario_result import ScenarioResult
 from .scenario_task import ScenarioTask, StaticScenarioTask, RunningScenarioTask
@@ -21,7 +20,7 @@ class ScenarioRunner:
 
     def submit(self, scenario: Scenario) -> ScenarioTask:
         starts = now()
-        current_context: Dict[str, object] = {
+        current_context: Context = {
             CONTEXT_KEY_STARTS: starts,
             CONTEXT_KEY_BASE_URL: self._case_runner.base_url,
         }
