@@ -5,6 +5,7 @@ from typing import Optional, Tuple
 
 import requests
 
+from preacher.core.context import CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from preacher.core.request import Request, Response, Requester, ExecutionReport
 from preacher.core.scenario.util.retry import retry_while_false
 from preacher.core.verification import ResponseDescription, ResponseVerification
@@ -57,6 +58,9 @@ class UnitRunner:
         if not response:
             return execution, None, None
 
-        context = {"starts": execution.starts, "base_url": self.base_url}
+        context = {
+            CONTEXT_KEY_STARTS: execution.starts,
+            CONTEXT_KEY_BASE_URL: self.base_url,
+        }
         verification = requirements.verify(response, context)
         return execution, response, verification

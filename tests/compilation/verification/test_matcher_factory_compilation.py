@@ -5,7 +5,6 @@ from pytest import fixture, mark, raises
 from preacher.compilation.error import CompilationError
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
 from preacher.compilation.verification.matcher import add_default_matchers
-from preacher.core.value import ValueContext
 
 
 @fixture
@@ -177,7 +176,7 @@ def test_invalid_mapping(compiler, obj):
 )
 def test_matcher_matchers(compiler, obj, item, expected):
     factory = compiler.compile(obj)
-    context = ValueContext(origin_datetime=datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc))
+    context = {"starts": datetime(2020, 5, 16, 12, 34, 56, tzinfo=timezone.utc)}
     matcher = factory.create(context)
     assert matcher.matches(item) == expected
 

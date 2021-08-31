@@ -5,7 +5,6 @@ from pytest import fixture, mark, raises
 from yamlen import Loader, YamlenError
 
 from preacher.compilation.yaml.tag.datetime import RelativeDatetimeTag
-from preacher.core.value import ValueContext
 from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 
 
@@ -53,7 +52,7 @@ def test_given_an_empty_relative_datetime(loader: Loader):
     assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime.now()
-    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    resolved = actual.resolve({"starts": now})
     assert resolved.value == now
 
 
@@ -62,7 +61,7 @@ def test_given_a_valid_string_relative_datetime(loader: Loader):
     assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime.now()
-    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    resolved = actual.resolve({"starts": now})
     assert resolved.value == now - timedelta(hours=1)
 
 
@@ -71,7 +70,7 @@ def test_given_an_empty_mapping_relative_datetime(loader: Loader):
     assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime.now()
-    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    resolved = actual.resolve({"starts": now})
     assert resolved.value == now
 
 
@@ -88,5 +87,5 @@ def test_given_a_filled_mapping_relative_datetime(loader: Loader):
     assert isinstance(actual, DatetimeValueWithFormat)
 
     now = datetime(2020, 1, 23, 12, 34, 56)
-    resolved = actual.resolve(ValueContext(origin_datetime=now))
+    resolved = actual.resolve({"starts": now})
     assert resolved.formatted == "12:33:56"
