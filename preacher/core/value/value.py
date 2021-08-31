@@ -13,6 +13,9 @@ class ValueContext:
     origin_datetime: Optional[datetime] = None
 
 
+AnyContext = Union[ValueContext, Context]
+
+
 class Value(ABC, Generic[T]):
     @property
     @abstractmethod
@@ -20,5 +23,5 @@ class Value(ABC, Generic[T]):
         ...  # pragma: no cover
 
     @abstractmethod
-    def resolve(self, context: Optional[Union[ValueContext, Context]] = None) -> T:
+    def resolve(self, context: Optional[Union[AnyContext]] = None) -> T:
         ...  # pragma: no cover

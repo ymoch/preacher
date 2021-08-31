@@ -9,7 +9,7 @@ from hamcrest import assert_that
 from hamcrest.core.matcher import Matcher
 
 from preacher.core.status import Status
-from preacher.core.value import Value, ValueContext
+from preacher.core.value import Value, AnyContext
 from preacher.core.value.impl.static import StaticValue
 from .predicate import Predicate
 from .verification import Verification
@@ -24,7 +24,7 @@ class MatcherWrappingPredicate(Predicate):
     def __init__(self, factory: MatcherFactory):
         self._factory = factory
 
-    def verify(self, actual: object, context: Optional[ValueContext] = None) -> Verification:
+    def verify(self, actual: object, context: Optional[AnyContext] = None) -> Verification:
         try:
             hamcrest_matcher = self._factory.create(context)
             assert_that(actual, hamcrest_matcher)
@@ -39,7 +39,7 @@ class MatcherWrappingPredicate(Predicate):
 
 class MatcherFactory(ABC):
     @abstractmethod
-    def create(self, context: Optional[ValueContext] = None) -> Matcher:
+    def create(self, context: Optional[AnyContext] = None) -> Matcher:
         ...  # pragma: no cover
 
 
@@ -47,7 +47,7 @@ class StaticMatcherFactory(MatcherFactory):
     def __init__(self, matcher: Matcher):
         self._matcher = matcher
 
-    def create(self, context: Optional[ValueContext] = None) -> Matcher:
+    def create(self, context: Optional[AnyContext] = None) -> Matcher:
         return self._matcher
 
 
@@ -62,7 +62,7 @@ class ValueMatcherFactory(MatcherFactory):
         self._arg = arg
         self._value_func = value_func
 
-    def create(self, context: Optional[ValueContext] = None) -> Matcher:
+    def create(self, context: Optional[AnyContext] = None) -> Matcher:
         resolved_value = self._ensure_value().resolve(context)
         return self._inner_factory(resolved_value)
 
@@ -77,6 +77,6 @@ class RecursiveMatcherFactory(MatcherFactory):
         self._matcher_func = matcher_func
         self._inner_factories = inner_factories
 
-    def create(self, context: Optional[ValueContext] = None) -> Matcher:
+    def create(self, context: Optional[AnyContext] = None) -> Matcher:
         inner_matchers = (factory.create(context) for factory in self._inner_factories)
         return self._matcher_func(*inner_matchers)
