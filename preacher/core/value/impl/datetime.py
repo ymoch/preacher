@@ -12,7 +12,7 @@ from preacher.core.datetime import now
 from preacher.core.datetime import parse_time
 from preacher.core.datetime import parse_timedelta
 from preacher.core.datetime import system_timezone
-from preacher.core.value.value import Value, ValueContext, AnyContext
+from preacher.core.value.value import Value, AnyContext
 from .static import StaticValue
 
 
@@ -107,9 +107,6 @@ def parse_relative_datetime_value(value: str) -> RelativeDatetime:
 def _select_origin(context: Optional[AnyContext] = None) -> datetime:
     if context is None:
         return now()
-
-    if isinstance(context, ValueContext):
-        return context.origin_datetime or now()
 
     origin = context.get(CONTEXT_KEY_STARTS)
     if not origin:

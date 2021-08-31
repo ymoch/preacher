@@ -4,7 +4,7 @@ from unittest.mock import NonCallableMock, sentinel
 from pytest import mark, raises
 
 from preacher.core.datetime import DatetimeWithFormat, ISO8601
-from preacher.core.value import ValueContext, Value
+from preacher.core.value import Value
 from preacher.core.value.impl.datetime import DatetimeValueWithFormat
 from preacher.core.value.impl.datetime import RelativeDatetime
 from preacher.core.value.impl.datetime import parse_datetime_value_with_format
@@ -24,7 +24,7 @@ def test_only_time_datetime_value_default(mocker):
     assert resolved == datetime(2020, 1, 23, 1, 23, 45, 678901)
 
 
-@mark.parametrize("context", (None, ValueContext(), {}))
+@mark.parametrize("context", (None, {}))
 def test_delta_datetime_value_default(mocker, context):
     now = datetime(2020, 1, 23, 12, 34, 56, 0, tzinfo=timezone.utc)
     mocker.patch(f"{PKG}.now", return_value=now)
@@ -40,9 +40,6 @@ def test_delta_datetime_value_default(mocker, context):
 @mark.parametrize(
     "context",
     (
-        ValueContext(
-            origin_datetime=datetime(2020, 12, 31, 1, 23, 45, 123456, tzinfo=timezone.utc)
-        ),
         {"starts": datetime(2020, 12, 31, 1, 23, 45, 123456, tzinfo=timezone.utc)},
         {"starts": "2020-12-31T01:23:45.123456Z"},
     )
