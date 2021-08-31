@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, TypeVar, Type, Union
+from typing import Generic, Optional, TypeVar, Type
 
 from preacher.core.context import Context
 
 T = TypeVar("T")
-
-
-AnyContext = Context
 
 
 class Value(ABC, Generic[T]):
@@ -16,5 +13,5 @@ class Value(ABC, Generic[T]):
         ...  # pragma: no cover
 
     @abstractmethod
-    def resolve(self, context: Optional[Union[AnyContext]] = None) -> T:
+    def resolve(self, context: Optional[Context] = None) -> T:
         ...  # pragma: no cover

@@ -5,8 +5,8 @@ along the given predicates.
 
 from typing import List, Optional
 
+from preacher.core.context import Context
 from preacher.core.extraction import Analyzer, Extractor
-from preacher.core.value import AnyContext
 from .predicate import Predicate
 from .verification import Verification
 
@@ -16,11 +16,7 @@ class Description:
         self._extractor = extractor
         self._predicates = predicates
 
-    def verify(
-        self,
-        analyzer: Analyzer,
-        context: Optional[AnyContext] = None,
-    ) -> Verification:
+    def verify(self, analyzer: Analyzer, context: Optional[Context] = None) -> Verification:
         try:
             verified_value = self._extractor.extract(analyzer)
         except Exception as error:

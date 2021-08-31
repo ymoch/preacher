@@ -1,6 +1,6 @@
 """
 Value interpretation.
 """
-from .value import Value, AnyContext
+from .value import Value
 
-__all__ = ("Value", "AnyContext")
+__all__ = ("Value",)
