@@ -92,6 +92,8 @@ def test_unordered(mocker):
 
 
 def test_ordered(mocker):
+    mocker.patch(f"{PKG}.now", side_effect=[sentinel.starts1, sentinel.starts2])
+
     cases_task_ctor = mocker.patch(f"{PKG}.OrderedCasesTask", return_value=sentinel.cases_task)
     task_ctor = mocker.patch(f"{PKG}.RunningScenarioTask", return_value=sentinel.task)
 
@@ -107,8 +109,18 @@ def test_ordered(mocker):
 
     cases_task_ctor.assert_has_calls(
         [
-            call(sentinel.executor, case_runner, sentinel.cases),
-            call(sentinel.executor, case_runner, []),
+            call(
+                sentinel.executor,
+                case_runner,
+                sentinel.cases,
+                context={"starts": sentinel.starts1, "base_url": sentinel.base_url},
+            ),
+            call(
+                sentinel.executor,
+                case_runner,
+                [],
+                context={"starts": sentinel.starts2, "base_url": sentinel.base_url},
+            ),
         ]
     )
     task_ctor.assert_has_calls(

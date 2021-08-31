@@ -49,7 +49,7 @@ def test_given_cases(mocker, executor):
     runner.run.side_effect = case_results
     cases = [sentinel.case1, sentinel.case2]
 
-    task = OrderedCasesTask(executor, runner, cases)
+    task = OrderedCasesTask(executor, runner, cases, context=sentinel.context)
     result = task.result()
     assert result.status is Status.UNSTABLE
     assert result.items == case_results
@@ -57,8 +57,8 @@ def test_given_cases(mocker, executor):
     executor.submit.assert_called_once()
     runner.run.assert_has_calls(
         [
-            call(sentinel.case1, session=session),
-            call(sentinel.case2, session=session),
+            call(sentinel.case1, session=session, context=sentinel.context),
+            call(sentinel.case2, session=session, context=sentinel.context),
         ]
     )
 

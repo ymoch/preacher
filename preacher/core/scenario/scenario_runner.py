@@ -20,12 +20,12 @@ class ScenarioRunner:
 
     def submit(self, scenario: Scenario) -> ScenarioTask:
         starts = now()
-        current_context: Context = {
+        context: Context = {
             CONTEXT_KEY_STARTS: starts,
             CONTEXT_KEY_BASE_URL: self._case_runner.base_url,
         }
 
-        context_analyzer = MappingAnalyzer(current_context)
+        context_analyzer = MappingAnalyzer(context)
         value_context = ValueContext(origin_datetime=starts)
         conditions = Verification.collect(
             condition.verify(context_analyzer, value_context) for condition in scenario.conditions
@@ -39,7 +39,12 @@ class ScenarioRunner:
             return StaticScenarioTask(result)
 
         if scenario.ordered:
-            cases: CasesTask = OrderedCasesTask(self._executor, self._case_runner, scenario.cases)
+            cases: CasesTask = OrderedCasesTask(
+                self._executor,
+                self._case_runner,
+                scenario.cases,
+                context=context,
+            )
         else:
             cases = UnorderedCasesTask(self._executor, self._case_runner, scenario.cases)
         subscenarios = [self.submit(subscenario) for subscenario in scenario.subscenarios]
