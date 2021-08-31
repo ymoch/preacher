@@ -7,7 +7,6 @@ import requests
 
 from preacher.core.request import Request, Response, Requester, ExecutionReport
 from preacher.core.scenario.util.retry import retry_while_false
-from preacher.core.value import ValueContext
 from preacher.core.verification import ResponseDescription, ResponseVerification
 
 Result = Tuple[ExecutionReport, Optional[Response], Optional[ResponseVerification]]
@@ -58,6 +57,6 @@ class UnitRunner:
         if not response:
             return execution, None, None
 
-        context = ValueContext(origin_datetime=execution.starts)
+        context = {"starts": execution.starts, "base_url": self.base_url}
         verification = requirements.verify(response, context)
         return execution, response, verification

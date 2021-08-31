@@ -9,7 +9,7 @@ from typing import List, Optional
 from preacher.core.extraction import ResponseBodyAnalyzer, MappingAnalyzer
 from preacher.core.request import Response
 from preacher.core.status import Status, Statused, merge_statuses
-from preacher.core.value import ValueContext
+from preacher.core.value import AnyContext
 from .description import Description
 from .predicate import Predicate
 from .verification import Verification
@@ -41,7 +41,7 @@ class ResponseDescription:
     def verify(
         self,
         response: Response,
-        context: Optional[ValueContext] = None,
+        context: Optional[AnyContext] = None,
     ) -> ResponseVerification:
         status_code = Verification.collect(
             p.verify(response.status_code, context) for p in self._status_code
