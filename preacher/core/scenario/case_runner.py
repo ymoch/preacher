@@ -1,16 +1,15 @@
-from typing import Dict, Optional
+from typing import Optional
 
 import requests
 
+from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
 from preacher.core.unit import UnitRunner
-from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
 from .case import Case
 from .case_listener import CaseListener
 from .case_result import CaseResult
-from .context import CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 
 
 class CaseRunner:
@@ -26,20 +25,19 @@ class CaseRunner:
         self,
         case: Case,
         session: Optional[requests.Session] = None,
-        context: Optional[Dict[str, object]] = None,
+        context: Optional[Context] = None,
     ) -> CaseResult:
         if not case.enabled:
             return CaseResult(label=case.label)
 
         starts = now()
-        current_context: Dict[str, object] = context or {}
-        current_context[CONTEXT_KEY_STARTS] = starts
-        current_context[CONTEXT_KEY_BASE_URL] = self.base_url
+        context = context if context is not None else {}
+        context[CONTEXT_KEY_STARTS] = starts
+        context[CONTEXT_KEY_BASE_URL] = self.base_url
 
-        context_analyzer = MappingAnalyzer(current_context)
-        value_context = ValueContext(origin_datetime=starts)
+        context_analyzer = MappingAnalyzer(context)
         conditions = Verification.collect(
-            condition.verify(context_analyzer, value_context) for condition in case.conditions
+            condition.verify(context_analyzer, context) for condition in case.conditions
         )
         if not conditions.status.is_succeeded:
             return CaseResult(case.label, conditions)

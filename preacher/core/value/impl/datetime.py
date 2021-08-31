@@ -2,14 +2,17 @@ from collections import deque
 from datetime import time, datetime, timedelta
 from typing import Optional, Type
 
-from preacher.core.datetime import DatetimeWithFormat
+from dateutil.parser import isoparse
+
+from preacher.core.context import Context, CONTEXT_KEY_STARTS
 from preacher.core.datetime import DatetimeFormat
+from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.datetime import ISO8601
 from preacher.core.datetime import now
 from preacher.core.datetime import parse_time
 from preacher.core.datetime import parse_timedelta
 from preacher.core.datetime import system_timezone
-from preacher.core.value import Value, ValueContext
+from preacher.core.value.value import Value
 from .static import StaticValue
 
 
@@ -22,7 +25,7 @@ class RelativeDatetime(Value[datetime]):
     def type(self) -> Type[datetime]:
         return datetime
 
-    def resolve(self, context: Optional[ValueContext] = None) -> datetime:
+    def resolve(self, context: Optional[Context] = None) -> datetime:
         origin = _select_origin(context)
         resolved = origin + self._delta
         if self._tm:
@@ -39,7 +42,7 @@ class DatetimeValueWithFormat(Value[DatetimeWithFormat]):
     def type(self) -> Type[DatetimeWithFormat]:
         return DatetimeWithFormat
 
-    def resolve(self, context: Optional[ValueContext] = None) -> DatetimeWithFormat:
+    def resolve(self, context: Optional[Context] = None) -> DatetimeWithFormat:
         resolved = self._original.resolve(context)
         return DatetimeWithFormat(resolved, self._fmt)
 
@@ -101,7 +104,15 @@ def parse_relative_datetime_value(value: str) -> RelativeDatetime:
     return RelativeDatetime(delta, tm)
 
 
-def _select_origin(context: Optional[ValueContext]) -> datetime:
-    if not context:
-        context = ValueContext()
-    return context.origin_datetime or now()
+def _select_origin(context: Optional[Context] = None) -> datetime:
+    if context is None:
+        return now()
+
+    origin = context.get(CONTEXT_KEY_STARTS)
+    if not origin:
+        return now()
+    if isinstance(origin, datetime):
+        return origin
+    if isinstance(origin, str):
+        return isoparse(origin)
+    raise ValueError(f"Invalid datetime value: {origin}")

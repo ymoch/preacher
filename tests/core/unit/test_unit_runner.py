@@ -5,7 +5,6 @@ from pytest import mark, raises
 from preacher.core.request import ExecutionReport, Requester
 from preacher.core.status import Status
 from preacher.core.unit.runner import predicate, UnitRunner
-from preacher.core.value import ValueContext
 from preacher.core.verification import ResponseVerification, ResponseDescription
 
 PKG = "preacher.core.unit.runner"
@@ -95,6 +94,6 @@ def test_given_a_response(mocker):
     requester.execute.assert_called_with(sentinel.request, session=sentinel.session)
     requirements.verify.assert_called_with(
         sentinel.response,
-        ValueContext(origin_datetime=sentinel.starts),
+        {"starts": sentinel.starts, "base_url": sentinel.requester_base_url},
     )
     retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay, predicate=ANY)

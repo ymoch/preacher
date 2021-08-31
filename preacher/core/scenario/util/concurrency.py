@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from concurrent.futures import Executor
-from typing import Iterable
+from typing import Iterable, Optional
 
 from requests import Session
 
+from preacher.core.context import Context
 from preacher.core.scenario.case import Case
 from preacher.core.scenario.case_result import CaseResult
 from preacher.core.scenario.case_runner import CaseRunner
@@ -16,14 +17,26 @@ class CasesTask(ABC):
         ...  # pragma: no cover
 
 
-def _run_cases_in_order(runner: CaseRunner, cases: Iterable[Case]) -> StatusedList[CaseResult]:
+def _run_cases_in_order(
+    runner: CaseRunner,
+    cases: Iterable[Case],
+    context: Optional[Context],
+) -> StatusedList[CaseResult]:
     with Session() as session:
-        return StatusedList.collect(runner.run(case, session=session) for case in cases)
+        return StatusedList.collect(
+            runner.run(case, session=session, context=context) for case in cases
+        )
 
 
 class OrderedCasesTask(CasesTask):
-    def __init__(self, executor: Executor, runner: CaseRunner, cases: Iterable[Case]):
-        self._future = executor.submit(_run_cases_in_order, runner, cases)
+    def __init__(
+        self,
+        executor: Executor,
+        runner: CaseRunner,
+        cases: Iterable[Case],
+        context: Optional[Context] = None,
+    ):
+        self._future = executor.submit(_run_cases_in_order, runner, cases, context)
 
     def result(self) -> StatusedList[CaseResult]:
         return self._future.result()
