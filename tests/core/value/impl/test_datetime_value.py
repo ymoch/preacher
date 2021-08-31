@@ -42,7 +42,7 @@ def test_delta_datetime_value_default(mocker, context):
     (
         {"starts": datetime(2020, 12, 31, 1, 23, 45, 123456, tzinfo=timezone.utc)},
         {"starts": "2020-12-31T01:23:45.123456Z"},
-    )
+    ),
 )
 def test_combined_relative_datetime_value_contextual(context):
     delta = timedelta(days=-1)
