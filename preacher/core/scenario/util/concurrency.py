@@ -4,10 +4,10 @@ from typing import Iterable, Optional
 
 from requests import Session
 
+from preacher.core.context import Context
 from preacher.core.scenario.case import Case
 from preacher.core.scenario.case_result import CaseResult
 from preacher.core.scenario.case_runner import CaseRunner
-from preacher.core.scenario.context import Context
 from preacher.core.status import StatusedList
 
 

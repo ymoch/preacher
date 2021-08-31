@@ -2,6 +2,7 @@ from typing import Dict, Optional
 
 import requests
 
+from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
 from preacher.core.unit import UnitRunner
@@ -10,7 +11,6 @@ from preacher.core.verification import Verification
 from .case import Case
 from .case_listener import CaseListener
 from .case_result import CaseResult
-from .context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 
 
 class CaseRunner:
