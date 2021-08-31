@@ -6,7 +6,6 @@ from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STA
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
 from preacher.core.unit import UnitRunner
-from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
 from .case import Case
 from .case_listener import CaseListener
@@ -37,9 +36,8 @@ class CaseRunner:
         context[CONTEXT_KEY_BASE_URL] = self.base_url
 
         context_analyzer = MappingAnalyzer(context)
-        value_context = ValueContext(origin_datetime=starts)
         conditions = Verification.collect(
-            condition.verify(context_analyzer, value_context) for condition in case.conditions
+            condition.verify(context_analyzer, context) for condition in case.conditions
         )
         if not conditions.status.is_succeeded:
             return CaseResult(case.label, conditions)

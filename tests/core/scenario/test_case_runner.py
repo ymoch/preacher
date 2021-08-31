@@ -8,7 +8,6 @@ from preacher.core.scenario.case import Case
 from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
-from preacher.core.value import ValueContext
 from preacher.core.verification import Description
 from preacher.core.verification import ResponseVerification
 from preacher.core.verification import Verification
@@ -82,7 +81,7 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
     unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
     listener = NonCallableMock(CaseListener)
     runner = CaseRunner(unit_runner=unit_runner, listener=listener)
-    result = runner.run(case)
+    result = runner.run(case, context={"foo": "bar"})
 
     assert result.label is sentinel.label
     assert result.status is expected_status
@@ -90,11 +89,11 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
     for condition in conditions:
         condition.verify.assert_called_once_with(
             sentinel.context_analyzer,
-            ValueContext(origin_datetime=sentinel.starts),
+            {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url},
         )
 
     analyze_context.assert_called_once_with(
-        {"starts": sentinel.starts, "base_url": sentinel.base_url}
+        {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
     )
 
     unit_runner.run.assert_not_called()
