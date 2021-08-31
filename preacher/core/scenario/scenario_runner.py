@@ -4,7 +4,6 @@ from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STA
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
 from preacher.core.status import Status
-from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
 from .case_runner import CaseRunner
 from .scenario import Scenario
@@ -26,9 +25,8 @@ class ScenarioRunner:
         }
 
         context_analyzer = MappingAnalyzer(context)
-        value_context = ValueContext(origin_datetime=starts)
         conditions = Verification.collect(
-            condition.verify(context_analyzer, value_context) for condition in scenario.conditions
+            condition.verify(context_analyzer, context) for condition in scenario.conditions
         )
         if not conditions.status.is_succeeded:
             status = Status.SKIPPED

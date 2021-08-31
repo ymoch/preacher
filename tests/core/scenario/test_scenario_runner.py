@@ -6,7 +6,6 @@ from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.scenario.scenario import Scenario
 from preacher.core.scenario.scenario_runner import ScenarioRunner
 from preacher.core.status import Status
-from preacher.core.value import ValueContext
 from preacher.core.verification import Description, Verification
 
 PKG = "preacher.core.scenario.scenario_runner"
@@ -55,7 +54,7 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     for condition in conditions:
         condition.verify.assert_called_once_with(
             sentinel.context_analyzer,
-            ValueContext(origin_datetime=sentinel.starts),
+            {"starts": sentinel.starts, "base_url": sentinel.base_url},
         )
 
     analyze_context.assert_called_once_with(
