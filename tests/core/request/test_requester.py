@@ -9,7 +9,6 @@ from preacher.core.request.request import Request, Method
 from preacher.core.request.request_body import RequestBody
 from preacher.core.request.requester import Requester, ResponseWrapper
 from preacher.core.status import Status
-from preacher.core.value import ValueContext
 
 PKG = "preacher.core.request.requester"
 
@@ -164,7 +163,7 @@ def test_when_request_succeeds(mocker, session, body):
     uuid4.assert_called()
     now.assert_called()
 
-    expected_context = ValueContext(origin_datetime=sentinel.now)
+    expected_context = {"starts": sentinel.now, "base_url": "https://a.com"}
     resolve_params.assert_called_once_with(sentinel.params, expected_context)
     body.resolve.assert_called_once_with(expected_context)
 

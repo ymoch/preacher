@@ -7,10 +7,10 @@ from typing import Mapping, Union, Optional, Tuple
 import requests
 
 from preacher import __version__ as _version
+from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from preacher.core.datetime import now
 from preacher.core.status import Statused, Status
 from preacher.core.util.error import to_message
-from preacher.core.value import ValueContext
 from .request import Request
 from .response import Response, ResponseBody
 from .url_param import resolve_url_params
@@ -149,7 +149,10 @@ class Requester:
         request: Request,
         starts: datetime,
     ) -> requests.PreparedRequest:
-        context = ValueContext(origin_datetime=starts)
+        context: Context = {
+            CONTEXT_KEY_STARTS: starts,
+            CONTEXT_KEY_BASE_URL: self._base_url,
+        }
 
         url = self._base_url + request.path
         headers = copy(_DEFAULT_HEADERS)
