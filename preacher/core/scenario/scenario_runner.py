@@ -1,5 +1,5 @@
 from concurrent.futures import Executor
-from typing import Callable, Dict
+from typing import Dict
 
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
@@ -11,7 +11,7 @@ from .context import CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from .scenario import Scenario
 from .scenario_result import ScenarioResult
 from .scenario_task import ScenarioTask, StaticScenarioTask, RunningScenarioTask
-from .util.concurrency import OrderedCasesTask, UnorderedCasesTask
+from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 
 
 class ScenarioRunner:
@@ -40,10 +40,9 @@ class ScenarioRunner:
             return StaticScenarioTask(result)
 
         if scenario.ordered:
-            submit_cases: Callable = OrderedCasesTask
+            cases: CasesTask = OrderedCasesTask(self._executor, self._case_runner, scenario.cases)
         else:
-            submit_cases = UnorderedCasesTask
-        cases = submit_cases(self._executor, self._case_runner, scenario.cases)
+            cases = UnorderedCasesTask(self._executor, self._case_runner, scenario.cases)
         subscenarios = [self.submit(subscenario) for subscenario in scenario.subscenarios]
         return RunningScenarioTask(
             label=scenario.label,
