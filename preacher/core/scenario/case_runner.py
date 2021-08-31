@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Optional
 
 import requests
 
@@ -32,11 +32,11 @@ class CaseRunner:
             return CaseResult(label=case.label)
 
         starts = now()
-        current_context: Dict[str, object] = context or {}
-        current_context[CONTEXT_KEY_STARTS] = starts
-        current_context[CONTEXT_KEY_BASE_URL] = self.base_url
+        context = context if context is not None else {}
+        context[CONTEXT_KEY_STARTS] = starts
+        context[CONTEXT_KEY_BASE_URL] = self.base_url
 
-        context_analyzer = MappingAnalyzer(current_context)
+        context_analyzer = MappingAnalyzer(context)
         value_context = ValueContext(origin_datetime=starts)
         conditions = Verification.collect(
             condition.verify(context_analyzer, value_context) for condition in case.conditions
