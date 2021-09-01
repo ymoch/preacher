@@ -57,7 +57,7 @@ class UnitRunner:
         session: Optional[requests.Session],
         context: Context,
     ) -> Result:
-        execution, response = self._requester.execute(request, session=session)
+        execution, response = self._requester.execute(request, session=session, context=context)
         if not response:
             return execution, None, None
 

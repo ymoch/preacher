@@ -66,7 +66,7 @@ def test_given_no_response(mocker):
     assert response is None
     assert verification is None
 
-    requester.execute.assert_called_once_with(sentinel.request, session=None)
+    requester.execute.assert_called_once_with(sentinel.request, session=None, context={})
     requirements.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1, predicate=predicate)
 
@@ -99,7 +99,11 @@ def test_given_a_response(mocker):
     assert response is sentinel.response
     assert verification is sentinel.verification
 
-    requester.execute.assert_called_with(sentinel.request, session=sentinel.session)
+    requester.execute.assert_called_with(
+        sentinel.request,
+        session=sentinel.session,
+        context={"foo": "bar"},
+    )
     # Contextual values will disappear.
     requirements.verify.assert_called_with(sentinel.response, {"foo": "bar"})
     retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay, predicate=ANY)
