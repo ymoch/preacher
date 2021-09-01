@@ -2,7 +2,7 @@ from typing import Optional
 
 import requests
 
-from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
+from preacher.core.context import Context, closed_context
 from preacher.core.datetime import now
 from preacher.core.extraction import MappingAnalyzer
 from preacher.core.unit import UnitRunner
@@ -30,15 +30,12 @@ class CaseRunner:
         if not case.enabled:
             return CaseResult(label=case.label)
 
-        starts = now()
         context = context if context is not None else {}
-        context[CONTEXT_KEY_STARTS] = starts
-        context[CONTEXT_KEY_BASE_URL] = self.base_url
-
-        context_analyzer = MappingAnalyzer(context)
-        conditions = Verification.collect(
-            condition.verify(context_analyzer, context) for condition in case.conditions
-        )
+        with closed_context(context, starts=now(), base_url=self.base_url) as context:
+            context_analyzer = MappingAnalyzer(context)
+            conditions = Verification.collect(
+                condition.verify(context_analyzer, context) for condition in case.conditions
+            )
         if not conditions.status.is_succeeded:
             return CaseResult(case.label, conditions)
 

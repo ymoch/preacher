@@ -117,7 +117,7 @@ class ResponseBodyAnalyzer(Analyzer):
 
 
 class MappingAnalyzer(Analyzer):
-    def __init__(self, value: Mapping):
+    def __init__(self, value: Mapping[str, object]):
         self._value = value
 
     def for_text(self, extract: Callable[[str], T]) -> T:

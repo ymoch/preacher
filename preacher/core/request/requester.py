@@ -7,7 +7,7 @@ from typing import Mapping, Union, Optional, Tuple
 import requests
 
 from preacher import __version__ as _version
-from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
+from preacher.core.context import Context, closed_context
 from preacher.core.datetime import now
 from preacher.core.status import Statused, Status
 from preacher.core.util.error import to_message
@@ -98,6 +98,7 @@ class Requester:
         self,
         request: Request,
         session: Optional[requests.Session] = None,
+        context: Optional[Context] = None,
     ) -> Tuple[ExecutionReport, Optional[Response]]:
         """
         Executes a request.
@@ -105,6 +106,7 @@ class Requester:
         Args:
             request: A request.
             session: A session object to execute.
+            context: Execution context.
         Returns:
             A tuple of execution report and response.
             When there is no response, the response will be ``None``.
@@ -113,10 +115,12 @@ class Requester:
             with requests.Session() as new_session:
                 return self.execute(request, session=new_session)
 
+        context = context if context is not None else {}
         starts = now()
         report = ExecutionReport(starts=starts)
         try:
-            prepped = self._prepare_request(request, starts)
+            with closed_context(context, starts=starts) as context:
+                prepped = self._prepare_request(request, context)
             proxies = session.rebuild_proxies(prepped, proxies=None)
         except Exception as error:
             message = to_message(error)
@@ -144,16 +148,7 @@ class Requester:
         response = ResponseWrapper(id=_generate_id(), res=res)
         return report, response
 
-    def _prepare_request(
-        self,
-        request: Request,
-        starts: datetime,
-    ) -> requests.PreparedRequest:
-        context: Context = {
-            CONTEXT_KEY_STARTS: starts,
-            CONTEXT_KEY_BASE_URL: self._base_url,
-        }
-
+    def _prepare_request(self, request: Request, context: Context) -> requests.PreparedRequest:
         url = self._base_url + request.path
         headers = copy(_DEFAULT_HEADERS)
 

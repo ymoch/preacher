@@ -1,7 +1,11 @@
+from functools import partial
+from typing import Optional
 from unittest.mock import Mock, NonCallableMock, sentinel
 
 from pytest import mark
 
+from preacher.core.context import Context
+from preacher.core.extraction import Analyzer
 from preacher.core.request import ExecutionReport
 from preacher.core.scenario import CaseListener
 from preacher.core.scenario.case import Case
@@ -65,11 +69,24 @@ def test_when_disabled():
 def test_given_bad_condition(mocker, condition_verifications, expected_status):
     mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
 
-    analyze_context = mocker.patch(f"{PKG}.MappingAnalyzer")
-    analyze_context.return_value = sentinel.context_analyzer
+    def _analyze_context(context: Context) -> Analyzer:
+        assert context == {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
+        return sentinel.context_analyzer
+
+    analyze_context = mocker.patch(f"{PKG}.MappingAnalyzer", side_effect=_analyze_context)
+
+    def _verify(
+        verification: Verification,
+        analyzer: Analyzer,
+        context: Optional[Context] = None,
+    ) -> Verification:
+        assert analyzer is sentinel.context_analyzer
+        assert context == {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
+        return verification
 
     conditions = [
-        NonCallableMock(Description, verify=Mock(return_value=v)) for v in condition_verifications
+        NonCallableMock(Description, verify=Mock(side_effect=partial(_verify, v)))
+        for v in condition_verifications
     ]
     case = Case(
         label=sentinel.label,
@@ -86,15 +103,10 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
     assert result.label is sentinel.label
     assert result.status is expected_status
 
+    # Contextual values will disappear.
     for condition in conditions:
-        condition.verify.assert_called_once_with(
-            sentinel.context_analyzer,
-            {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url},
-        )
-
-    analyze_context.assert_called_once_with(
-        {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
-    )
+        condition.verify.assert_called_once_with(sentinel.context_analyzer, {"foo": "bar"})
+    analyze_context.assert_called_once_with({"foo": "bar"})
 
     unit_runner.run.assert_not_called()
     listener.on_execution.assert_not_called()
