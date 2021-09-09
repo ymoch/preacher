@@ -11,16 +11,13 @@ from preacher.core.verification.verification import Verification
 
 @fixture
 def extractor():
-    return NonCallableMock(
-        spec=Extractor,
-        extract=Mock(return_value=sentinel.target),
-    )
+    return NonCallableMock(spec=Extractor, extract=Mock(return_value=sentinel.target))
 
 
 def test_when_analysis_fails(extractor):
     extractor.extract.side_effect = Exception("message")
 
-    description = Description(extractor=extractor, predicates=[])
+    description = Description(extractor=extractor, predicates=[], value_name="foo")
     verification = description.verify(sentinel.analyzer)
     assert verification.status == Status.FAILURE
     assert verification.message == "Exception: message"
@@ -30,11 +27,13 @@ def test_when_analysis_fails(extractor):
 
 def test_when_given_no_predicates(extractor):
     description = Description(extractor=extractor, predicates=[])
-    verification = description.verify(sentinel.analyzer)
+    context = {}
+    verification = description.verify(sentinel.analyzer, context=context)
     assert verification.status is Status.SKIPPED
     assert len(verification.children) == 0
 
     extractor.extract.assert_called_once_with(sentinel.analyzer)
+    assert context == {}
 
 
 def test_when_given_predicates(extractor):
@@ -43,8 +42,9 @@ def test_when_given_predicates(extractor):
         NonCallableMock(Predicate, verify=Mock(return_value=result))
         for result in predicate_results
     ]
-    description = Description(extractor=extractor, predicates=predicates)
-    verification = description.verify(sentinel.analyzer, sentinel.context)
+    description = Description(extractor=extractor, predicates=predicates, value_name="foo")
+    context = {"spam": "ham"}
+    verification = description.verify(sentinel.analyzer, context=context)
     assert verification.status is Status.UNSTABLE
     assert len(verification.children) == 2
     assert verification.children[0].status == Status.UNSTABLE
@@ -52,4 +52,8 @@ def test_when_given_predicates(extractor):
 
     extractor.extract.assert_called_once_with(sentinel.analyzer)
     for predicate in predicates:
-        predicate.verify.assert_called_once_with(sentinel.target, sentinel.context)
+        predicate.verify.assert_called_once_with(
+            sentinel.target,
+            {"spam": "ham", "foo": sentinel.target},
+        )
+    assert context == {"spam": "ham", "foo": sentinel.target}
