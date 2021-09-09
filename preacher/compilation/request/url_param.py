@@ -6,11 +6,14 @@ from typing import Mapping, Optional
 from preacher.compilation.argument import Arguments, inject_arguments
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.functional import map_compile
-from preacher.core.request import UrlParams, UrlParam, UrlParamValue
-from preacher.core.value.impl.datetime import DatetimeValueWithFormat
+from preacher.core.request import UrlParams, UrlParam
+from preacher.core.value import Value
 
 
-def compile_url_param_value(value: object) -> UrlParamValue:
+def compile_url_param_value(value: object) -> object:
+    if isinstance(value, Value):
+        return value
+
     if value is None:
         return value
     if isinstance(value, bool):
@@ -22,8 +25,6 @@ def compile_url_param_value(value: object) -> UrlParamValue:
     if isinstance(value, str):
         return value
     if isinstance(value, date):
-        return value
-    if isinstance(value, DatetimeValueWithFormat):  # HACK: relax typing.
         return value
     raise CompilationError(f"Not allowed type for a request parameter value: {value.__class__}")
 
@@ -37,7 +38,8 @@ def compile_url_param(value: object) -> UrlParam:
         return compile_url_param_value(value)
     except CompilationError as error:
         raise CompilationError(
-            f"Not allowed type for a request parameter: {value.__class__}", cause=error
+            f"Not allowed type for a request parameter: {value.__class__}",
+            cause=error,
         )
 
 

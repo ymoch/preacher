@@ -1,10 +1,10 @@
 """Request compilation."""
 
 from .request import Request, Method
-from .requester import Requester, ExecutionReport, PreparedRequest
 from .request_body import RequestBody, UrlencodedRequestBody, JsonRequestBody
+from .requester import Requester, ExecutionReport, PreparedRequest
 from .response import Response, ResponseBody
-from .url_param import UrlParams, UrlParam, UrlParamValue
+from .url_param import UrlParams, UrlParam
 
 __all__ = [
     "Request",
@@ -16,7 +16,6 @@ __all__ = [
     "ResponseBody",
     "UrlParams",
     "UrlParam",
-    "UrlParamValue",
     "Requester",
     "ExecutionReport",
     "PreparedRequest",
