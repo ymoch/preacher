@@ -12,6 +12,10 @@ class ContextualValue(Value[object]):
     def type(self) -> Type[object]:
         return object
 
+    @property
+    def key(self) -> str:
+        return self._key
+
     def resolve(self, context: Optional[Context] = None) -> object:
         context = context or {}
         return context.get(self._key)
