@@ -1,6 +1,6 @@
 """URL Parameters."""
 
-from datetime import date, datetime
+from datetime import date
 from typing import Union, List, Mapping, Optional
 
 from preacher.core.context import Context
@@ -14,7 +14,6 @@ UrlParamValue = Union[
     float,
     str,
     date,
-    datetime,
     DatetimeWithFormat,
     Value[None],
     Value[bool],
@@ -22,7 +21,6 @@ UrlParamValue = Union[
     Value[float],
     Value[str],
     Value[date],
-    Value[datetime],
     Value[DatetimeWithFormat],
 ]
 UrlParam = Union[UrlParamValue, List[UrlParamValue]]
