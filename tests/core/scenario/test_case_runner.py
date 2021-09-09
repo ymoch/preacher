@@ -2,17 +2,19 @@ from functools import partial
 from typing import Optional
 from unittest.mock import Mock, NonCallableMock, sentinel
 
+import requests
 from pytest import mark
 
 from preacher.core.context import Context
 from preacher.core.extraction import Analyzer
-from preacher.core.request import ExecutionReport
+from preacher.core.request import ExecutionReport, Request
 from preacher.core.scenario import CaseListener
 from preacher.core.scenario.case import Case
 from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.status import Status
 from preacher.core.unit import UnitRunner
-from preacher.core.verification import Description
+from preacher.core.unit.runner import Result
+from preacher.core.verification import Description, ResponseDescription
 from preacher.core.verification import ResponseVerification
 from preacher.core.verification import Verification
 
@@ -112,12 +114,26 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
     listener.on_execution.assert_not_called()
 
 
-def test_when_given_no_response():
+def test_when_given_no_response(mocker):
+    mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
+
     execution = ExecutionReport(status=Status.FAILURE)
     case = Case(label=sentinel.label, request=sentinel.request, response=sentinel.response)
 
-    unit_runner = NonCallableMock(UnitRunner)
-    unit_runner.run.return_value = (execution, None, None)
+    def _run_unit(
+        request: Request,
+        requirements: ResponseDescription,
+        session: Optional[requests.Session] = None,
+        context: Optional[Context] = None,
+    ) -> Result:
+        assert request is sentinel.request
+        assert requirements is sentinel.response
+        assert session is None
+        assert context == {"starts": sentinel.starts, "base_url": sentinel.base_url}
+        return execution, None, None
+
+    unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    unit_runner.run.side_effect = Mock(side_effect=_run_unit)
     listener = NonCallableMock(spec=CaseListener)
     runner = CaseRunner(unit_runner=unit_runner, listener=listener)
     result = runner.run(case)
@@ -127,15 +143,19 @@ def test_when_given_no_response():
     assert result.execution is execution
     assert result.response is None
 
+    # Contextual values will disappear.
     unit_runner.run.assert_called_once_with(
         request=sentinel.request,
         requirements=sentinel.response,
         session=None,
+        context={},
     )
     listener.on_execution.assert_called_once_with(execution, None)
 
 
-def test_when_given_an_response():
+def test_when_given_an_response(mocker):
+    mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
+
     execution = ExecutionReport(status=Status.SUCCESS, starts=sentinel.starts)
     verification = ResponseVerification(
         response_id=sentinel.response_id,
@@ -146,20 +166,34 @@ def test_when_given_an_response():
 
     case = Case(label=sentinel.label, request=sentinel.request, response=sentinel.response)
 
-    unit_runner = NonCallableMock(UnitRunner)
-    unit_runner.run.return_value = (execution, sentinel.response, verification)
+    def _run_unit(
+        request: Request,
+        requirements: ResponseDescription,
+        session: Optional[requests.Session] = None,
+        context: Optional[Context] = None,
+    ) -> Result:
+        assert request is sentinel.request
+        assert requirements is sentinel.response
+        assert session is sentinel.session
+        assert context == {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
+        return execution, sentinel.response, verification
+
+    unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    unit_runner.run.side_effect = Mock(side_effect=_run_unit)
     listener = NonCallableMock(spec=CaseListener)
     runner = CaseRunner(unit_runner=unit_runner, listener=listener)
-    result = runner.run(case, session=sentinel.session)
+    result = runner.run(case, session=sentinel.session, context={"foo": "bar"})
 
     assert result.label is sentinel.label
     assert result.status is Status.UNSTABLE
     assert result.execution is execution
     assert result.response is verification
 
+    # Contextual values will disappear.
     unit_runner.run.assert_called_once_with(
         request=sentinel.request,
         requirements=sentinel.response,
         session=sentinel.session,
+        context={"foo": "bar"},
     )
     listener.on_execution.assert_called_once_with(execution, sentinel.response)
