@@ -5,9 +5,9 @@ from typing import Optional, Tuple
 
 import requests
 
+from preacher.core.context import Context, closed_context
 from preacher.core.request import Request, Response, Requester, ExecutionReport
 from preacher.core.scenario.util.retry import retry_while_false
-from preacher.core.value import ValueContext
 from preacher.core.verification import ResponseDescription, ResponseVerification
 
 Result = Tuple[ExecutionReport, Optional[Response], Optional[ResponseVerification]]
@@ -40,9 +40,11 @@ class UnitRunner:
         request: Request,
         requirements: ResponseDescription,
         session: Optional[requests.Session] = None,
+        context: Optional[Context] = None,
     ) -> Result:
+        context = context if context is not None else {}
         return retry_while_false(
-            partial(self._execute, request, requirements, session),
+            partial(self._execute, request, requirements, session, context),
             attempts=self._retry + 1,
             delay=self._delay,
             predicate=predicate,
@@ -52,12 +54,14 @@ class UnitRunner:
         self,
         request: Request,
         requirements: ResponseDescription,
-        session: Optional[requests.Session] = None,
+        session: Optional[requests.Session],
+        context: Context,
     ) -> Result:
-        execution, response = self._requester.execute(request, session=session)
+        execution, response = self._requester.execute(request, session=session, context=context)
         if not response:
             return execution, None, None
 
-        context = ValueContext(origin_datetime=execution.starts)
-        verification = requirements.verify(response, context)
+        with closed_context(context, starts=execution.starts):
+            verification = requirements.verify(response, context)
+
         return execution, response, verification

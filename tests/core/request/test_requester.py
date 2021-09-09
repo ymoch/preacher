@@ -1,15 +1,18 @@
 import uuid
 from datetime import timedelta
+from typing import Optional
 from unittest.mock import NonCallableMock, NonCallableMagicMock, sentinel
 
 import requests
 from pytest import fixture
 
+from preacher.core.context import Context
+from preacher.core.request import UrlParams
 from preacher.core.request.request import Request, Method
 from preacher.core.request.request_body import RequestBody
 from preacher.core.request.requester import Requester, ResponseWrapper
+from preacher.core.request.url_param import ResolvedUrlParams
 from preacher.core.status import Status
-from preacher.core.value import ValueContext
 
 PKG = "preacher.core.request.requester"
 
@@ -131,8 +134,15 @@ def test_when_request_succeeds(mocker, session, body):
     uuid_obj.__str__.return_value = "id"
     uuid4 = mocker.patch("uuid.uuid4", return_value=uuid_obj)
 
-    resolve_params = mocker.patch(f"{PKG}.resolve_url_params")
-    resolve_params.return_value = {"name": "京", "a": ["b", "c"]}
+    def _resolve_url_params(
+        params: UrlParams,
+        context: Optional[Context] = None,
+    ) -> ResolvedUrlParams:
+        assert params is sentinel.params
+        assert context == {"foo": "bar", "starts": sentinel.now}
+        return {"name": "京", "a": ["b", "c"]}
+
+    resolve_params = mocker.patch(f"{PKG}.resolve_url_params", side_effect=_resolve_url_params)
 
     request = Request(
         method=Method.POST,
@@ -142,7 +152,7 @@ def test_when_request_succeeds(mocker, session, body):
         body=body,
     )
     requester = Requester("https://a.com", timeout=5.0)
-    report, response = requester.execute(request, session=session)
+    report, response = requester.execute(request, session=session, context={"foo": "bar"})
     assert report.status is Status.SUCCESS
     assert report.request
     assert report.request.method == "POST"
@@ -164,7 +174,8 @@ def test_when_request_succeeds(mocker, session, body):
     uuid4.assert_called()
     now.assert_called()
 
-    expected_context = ValueContext(origin_datetime=sentinel.now)
+    # Contextual values will disappear.
+    expected_context = {"foo": "bar"}
     resolve_params.assert_called_once_with(sentinel.params, expected_context)
     body.resolve.assert_called_once_with(expected_context)
 

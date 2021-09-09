@@ -4,7 +4,6 @@ Value analysis.
 
 import json
 from abc import ABC, abstractmethod
-from dataclasses import asdict
 from typing import Callable, Mapping, Optional, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, LxmlError, fromstring
@@ -118,7 +117,7 @@ class ResponseBodyAnalyzer(Analyzer):
 
 
 class MappingAnalyzer(Analyzer):
-    def __init__(self, value: Mapping):
+    def __init__(self, value: Mapping[str, object]):
         self._value = value
 
     def for_text(self, extract: Callable[[str], T]) -> T:
@@ -130,7 +129,3 @@ class MappingAnalyzer(Analyzer):
 
     def for_etree(self, extract: Callable[[Element], T]) -> T:
         raise ExtractionError("Not an XML content")
-
-
-def analyze_data_obj(obj) -> Analyzer:
-    return MappingAnalyzer(asdict(obj))

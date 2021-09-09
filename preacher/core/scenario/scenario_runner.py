@@ -1,24 +1,15 @@
 from concurrent.futures import Executor
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Callable
 
+from preacher.core.context import Context, CONTEXT_KEY_BASE_URL, CONTEXT_KEY_STARTS
 from preacher.core.datetime import now
-from preacher.core.extraction import analyze_data_obj
+from preacher.core.extraction import MappingAnalyzer
 from preacher.core.status import Status
-from preacher.core.value import ValueContext
 from preacher.core.verification import Verification
 from .case_runner import CaseRunner
 from .scenario import Scenario
 from .scenario_result import ScenarioResult
 from .scenario_task import ScenarioTask, StaticScenarioTask, RunningScenarioTask
-from .util.concurrency import OrderedCasesTask, UnorderedCasesTask
-
-
-@dataclass(frozen=True)
-class ScenarioContext:
-    starts: datetime = field(default_factory=now)
-    base_url: str = ""
+from .util.concurrency import CasesTask, OrderedCasesTask, UnorderedCasesTask
 
 
 class ScenarioRunner:
@@ -27,11 +18,15 @@ class ScenarioRunner:
         self._case_runner = case_runner
 
     def submit(self, scenario: Scenario) -> ScenarioTask:
-        context = ScenarioContext(base_url=self._case_runner.base_url)
-        context_analyzer = analyze_data_obj(context)
-        value_context = ValueContext(origin_datetime=context.starts)
+        starts = now()
+        context: Context = {
+            CONTEXT_KEY_STARTS: starts,
+            CONTEXT_KEY_BASE_URL: self._case_runner.base_url,
+        }
+
+        context_analyzer = MappingAnalyzer(context)
         conditions = Verification.collect(
-            condition.verify(context_analyzer, value_context) for condition in scenario.conditions
+            condition.verify(context_analyzer, context) for condition in scenario.conditions
         )
         if not conditions.status.is_succeeded:
             status = Status.SKIPPED
@@ -42,10 +37,14 @@ class ScenarioRunner:
             return StaticScenarioTask(result)
 
         if scenario.ordered:
-            submit_cases: Callable = OrderedCasesTask
+            cases: CasesTask = OrderedCasesTask(
+                self._executor,
+                self._case_runner,
+                scenario.cases,
+                context=context,
+            )
         else:
-            submit_cases = UnorderedCasesTask
-        cases = submit_cases(self._executor, self._case_runner, scenario.cases)
+            cases = UnorderedCasesTask(self._executor, self._case_runner, scenario.cases)
         subscenarios = [self.submit(subscenario) for subscenario in scenario.subscenarios]
         return RunningScenarioTask(
             label=scenario.label,

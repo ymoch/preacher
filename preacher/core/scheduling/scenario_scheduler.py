@@ -1,6 +1,9 @@
 from typing import Iterable, Iterator, Optional
 
-from preacher.core.scenario import Scenario, ScenarioRunner, ScenarioResult, ScenarioTask
+from preacher.core.scenario import Scenario
+from preacher.core.scenario import ScenarioRunner
+from preacher.core.scenario import ScenarioResult
+from preacher.core.scenario import ScenarioTask
 from preacher.core.scenario.scenario_task import StaticScenarioTask
 from preacher.core.status import Status
 from .listener import Listener

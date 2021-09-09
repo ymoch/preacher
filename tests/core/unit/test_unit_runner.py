@@ -1,12 +1,14 @@
-from unittest.mock import ANY, NonCallableMock, sentinel
+from typing import Optional
+from unittest.mock import ANY, Mock, NonCallableMock, sentinel
 
 from pytest import mark, raises
 
+from preacher.core.context import Context
+from preacher.core.extraction import Analyzer
 from preacher.core.request import ExecutionReport, Requester
 from preacher.core.status import Status
 from preacher.core.unit.runner import predicate, UnitRunner
-from preacher.core.value import ValueContext
-from preacher.core.verification import ResponseVerification, ResponseDescription
+from preacher.core.verification import ResponseVerification, ResponseDescription, Verification
 
 PKG = "preacher.core.unit.runner"
 
@@ -64,7 +66,7 @@ def test_given_no_response(mocker):
     assert response is None
     assert verification is None
 
-    requester.execute.assert_called_once_with(sentinel.request, session=None)
+    requester.execute.assert_called_once_with(sentinel.request, session=None, context={})
     requirements.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1, predicate=predicate)
 
@@ -77,8 +79,12 @@ def test_given_a_response(mocker):
     requester.base_url = sentinel.requester_base_url
     requester.execute.return_value = (execution, sentinel.response)
 
-    requirements = NonCallableMock(ResponseDescription)
-    requirements.verify.return_value = sentinel.verification
+    def _verify(analyzer: Analyzer, context: Optional[Context] = None) -> Verification:
+        assert analyzer is sentinel.response
+        assert context == {"foo": "bar", "starts": sentinel.starts}
+        return sentinel.verification
+
+    requirements = NonCallableMock(ResponseDescription, verify=Mock(side_effect=_verify))
 
     runner = UnitRunner(requester=requester, retry=3, delay=sentinel.delay)
     assert runner.base_url is sentinel.requester_base_url
@@ -87,14 +93,17 @@ def test_given_a_response(mocker):
         sentinel.request,
         requirements,
         sentinel.session,
+        context={"foo": "bar"},
     )
     assert execution is execution
     assert response is sentinel.response
     assert verification is sentinel.verification
 
-    requester.execute.assert_called_with(sentinel.request, session=sentinel.session)
-    requirements.verify.assert_called_with(
-        sentinel.response,
-        ValueContext(origin_datetime=sentinel.starts),
+    requester.execute.assert_called_with(
+        sentinel.request,
+        session=sentinel.session,
+        context={"foo": "bar"},
     )
+    # Contextual values will disappear.
+    requirements.verify.assert_called_with(sentinel.response, {"foo": "bar"})
     retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay, predicate=ANY)
