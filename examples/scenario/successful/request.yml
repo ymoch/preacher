@@ -72,10 +72,10 @@ cases:
           - !context starts
     response:
       body:
-        - describe: .args.key
+        - describe: .args.key[0]
+          as: stored-key
           should:
-            contain_exactly:
-              - equal: value
+            equal: value
         - describe: .args."multi-key"
           should:
             contain_exactly:
@@ -94,6 +94,16 @@ cases:
                   - match_regexp: '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z'
                   - be_after: now
               - be_after: -1 second
+
+  - label: Sends a contextual value
+    request:
+      params:
+        key: !context stored-key
+    response:
+      body:
+        describe: .args.key[0]
+        should:
+          equal: value
 
   - label: Sends a POST request with a urlencoded body
     request:

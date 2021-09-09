@@ -47,7 +47,11 @@ def test_given_a_string_predicate(mocker, compiler, extraction, predicate):
 
     extraction.compile.assert_called_with("foo")
     predicate.compile.assert_called_once_with("string")
-    ctor.assert_called_once_with(extractor=sentinel.extractor, predicates=[sentinel.predicate])
+    ctor.assert_called_once_with(
+        extractor=sentinel.extractor,
+        predicates=[sentinel.predicate],
+        value_name=None,
+    )
 
 
 def test_given_a_mapping_predicate(mocker, compiler, extraction, predicate):
@@ -58,14 +62,22 @@ def test_given_a_mapping_predicate(mocker, compiler, extraction, predicate):
 
     extraction.compile.assert_called_once_with("foo")
     predicate.compile.assert_called_once_with({"key": "value"})
-    ctor.assert_called_once_with(extractor=sentinel.extractor, predicates=[sentinel.predicate])
+    ctor.assert_called_once_with(
+        extractor=sentinel.extractor,
+        predicates=[sentinel.predicate],
+        value_name=None,
+    )
 
 
 def test_given_a_list_of_mapping_predicates(mocker, compiler, extraction, predicate):
     ctor = mocker.patch(f"{PKG}.Description", return_value=sentinel.description)
 
     description = compiler.compile(
-        {"describe": {"key": "value"}, "should": [{"key1": "value1"}, {"key2": "value2"}]}
+        {
+            "describe": {"key": "value"},
+            "as": "foo",
+            "should": [{"key1": "value1"}, {"key2": "value2"}],
+        }
     )
     assert description is sentinel.description
 
@@ -74,4 +86,5 @@ def test_given_a_list_of_mapping_predicates(mocker, compiler, extraction, predic
     ctor.assert_called_once_with(
         extractor=sentinel.extractor,
         predicates=[sentinel.predicate, sentinel.predicate],
+        value_name="foo",
     )

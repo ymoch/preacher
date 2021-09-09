@@ -12,7 +12,12 @@ from .verification import Verification
 
 
 class Description:
-    def __init__(self, extractor: Extractor, predicates: List[Predicate], value_name: str = ""):
+    def __init__(
+        self,
+        extractor: Extractor,
+        predicates: List[Predicate],
+        value_name: Optional[str] = None,
+    ):
         self._extractor = extractor
         self._predicates = predicates
         self._value_name = value_name
