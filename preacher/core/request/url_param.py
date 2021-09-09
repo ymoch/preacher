@@ -43,7 +43,7 @@ def resolve_url_param_value(value: object, context: Optional[Context] = None) ->
 def resolve_url_param(param: UrlParam, context: Optional[Context] = None) -> ResolvedUrlParam:
     if isinstance(param, list):
         return [resolve_url_param_value(value, context) for value in param]
-    return resolve_url_param_value(param)
+    return resolve_url_param_value(param, context)
 
 
 def resolve_url_params(params: UrlParams, context: Optional[Context] = None) -> ResolvedUrlParams:

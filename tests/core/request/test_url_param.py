@@ -1,5 +1,5 @@
 from datetime import date, datetime, timezone
-from unittest.mock import NonCallableMock, sentinel
+from unittest.mock import NonCallableMock, call, sentinel
 
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.request.url_param import resolve_url_params
@@ -19,6 +19,7 @@ def test_resolve_params_given_a_mapping():
         "none": None,
         "false": False,
         "true": True,
+        "value": value,
         "list": [
             None,
             1,
@@ -35,6 +36,7 @@ def test_resolve_params_given_a_mapping():
     assert resolved["none"] is None
     assert resolved["false"] == "false"
     assert resolved["true"] == "true"
+    assert resolved["value"] == "sentinel.resolved_value"
     assert resolved["list"] == [
         None,
         "1",
@@ -46,4 +48,4 @@ def test_resolve_params_given_a_mapping():
         "sentinel.resolved_value",
     ]
 
-    value.resolve.assert_called_once_with(sentinel.context)
+    value.resolve.assert_has_calls([call(sentinel.context), call(sentinel.context)])
