@@ -1,41 +1,31 @@
 """URL Parameters."""
 
-from datetime import date, datetime
+from datetime import date
 from typing import Union, List, Mapping, Optional
 
 from preacher.core.context import Context
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.value import Value
 
-UrlParamValue = Union[
-    None,
-    bool,
-    int,
-    float,
-    str,
-    date,
-    datetime,
-    DatetimeWithFormat,
-    Value[None],
-    Value[bool],
-    Value[int],
-    Value[float],
-    Value[str],
-    Value[date],
-    Value[datetime],
-    Value[DatetimeWithFormat],
-]
-UrlParam = Union[UrlParamValue, List[UrlParamValue]]
+UrlParam = Union[object, List[object]]
 UrlParams = Union[str, Mapping[str, UrlParam]]
 ResolvedUrlParamValue = Optional[str]
 ResolvedUrlParam = Union[ResolvedUrlParamValue, List[ResolvedUrlParamValue]]
 ResolvedUrlParams = Union[str, Mapping[str, ResolvedUrlParam]]
 
 
-def resolve_url_param_value(
-    value: UrlParamValue,
-    context: Optional[Context] = None,
-) -> Optional[str]:
+def resolve_url_param_value(value: object, context: Optional[Context] = None) -> Optional[str]:
+    """
+    Resolve a URL parameter value.
+
+    Args:
+        value: A URL parameter value.
+        context: A resolution context.
+    Returns:
+        The resolved value.
+    Raises:
+        ValueError: when given a not resolvable value.
+    """
     if isinstance(value, Value):
         value = value.resolve(context)
 
@@ -53,7 +43,7 @@ def resolve_url_param_value(
 def resolve_url_param(param: UrlParam, context: Optional[Context] = None) -> ResolvedUrlParam:
     if isinstance(param, list):
         return [resolve_url_param_value(value, context) for value in param]
-    return resolve_url_param_value(param)
+    return resolve_url_param_value(param, context)
 
 
 def resolve_url_params(params: UrlParams, context: Optional[Context] = None) -> ResolvedUrlParams:

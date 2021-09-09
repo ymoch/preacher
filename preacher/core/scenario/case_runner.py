@@ -36,14 +36,15 @@ class CaseRunner:
             conditions = Verification.collect(
                 condition.verify(context_analyzer, context) for condition in case.conditions
             )
-        if not conditions.status.is_succeeded:
-            return CaseResult(case.label, conditions)
+            if not conditions.status.is_succeeded:
+                return CaseResult(case.label, conditions)
 
-        execution, response, verification = self._unit_runner.run(
-            request=case.request,
-            requirements=case.response,
-            session=session,
-        )
+            execution, response, verification = self._unit_runner.run(
+                request=case.request,
+                requirements=case.response,
+                session=session,
+                context=context,
+            )
         self._listener.on_execution(execution, response)
 
         return CaseResult(case.label, conditions, execution, verification)
