@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-22 19:30+0900\n"
+"POT-Creation-Date: 2021-09-26 19:35+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -163,8 +163,8 @@ msgid ""
 "When given plural time like ``12:34+01:00 23:45+02:00``, even though it "
 "has no reasonable meaning, then uses the last part (``23:45+02:00``)."
 msgstr ""
-"``12:34+01:00 23:45+02:00`` のように複数の時間を与えられた場合,"
-" その指定には適切な意味はありませんが, 最後の値 (``23:45+02:00``) を採用します."
+"``12:34+01:00 23:45+02:00`` のように複数の時間を与えられた場合, その指定には適切な意味はありませんが, 最後の値 "
+"(``23:45+02:00``) を採用します."
 
 #: ../../reference/yaml-tag.rst:97 cc5d6f6d2a6e44c3a871779c3602cc06
 msgid "When given an offset, then uses the datetime that the request starts."
@@ -199,8 +199,8 @@ msgid ""
 "Note that ``-1 hour 2 minutes`` means \"58 minutes ago\". It is "
 "interpreted as ``-1 hour`` *plus* ``+2 minutes``."
 msgstr ""
-"``-1 hour 2 minutes`` は \"58 minutes ago\" を意味することに注意してください."
-" ``-1 hour`` プラス ``+2 minutes`` と解釈されます."
+"``-1 hour 2 minutes`` は \"58 minutes ago\" を意味することに注意してください. ``-1 hour`` "
+"プラス ``+2 minutes`` と解釈されます."
 
 #: ../../reference/yaml-tag.rst:99 0b39fd1dd0b44627b09781568f799577
 msgid "``now`` means zero offset, the same as ``0 second``."
@@ -230,16 +230,14 @@ msgstr "``-1 hour -2 minutes``: 1 時間 2 分前."
 msgid ""
 "``12:34+01:00``: the combination of the date that the evaluation starts "
 "and time 12:34 with an hour time difference between London."
-msgstr ""
-"``12:34+01:00``: 評価が始まった日と, 標準時から +1 時間の時間帯における時刻 12:34 の組み合わせ."
+msgstr "``12:34+01:00``: 評価が始まった日と, 標準時から +1 時間の時間帯における時刻 12:34 の組み合わせ."
 
 #: ../../reference/yaml-tag.rst:109 9a3c0656773640e6a9cced0e744ac197
 msgid ""
 "``+1 day +2 hour 12:34+01:00``: the combination of the date that is an "
 "hour and two minute later and time 12:34 with an hour time difference "
 "between London."
-msgstr ""
-"``12:34+01:00``: 1 日 2 時間後の日と, 標準時から +1 時間の時間帯における時刻 12:34 の組み合わせ."
+msgstr "``12:34+01:00``: 1 日 2 時間後の日と, 標準時から +1 時間の時間帯における時刻 12:34 の組み合わせ."
 
 #: ../../reference/yaml-tag.rst:115 fc6007cb1d1e4f5cb96a8622a2fb158d
 msgid ""
@@ -264,3 +262,13 @@ msgid ""
 msgstr ""
 "それ以外の文字列を指定すると, `format codes`_ に従ったフォーマット文字列とみなされます. このほとんどは 1989 C "
 "標準で要求されているものです."
+
+#: ../../reference/yaml-tag.rst:127 2834b5e3ee5f4766af1512c80c5a2f0f
+msgid "``!context``: Use a Contextual value"
+msgstr "``!context``: コンテキスト上の値を使用する"
+
+#: ../../reference/yaml-tag.rst:128 385f232f9f2d423a985585b75451b54f
+msgid ""
+"Use a contextual value of a given name. See :doc:`context<context>` for "
+"details."
+msgstr "コンテキスト上の指定された名前の値を使用します. 詳細は :doc:`context` を参照してください."

@@ -340,6 +340,12 @@ Description
       - List[:ref:`predicate`]
       - ``{}``
       - Predicates that match the described value.
+    * - as
+      - String
+      - ``null``
+      - The name of this value.
+        The extracted value is stored in :doc:`Context<context>`
+        as this name when given.
 
 .. _predicate:
 

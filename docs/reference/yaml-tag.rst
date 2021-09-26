@@ -123,5 +123,9 @@ Timestamp Format
 - When given another string, then the format is regarded as a format string in `format codes`_,
   almost all of which are required by 1989 C standard.
 
+``!context``: Use a Contextual value
+------------------------------------
+Use a contextual value of a given name. See :doc:`context<context>` for details.
+
 .. _ISO 8601: https://www.iso.org/iso-8601-date-and-time-format.html
 .. _format codes: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
