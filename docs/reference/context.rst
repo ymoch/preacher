@@ -1,41 +1,47 @@
 Context
 =======
+``Context`` is mutable meta information on execution.
 
-Context for a Scenario
+Contextual Value Usage
 ----------------------
-.. list-table:: The definition of ``ScenarioContext`` Object
-   :header-rows: 1
-   :widths: 15 15 40 30
+Contextual values are available in :ref:`Contextual Scenario<contextual-scenario>`.
 
-   * - Key
-     - Type
-     - Description
-     - Example
-   * - starts
-     - DateTime
-     - When the scenario starts
-     - ``2019-01-23T12:34:56.123456+00:00``
-   * - base_url
-     - String
-     - The base URL
-     - ``http://localhost:5042/base``
-   * - retry
-     - Integer
-     - The max retry count
-     - 0
-   * - delay
-     - Float
-     - The delay between attempts in seconds
-     - 0.1
-   * - timeout
-     - Optional[Float]
-     - The request timeout in seconds
-     - ``null``, 1.0
+.. code-block:: yaml
 
+    when:
+      describe:
+        key: starts
+      should:
+        be_after: 2021-12-31T12:34:56Z
 
-Context for a Case
+Contextual values are also available in request parameters via ``!context`` tag.
+
+.. code-block:: yaml
+
+    request:
+      params:
+        redirect-url: !context base_url
+
+Define a contextual value
+-------------------------
+
+On :ref:`descriptions<description>`,
+you can name the described value the given name as a contextual value.
+
+.. code-block:: yaml
+
+    describe: .foo.bar
+    as: foo-bar
+
+A contextual value live until the scenario ends, which doesn't contain subscenarios.
+
+.. note::
+
+    Contextual values are available in only ordered scenarios.
+
+Predefined context
 ------------------
-.. list-table:: The definition of ``CaseContext`` Object
+.. list-table:: The Definition of Predefined Context
    :header-rows: 1
    :widths: 15 15 40 30
 
@@ -45,21 +51,9 @@ Context for a Case
      - Example
    * - starts
      - DateTime
-     - When the case starts
+     - When the execution starts.
      - ``2019-01-23T12:34:56.123456+00:00``
    * - base_url
      - String
      - The base URL
      - ``http://localhost:5042/base``
-   * - retry
-     - Integer
-     - The max retry count
-     - 0
-   * - delay
-     - Float
-     - The delay between attempts in seconds
-     - 0.1
-   * - timeout
-     - Optional[Float]
-     - The request timeout in seconds
-     - ``null``, 1.0

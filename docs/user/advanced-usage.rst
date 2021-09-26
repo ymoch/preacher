@@ -82,6 +82,8 @@ To make tests parameterized:
               should:
                 equal_to: !argument bar
 
+.. _contextual-scenario:
+
 Conditional Scenario
 --------------------
 Using ``when`` properties, you can run scenarios conditionally.
