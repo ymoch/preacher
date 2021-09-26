@@ -22,7 +22,7 @@ Contextual values are also available in request parameters via ``!context`` tag.
       params:
         redirect-url: !context base_url
 
-Define a contextual value
+Define a Contextual Value
 -------------------------
 
 On :ref:`descriptions<description>`,
@@ -39,9 +39,9 @@ A contextual value live until the scenario ends, which doesn't contain subscenar
 
     Contextual values are available in only ordered scenarios.
 
-Predefined context
-------------------
-.. list-table:: The Definition of Predefined Context
+Predefined Contextual Values
+----------------------------
+.. list-table:: Predefined Contextual Values
    :header-rows: 1
    :widths: 15 15 40 30
 
