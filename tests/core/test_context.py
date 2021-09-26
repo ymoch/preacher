@@ -1,15 +1,22 @@
 from unittest.mock import sentinel
 
-from preacher.core.context import closed_context
+from preacher.core.context import Context, closed_context
+
+
+def test_context():
+    context = Context(foo="bar")
+    assert list(context) == ["foo"]
+    assert context != {"foo": "bar"}
+    assert context == Context(foo="bar")
 
 
 def test_closed_context():
-    context = {
-        "control": sentinel.control,
-        "normal": sentinel.normal_out_of_context,
-        "deleted": sentinel.deleted_out_of_context,
-        "overwritten": sentinel.overwritten_out_of_context,
-    }
+    context = Context(
+        control=sentinel.control,
+        normal=sentinel.normal_out_of_context,
+        deleted=sentinel.deleted_out_of_context,
+        overwritten=sentinel.overwritten_out_of_context,
+    )
 
     with closed_context(
         context,

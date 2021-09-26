@@ -30,7 +30,7 @@ class CaseRunner:
         if not case.enabled:
             return CaseResult(label=case.label)
 
-        context = context if context is not None else {}
+        context = context if context is not None else Context()
         with closed_context(context, starts=now(), base_url=self.base_url) as context:
             context_analyzer = MappingAnalyzer(context)
             conditions = Verification.collect(
