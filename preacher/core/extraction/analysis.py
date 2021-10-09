@@ -38,8 +38,10 @@ class Analyzer(ABC):
 
 class _LazyLoader(Generic[Source, T]):
     """Loads an element tree from a binary content lazily."""
+
     def __init__(
-        self, source: Source,
+        self,
+        source: Source,
         load: Callable[[Source], T],
         error: Optional[ExtractionError] = None,
     ):
