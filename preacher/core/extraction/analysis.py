@@ -4,15 +4,17 @@ Value analysis.
 
 import json
 from abc import ABC, abstractmethod
-from typing import Callable, Mapping, Optional, TypeVar
+from functools import partial
+from typing import Callable, Generic, Mapping, Optional, TypeVar
 
-from lxml.etree import _Element as Element, XMLParser, LxmlError, fromstring
+from lxml.etree import _Element as Element, XMLParser, fromstring
 
 from preacher.core.request.response import ResponseBody
 from preacher.core.util.functional import recursive_map
 from preacher.core.util.serialization import to_serializable
 from .error import ExtractionError
 
+Source = TypeVar("Source")
 T = TypeVar("T")
 
 
@@ -34,74 +36,55 @@ class Analyzer(ABC):
         ...  # pragma: no cover
 
 
-class _LazyElementTreeLoader:
+class _LazyLoader(Generic[Source, T]):
     """Loads an element tree from a binary content lazily."""
 
-    def __init__(self, content: bytes):
-        self._content = content
-        self._is_loaded = False
-        self._etree: Optional[Element] = None
+    def __init__(
+        self,
+        source: Source,
+        load: Callable[[Source], T],
+        error: Optional[ExtractionError] = None,
+    ):
+        self._source = source
+        self._load = load
+        self._error: Exception = error or ExtractionError("Load failed once.")
 
-    def get(self) -> Element:
+        self._is_loaded = False
+        self._target: Optional[T] = None
+
+    def get(self) -> T:
         """
-        Load an element tree if needed and returns it.
+        Load the target value if needed and returns it.
 
         Returns:
             The loaded element tree.
         Raises:
-            ExtractionError: when loading the element tree has failed once.
+            ExtractionError: when loading the target has failed once.
         """
-
         if not self._is_loaded:
             try:
-                self._etree = fromstring(self._content, parser=XMLParser())
-            except LxmlError:
+                self._target = self._load(self._source)
+            except Exception:
                 pass
             self._is_loaded = True
 
-        etree = self._etree
-        if etree is None:
-            raise ExtractionError("Not an XML content")
-        return etree
+        target = self._target
+        if target is None:
+            raise self._error
+        return target
 
 
-class _LazyJsonLoader:
-    """Loads a JSON value from a text lazily."""
-
-    def __init__(self, text: str):
-        self._text = text
-        self._is_loaded = False
-        self._is_valid_json = False
-        self._value: object = None
-
-    def get(self) -> object:
-        """
-        Load a JSON value if needed and returns it.
-
-        Returns:
-            The loaded JSON value.
-        Raises:
-            ExtractionError: when loading the JSON value has failed once.
-        """
-
-        if not self._is_loaded:
-            try:
-                self._value = json.loads(self._text)
-                self._is_valid_json = True
-            except json.JSONDecodeError:
-                pass
-            self._is_loaded = True
-
-        if not self._is_valid_json:
-            raise ExtractionError("Not a JSON content")
-        return self._value
+JSON_LOAD = json.loads
+JSON_ERROR = ExtractionError("Not a valid JSON content")
+XML_LOAD = partial(fromstring, parser=XMLParser())
+XML_ERROR = ExtractionError("Not a valid XML content")
 
 
 class ResponseBodyAnalyzer(Analyzer):
     def __init__(self, body: ResponseBody):
         self._body = body
-        self._etree_loader = _LazyElementTreeLoader(body.content)
-        self._json_loader = _LazyJsonLoader(body.text)
+        self._etree_loader = _LazyLoader(body.content, XML_LOAD, XML_ERROR)
+        self._json_loader = _LazyLoader(body.text, JSON_LOAD, JSON_ERROR)
 
     def for_text(self, extract: Callable[[str], T]) -> T:
         return extract(self._body.text)
