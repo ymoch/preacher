@@ -42,7 +42,7 @@ class UnitRunner:
         session: Optional[requests.Session] = None,
         context: Optional[Context] = None,
     ) -> Result:
-        context = context if context is not None else {}
+        context = context if context is not None else Context()
         return retry_while_false(
             partial(self._execute, request, requirements, session, context),
             attempts=self._retry + 1,

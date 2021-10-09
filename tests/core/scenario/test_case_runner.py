@@ -72,7 +72,7 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
     mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
 
     def _analyze_context(context: Context) -> Analyzer:
-        assert context == {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
+        assert context == Context(foo="bar", starts=sentinel.starts, base_url=sentinel.base_url)
         return sentinel.context_analyzer
 
     analyze_context = mocker.patch(f"{PKG}.MappingAnalyzer", side_effect=_analyze_context)
@@ -83,7 +83,7 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
         context: Optional[Context] = None,
     ) -> Verification:
         assert analyzer is sentinel.context_analyzer
-        assert context == {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
+        assert context == Context(foo="bar", starts=sentinel.starts, base_url=sentinel.base_url)
         return verification
 
     conditions = [
@@ -100,15 +100,15 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
     unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
     listener = NonCallableMock(CaseListener)
     runner = CaseRunner(unit_runner=unit_runner, listener=listener)
-    result = runner.run(case, context={"foo": "bar"})
+    result = runner.run(case, context=Context(foo="bar"))
 
     assert result.label is sentinel.label
     assert result.status is expected_status
 
     # Contextual values will disappear.
     for condition in conditions:
-        condition.verify.assert_called_once_with(sentinel.context_analyzer, {"foo": "bar"})
-    analyze_context.assert_called_once_with({"foo": "bar"})
+        condition.verify.assert_called_once_with(sentinel.context_analyzer, Context(foo="bar"))
+    analyze_context.assert_called_once_with(Context(foo="bar"))
 
     unit_runner.run.assert_not_called()
     listener.on_execution.assert_not_called()
@@ -129,7 +129,7 @@ def test_when_given_no_response(mocker):
         assert request is sentinel.request
         assert requirements is sentinel.response
         assert session is None
-        assert context == {"starts": sentinel.starts, "base_url": sentinel.base_url}
+        assert context == Context(starts=sentinel.starts, base_url=sentinel.base_url)
         return execution, None, None
 
     unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
@@ -148,7 +148,7 @@ def test_when_given_no_response(mocker):
         request=sentinel.request,
         requirements=sentinel.response,
         session=None,
-        context={},
+        context=Context(),
     )
     listener.on_execution.assert_called_once_with(execution, None)
 
@@ -175,14 +175,14 @@ def test_when_given_an_response(mocker):
         assert request is sentinel.request
         assert requirements is sentinel.response
         assert session is sentinel.session
-        assert context == {"foo": "bar", "starts": sentinel.starts, "base_url": sentinel.base_url}
+        assert context == Context(foo="bar", starts=sentinel.starts, base_url=sentinel.base_url)
         return execution, sentinel.response, verification
 
     unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
     unit_runner.run.side_effect = Mock(side_effect=_run_unit)
     listener = NonCallableMock(spec=CaseListener)
     runner = CaseRunner(unit_runner=unit_runner, listener=listener)
-    result = runner.run(case, session=sentinel.session, context={"foo": "bar"})
+    result = runner.run(case, session=sentinel.session, context=Context(foo="bar"))
 
     assert result.label is sentinel.label
     assert result.status is Status.UNSTABLE
@@ -194,6 +194,6 @@ def test_when_given_an_response(mocker):
         request=sentinel.request,
         requirements=sentinel.response,
         session=sentinel.session,
-        context={"foo": "bar"},
+        context=Context(foo="bar"),
     )
     listener.on_execution.assert_called_once_with(execution, sentinel.response)

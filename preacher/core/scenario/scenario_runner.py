@@ -19,10 +19,12 @@ class ScenarioRunner:
 
     def submit(self, scenario: Scenario) -> ScenarioTask:
         starts = now()
-        context: Context = {
-            CONTEXT_KEY_STARTS: starts,
-            CONTEXT_KEY_BASE_URL: self._case_runner.base_url,
-        }
+        context = Context(
+            **{
+                CONTEXT_KEY_STARTS: starts,
+                CONTEXT_KEY_BASE_URL: self._case_runner.base_url,
+            }
+        )
 
         context_analyzer = MappingAnalyzer(context)
         conditions = Verification.collect(

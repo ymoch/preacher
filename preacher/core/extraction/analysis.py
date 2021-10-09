@@ -5,7 +5,7 @@ Value analysis.
 import json
 from abc import ABC, abstractmethod
 from functools import partial
-from typing import Callable, Generic, Mapping, Optional, TypeVar
+from typing import Callable, Dict, Generic, Mapping, Optional, TypeVar
 
 from lxml.etree import _Element as Element, XMLParser, fromstring
 
@@ -99,16 +99,21 @@ class ResponseBodyAnalyzer(Analyzer):
         return extract(self._etree_loader.get())
 
 
+def _load_mapping(source: Mapping[str, object]) -> Dict[str, object]:
+    return {k: v for k, v in source.items()}
+
+
 class MappingAnalyzer(Analyzer):
     def __init__(self, value: Mapping[str, object]):
-        self._value = value
+        self._loader = _LazyLoader(value, _load_mapping)
 
     def for_text(self, extract: Callable[[str], T]) -> T:
-        serializable = recursive_map(to_serializable, self._value)
+        # HACK serialize only one time.
+        serializable = recursive_map(to_serializable, self._loader.get())
         return extract(json.dumps(serializable, separators=(",", ":")))
 
     def for_mapping(self, extract: Callable[[Mapping], T]) -> T:
-        return extract(self._value)
+        return extract(self._loader.get())
 
     def for_etree(self, extract: Callable[[Element], T]) -> T:
         raise ExtractionError("Not an XML content")

@@ -66,7 +66,7 @@ def test_given_no_response(mocker):
     assert response is None
     assert verification is None
 
-    requester.execute.assert_called_once_with(sentinel.request, session=None, context={})
+    requester.execute.assert_called_once_with(sentinel.request, session=None, context=Context())
     requirements.verify.assert_not_called()
     retry.assert_called_once_with(ANY, attempts=1, delay=0.1, predicate=predicate)
 
@@ -81,7 +81,7 @@ def test_given_a_response(mocker):
 
     def _verify(analyzer: Analyzer, context: Optional[Context] = None) -> Verification:
         assert analyzer is sentinel.response
-        assert context == {"foo": "bar", "starts": sentinel.starts}
+        assert context == Context(foo="bar", starts=sentinel.starts)
         return sentinel.verification
 
     requirements = NonCallableMock(ResponseDescription, verify=Mock(side_effect=_verify))
@@ -93,7 +93,7 @@ def test_given_a_response(mocker):
         sentinel.request,
         requirements,
         sentinel.session,
-        context={"foo": "bar"},
+        context=Context(foo="bar"),
     )
     assert execution is execution
     assert response is sentinel.response
@@ -102,8 +102,8 @@ def test_given_a_response(mocker):
     requester.execute.assert_called_with(
         sentinel.request,
         session=sentinel.session,
-        context={"foo": "bar"},
+        context=Context(foo="bar"),
     )
     # Contextual values will disappear.
-    requirements.verify.assert_called_with(sentinel.response, {"foo": "bar"})
+    requirements.verify.assert_called_with(sentinel.response, Context(foo="bar"))
     retry.assert_called_once_with(ANY, attempts=4, delay=sentinel.delay, predicate=ANY)

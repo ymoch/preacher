@@ -115,7 +115,7 @@ class Requester:
             with requests.Session() as new_session:
                 return self.execute(request, session=new_session)
 
-        context = context if context is not None else {}
+        context = context if context is not None else Context()
         starts = now()
         report = ExecutionReport(starts=starts)
         try:
