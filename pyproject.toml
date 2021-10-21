@@ -30,7 +30,7 @@ lxml = "^4.4"
 yamlen = "^0.1.1"
 click = "^8.0.1"
 colorama = "^0.4.1"
-pluggy = "^0.13.1"
+pluggy = "^1.0.0"
 Jinja2 = "^3.0.1"
 
 [tool.poetry.dev-dependencies]
