@@ -1,5 +1,5 @@
-from pluggy.hooks import HookspecMarker
-from yaml import Loader
+from pluggy import HookspecMarker
+from yamlen import Loader
 
 from preacher.compilation.extraction import ExtractionCompiler
 from preacher.compilation.verification.matcher import MatcherFactoryCompiler
