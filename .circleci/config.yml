@@ -195,7 +195,7 @@ commands:
       - run:
           name: Install aws-cli to push the image into ECR
           command: |
-            pip install awscli==1.20.58
+            pip install awscli==1.21.1
       - run:
           name: Build Docker image
           command: docker build -t preacher .
