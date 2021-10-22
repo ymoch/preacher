@@ -4,17 +4,17 @@ workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - test-39:
+      - test-3-9:
           filters:
             tags:
               only: /.*/
 
-      - test-38:
+      - test-3-8:
           filters:
             tags:
               only: /.*/
 
-      - test-37:
+      - test-3-7:
           filters:
             tags:
               only: /.*/
@@ -26,9 +26,9 @@ workflows:
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
           requires:
-            - test-39
-            - test-38
-            - test-37
+            - test-3-9
+            - test-3-8
+            - test-3-7
 
       - deploy:
           filters:
@@ -37,12 +37,12 @@ workflows:
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
           requires:
-            - test-39
-            - test-38
-            - test-37
+            - test-3-9
+            - test-3-8
+            - test-3-7
 
 jobs:
-  test-39:
+  test-3-9:
     docker:
       - image: circleci/python:3.9
     steps:
@@ -53,7 +53,7 @@ jobs:
       - example-test
       - document-build
 
-  test-38:
+  test-3-8:
     docker:
       - image: circleci/python:3.8
     steps:
@@ -64,7 +64,7 @@ jobs:
       - example-test
       - document-build
 
-  test-37:
+  test-3-7:
     docker:
       - image: circleci/python:3.7
     steps:
