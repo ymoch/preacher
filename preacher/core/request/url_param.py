@@ -37,10 +37,28 @@ def resolve_url_param_value(value: object, context: Optional[Context] = None) ->
         return value.formatted
     if isinstance(value, date):
         return value.isoformat()
+    # TODO raise when given a not resolvable value.
     return str(value)
 
 
 def resolve_url_param(param: UrlParam, context: Optional[Context] = None) -> ResolvedUrlParam:
+    """
+    Resolve a URL parameter.
+
+    Args:
+        param: A URL parameter, which type is one of the items below.
+            - A URL parameter value.
+            - A list of URL parameter values.
+            - A Value of a list of URL parameter values.
+        context: A resolution context.
+    Returns:
+        The resolved value.
+    Raises:
+        ValueError: when given a not resolvable value.
+    """
+    if isinstance(param, Value):
+        param = param.resolve(context)
+
     if isinstance(param, list):
         return [resolve_url_param_value(value, context) for value in param]
     return resolve_url_param_value(param, context)
