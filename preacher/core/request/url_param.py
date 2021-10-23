@@ -19,7 +19,14 @@ def resolve_url_param_value(value: object, context: Optional[Context] = None) ->
     Resolve a URL parameter value.
 
     Args:
-        value: A URL parameter value.
+        value: A URL parameter value, which is one of the items below.
+            - A `bool` value, which is resolved into "true" or "false".
+            - A `int` value.
+            - A `float` value.
+            - A `str` value.
+            - A `date` value, which is resolved into its ISO format.
+            - A `DatetimeWithFormat` value, which is resolved into its formatted string.
+            - A value of one of them.
         context: A resolution context.
     Returns:
         The resolved value.
@@ -47,7 +54,7 @@ def resolve_url_param(param: UrlParam, context: Optional[Context] = None) -> Res
     Resolve a URL parameter.
 
     Args:
-        param: A URL parameter, which type is one of the items below.
+        param: A URL parameter, which is one of the items below.
             - A URL parameter value.
             - A list of URL parameter values.
             - A Value of a list of URL parameter values.
