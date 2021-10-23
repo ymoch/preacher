@@ -1,9 +1,17 @@
 from datetime import date, datetime, timezone
 from unittest.mock import NonCallableMock, sentinel
 
+from pytest import mark, raises
+
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.request.url_param import resolve_url_params
 from preacher.core.value import Value
+
+
+@mark.parametrize("params", ({"param": {"foo": "bar"}}, {"param": [["foo"]]}))
+def test_resolve_params_given_an_invalid_params(params):
+    with raises(ValueError):
+        resolve_url_params(params)
 
 
 def test_resolve_params_given_a_string():

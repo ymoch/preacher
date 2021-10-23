@@ -37,8 +37,9 @@ def resolve_url_param_value(value: object, context: Optional[Context] = None) ->
         return value.formatted
     if isinstance(value, date):
         return value.isoformat()
-    # TODO raise when given a not resolvable value.
-    return str(value)
+    if isinstance(value, (str, int, float)):
+        return str(value)
+    raise ValueError(f"Invalid URL parameter value: {value}")
 
 
 def resolve_url_param(param: UrlParam, context: Optional[Context] = None) -> ResolvedUrlParam:
