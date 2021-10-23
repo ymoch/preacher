@@ -13,9 +13,9 @@ def test_resolve_params_given_a_string():
 
 def test_resolve_params_given_a_mapping():
     value = NonCallableMock(Value)
-    value.resolve.return_value = sentinel.resolved_value
+    value.resolve.return_value = "resolved"
     values = NonCallableMock(Value)
-    values.resolve.return_value = [sentinel.foo, value]
+    values.resolve.return_value = ["foo", value]
 
     params = {
         "none": None,
@@ -30,7 +30,7 @@ def test_resolve_params_given_a_mapping():
             "str",
             date(2020, 12, 31),
             datetime(2020, 1, 23, 12, 34, 56, tzinfo=timezone.utc),
-            NonCallableMock(DatetimeWithFormat, formatted=sentinel.formatted),
+            NonCallableMock(DatetimeWithFormat, formatted="formatted"),
             value,
         ],
     }
@@ -39,8 +39,8 @@ def test_resolve_params_given_a_mapping():
     assert resolved["none"] is None
     assert resolved["false"] == "false"
     assert resolved["true"] == "true"
-    assert resolved["value"] == "sentinel.resolved_value"
-    assert resolved["values"] == ["sentinel.foo", "sentinel.resolved_value"]
+    assert resolved["value"] == "resolved"
+    assert resolved["values"] == ["foo", "resolved"]
     assert resolved["list"] == [
         None,
         "1",
@@ -48,8 +48,8 @@ def test_resolve_params_given_a_mapping():
         "str",
         "2020-12-31",
         "2020-01-23T12:34:56+00:00",
-        sentinel.formatted,
-        "sentinel.resolved_value",
+        "formatted",
+        "resolved",
     ]
 
     assert value.resolve.call_count == 3
