@@ -37,6 +37,7 @@ Jinja2 = "^3.0.1"
 pytest = "^6.2.5"
 pytest-mock = "^3.6.1"
 pytest-flake8 = "^1.0.7"
+flake8 = "^3.9.2"  # Because of pytest-flake8 issue #81
 pytest-mccabe = "^2.0"
 pytest-mypy = "^0.8.1"
 pytest-cov = "^3.0.0"

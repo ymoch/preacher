@@ -1,9 +1,17 @@
 from datetime import date, datetime, timezone
-from unittest.mock import NonCallableMock, call, sentinel
+from unittest.mock import NonCallableMock, sentinel
+
+from pytest import mark, raises
 
 from preacher.core.datetime import DatetimeWithFormat
 from preacher.core.request.url_param import resolve_url_params
 from preacher.core.value import Value
+
+
+@mark.parametrize("params", ({"param": {"foo": "bar"}}, {"param": [["foo"]]}))
+def test_resolve_params_given_an_invalid_params(params):
+    with raises(ValueError):
+        resolve_url_params(params)
 
 
 def test_resolve_params_given_a_string():
@@ -13,13 +21,16 @@ def test_resolve_params_given_a_string():
 
 def test_resolve_params_given_a_mapping():
     value = NonCallableMock(Value)
-    value.resolve.return_value = sentinel.resolved_value
+    value.resolve.return_value = "resolved"
+    values = NonCallableMock(Value)
+    values.resolve.return_value = ["foo", value]
 
     params = {
         "none": None,
         "false": False,
         "true": True,
         "value": value,
+        "values": values,
         "list": [
             None,
             1,
@@ -27,7 +38,7 @@ def test_resolve_params_given_a_mapping():
             "str",
             date(2020, 12, 31),
             datetime(2020, 1, 23, 12, 34, 56, tzinfo=timezone.utc),
-            NonCallableMock(DatetimeWithFormat, formatted=sentinel.formatted),
+            NonCallableMock(DatetimeWithFormat, formatted="formatted"),
             value,
         ],
     }
@@ -36,7 +47,8 @@ def test_resolve_params_given_a_mapping():
     assert resolved["none"] is None
     assert resolved["false"] == "false"
     assert resolved["true"] == "true"
-    assert resolved["value"] == "sentinel.resolved_value"
+    assert resolved["value"] == "resolved"
+    assert resolved["values"] == ["foo", "resolved"]
     assert resolved["list"] == [
         None,
         "1",
@@ -44,8 +56,9 @@ def test_resolve_params_given_a_mapping():
         "str",
         "2020-12-31",
         "2020-01-23T12:34:56+00:00",
-        sentinel.formatted,
-        "sentinel.resolved_value",
+        "formatted",
+        "resolved",
     ]
 
-    value.resolve.assert_has_calls([call(sentinel.context), call(sentinel.context)])
+    assert value.resolve.call_count == 3
+    value.resolve.assert_called_with(sentinel.context)
