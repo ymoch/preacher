@@ -1,8 +1,9 @@
 """Request."""
 
 from enum import Enum
-from typing import Mapping, Optional
+from typing import Optional
 
+from .header import Headers
 from .request_body import RequestBody
 from .url_param import UrlParams
 
@@ -19,7 +20,7 @@ class Request:
         self,
         method: Method = Method.GET,
         path: str = "",
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Optional[Headers] = None,
         params: Optional[UrlParams] = None,
         body: Optional[RequestBody] = None,
     ):
@@ -38,7 +39,7 @@ class Request:
         return self._path
 
     @property
-    def headers(self) -> Mapping[str, str]:
+    def headers(self) -> Headers:
         return self._headers
 
     @property
