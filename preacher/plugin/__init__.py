@@ -1,4 +1,4 @@
-from pluggy.hooks import HookimplMarker
+from pluggy import HookimplMarker
 
 __all__ = ["hookimpl"]
 

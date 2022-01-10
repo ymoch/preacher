@@ -17,5 +17,5 @@ class ContextualValue(Value[object]):
         return self._key
 
     def resolve(self, context: Optional[Context] = None) -> object:
-        context = context or {}
+        context = context or Context()
         return context.get(self._key)

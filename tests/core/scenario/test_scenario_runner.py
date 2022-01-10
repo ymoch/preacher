@@ -2,6 +2,7 @@ from unittest.mock import Mock, NonCallableMock, call, sentinel
 
 from pytest import mark
 
+from preacher.core.context import Context
 from preacher.core.scenario.case_runner import CaseRunner
 from preacher.core.scenario.scenario import Scenario
 from preacher.core.scenario.scenario_runner import ScenarioRunner
@@ -54,11 +55,11 @@ def test_given_not_satisfied_conditions(mocker, statuses, expected_status):
     for condition in conditions:
         condition.verify.assert_called_once_with(
             sentinel.context_analyzer,
-            {"starts": sentinel.starts, "base_url": sentinel.base_url},
+            Context(starts=sentinel.starts, base_url=sentinel.base_url),
         )
 
     analyze_context.assert_called_once_with(
-        {"starts": sentinel.starts, "base_url": sentinel.base_url}
+        Context(starts=sentinel.starts, base_url=sentinel.base_url)
     )
     ordered_cases_task_ctor.assert_not_called()
     unordered_cases_task_ctor.assert_not_called()
@@ -112,13 +113,13 @@ def test_ordered(mocker):
                 sentinel.executor,
                 case_runner,
                 sentinel.cases,
-                context={"starts": sentinel.starts1, "base_url": sentinel.base_url},
+                context=Context(starts=sentinel.starts1, base_url=sentinel.base_url),
             ),
             call(
                 sentinel.executor,
                 case_runner,
                 [],
-                context={"starts": sentinel.starts2, "base_url": sentinel.base_url},
+                context=Context(starts=sentinel.starts2, base_url=sentinel.base_url),
             ),
         ]
     )

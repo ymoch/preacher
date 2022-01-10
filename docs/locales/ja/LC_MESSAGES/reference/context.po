@@ -8,163 +8,117 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 17:51+0900\n"
+"POT-Creation-Date: 2021-09-26 19:27+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
-#: ../../reference/context.rst:2 4f9c3f4c0ee64c7491ec46265ca0ce6e
+#: ../../reference/context.rst:2 fa59013ce6ca41dbb3f2598b1c1dd51c
 msgid "Context"
 msgstr "コンテキスト"
 
-#: ../../reference/context.rst:5 53efa955b45a432e926df2c7c5204863
-msgid "Context for a Scenario"
-msgstr "Scenario のコンテキスト"
+#: ../../reference/context.rst:3 8c5c2c3fdbab44c6917c517ee8f14cb2
+msgid "``Context`` is mutable meta information on execution."
+msgstr "``Context`` は書き換え可能な実行時メタ情報です."
 
-# 15b212e51ebc4acc8a5b1bbc6e9d5219
-#: ../../reference/context.rst:6 7ebd91fc7a5c42feb08b0fd6ed96aa6c
-msgid "The definition of ``ScenarioContext`` Object"
+#: ../../reference/context.rst:6 ea88d0b1237049bb8bd18fe00d65739f
+msgid "Contextual Value Usage"
+msgstr "コンテキスト上の値の使い方"
+
+#: ../../reference/context.rst:7 7b4d23eb3c58486c9938ea98938558b9
+msgid ""
+"Contextual values are available in :ref:`Contextual Scenario<contextual-"
+"scenario>`."
+msgstr "コンテキスト上の値は :ref:`条件付きシナリオ<contextual-scenario>` で使用できます."
+
+#: ../../reference/context.rst:17 63752fa1860c436c989fd60bd30b8285
+msgid ""
+"Contextual values are also available in request parameters via "
+"``!context`` tag."
+msgstr "コンテキスト上の値はリクエストパラメータとしても使用できます. ``!context`` タグを用います."
+
+#: ../../reference/context.rst:26 5ceefe48254741f29ed61945701627a3
+msgid "Define a Contextual Value"
+msgstr "コンテキスト上の値を定義する"
+
+#: ../../reference/context.rst:28 a9f12e99651c46f381193c6246494123
+msgid ""
+"On :ref:`descriptions<description>`, you can name the described value the"
+" given name as a contextual value."
 msgstr ""
+":ref:`値の記述 (description)<description>` において, "
+"その値をコンテキスト上の値として名付けることができます."
 
-#: ../../reference/context.rst:10 ../../reference/context.rst:42
-#: d32f11e59b6046d58ec2f854d63090d6 fc885bbad36f4310a2f1d6a0e66e2ef6
+#: ../../reference/context.rst:36 370586ae31f64c938d5e69a16daa02be
+msgid ""
+"A contextual value live until the scenario ends, which doesn't contain "
+"subscenarios."
+msgstr "コンテキスト上の値はそのシナリオ (サブシナリオは含まない) が終わるまで存続します."
+
+#: ../../reference/context.rst:40 597a5cfa64294cdf967273ba9a97daeb
+msgid "Contextual values are available in only ordered scenarios."
+msgstr "コンテキスト上の値は順序づけられたシナリオでのみ有効です."
+
+#: ../../reference/context.rst:43 ../../reference/context.rst:44
+#: adc7b5612e5c490a9b395c0df427d1f8
+msgid "Predefined Contextual Values"
+msgstr "事前定義されたコンテキスト上の値"
+
+#: ../../reference/context.rst:48 5888a65375be4b0e8cefcca17112edf9
 msgid "Key"
 msgstr "キー"
 
-#: ../../reference/context.rst:11 ../../reference/context.rst:43
-#: 1d9aa99373b14a1ab8bea65817160ec2 dadd73eecef84d6fbe6434df553b18b4
+#: ../../reference/context.rst:49 c9dcee20716e49fcb7cff77b565ee24b
 msgid "Type"
 msgstr "型"
 
-#: ../../reference/context.rst:12 ../../reference/context.rst:44
-#: 333347d8f0684369bdcc5d3e328a5a5c 47a6fa3db0e1418986b87930cbe2a87e
+#: ../../reference/context.rst:50 e237d795087344c4bfb1ae994dd48d9e
 msgid "Description"
 msgstr "説明"
 
-#: ../../reference/context.rst:13 ../../reference/context.rst:45
-#: 9348d81c54584937bab9b0427e1cfd7f b178361179ba4718be7351faa10916e1
+#: ../../reference/context.rst:51 30b4cae39dad44f7be2137336c91630f
 msgid "Example"
 msgstr "例"
 
 # 33d1035bed9e4ce389a6e47b9bc746dc
 # c05cc3ef2a244083a31afff31bdc68ae
-#: ../../reference/context.rst:14 ../../reference/context.rst:46
-#: 7d2249afc3a7455cab39c85852dfd1a8 a4397e4f91694518a93783e1058d7bb8
+#: ../../reference/context.rst:52 949353331dcc496fa30b93ae357eee6b
 msgid "starts"
 msgstr ""
 
 # abf15ee9890548f0a751ba25c0d1355d
 # 9f4203da04c74fdb9b9eb60f18211145
-#: ../../reference/context.rst:15 ../../reference/context.rst:47
-#: 48e06c893a724363913ca1411b1b05e8 d0b31980ba124edb855a68336870d4f1
+#: ../../reference/context.rst:53 60046d57da6948ac9788158cf56f50a2
 msgid "DateTime"
 msgstr ""
 
 # 38ad1c5893344f02a17832d82411140c
-#: ../../reference/context.rst:16 79b178cce66c42f59b30a99ff05f84c2
-msgid "When the scenario starts"
-msgstr "シナリオの実行開始時刻"
+#: ../../reference/context.rst:54 af9a2df4fedb4da2b2aaf04e95a53021
+msgid "When the execution starts."
+msgstr "実行開始時刻"
 
 # df0edca693474f98b330aa0e9fef45d9
 # 0f38db0c37b84a28875c74a5bfe238c3
-#: ../../reference/context.rst:17 ../../reference/context.rst:49
-#: 686bb7245917465bb842683cac9e0a89 fd4b3c8271d64f97a43ce06695208942
+#: ../../reference/context.rst:55 71a200874fa8481a987a92f143b6905a
 msgid "``2019-01-23T12:34:56.123456+00:00``"
 msgstr ""
 
-#: ../../reference/context.rst:18 ../../reference/context.rst:50
-#: 011a148f22aa42289569b5548edbc3dd 9fca6ffc8bd742a4bf85dddf65f83bdf
+#: ../../reference/context.rst:56 b204f5e9cf22435b9682587608d4a87a
 msgid "base_url"
 msgstr ""
 
-#: ../../reference/context.rst:19 ../../reference/context.rst:51
-#: 748777163e014a45b968afa4ff95b311 a7f3e96443974318a486fa4e6b0cec0a
+#: ../../reference/context.rst:57 e566c4bdc4554c6891d98739c8db1c09
 msgid "String"
 msgstr ""
 
-#: ../../reference/context.rst:20 ../../reference/context.rst:52
-#: 5bf61174bb024b95ba93ad8dea6fd9f0 60e4a908e0e04aa7b757959c08d642a8
+#: ../../reference/context.rst:58 9b445eaa7ee94222b846769901b0fdf3
 msgid "The base URL"
 msgstr "リクエストの基準 URL"
 
-#: ../../reference/context.rst:21 ../../reference/context.rst:53
-#: 692f7acf895645ab9ba90f54fe88b523 6af3d1f0429844f6adc2b1ad4fa29ec4
+#: ../../reference/context.rst:59 f0ccd86bc06d435ab9be4ce7c6c3d443
 msgid "``http://localhost:5042/base``"
 msgstr ""
-
-#: ../../reference/context.rst:22 ../../reference/context.rst:54
-#: 76f850a2eb424b5caff8b5973c04c8e4 e30e610ccbf34ff7b1faf8db18607336
-msgid "retry"
-msgstr ""
-
-#: ../../reference/context.rst:23 ../../reference/context.rst:55
-#: 247ee5fdf8e742d9b7e12dc769c8086e d757de3cae194fe3b784afa76d460d9b
-msgid "Integer"
-msgstr ""
-
-#: ../../reference/context.rst:24 ../../reference/context.rst:56
-#: 93912ef1e4924e99b96b2776b3cc4265 b08d270249d643c98b5c0ddb3bac82f0
-msgid "The max retry count"
-msgstr "最大リトライ数"
-
-#: ../../reference/context.rst:25 ../../reference/context.rst:57
-#: 61857805c4a04786933d5850414e67e0 b415bf9e02384e50a96fdb92e41e1c5b
-msgid "0"
-msgstr ""
-
-#: ../../reference/context.rst:26 ../../reference/context.rst:58
-#: 80ca0d9c1a404151b831f33ca7751600 c06fbbdeec354882adb8174cad478ab6
-msgid "delay"
-msgstr ""
-
-#: ../../reference/context.rst:27 ../../reference/context.rst:59
-#: 355b86300fad4910addc7b10337a1438 aaa88155a5a449da83713b475fb1a921
-msgid "Float"
-msgstr ""
-
-#: ../../reference/context.rst:28 ../../reference/context.rst:60
-#: a76fa74e642743af902ef22f9f72c910 ec82e2f4b6424f798b69b7d2f9ea7a77
-msgid "The delay between attempts in seconds"
-msgstr "試行間の待ち時間 (秒)"
-
-#: ../../reference/context.rst:29 ../../reference/context.rst:61
-#: 197621d304b848b5beefaf75608e0f66 dfbe07ce61294fc9a967d0c7bb7547f0
-msgid "0.1"
-msgstr ""
-
-#: ../../reference/context.rst:30 ../../reference/context.rst:62
-#: 8910b57f39f34a92821fd5bc102980ed 92242724ab62425680fefca22d0a9125
-msgid "timeout"
-msgstr ""
-
-#: ../../reference/context.rst:31 ../../reference/context.rst:63
-#: b0435103d86b4056a35163ed4d5bfd8a e1b8c2d6812240d6a735fcc674410a9b
-msgid "Optional[Float]"
-msgstr ""
-
-#: ../../reference/context.rst:32 ../../reference/context.rst:64
-#: 60d682a350394b7b84bb0f0867440d54 81ea3958e4ac44c8a3b0c4be7164a451
-msgid "The request timeout in seconds"
-msgstr "リクエストタイムアウト時間 (秒)"
-
-#: ../../reference/context.rst:33 ../../reference/context.rst:65
-#: af1b9725111a49b2a3922c4ea64924df c65789a8b8fa4eb08dc3d90532924e50
-msgid "``null``, 1.0"
-msgstr ""
-
-#: ../../reference/context.rst:37 0271d3501b214599a933ae12bb4a7a83
-msgid "Context for a Case"
-msgstr "Case のコンテキスト"
-
-#: ../../reference/context.rst:38 df61f366da0d4ca09910707652941f51
-msgid "The definition of ``CaseContext`` Object"
-msgstr ""
-
-# 38ad1c5893344f02a17832d82411140c
-#: ../../reference/context.rst:48 2c3f1b462d9a4e678aad3b054b8c2fdb
-msgid "When the case starts"
-msgstr "ケースの実行開始時刻"
