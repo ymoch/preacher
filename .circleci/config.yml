@@ -199,6 +199,13 @@ commands:
           command: |
             pip install awscli==1.22.72
       - run:
+          name: Install Docker Buildx
+          command: |
+            mkdir -vp ~/.docker/cli-plugins/
+            curl -sL "https://github.com/docker/buildx/releases/download/v0.8.0/buildx-v0.8.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+            chmod a+x ~/.docker/cli-plugins/docker-buildx
+            docker buildx create --use
+      - run:
           name: Build Docker image
           command: |
             docker buildx build --platform=linux/arm64/v8,linux/amd64 -t preacher .
