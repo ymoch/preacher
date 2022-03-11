@@ -211,9 +211,9 @@ commands:
 
             docker context create buildcontext
             docker buildx create buildcontext --use
-
       - run:
           name: Build Docker image
+          no_output_timeout: 30m
           command: |
             docker buildx build --platform=linux/arm64/v8,linux/amd64 --progress plain -t preacher .
       - run:
