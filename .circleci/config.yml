@@ -215,7 +215,7 @@ commands:
       - run:
           name: Build Docker image
           command: |
-            docker buildx build --platform=linux/arm64/v8,linux/amd64 -t preacher .
+            docker buildx build --platform=linux/arm64/v8,linux/amd64 --progress plain -t preacher .
       - run:
           name: Push Docker image
           command: |
