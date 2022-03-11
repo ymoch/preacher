@@ -34,7 +34,7 @@ pluggy = "^1.0.0"
 Jinja2 = "^3.0.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
+pytest = "^7.0.1"
 pytest-mock = "^3.7.0"
 pytest-flake8 = "^1.1.0"
 flake8 = "^3.9.2"  # Because of pytest-flake8 issue #81
