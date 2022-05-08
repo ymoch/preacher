@@ -36,7 +36,7 @@ def echo():
             "headers": dict(request.headers.items()),
             "args": dict(request.args.lists()),
             "form": dict(request.form.lists()),
-            "json": request.json,
+            "json": request.get_json(silent=True),
         }
     )
 
@@ -83,7 +83,7 @@ def sleep(seconds):
 
 
 def main() -> None:
-    api.run()
+    api.run(debug=True)
 
 
 if __name__ == "__main__":
