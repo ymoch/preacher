@@ -193,19 +193,30 @@ commands:
     description: Build the Docker image and push it
     steps:
       - setup_remote_docker:
-          version: 20.10.11
+          version: 20.10.14
       - run:
           name: Install aws-cli to push the image into ECR
           command: |
             pip install awscli==1.23.9
       - run:
-          name: Build Docker image
+          name: Install Docker Buildx
+          command: |
+            mkdir -p ~/.docker/cli-plugins/
+            curl -sL "https://github.com/docker/buildx/releases/download/v0.8.0/buildx-v0.8.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+            chmod a+x ~/.docker/cli-plugins/docker-buildx
+            sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            docker run --privileged --rm tonistiigi/binfmt --install arm64
+            docker context create buildcontext
+            docker buildx create buildcontext --use
+      - run:
+          name: Build Docker images
           no_output_timeout: 30m
           command: |
             docker build --platform linux/arm64/v8 -t preacher:arm64-v8 .
             docker build --platform linux/amd64 -t preacher:amd64 .
       - run:
-          name: Push Docker image
+          name: Push Docker images
           command: |
             function push() {
               local image="${1:?}"
