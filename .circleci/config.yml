@@ -213,7 +213,7 @@ commands:
           name: Build Docker images
           no_output_timeout: 30m
           command: |
-            docker buildx build --load --platform linux/arm64/v8 -t preacher:arm64-v8 .
+            docker buildx build --load --progress plain --platform linux/arm64/v8 -t preacher:arm64-v8 .
             docker build --platform linux/amd64 -t preacher:amd64 .
       - run:
           name: Push Docker images
