@@ -229,7 +229,7 @@ commands:
               docker tag preacher:amd64 "${image_amd64}"
               docker push "${image_amd64}"
 
-              docker manifest "${image}" --amend "${image_amd64_v8}" --amend "${image_amd64}"
+              docker manifest "${image}" "${image_amd64_v8}" "${image_amd64}"
               docker manifest push "${image}"
             }
 
