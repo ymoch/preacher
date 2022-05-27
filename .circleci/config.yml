@@ -26,12 +26,10 @@ workflows:
 
       - image-push:
           filters:
-            #branches:
-            #  only: /(master|main)/
-            #tags:
-            #  only: /^[0-9]+(\.[0-9]+)*$/
+            branches:
+              only: /(master|main)/
             tags:
-              only: /.*/
+              only: /^[0-9]+(\.[0-9]+)*$/
           requires:
             - test-3-10
             - test-3-9
