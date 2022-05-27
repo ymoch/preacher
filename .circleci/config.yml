@@ -51,7 +51,7 @@ workflows:
 jobs:
   test-3-10:
     docker:
-      - image: circleci/python:3.10
+      - image: cimg/python:3.10
     steps:
       - checkout
       - prepare
@@ -62,7 +62,7 @@ jobs:
 
   test-3-9:
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
     steps:
       - checkout
       - prepare
@@ -73,7 +73,7 @@ jobs:
 
   test-3-8:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
     steps:
       - checkout
       - prepare
@@ -84,7 +84,7 @@ jobs:
 
   test-3-7:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
     steps:
       - checkout
       - prepare
@@ -95,14 +95,14 @@ jobs:
 
   image-push:
     docker:
-      - image: circleci/python:3.10
+      - image: cimg/python:3.10
     steps:
       - checkout
       - docker-image-build-push
 
   deploy:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
     steps:
       - checkout
       - prepare
@@ -191,30 +191,54 @@ commands:
     description: Build the Docker image and push it
     steps:
       - setup_remote_docker:
-          version: 20.10.11
+          version: 20.10.14
       - run:
           name: Install aws-cli to push the image into ECR
           command: |
-            pip install awscli==1.22.72
+            pip install awscli==1.24.9
       - run:
-          name: Build Docker image
-          command: docker build -t preacher .
-      - run:
-          name: Push Docker image
+          name: Install Docker Buildx
           command: |
+            mkdir -p ~/.docker/cli-plugins/
+            curl -sL "https://github.com/docker/buildx/releases/download/v0.8.0/buildx-v0.8.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+            chmod a+x ~/.docker/cli-plugins/docker-buildx
+            sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            docker run --privileged --rm tonistiigi/binfmt --install arm64
+            docker context create buildcontext
+            docker buildx create buildcontext --use
+      - run:
+          name: Build Docker images
+          no_output_timeout: 30m
+          command: |
+            docker buildx build --load --progress plain --platform linux/arm64/v8 -t preacher:arm64-v8 .
+            docker build --platform linux/amd64 -t preacher:amd64 .
+      - run:
+          name: Push Docker images
+          command: |
+            function push() {
+              local image="${1:?}"
+
+              local image_amd64_v8="${image}-arm64-v8"
+              docker tag preacher:arm64-v8 "${image_amd64_v8}"
+              docker push "${image_amd64_v8}"
+
+              local image_amd64="${image}-amd64"
+              docker tag preacher:amd64 "${image_amd64}"
+              docker push "${image_amd64}"
+
+              docker manifest create "${image}" "${image_amd64_v8}" "${image_amd64}"
+              docker manifest push "${image}"
+            }
+
             IMAGE_TAG=latest
             if [[ -n "${CIRCLE_TAG}" ]]; then
               IMAGE_TAG="${CIRCLE_TAG}"
             fi
-            echo "${IMAGE_TAG}"
-            export IMAGE_TAG
+            echo "Image Tag: ${IMAGE_TAG}"
 
-            DOCKER_HUB_IMAGE="ymoch/preacher:${IMAGE_TAG}"
-            docker tag preacher "${DOCKER_HUB_IMAGE}"
             echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
-            docker push "${DOCKER_HUB_IMAGE}"
+            push "ymoch/preacher:${IMAGE_TAG}"
 
-            ECR_PUBLIC_IMAGE="public.ecr.aws/ymoch/preacher:${IMAGE_TAG}"
-            docker tag preacher "${ECR_PUBLIC_IMAGE}"
             aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/ymoch
-            docker push "${ECR_PUBLIC_IMAGE}"
+            push "public.ecr.aws/ymoch/preacher:${IMAGE_TAG}"
