@@ -3,13 +3,10 @@ FROM alpine:3.16.0
 WORKDIR /work
 
 COPY . preacher
-RUN apk --no-cache add python3 yaml libxml2 libxslt && \
+RUN apk --no-cache add python3 py3-lxml py3-yaml && \
     apk --no-cache add --virtual .build-deps \
         python3-dev \
-        yaml-dev \
         libc-dev \
-        libxml2-dev \
-        libxslt-dev \
         libffi-dev \
         openssl-dev \
         libtool \
