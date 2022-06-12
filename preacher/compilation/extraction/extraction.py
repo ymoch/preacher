@@ -1,8 +1,6 @@
 """Extraction compilation."""
 
-from collections.abc import Mapping
-from functools import partial
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Mapping, Optional
 
 from preacher.compilation.error import CompilationError, on_key
 from preacher.compilation.util.type import ensure_bool, ensure_str
@@ -24,11 +22,14 @@ _KEY_MULTIPLE = "multiple"
 _KEY_CAST_TO = "cast_to"
 
 
+Factory = Callable[[str, Mapping[str, object]], Extractor]
+
+
 class ExtractionCompiler:
     def __init__(self):
         self._factory_map = {}
 
-    def add_factory(self, key: str, factory):
+    def add_factory(self, key: str, factory: Factory):
         self._factory_map[key] = factory
 
     def compile(self, obj: object) -> Extractor:
@@ -49,22 +50,22 @@ class ExtractionCompiler:
         factory = self._factory_map[factory_key]
         query = obj[factory_key]
 
-        multiple_obj = obj.get(_KEY_MULTIPLE, False)
-        with on_key(_KEY_MULTIPLE):
-            multiple = ensure_bool(multiple_obj)
+        return factory(query, obj)
 
-        cast: Optional[Callable[[object], Any]] = None
-        cast_obj = obj.get(_KEY_CAST_TO)
-        if cast_obj is not None:
-            with on_key(_KEY_CAST_TO):
-                cast = self._compile_cast(cast_obj)
 
-        return factory(query, multiple=multiple, cast=cast)
+def _select_multiple(options: Mapping) -> bool:
+    obj = options.get(_KEY_MULTIPLE, False)
+    print(options, obj)
+    with on_key(_KEY_MULTIPLE):
+        return ensure_bool(obj)
 
-    @staticmethod
-    def _compile_cast(obj: object) -> Callable[[object], Any]:
-        """`obj` should be a string."""
 
+def _select_cast(options: Mapping) -> Optional[Callable[[object], Any]]:
+    obj = options.get(_KEY_CAST_TO)
+    if obj is None:
+        return None
+
+    with on_key(_KEY_CAST_TO):
         key = ensure_str(obj)
         cast = _CAST_FUNC_MAP.get(key)
         if not cast:
@@ -73,8 +74,26 @@ class ExtractionCompiler:
         return cast
 
 
+def compile_jq(query: str, options: Mapping) -> JqExtractor:
+    multiple = _select_multiple(options)
+    cast = _select_cast(options)
+    return JqExtractor(PyJqEngine(), query, multiple=multiple, cast=cast)
+
+
+def compile_xpath(query: str, options: Mapping) -> XPathExtractor:
+    multiple = _select_multiple(options)
+    cast = _select_cast(options)
+    return XPathExtractor(query, multiple=multiple, cast=cast)
+
+
+def compile_key(query: str, options: Mapping) -> KeyExtractor:
+    multiple = _select_multiple(options)
+    cast = _select_cast(options)
+    return KeyExtractor(query, multiple=multiple, cast=cast)
+
+
 def add_default_extractions(compiler: ExtractionCompiler) -> None:
     if PyJqEngine.is_available():
-        compiler.add_factory(_KEY_JQ, partial(JqExtractor, PyJqEngine()))
-    compiler.add_factory(_KEY_XPATH, XPathExtractor)
-    compiler.add_factory(_KEY_KEY, KeyExtractor)
+        compiler.add_factory(_KEY_JQ, compile_jq)
+    compiler.add_factory(_KEY_XPATH, compile_xpath)
+    compiler.add_factory(_KEY_KEY, compile_key)
