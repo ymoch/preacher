@@ -44,6 +44,11 @@ Here is the definition of ``Extraction`` as a mapping.
      - no
      - See: :ref:`casting`
      - ``"float"``
+   * - namespaces
+     - dictionary
+     - no (for XPath only)
+     - A namespace mapping.
+     - ``{"syn": "http://purl.org/rss/1.0/modules/syndication/"}``
 
 .. note:: One of ``jq``, ``xpath`` or ``key`` is required.
 
