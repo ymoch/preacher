@@ -64,6 +64,7 @@ def test_when_given_an_xpath_object(compiler, jq_factory, xpath_factory):
 
 
 if PyJqEngine.is_available():
+
     @mark.parametrize(
         ("value", "expected_message", "expected_path"),
         (
