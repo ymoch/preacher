@@ -23,6 +23,16 @@ VALUE = """
     <numbers>
         <value>2</value>
     </numbers>
+    <namespacing xmlns="default-foo">
+        <foo>foo-content</foo>
+        <namespacing xmlns="default-bar">
+            <bar>bar-content</bar>
+        </namespacing>
+    </namespacing>
+    <ns-baz:namespacing xmlns:ns-baz="explicit-baz">
+        <ns-baz:baz>ns-baz:baz-content</ns-baz:baz>
+        <baz>baz-content</baz>
+    </ns-baz:namespacing>
 </root>
 """
 
@@ -54,10 +64,15 @@ def test_extract_invalid(analyzer):
         ("//baz/@attr", "baz-attr"),
         ("./number", "10"),
         ("./numbers/value", "1"),
+        ("/root/ns-foo:namespacing/ns-foo:foo", "foo-content"),
+        ("/root/ns-foo:namespacing/ns-bar:namespacing/ns-bar:bar", "bar-content"),
+        ("/root/ns-baz:namespacing/baz", "baz-content"),
+        ("/root/ns-baz:namespacing/ns-baz:baz", "ns-baz:baz-content"),
     ),
 )
 def test_extract_default(query, expected, analyzer):
-    extractor = XPathExtractor(query)
+    namespaces = {"ns-foo": "default-foo", "ns-bar": "default-bar", "ns-baz": "explicit-baz"}
+    extractor = XPathExtractor(query, namespaces=namespaces)
     assert extractor.extract(analyzer) == expected
 
 

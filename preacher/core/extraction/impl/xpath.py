@@ -1,4 +1,4 @@
-from typing import Optional, Callable, Any, List
+from typing import Callable, Any, List, Mapping, Optional
 
 from lxml.etree import _Element as Element, XPathEvalError
 
@@ -13,10 +13,12 @@ class XPathExtractor(Extractor):
         query: str,
         multiple: bool = False,
         cast: Optional[Callable[[object], Any]] = None,
+        namespaces: Optional[Mapping[str, str]] = None,
     ):
         self._query = query
         self._multiple = multiple
         self._cast = cast or identity
+        self._namespaces = namespaces or {}
 
     def extract(self, analyzer: Analyzer) -> object:
         elements = analyzer.for_etree(self._extract)
@@ -37,6 +39,6 @@ class XPathExtractor(Extractor):
 
     def _extract(self, elem: Element) -> List[Element]:
         try:
-            return elem.xpath(self._query)
+            return elem.xpath(self._query, namespaces=self._namespaces)
         except XPathEvalError:
             raise ExtractionError(f"Invalid XPath: {self._query}")
