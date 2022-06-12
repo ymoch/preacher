@@ -3,7 +3,7 @@
 from typing import Any, Callable, Mapping, Optional
 
 from preacher.compilation.error import CompilationError, on_key
-from preacher.compilation.util.type import ensure_bool, ensure_str
+from preacher.compilation.util.type import ensure_bool, ensure_mapping, ensure_str
 from preacher.core.extraction.extraction import Extractor
 from preacher.core.extraction.impl.key import KeyExtractor
 from preacher.core.extraction.impl.jq_ import JqExtractor
@@ -20,6 +20,7 @@ _KEY_XPATH = "xpath"
 _KEY_KEY = "key"
 _KEY_MULTIPLE = "multiple"
 _KEY_CAST_TO = "cast_to"
+_KEY_NAMESPACES = "namespaces"
 
 
 Factory = Callable[[str, Mapping[str, object]], Extractor]
@@ -80,10 +81,24 @@ def compile_jq(query: str, options: Mapping) -> JqExtractor:
     return JqExtractor(PyJqEngine(), query, multiple=multiple, cast=cast)
 
 
+def _ensure_str_on_key(key: str, obj: object) -> str:
+    with on_key(key):
+        return ensure_str(obj)
+
+
+def _select_namespaces(options: Mapping) -> Mapping[str, str]:
+    obj = options.get(_KEY_NAMESPACES, {})
+    with on_key(_KEY_NAMESPACES):
+        mapping = ensure_mapping(obj)
+        return {ensure_str(key): _ensure_str_on_key(key, value) for key, value in mapping.items()}
+
+
 def compile_xpath(query: str, options: Mapping) -> XPathExtractor:
     multiple = _select_multiple(options)
     cast = _select_cast(options)
-    return XPathExtractor(query, multiple=multiple, cast=cast)
+    namespaces = _select_namespaces(options)
+
+    return XPathExtractor(query, multiple=multiple, cast=cast, namespaces=namespaces)
 
 
 def compile_key(query: str, options: Mapping) -> KeyExtractor:

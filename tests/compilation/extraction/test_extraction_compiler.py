@@ -105,6 +105,15 @@ if PyJqEngine.is_available():
         ({"multiple": 1}, "", [NamedNode("multiple")]),
         ({"cast_to": 1}, " string", [NamedNode("cast_to")]),
         ({"cast_to": "xxx"}, ": xxx", [NamedNode("cast_to")]),
+        ({"namespaces": 1}, "be a map", [NamedNode("namespaces")]),
+        ({"namespaces": "xxx"}, "be a map", [NamedNode("namespaces")]),
+        ({"namespaces": []}, "be a map", [NamedNode("namespaces")]),
+        ({"namespaces": {None: "xxx"}}, "", [NamedNode("namespaces")]),
+        ({"namespaces": {1: "xxx"}}, "", [NamedNode("namespaces")]),
+        ({"namespaces": {"xxx": None}}, "", [NamedNode("namespaces"), NamedNode("xxx")]),
+        ({"namespaces": {"xxx": 1}}, "", [NamedNode("namespaces"), NamedNode("xxx")]),
+        ({"namespaces": {"xxx": []}}, "", [NamedNode("namespaces"), NamedNode("xxx")]),
+        ({"namespaces": {"xxx": {}}}, "", [NamedNode("namespaces"), NamedNode("xxx")]),
     ),
 )
 def test_compile_xpath_when_given_invalid_options(value, expected_message, expected_path):
@@ -117,8 +126,12 @@ def test_compile_xpath_when_given_invalid_options(value, expected_message, expec
 @mark.parametrize(
     ("query", "options", "expected_call"),
     (
-        (".foo", {}, call(".foo", multiple=False, cast=None)),
-        ("/bar", {"multiple": True, "cast_to": "int"}, call("/bar", multiple=True, cast=int)),
+        (".foo", {}, call(".foo", multiple=False, cast=None, namespaces={})),
+        (
+            "/bar",
+            {"multiple": True, "cast_to": "int", "namespaces": {"spam": "ham"}},
+            call("/bar", multiple=True, cast=int, namespaces={"spam": "ham"}),
+        ),
     ),
 )
 def test_compile_xpath(mocker, query, options, expected_call):
@@ -158,7 +171,7 @@ def test_compile_key(mocker, query, options, expected_call):
 
 
 ADD_DEFAULT_EXTRACTIONS_CASES: List[Tuple[object, str, object]] = [
-    ({"xpath": "/foo"}, "XPathExtractor", call("/foo", multiple=False, cast=None)),
+    ({"xpath": "/foo"}, "XPathExtractor", call("/foo", multiple=False, cast=None, namespaces={})),
     ({"key": "foo"}, "KeyExtractor", call("foo", multiple=False, cast=None)),
 ]
 if PyJqEngine.is_available():
