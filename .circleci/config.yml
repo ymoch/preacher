@@ -195,7 +195,7 @@ commands:
       - run:
           name: Install aws-cli to push the image into ECR
           command: |
-            pip install awscli==1.24.9
+            pip install awscli==1.25.7
       - run:
           name: Install Docker Buildx
           command: |
