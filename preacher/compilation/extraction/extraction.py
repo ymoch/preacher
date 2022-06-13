@@ -56,7 +56,6 @@ class ExtractionCompiler:
 
 def _select_multiple(options: Mapping) -> bool:
     obj = options.get(_KEY_MULTIPLE, False)
-    print(options, obj)
     with on_key(_KEY_MULTIPLE):
         return ensure_bool(obj)
 
