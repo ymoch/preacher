@@ -31,3 +31,21 @@ cases:
             xpath: //baz/@id
           should:
             equal: baz1
+        - describe:
+            xpath: ./foo:namespace/foo:foo
+            namespaces:
+              foo: ns-foo
+          should:
+            equal: foo-content
+        - describe:
+            xpath: ./bar:namespace/baz
+            namespaces:
+              bar: ns-bar
+          should:
+            equal: baz-content
+        - describe:
+            xpath: ./bar:namespace/bar:baz
+            namespaces:
+              bar: ns-bar
+          should:
+            equal: bar:baz-content

@@ -8,4 +8,11 @@
   <bar id="bar2">
     <baz id="baz2"/>
   </bar>
+  <namespace xmlns="ns-foo">
+    <foo>foo-content</foo>
+  </namespace>
+  <bar:namespace xmlns:bar="ns-bar">
+    <baz>baz-content</baz>
+    <bar:baz>bar:baz-content</bar:baz>
+  </bar:namespace>
 </root>
