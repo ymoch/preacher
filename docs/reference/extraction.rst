@@ -20,17 +20,17 @@ Here is the definition of ``Extraction`` as a mapping.
      - Description
      - Example
    * - jq
-     - string
+     - String
      - ?
      - A `jq`_ query.
      - ``".foo.bar"``
    * - xpath
-     - string
+     - String
      - ?
      - A `XPath`_ query.
      - ``"/foo/nar"``
    * - key
-     - string
+     - String
      - ?
      - A key of a dictionary.
      - ``"key"``
@@ -44,13 +44,29 @@ Here is the definition of ``Extraction`` as a mapping.
      - no
      - See: :ref:`casting`
      - ``"float"``
-   * - namespaces
-     - dictionary
-     - no (for XPath only)
-     - A namespace mapping.
-     - ``{"syn": "http://purl.org/rss/1.0/modules/syndication/"}``
 
 .. note:: One of ``jq``, ``xpath`` or ``key`` is required.
+
+There are some options for each extraction method.
+
+For XPath
+""""""""""
+.. list-table:: The definition of options for XPath extraction.
+   :header-rows: 1
+
+   * - Key
+     - Type
+     - Description
+     - Example
+   * - namespaces
+     - Map[String, String]
+     - A namespace mapping from a prefix to a namespace URI.
+     - ``{"ns": "namespace-uri"}``
+
+.. note:: All namespaces you expect must be specified explicitly.
+
+.. note:: Use arbitrary prefix for default namespaces,
+          which XPath 1.0 does not support.
 
 .. _multiple:
 
