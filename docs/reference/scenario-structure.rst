@@ -27,6 +27,7 @@ Here is a scenario example.
               equal: bar
       - label: A Little Complicated
         enabled: true
+        wait: 3 minutes
         request:
           method: POST
           path: /path/to/foo
@@ -183,6 +184,10 @@ A "case" is the basic unit of verification, which executes a request and verify 
       - ``[]``
       - Run this case only when the context satisfies these description.
         See :doc:`context` for more information.
+    * - wait
+      - :ref:`duration`
+      - ``null``
+      - The waiting time before this case is run.
 
 You can use default values to simplify cases. See :ref:`default-test` for more information.
 
