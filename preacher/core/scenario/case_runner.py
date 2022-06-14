@@ -1,3 +1,4 @@
+from time import sleep
 from typing import Optional
 
 import requests
@@ -38,6 +39,8 @@ class CaseRunner:
             )
             if not conditions.status.is_succeeded:
                 return CaseResult(case.label, conditions)
+
+            sleep(max(case.waiting_time.total_seconds(), 0.0))
 
             execution, response, verification = self._unit_runner.run(
                 request=case.request,

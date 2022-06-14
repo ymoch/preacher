@@ -1,3 +1,4 @@
+from datetime import timedelta
 from functools import partial
 from typing import Optional
 from unittest.mock import Mock, NonCallableMock, sentinel
@@ -35,8 +36,10 @@ def test_runner_properties():
     assert runner.base_url is sentinel.base_url
 
 
-def test_when_disabled():
-    case = Case(label=sentinel.label, enabled=False)
+def test_when_disabled(mocker):
+    sleep = mocker.patch(f"{PKG}.sleep")
+
+    case = Case(label=sentinel.label, enabled=False, waiting_time=timedelta(1.0))
 
     unit_runner = NonCallableMock(UnitRunner)
     runner = CaseRunner(unit_runner=unit_runner)
@@ -44,6 +47,7 @@ def test_when_disabled():
     assert actual.label is sentinel.label
     assert actual.status is Status.SKIPPED
 
+    sleep.assert_not_called()
     unit_runner.run.assert_not_called()
 
 
@@ -70,6 +74,7 @@ def test_when_disabled():
 )
 def test_given_bad_condition(mocker, condition_verifications, expected_status):
     mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
+    sleep = mocker.patch(f"{PKG}.sleep")
 
     def _analyze_context(context: Context) -> Analyzer:
         assert context == Context(foo="bar", starts=sentinel.starts, base_url=sentinel.base_url)
@@ -110,12 +115,14 @@ def test_given_bad_condition(mocker, condition_verifications, expected_status):
         condition.verify.assert_called_once_with(sentinel.context_analyzer, Context(foo="bar"))
     analyze_context.assert_called_once_with(Context(foo="bar"))
 
+    sleep.assert_not_called()
     unit_runner.run.assert_not_called()
     listener.on_execution.assert_not_called()
 
 
 def test_when_given_no_response(mocker):
     mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
+    sleep = mocker.patch(f"{PKG}.sleep")
 
     execution = ExecutionReport(status=Status.FAILURE)
     case = Case(label=sentinel.label, request=sentinel.request, response=sentinel.response)
@@ -143,8 +150,8 @@ def test_when_given_no_response(mocker):
     assert result.execution is execution
     assert result.response is None
 
-    # Contextual values will disappear.
-    unit_runner.run.assert_called_once_with(
+    sleep.assert_called_once_with(0.0)
+    unit_runner.run.assert_called_once_with(  # Contextual values will disappear.
         request=sentinel.request,
         requirements=sentinel.response,
         session=None,
@@ -155,6 +162,7 @@ def test_when_given_no_response(mocker):
 
 def test_when_given_an_response(mocker):
     mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
+    sleep = mocker.patch(f"{PKG}.sleep")
 
     execution = ExecutionReport(status=Status.SUCCESS, starts=sentinel.starts)
     verification = ResponseVerification(
@@ -164,7 +172,12 @@ def test_when_given_an_response(mocker):
         body=Verification(status=Status.UNSTABLE),
     )
 
-    case = Case(label=sentinel.label, request=sentinel.request, response=sentinel.response)
+    case = Case(
+        label=sentinel.label,
+        request=sentinel.request,
+        response=sentinel.response,
+        waiting_time=timedelta(minutes=1.2),
+    )
 
     def _run_unit(
         request: Request,
@@ -176,6 +189,8 @@ def test_when_given_an_response(mocker):
         assert requirements is sentinel.response
         assert session is sentinel.session
         assert context == Context(foo="bar", starts=sentinel.starts, base_url=sentinel.base_url)
+        sleep.assert_called_once_with(72.0)
+
         return execution, sentinel.response, verification
 
     unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
@@ -197,3 +212,16 @@ def test_when_given_an_response(mocker):
         context=Context(foo="bar"),
     )
     listener.on_execution.assert_called_once_with(execution, sentinel.response)
+
+
+def test_given_a_negative_waiting_time(mocker):
+    mocker.patch(f"{PKG}.now", return_value=sentinel.starts)
+    sleep = mocker.patch(f"{PKG}.sleep")
+
+    case = Case(waiting_time=timedelta(seconds=-2.4))
+    unit_runner = NonCallableMock(UnitRunner, base_url=sentinel.base_url)
+    unit_runner.run.return_value = ExecutionReport(), None, None
+    runner = CaseRunner(unit_runner=unit_runner)
+    runner.run(case)
+
+    sleep.assert_called_once_with(0.0)
