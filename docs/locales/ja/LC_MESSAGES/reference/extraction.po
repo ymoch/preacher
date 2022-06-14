@@ -8,237 +8,279 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Preacher \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-28 01:08+0900\n"
+"POT-Creation-Date: 2022-06-14 23:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.10.2\n"
 
-#: ../../reference/extraction.rst:2 191ad2b61c7b47ff928e6d4df0303592
+#: ../../reference/extraction.rst:2 271717ef48df40c199eaeb24181e45ca
 msgid "Extraction"
 msgstr ""
 
-#: ../../reference/extraction.rst:3 92181155fbc9400787d09ee486a92245
+#: ../../reference/extraction.rst:3 faadd47492504f8c9a15a8b51c38c36c
 msgid ""
 "In Preacher, an \"extraction\" is a process to extract values from a "
 "target such as a response body. Extractions are descripted in `jq`_ or "
 "`XPath`_."
 msgstr ""
 
-#: ../../reference/extraction.rst:8 055d6805001245aa85b429b365bd1b98
+#: ../../reference/extraction.rst:8 9bc7e4edbd904227a440515844648665
 msgid "Grammer"
 msgstr ""
 
-#: ../../reference/extraction.rst:11 cfa95dfd272c41399202de3ac9425eda
+#: ../../reference/extraction.rst:11 c1c05ed16c434b60b23c6bf2e68a291e
 msgid "Full Definition"
 msgstr ""
 
-#: ../../reference/extraction.rst:12 ef72a7e9c45a446f993370346b2c49a8
+#: ../../reference/extraction.rst:12 799c25c21580454ba5d5ead9b4156369
 msgid "Here is the definition of ``Extraction`` as a mapping."
 msgstr ""
 
-#: ../../reference/extraction.rst:14 0c13334d3c724775a287d6e5966d7061
+#: ../../reference/extraction.rst:14 c50df424ef5f412d85eaf2d1a9902c6b
 msgid "The definition of ``Extraction`` Object"
 msgstr ""
 
-#: ../../reference/extraction.rst:18 a7112039399043f5bdd64b0dc62e438f
+#: ../../reference/extraction.rst:17 ../../reference/extraction.rst:57
+#: 69b8edfe2b4b44ff8e2827bc9e2c59ca c6dd2b0a33344bfc96d27955c4e9c4e2
 msgid "Key"
 msgstr ""
 
-#: ../../reference/extraction.rst:19 7e840692fb104be2976bae416f4b4c17
+#: ../../reference/extraction.rst:18 ../../reference/extraction.rst:58
+#: 20896be1f7154b3f840f18c55c31a96e ea61f0852fa746ca85fc6e436549d7b3
 msgid "Type"
 msgstr ""
 
-#: ../../reference/extraction.rst:20 c1506a22cbdc47b0812548dcb5ebab96
+#: ../../reference/extraction.rst:19 3b8b2fd4a13c44a7bbafb095e6f76801
 msgid "Required?"
 msgstr ""
 
-#: ../../reference/extraction.rst:21 c71d231b98d0461b80de4fb03187cb4f
+#: ../../reference/extraction.rst:20 ../../reference/extraction.rst:59
+#: 7dc70bd03b5b4fbbb43afd1d5a05e37e b26897875c5d41b4ac51b91b8f7a996f
 msgid "Description"
 msgstr ""
 
-#: ../../reference/extraction.rst:22 6eff0a4c1b7d4583b57c2380104427ce
+#: ../../reference/extraction.rst:21 ../../reference/extraction.rst:60
+#: ca5aa8f985b74a80b0b2720ec928d181 e2ff025a52764a1489f05b66bf702dc6
 msgid "Example"
 msgstr ""
 
-#: ../../reference/extraction.rst:23 ../../reference/extraction.rst:85
-#: 15cf5aa8582f46bdaa72c907c6861923 576d216673534b43929ee0b177af5cd5
+#: ../../reference/extraction.rst:22 ../../reference/extraction.rst:105
+#: cdac120175454729ae6fe5d7e58d97c7 eeb0bf1416674eb79b81037995a70d4b
 msgid "jq"
 msgstr ""
 
-#: ../../reference/extraction.rst:24 ../../reference/extraction.rst:29
-#: ../../reference/extraction.rst:34 ../../reference/extraction.rst:44
-#: 338e9b3efc69491cbd3fe37785db80df 7ec84187565f448c92c3f6aee10a2989
-#: 9afca1ca90a848f58c6b23af8da1b23c ce64c8ef70e642f283132c46830163ce
-msgid "string"
+#: ../../reference/extraction.rst:23 ../../reference/extraction.rst:28
+#: ../../reference/extraction.rst:33 40c4a10381ed40f8899d8acd8913aa20
+#: 9a84aa8df3f542ba97ab9e20f58cd517 da9cd1427a1d4172b6a75f6a02230e65
+msgid "String"
 msgstr ""
 
-#: ../../reference/extraction.rst:25 ../../reference/extraction.rst:30
-#: ../../reference/extraction.rst:35 54c359856e07450889a7eb754d1dfd39
-#: 900210db0eee42e9b61a39519084001e c2f30687ff9f4f9799fa9b123a7f3045
+#: ../../reference/extraction.rst:24 ../../reference/extraction.rst:29
+#: ../../reference/extraction.rst:34 407db56418574a2883c84f3a866e117e
+#: 92731e0a795c46b588948bf5c660ad3a f8b2c8cad86340f29f2a5b5689b511e2
 msgid "?"
 msgstr ""
 
-#: ../../reference/extraction.rst:26 735e6a003fc54b78933216399c82002a
+#: ../../reference/extraction.rst:25 9a75cf3d4c0946f38d9c3be966687fc1
 msgid "A `jq`_ query."
 msgstr ""
 
-#: ../../reference/extraction.rst:27 42ea0c702dd24a70b4d4a5c296c93eea
+#: ../../reference/extraction.rst:26 facb9a6f07ec49b882473234c232ba7e
 msgid "``\".foo.bar\"``"
 msgstr ""
 
-#: ../../reference/extraction.rst:28 ../../reference/extraction.rst:85
-#: 0bea2a53306745588158268a65dfbbcc 3e66ccb8bc3e4d508b5d922dc703c920
+#: ../../reference/extraction.rst:27 ../../reference/extraction.rst:105
+#: 507fb1eb3aa746688e0cfaf0a48d8aa8 6358b12f812247bd99f19c1de31b7f5b
 msgid "xpath"
 msgstr ""
 
-#: ../../reference/extraction.rst:31 856d68b4ae374eddab3a44f131b9989f
+#: ../../reference/extraction.rst:30 4afe3e299344499499d613f22e52ee07
 msgid "A `XPath`_ query."
 msgstr ""
 
-#: ../../reference/extraction.rst:32 f0877b54b25a43f992b7fb0dc8be6c30
+#: ../../reference/extraction.rst:31 ee7214d1f51e4d76b94f6559b5b0b651
 msgid "``\"/foo/nar\"``"
 msgstr ""
 
-#: ../../reference/extraction.rst:33 ../../reference/extraction.rst:85
-#: 45e2d11359754618a512d3e49aea85dc e101141b9c574cd787287c53619e00b1
+#: ../../reference/extraction.rst:32 ../../reference/extraction.rst:105
+#: 69b8edfe2b4b44ff8e2827bc9e2c59ca a22076f9c69d48f4b3962579943705d4
 msgid "key"
 msgstr ""
 
-#: ../../reference/extraction.rst:36 6d162863cbef4d92b7807085faeb0a75
+#: ../../reference/extraction.rst:35 08139c91511146638086cc5189bc0c85
 msgid "A key of a dictionary."
 msgstr ""
 
-#: ../../reference/extraction.rst:37 c44e26383d224361918a657884087e85
+#: ../../reference/extraction.rst:36 ca06cb88261f42d8aaaf0c34163099a6
 msgid "``\"key\"``"
 msgstr ""
 
-#: ../../reference/extraction.rst:38 cf8d7b7fd68e4bb2a3ca0a2e9bd99d6f
+#: ../../reference/extraction.rst:37 03b14e775fba443da95027c4499cca63
 msgid "multiple"
 msgstr ""
 
-#: ../../reference/extraction.rst:39 4b47f6bd8446433f8534c00ad1c9934b
+#: ../../reference/extraction.rst:38 8c57e11f9b0d4a13b4a537a6c99910d8
 msgid "boolean"
 msgstr ""
 
-#: ../../reference/extraction.rst:40 ../../reference/extraction.rst:45
-#: 4379a5e4a4f14af5b197e08d8ee96374 5e7c4a0e53104a3190a6786b21e1850d
+#: ../../reference/extraction.rst:39 ../../reference/extraction.rst:44
+#: 792d373332ce416786032257990ebc43 9ad0ddcb3baa45a090c87688b0dbadbb
 msgid "no"
 msgstr ""
 
-#: ../../reference/extraction.rst:41 1ad50456d55c4b38b1e570e33fc12ba4
+#: ../../reference/extraction.rst:40 c368564aea404f7987d69d8a0dcd681b
 msgid "See: :ref:`multiple`"
 msgstr ""
 
-#: ../../reference/extraction.rst:42 7d46404aa3d04777811b96a59a0bafa4
+#: ../../reference/extraction.rst:41 bbbafc763cdc415ab6a3ce903f343bd7
 msgid "``true``"
 msgstr ""
 
-#: ../../reference/extraction.rst:43 ef51ae043e94495b9e29fc8d50f5f038
+#: ../../reference/extraction.rst:42 1c5bb37c44f74af38b2864feda5f282b
 msgid "cast_to"
 msgstr ""
 
-#: ../../reference/extraction.rst:46 f0e106528afd45ef89e8fce655d1f80f
+#: ../../reference/extraction.rst:43 4a9e422813004807832315260c468660
+msgid "string"
+msgstr ""
+
+#: ../../reference/extraction.rst:45 3b426235bc934321bf1fc2fa06c8b101
 msgid "See: :ref:`casting`"
 msgstr ""
 
-#: ../../reference/extraction.rst:47 6ba7a45e2da64a8d865deb336734758a
+#: ../../reference/extraction.rst:46 36e4de820f6b410db92c52a6afd7063e
 msgid "``\"float\"``"
 msgstr ""
 
-#: ../../reference/extraction.rst:49 80b54954199941f090a09bcc8152b661
+#: ../../reference/extraction.rst:48 33f5e9d6996742949d1a6a6f78e66862
 msgid "One of ``jq``, ``xpath`` or ``key`` is required."
 msgstr ""
 
-#: ../../reference/extraction.rst:54 b7e02af5c81144338526c82a1f46e79a
+#: ../../reference/extraction.rst:50 56ac228734c04b8d950595ffa13a8802
+msgid "There are some options for each extraction method."
+msgstr ""
+
+#: ../../reference/extraction.rst:53 b23d517a5df14a20b571131d640dc098
+msgid "For XPath"
+msgstr ""
+
+#: ../../reference/extraction.rst:54 26d2160bc64a41a79b5ac6a49b826475
+msgid "The definition of options for XPath extraction."
+msgstr ""
+
+#: ../../reference/extraction.rst:61 1fbc6c463336405190096e8b2d0f46c1
+msgid "namespaces"
+msgstr ""
+
+#: ../../reference/extraction.rst:62 fec52f6464464bc3ac8fc5e047478a40
+msgid "Map[String, String]"
+msgstr ""
+
+#: ../../reference/extraction.rst:63 a85f491f1681402aaed771cb3a74daed
+msgid "A namespace mapping from a prefix to a namespace URI."
+msgstr ""
+
+#: ../../reference/extraction.rst:64 abfcb5ec272f48d19c6873e24f80ad14
+msgid "``{\"ns\": \"namespace-uri\"}``"
+msgstr ""
+
+#: ../../reference/extraction.rst:66 00534dbbd7174457aa0f773889f017cc
+msgid "All namespaces you expect must be specified explicitly."
+msgstr ""
+
+#: ../../reference/extraction.rst:68 52ec8127cddc4025a5af0f0089c31193
+msgid ""
+"Use arbitrary prefix for default namespaces, which XPath 1.0 does not "
+"support."
+msgstr ""
+
+#: ../../reference/extraction.rst:74 34acea3ae0d946778d68030473587126
 msgid "Multiple Values"
 msgstr ""
 
-#: ../../reference/extraction.rst:55 a3117c398e2144a89322a114e76ace0e
+#: ../../reference/extraction.rst:75 5b4f1ca1907b4eb1914cf59fb92800d7
 msgid ""
 "By default, an extraction provides the first of extracted values. When "
 "``multiple`` is  ``true``, it provides the list of all extracted values."
 msgstr ""
 
-#: ../../reference/extraction.rst:61 c8a5b82ea8c644059dfa9dc5ad7be887
+#: ../../reference/extraction.rst:81 e8c88e1d30fe4d4299ba7bbb411f5831
 msgid "Casting"
 msgstr ""
 
-#: ../../reference/extraction.rst:62 6829499c6cb44703be0be09f82e90663
+#: ../../reference/extraction.rst:82 0fd7415a9ce84dfa9932d7c0ed19d56f
 msgid ""
 "Extracted values can be casted by ``cast_to`` settings. This feature is "
 "useful for XML analysis, which provides only strings even if they are "
 "numbers."
 msgstr ""
 
-#: ../../reference/extraction.rst:66 794a65de0aa04725832e66b1d5499a68
+#: ../../reference/extraction.rst:86 77d7745367be4ed188b5770b7af0b04a
 msgid "Allowed values are:"
 msgstr ""
 
-#: ../../reference/extraction.rst:68 8aa1a05ab00745c78bb7309605af44c6
+#: ../../reference/extraction.rst:88 b5993d252c9c4f38b24a07f64b10ee96
 msgid "int: Cast to an integer."
 msgstr ""
 
-#: ../../reference/extraction.rst:69 c07d98ef352441b290e5639fe93e8281
+#: ../../reference/extraction.rst:89 518f33a3d9a0477aaa5e03934e6c44ac
 msgid "float: Cast to a floating point number."
 msgstr ""
 
-#: ../../reference/extraction.rst:70 6afd5879d2704877b06895359a7c42e5
+#: ../../reference/extraction.rst:90 24f2f6dd94364899acec5d9b39683d77
 msgid "string: Cast to a string."
 msgstr ""
 
-#: ../../reference/extraction.rst:72 6ae72ece11dd486f833127e2e00a1227
+#: ../../reference/extraction.rst:92 065951a0901d4c7fad2658fe73d50ada
 msgid "Casting does not affect ``null``."
 msgstr ""
 
-#: ../../reference/extraction.rst:75 855de7a00c5a457c9237820792298c70
+#: ../../reference/extraction.rst:95 b26897875c5d41b4ac51b91b8f7a996f
 msgid "Abbreviation"
 msgstr ""
 
-#: ../../reference/extraction.rst:76 b8422414d39e4e23a127080c47843852
+#: ../../reference/extraction.rst:96 c4eb306b9db04e6987222b7d2b45cec9
 msgid ""
 "Ordinary, extractions should be very simple `jq`_ queries. In these "
 "cases, an extraction can be written in a string, which is equivalent to "
 "``{\"jq\": it}``."
 msgstr ""
 
-#: ../../reference/extraction.rst:81 a8bf7a2ee2894c3ea3cdbce47ef279cf
+#: ../../reference/extraction.rst:101 7cd41598a5864334bcce399d15089987
 msgid "Content Compatibility"
 msgstr ""
 
-#: ../../reference/extraction.rst:82 5b6a26f888914973ad12eee11299b995
+#: ../../reference/extraction.rst:102 957c39b29b1140cb9e7c8547a66d44f6
 msgid "A extraction must be compatible for the content."
 msgstr ""
 
-#: ../../reference/extraction.rst:85 f64e6cb3320f4218aebf88df1c756e24
+#: ../../reference/extraction.rst:105 463cc50e3df9493ea8d2bc1a2d123be8
 msgid "Content"
 msgstr ""
 
-#: ../../reference/extraction.rst:87 76d5a6b6d01940bea04d86f3c430e027
+#: ../../reference/extraction.rst:107 b753fd75690c4095a3dacad52464fbd6
 msgid "JSON (an object)"
 msgstr ""
 
-#: ../../reference/extraction.rst:87 ../../reference/extraction.rst:89
-#: ../../reference/extraction.rst:91 095b3c2e209249d08f0401f1f8f72a5b
-#: 36fac3f09d41401b828c1541366f9bd8 7562c82479524ef2ae5177feea99d8c7
-#: 86679983b2cb4b56a6c7f96fd254e6bd
+#: ../../reference/extraction.rst:107 ../../reference/extraction.rst:109
+#: ../../reference/extraction.rst:111 4f6b58adaa0e4eeba8e6bfceb6380509
 msgid "o"
 msgstr ""
 
-#: ../../reference/extraction.rst:87 ../../reference/extraction.rst:89
-#: ../../reference/extraction.rst:91 16e5b80127f145a9a6f4a4e3e8eb7fff
-#: 1eb33d171cae471ebd138e7490970ded 4fc9c43a1586483186b1622af32bb99f
-#: 5f89a99000b74239a539828c0306cf4e f1f7aaba9cd14263aa7ea7a327841665
+#: ../../reference/extraction.rst:107 ../../reference/extraction.rst:109
+#: ../../reference/extraction.rst:111 4cf8c78a5e2c489c91f2489acfab25b6
 msgid "x"
 msgstr ""
 
-#: ../../reference/extraction.rst:89 303f36e2bb1f4beda2df279d694ef98f
+#: ../../reference/extraction.rst:109 bd148bc7924e4a9780467b36813bdee5
 msgid "JSON (not an object)"
 msgstr ""
 
-#: ../../reference/extraction.rst:91 2371c1ded61a4e09887c12257c48e250
+#: ../../reference/extraction.rst:111 78d6532d307f4057aed08dca909f6ecd
 msgid "XML"
 msgstr ""
+
