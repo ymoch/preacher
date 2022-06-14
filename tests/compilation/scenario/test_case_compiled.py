@@ -13,6 +13,7 @@ def test_replace():
         enabled=sentinel.initial_enabled,
         request=sentinel.initial_request,
         response=sentinel.initial_response,
+        wait=sentinel.initial_wait,
     )
 
     other = CaseCompiled()
@@ -21,18 +22,21 @@ def test_replace():
     assert replaced.enabled is sentinel.initial_enabled
     assert replaced.request is sentinel.initial_request
     assert replaced.response is sentinel.initial_response
+    assert replaced.wait is sentinel.initial_wait
 
     other = CaseCompiled(
         label=sentinel.label,
         enabled=sentinel.enabled,
         request=sentinel.request,
         response=sentinel.response,
+        wait=sentinel.wait,
     )
     replaced = initial.replace(other)
     assert replaced.label is sentinel.label
     assert replaced.enabled is sentinel.enabled
     assert replaced.request is sentinel.request
     assert replaced.response is sentinel.response
+    assert replaced.wait is sentinel.wait
 
 
 def test_fix_hollow(mocker):
@@ -48,6 +52,7 @@ def test_fix_hollow(mocker):
         conditions=[],
         request=None,
         response=None,
+        waiting_time=None,
     )
 
 
@@ -66,6 +71,7 @@ def test_fix_filled(mocker):
         conditions=sentinel.conditions,
         request=request,
         response=response,
+        wait=sentinel.wait,
     )
     fixed = compiled.fix()
     assert fixed is sentinel.fixed
@@ -76,6 +82,7 @@ def test_fix_filled(mocker):
         conditions=sentinel.conditions,
         request=sentinel.request,
         response=sentinel.response,
+        waiting_time=sentinel.wait,
     )
     request.fix.assert_called_once_with()
     response.fix.assert_called_once_with()

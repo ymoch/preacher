@@ -45,6 +45,7 @@ def desc():
         ("", []),
         ({"label": []}, [NamedNode("label")]),
         ({"enabled": []}, [NamedNode("enabled")]),
+        ({"wait": "foo"}, [NamedNode("wait")]),
     ),
 )
 def test_given_invalid_values(compiler: CaseCompiler, value, expected_path):
@@ -87,6 +88,7 @@ def test_given_an_empty_object(compiler: CaseCompiler, req, res):
     assert compiled.conditions is None
     assert compiled.request is None
     assert compiled.response is None
+    assert compiled.wait is None
 
     req.compile.assert_not_called()
     res.compile.assert_not_called()
@@ -100,6 +102,7 @@ def test_creates_a_case(compiler: CaseCompiler, req, res, desc):
             "when": {"k": "v"},
             "request": {"path": "/path"},
             "response": {"key": "value"},
+            "wait": "2 minutes",
         }
     )
     assert compiled.label == "label"
@@ -107,6 +110,8 @@ def test_creates_a_case(compiler: CaseCompiler, req, res, desc):
     assert compiled.conditions == [sentinel.description]
     assert compiled.request is sentinel.request
     assert compiled.response is sentinel.response
+    assert compiled.wait
+    assert compiled.wait.total_seconds() == 120.0
 
     req.compile.assert_called_once_with({"path": "/path"})
     res.compile.assert_called_once_with({"key": "value"})
