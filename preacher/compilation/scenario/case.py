@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from datetime import timedelta
 from typing import List, Optional
 
+from preacher.compilation.datetime import compile_timedelta
 from preacher.compilation.error import on_key
 from preacher.compilation.request import RequestCompiler, RequestCompiled
 from preacher.compilation.util.functional import map_compile
@@ -28,6 +30,7 @@ _KEY_ENABLED = "enabled"
 _KEY_CONDITIONS = "when"
 _KEY_REQUEST = "request"
 _KEY_RESPONSE = "response"
+_KEY_WAIT = "wait"
 
 
 @dataclass(frozen=True)
@@ -37,6 +40,7 @@ class CaseCompiled:
     conditions: Optional[List[Description]] = None
     request: Optional[RequestCompiled] = None
     response: Optional[ResponseDescriptionCompiled] = None
+    wait: Optional[timedelta] = None
 
     def replace(self, other: CaseCompiled) -> CaseCompiled:
         return CaseCompiled(
@@ -45,6 +49,7 @@ class CaseCompiled:
             conditions=or_else(other.conditions, self.conditions),
             request=or_else(other.request, self.request),
             response=or_else(other.response, self.response),
+            wait=or_else(other.wait, self.wait),
         )
 
     def fix(self) -> Case:
@@ -54,6 +59,7 @@ class CaseCompiled:
             conditions=self.conditions or [],
             request=self.request.fix() if self.request else None,
             response=self.response.fix() if self.response else None,
+            waiting_time=self.wait,
         )
 
 
@@ -137,6 +143,12 @@ class CaseCompiler:
             with on_key(_KEY_RESPONSE):
                 response = self._response.compile(response_obj)
             compiled = replace(compiled, response=response)
+
+        wait_obj = obj.get(_KEY_WAIT)
+        if wait_obj is not None:
+            with on_key(_KEY_WAIT):
+                wait = compile_timedelta(wait_obj)
+            compiled = replace(compiled, wait=wait)
 
         return compiled
 

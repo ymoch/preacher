@@ -3,6 +3,7 @@ Test cases, which execute a given request and verify its response
 along the given descriptions.
 """
 
+from datetime import timedelta
 from typing import Optional, List
 
 from preacher.core.request import Request
@@ -23,12 +24,14 @@ class Case:
         conditions: Optional[List[Description]] = None,
         request: Optional[Request] = None,
         response: Optional[ResponseDescription] = None,
+        waiting_time: Optional[timedelta] = None,
     ):
         self._label = label
         self._enabled = enabled
         self._conditions = conditions or []
         self._request = request or Request()
         self._response = response or ResponseDescription()
+        self._waiting_time = waiting_time or timedelta()
 
     @property
     def label(self) -> Optional[str]:
@@ -49,3 +52,7 @@ class Case:
     @property
     def response(self) -> ResponseDescription:
         return self._response
+
+    @property
+    def waiting_time(self) -> timedelta:
+        return self._waiting_time
