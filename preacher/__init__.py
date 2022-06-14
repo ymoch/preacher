@@ -1,3 +1,3 @@
 """Preacher: Web API Verification without Coding"""
 
-__version__ = "0.15.10"
+__version__ = "0.15.11"
