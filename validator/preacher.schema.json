@@ -1,0 +1,335 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "JSON Schema for Preacher Scenario YAML",
+    "description": "Preacher シナリオの YAML のスキーマです",
+    "type": "object",
+    "$ref": "#/definitions/scenario",
+    "definitions": {
+        "scenario": {
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "cases": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/case"
+                        }, {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/case"
+                            }
+                        }
+                    ]
+                },
+                "subscenarios": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/yamlTag"
+                        }, {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/scenario"
+                            }
+                        }
+                    ]
+                },
+                "ordered": {
+                    "type": "boolean"
+                },
+                "default": {
+                    "$ref": "#/definitions/case"
+                },
+                "when": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/description"
+                        }, {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/description"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/yamlTag"
+                        }, {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/parameter"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "case": {
+            "type": "object",
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "request": {
+                    "$ref": "#/definitions/request"
+                },
+                "response": {
+                    "$ref": "#/definitions/responseDescription"
+                }
+            },
+            "enabled": {
+                "type": "boolean"
+            },
+            "when": {
+                "$ref": "#/definitions/description"
+            },
+            "wait": {
+                "$ref": "#/definitions/datetime"
+            }
+        },
+        "request": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/yamlTag"
+                },{
+                    "type": "string"
+                },{
+                    "type": "object",
+                    "properties": {
+                        "method": {
+                            "type": "string",
+                            "enum": ["GET", "POST", "PUT", "DELETE"]
+                        },
+                        "path": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        },
+                        "params": {
+                            "$ref": "#/definitions/urlParameters"
+                        },
+                        "body": {
+                            "$ref": "#/definitions/requestBody"
+                        }
+                    }
+                }
+            ]
+        },
+        "urlParameters": {
+            "type": ["string", "object"],
+            "additionalProperties": {
+                "type": ["string", "number", "boolean", "array"]
+            }
+        },
+        "requestBody": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": ["urlencoded", "json"]
+                },
+                "data": {
+                    "type": ["string", "object"]
+                }
+            }
+        },
+        "responseDescription": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "status_code": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        }, {
+                            "$ref": "#/definitions/matcher"
+                        }, {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/matcher"
+                            }
+                        }
+                    ]
+                },
+                "headers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/description"
+                    }
+                },
+                "body": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/description"
+                        },{
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/description"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "description": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["describe"],
+            "properties": {
+                "describe": {
+                    "$ref": "#/definitions/extraction"
+                },
+                "should": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/matcher"
+                        },{
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/matcher"
+                            }
+                        }
+                    ]
+                },
+                "as": {
+                    "type": "string"
+                }
+            }
+        },
+        "extraction": {
+            "anyOf": [
+                {
+                    "type": "string"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "jq": {
+                            "type": "string"
+                        },
+                        "xpath": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        },
+                        "multiple": {
+                            "type": "boolean"
+                        },
+                        "cast_to": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ]
+        },
+        "matcher": {
+            "additionalProperties": false,
+            "maxProperties": 1,
+            "type": ["object", "string", "number", "boolean"],
+            "properties": {
+                "equal": {
+                    "type": ["string", "number", "boolean", "array", "object"]
+                },
+                "have_length": {
+                    "type": "number"
+                },
+                "be_greater_than": {
+                    "type": "number"
+                },
+                "be_greater_than_or_equal_to": {
+                    "type": "number"
+                },
+                "be_less_than": {
+                    "type": "number"
+                },
+                "be_less_than_or_equal_to": {
+                    "type": "number"
+                },
+                "contain_string": {
+                    "type": "string"
+                },
+                "start_with": {
+                    "type": "string"
+                },
+                "end_with": {
+                    "type": "string"
+                },
+                "match_regexp": {
+                    "type": "string"
+                },
+                "be_before": {
+                    "$ref": "#/definitions/datetime"
+                },
+                "be_after": {
+                    "$ref": "#/definitions/datetime"
+                },
+                "have_item": {
+                    "$ref": "#/definitions/matcher"
+                },
+                "have_items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matcher"
+                    }
+                },
+                "contain_exactly": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matcher"
+                    }
+                },
+                "contain_in_any_order": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matcher"
+                    }
+                },
+                "not": {
+                    "$ref": "#/definitions/matcher"
+                },
+                "all_of": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matcher"
+                    }
+                },
+                "any_of": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matcher"
+                    }
+                }
+            }
+        },
+        "parameter": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/yamlTag"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "label": {
+                            "type": "string"
+                        },
+                        "args": {
+                            "type": "object"
+                        }
+                    }
+                }
+            ]
+        },
+        "datetime": {
+            "type": "string"
+        },
+        "yamlTag": {
+            "type": "string",
+            "pattern": "^!(argument|include|context) .*"
+        }
+    }
+}

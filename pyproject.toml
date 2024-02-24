@@ -48,6 +48,7 @@ flask = "^2.1.2"
 sphinx = "<4.4.0"  # to avoid confliction of `importlib-metadata`.
 sphinx-intl = "^2.0.1"
 codecov = "^2.1.12"
+jsonschema = "^4.21.1"
 
 [tool.pytest.ini_options]
 testpaths = ["preacher", "tests"]
